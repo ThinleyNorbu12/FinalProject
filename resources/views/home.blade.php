@@ -13,13 +13,13 @@
 <div id="sidebar" class="sidebar">
     <div id="sidebar-content" class="sidebar-content">
         <ul class="sidebar-links">
-            <li><a href="{{ url('/car-owner/owner-registration') }}" style="color: black; text-decoration: none;">Car owner</a></li>
-            <li><a href="{{ url('/car-admin') }}" style="color: black; text-decoration: none;">Car admin</a></li>
-            <li><a href="{{ url('/carusers/dashboard') }}" style="color: black; text-decoration: none;">Car user</a></li>
-            <li><a href="{{ url('/contact') }}" style="color: black; text-decoration: none;">Contact</a></li>
+            <li><a href="{{ url('/car-owner/owner-registration') }}" >CAROWNER</a></li>
+            <li><a href="{{ url('/car-admin') }}">ADMIN</a></li>
+            <li><a href="{{ url('/carusers/dashboard') }}">CUSTOMER</a></li>
+            <li><a href="{{ url('/contact') }}">CONTACT</a></li>
         </ul>
     </div>
-</div>
+</div>    
 
 <!-- Main Content -->
 <div id="main-content">
