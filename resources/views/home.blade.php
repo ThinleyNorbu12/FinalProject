@@ -4,22 +4,24 @@
 <!-- Header -->
 <header id="header">
     <nav>
-        <button onclick="toggleSidebar()">☰</button>
+        <button onclick="toggleSidebar()">☰</button>   
     </nav>
 </header>
+
 
 
 <!-- Sidebar -->
 <div id="sidebar" class="sidebar">
     <div id="sidebar-content" class="sidebar-content">
         <ul class="sidebar-links">
-            <li><a href="{{ url('/car-owner/owner-registration') }}" >CAROWNER</a></li>
-            <li><a href="{{ url('/car-admin') }}">ADMIN</a></li>
-            <li><a href="{{ url('/carusers/dashboard') }}">CUSTOMER</a></li>
-            <li><a href="{{ url('/contact') }}">CONTACT</a></li>
+            <li><a href="{{ route('car_owner_register') }}" >CAROWNER</a></li>
+            <li><a href="{{ route('car_admin') }}" >ADMIN</a></li>
+            <li><a href="{{ route('car_user_dashboard') }}">CUSTOMER</a></li>
+            <li><a href="{{ route('contact') }}">CONTACT</a></li>
         </ul>
     </div>
-</div>    
+</div>
+
 
 <!-- Main Content -->
 <div id="main-content">
