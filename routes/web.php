@@ -1,31 +1,29 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\CarOwnerController;
+use App\Http\Controllers\CarOwnerController;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\CarOwner\AuthController;
 
 Route::get('/', function () {
     return view('home');
 
-// Create a Registration Form
-Route::get('/car_owner_register', [CarOwnerController::class, 'showRegisterForm'])->name('car_owner_register');
-Route::get('/car-owner/set-password', [CarOwnerController::class, 'showSetPassword']);
-
-
-//  Create Password Setup Route
-Route::get('/set-password', function (Request $request) {
-    return view('set_password', ['token' => $request->query('token')]);
-});
-Route::post('/set-password', [CarOwnerController::class, 'setPassword']);
-
-
-// Steps to Test Email in Laravel
-Route::get('/test-email', function () {
-    Mail::raw('Testing email', function($message) {
-        $message->to('11514004750@rim.edu.bt')  // Change to your email address
-                ->subject('Test Email from Laravel');
-    });
-    return 'Email sent!';
 });
 
-});
+// login and register 
+    Route::get('/car-owner', [AuthController::class, 'showLogin'])->name('carowner.login');
+    Route::get('/car-owner/register', [AuthController::class, 'showRegister'])->name('carowner.register');
+    Route::post('/car-owner/login', [AuthController::class, 'login'])->name('carowner.login.submit');
+    Route::post('/car-owner/register', [AuthController::class, 'register'])->name('carowner.register.submit');
+    Route::get('/car-owner/dashboard', [AuthController::class, 'dashboard'])->middleware('auth')->name('carowner.dashboard');
+    Route::post('/car-owner/logout', [AuthController::class, 'logout'])->name('carowner.logout');
+
+    //  Reset Password Route
+    Auth::routes(['reset' => true]);
+
+    //  registerSubmit
+    Route::post('/carowner/register', [CarOwnerController::class, 'registerSubmit'])->name('carowner.register.submit');
+
+// this is for the laravel loign and register  
+// Auth::routes();
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
