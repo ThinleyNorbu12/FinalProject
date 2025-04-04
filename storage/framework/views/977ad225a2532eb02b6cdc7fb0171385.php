@@ -1,27 +1,25 @@
+<!--  -->
 
 
 <?php $__env->startSection('content'); ?>
 <!-- Header -->
 <header id="header">
     <nav>
-        <button onclick="toggleSidebar()">☰</button>   
+        <button onclick="toggleSidebar()">☰</button>
     </nav>
 </header>
-
-
 
 <!-- Sidebar -->
 <div id="sidebar" class="sidebar">
     <div id="sidebar-content" class="sidebar-content">
         <ul class="sidebar-links">
-            <li><a href="<?php echo e(route('car_owner_register')); ?>" >CAROWNER</a></li>
-            <li><a href="<?php echo e(route('car_admin')); ?>" >ADMIN</a></li>
-            <li><a href="<?php echo e(route('car_user_dashboard')); ?>">CUSTOMER</a></li>
-            <li><a href="<?php echo e(route('contact')); ?>">CONTACT</a></li>
+            <li><a href="<?php echo e(route('carowner.login')); ?>">CAROWNER DASHBOARD</a></li>
+            <li><a href="<?php echo e(url('/car-admin')); ?>">ADMIN DASHBOARD</a></li>
+            <li><a href="<?php echo e(url('/customer')); ?>">CUSTOMER DASHBOARD</a></li>
+            <li><a href="<?php echo e(url('/contact')); ?>">CONTACT</a></li>
         </ul>
     </div>
 </div>
-
 
 <!-- Main Content -->
 <div id="main-content">
@@ -45,8 +43,6 @@
     </section>
 </div>
 
-
-
 <script>
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
@@ -62,10 +58,96 @@
         header.classList.toggle('shifted');
         footer.classList.toggle('shifted');
     }
-
+    
     function searchCar() {
         alert("Searching for available cars...");
     }
+    
+    // Car owner authentication check
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if the carowner dashboard link exists
+        const carOwnerLink = document.querySelector('a[href="<?php echo e(route("carowner.login")); ?>"]');
+        
+        if (carOwnerLink) {
+            // Override the click behavior
+            carOwnerLink.addEventListener('click', function(e) {
+                // Check if user is logged in as car owner
+                const isLoggedIn = <?php echo e(Auth::guard('carowner')->check() ? 'true' : 'false'); ?>;
+                
+                if (!isLoggedIn) {
+                    e.preventDefault();
+                    
+                    // Create modal or alert
+                    const modal = document.createElement('div');
+                    modal.className = 'custom-modal';
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <h3>Car Owner Access Required</h3>
+                            <p>You need to register or login as a car owner first.</p>
+                            <div class="modal-buttons">
+                                <a href="<?php echo e(route('carowner.register')); ?>" class="modal-btn register-btn">Register</a>
+                                <a href="<?php echo e(route('carowner.login')); ?>" class="modal-btn login-btn">Login</a>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(modal);
+                    
+                    // Add style for the modal
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .custom-modal {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: rgba(0,0,0,0.5);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            z-index: 1000;
+                        }
+                        .modal-content {
+                            background-color: white;
+                            padding: 30px;
+                            border-radius: 5px;
+                            text-align: center;
+                            max-width: 400px;
+                        }
+                        .modal-buttons {
+                            display: flex;
+                            justify-content: center;
+                            gap: 20px;
+                            margin-top: 20px;
+                        }
+                        .modal-btn {
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            font-weight: bold;
+                        }
+                        .register-btn {
+                            background-color: #4CAF50;
+                            color: white;
+                        }
+                        .login-btn {
+                            background-color: #2196F3;
+                            color: white;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    
+                    // Close modal when clicking outside
+                    modal.addEventListener('click', function(event) {
+                        if (event.target === modal) {
+                            document.body.removeChild(modal);
+                        }
+                    });
+                }
+            });
+        }
+    });
 </script>
 <?php $__env->stopSection(); ?>
 
