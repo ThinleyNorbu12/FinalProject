@@ -115,10 +115,42 @@
 // ];
 
 
-return [
+// return [
 
+//     'defaults' => [
+//         'guard' => 'web', // The default guard for normal users
+//     ],
+
+//     'guards' => [
+//         'web' => [
+//             'driver' => 'session',
+//             'provider' => 'users',
+//         ],
+
+//         'carowner' => [
+//             'driver' => 'session',
+//             'provider' => 'carowners',
+//         ],
+//     ],
+
+//     'providers' => [
+//         'users' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\User::class,
+//         ],
+
+//         'carowners' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\CarOwner::class,
+//         ],
+//     ],
+
+// ];
+
+return [
     'defaults' => [
-        'guard' => 'web', // The default guard for normal users
+        'guard' => 'web',
+        'passwords' => 'users',
     ],
 
     'guards' => [
@@ -127,9 +159,15 @@ return [
             'provider' => 'users',
         ],
 
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+            'hash' => false,
+        ],
+
         'carowner' => [
             'driver' => 'session',
-            'provider' => 'carowners',
+            'provider' => 'car_owners',
         ],
     ],
 
@@ -139,10 +177,27 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        'carowners' => [
+        'car_owners' => [
             'driver' => 'eloquent',
             'model' => App\Models\CarOwner::class,
         ],
     ],
 
+    'passwords' => [
+        'users' => [
+            'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'car_owners' => [
+            'provider' => 'car_owners',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+    ],
+
+    'password_timeout' => 10800,
 ];

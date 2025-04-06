@@ -10,14 +10,8 @@ Route::get('/', function () {
 
 });
 
-// login and register 
-    // Route::get('/car-owner', [AuthController::class, 'showLogin'])->name('carowner.login');
-    // Route::get('/car-owner/register', [AuthController::class, 'showRegister'])->name('carowner.register');
-    // Route::post('/car-owner/login', [AuthController::class, 'login'])->name('carowner.login.submit');
-    // Route::post('/car-owner/register', [AuthController::class, 'register'])->name('carowner.register.submit');
-    // Route::get('/car-owner/dashboard', [AuthController::class, 'dashboard'])->middleware('auth')->name('carowner.dashboard');
-    // Route::post('/car-owner/logout', [AuthController::class, 'logout'])->name('carowner.logout');
-// Routes file (routes/web.php)
+
+// go to the Car owner dashboard owner have to register and login
 Route::get('/carowner/register', [CarOwnerController::class, 'showRegisterForm'])->name('carowner.register');
 Route::post('/carowner/register', [CarOwnerController::class, 'register'])->name('carowner.register.submit');
 Route::get('/carowner/login', [CarOwnerController::class, 'showLoginForm'])->name('carowner.login');
@@ -28,9 +22,28 @@ Route::get('/carowner/verify/{token}', [CarOwnerController::class, 'verify'])->n
     //  Reset Password Route
     Auth::routes(['reset' => true]);
 
-    //  registerSubmit
-    Route::post('/carowner/register', [CarOwnerController::class, 'registerSubmit'])->name('carowner.register.submit');
+    //  register the car owner
+Route::post('/carowner/register', [CarOwnerController::class, 'register'])->name('carowner.register');
 
 // this is for the laravel loign and register  
 // Auth::routes();
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Car Owner routes
+// Route::prefix('carowner')->name('carowner.')->group(function () {
+//     // Public routes
+//     Route::get('/register', [CarOwnerController::class, 'showRegisterForm'])->name('register');
+//     Route::post('/register', [CarOwnerController::class, 'register'])->name('register.submit');
+//     Route::get('/login', [CarOwnerController::class, 'showLoginForm'])->name('login');
+//     Route::post('/login', [CarOwnerController::class, 'login'])->name('login.submit');
+//     Route::get('/verify/{token}', [CarOwnerController::class, 'verify'])->name('verify');
+//     Route::post('/set-password', [CarOwnerController::class, 'setPassword'])->name('set.password');
+    
+//     // Protected routes
+//     Route::middleware('carowner.auth')->group(function () {
+//         Route::get('/dashboard', [CarOwnerController::class, 'dashboard'])->name('dashboard');
+//         Route::post('/logout', [CarOwnerController::class, 'logout'])->name('logout');
+//     });
+// });
+
+// // Laravel Auth routes for password reset
+// Auth::routes(['reset' => true]);

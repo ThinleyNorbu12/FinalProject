@@ -10,7 +10,11 @@ return new class extends Migration {
             $table->string('name');
             $table->string('phone');
             $table->string('email')->unique();
+            $table->string('password'); // ✅ add password
             $table->text('address');
+            $table->timestamp('email_verified_at')->nullable(); // ✅ add email verification
+            $table->string('verification_token')->nullable(); // ✅ add verification token
+            $table->rememberToken(); // ✅ adds a nullable string('remember_token')
             $table->timestamps();
         });
     }

@@ -21,6 +21,7 @@ use Illuminate\Notifications\Notifiable;
 class CarOwner extends Authenticatable
 {
     use HasFactory, Notifiable;
+    protected $guard = 'carowner'; 
     protected $guarded = [];
 
     protected $fillable = [

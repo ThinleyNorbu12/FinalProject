@@ -52,7 +52,6 @@ class CarOwnerController extends Controller
         return view('CarOwner.register');
     }
 
-    // Handle registration
     public function register(Request $request)
     {
         // Validate request
@@ -61,28 +60,30 @@ class CarOwnerController extends Controller
             'email' => 'required|string|email|max:255|unique:car_owners',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
+            'password' => 'required|string|min:8|confirmed',  // Add password validation
         ]);
 
         // Generate verification token
-        $verificationToken = Str::random(64);
+        $verificationToken = Str::random(64);  // Define the verification token here
 
-        // Create car owner in database (without password for now)
+        // Create car owner in the database with the hashed password and verification token
         $carOwner = CarOwner::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'address' => $validated['address'],
-            'password' => null, // Will be set later by the user
-            'verification_token' => $verificationToken,
+            'password' => bcrypt($validated['password']),  // Hash the password before storing it
+            'verification_token' => $verificationToken,  // Add the generated verification token here
         ]);
 
         // Send verification email
         Mail::to($carOwner->email)->send(new CarOwnerVerification($carOwner, $verificationToken));
 
+        // Redirect to login page with success message
         return redirect()->route('carowner.login')
             ->with('success', 'Registration successful! Please check your email to verify your account and set up your password.');
     }
-    
+
 
     // Handle email verification
     public function verify($token)
