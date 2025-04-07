@@ -1,4 +1,4 @@
- {{-- @extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
 <h2>Welcome to Car Owner Dashboard</h2>
@@ -8,9 +8,9 @@
     <button type="submit">Logout</button>
 </form>
 @endsection 
-resources/views/carowner/dashboard.blade.php
-@extends('layouts.app')
-
+<!-- resources/views/carowner/dashboard.blade.php
+@extends('layouts.app') -->
+<!--  
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -74,9 +74,9 @@ resources/views/carowner/dashboard.blade.php
         </div>
     </div>
 </div>
-@endsection --}}
+@endsection --}} -->
 
-
+<!-- 
 @extends('layouts.app')
 
 @section('content')
@@ -143,4 +143,4 @@ resources/views/carowner/dashboard.blade.php
         </div>
     </div>
 </div>
-@endsection
+@endsection -->

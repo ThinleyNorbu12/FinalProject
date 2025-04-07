@@ -1,7 +1,3 @@
-@extends('layouts.app')
-
-
-@section('content')
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,9 +8,9 @@
 <body>
     <h1>Set Your Password</h1>
 
-    <form action="{{ route('carowner.set-password.submit') }}" method="POST">
-        @csrf
-        <input type="hidden" name="token" value="{{ $token }}">
+    <form action="<?php echo e(route('carowner.set-password.submit')); ?>" method="POST">
+        <?php echo csrf_field(); ?>
+        <input type="hidden" name="token" value="<?php echo e($token); ?>">
 
         <label for="password">New Password:</label>
         <input type="password" name="password" id="password" required>
@@ -26,4 +22,4 @@
     </form>
 </body>
 </html>
-@endsection 
+<?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/CarOwner/set-password.blade.php ENDPATH**/ ?>
