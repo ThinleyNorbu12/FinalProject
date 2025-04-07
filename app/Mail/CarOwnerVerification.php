@@ -12,23 +12,22 @@ class CarOwnerVerification extends Mailable
     use Queueable, SerializesModels;
 
     public $carOwner;
-    public $token;
+    public $verificationUrl;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(CarOwner $carOwner, $token)
-    {
-        $this->carOwner = $carOwner;
-        $this->token = $token;
-    }
+    public function __construct($carOwner, $verificationUrl)
+{
+    $this->carOwner = $carOwner;
+    $this->verificationUrl = $verificationUrl;
+}
 
-    /**
-     * Build the message.
-     */
-    public function build()
-    {
-        return $this->subject('Verify Your Car Owner Account')
-                    ->view('emails.carowner-verification');
-    }
+public function build()
+{
+    return $this->view('emails.carowner-verification')
+                ->subject('Email Verification Successful')
+                ->with([
+                    'carOwnerName' => $this->carOwner->name,
+                    'verificationUrl' => $this->verificationUrl,
+                ]);
+}
+
 }

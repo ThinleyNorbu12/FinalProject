@@ -7,4 +7,4 @@
         <p>&copy; <?php echo e(date('Y')); ?> Thinley Norbu. All rights reserved.</p>
     </div>
 </footer>
-<?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/layouts/footer.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/layouts/footer.blade.php ENDPATH**/ ?>

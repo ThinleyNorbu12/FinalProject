@@ -24,24 +24,17 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CarOwnerAuth
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
-    public function handle(Request $request, Closure $next)
+    public function handle($request, Closure $next)
     {
-        if (!Auth::guard('carowner')->check()) {
-            return redirect()->route('carowner.login');
+        if (!Auth::check()) {
+            return redirect()->route('carowner.login')->with('error', 'Please login first.');
         }
 
+        // You can add custom role/guard checks here if needed
         return $next($request);
     }
 }

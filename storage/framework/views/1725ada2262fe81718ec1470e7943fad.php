@@ -5,4 +5,4 @@
         <span class="brand-text" style="font-size: 24px; font-weight: bold;">DRUK RIDE RENTALS </span>
     </div>
 
-</nav><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/layouts/header.blade.php ENDPATH**/ ?>
+</nav><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/layouts/header.blade.php ENDPATH**/ ?>

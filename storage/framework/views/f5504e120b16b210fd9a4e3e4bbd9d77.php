@@ -8,9 +8,9 @@
 <body>
     <h1>Set Your Password</h1>
 
-    <form action="{{ route('carowner.set-password.submit') }}" method="POST">
-        @csrf
-        <input type="hidden" name="token" value="{{ $token }}">
+    <form action="<?php echo e(route('carowner.set-password.submit')); ?>" method="POST">
+        <?php echo csrf_field(); ?>
+        <input type="hidden" name="token" value="<?php echo e($token); ?>">
 
         <label for="password">New Password:</label>
         <input type="password" name="password" id="password" required>
@@ -22,3 +22,4 @@
     </form>
 </body>
 </html>
+<?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/carowner/set-password.blade.php ENDPATH**/ ?>
