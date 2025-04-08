@@ -55,9 +55,8 @@ class CarOwner extends Authenticatable
     // One-to-many relationship with the cars table
     public function cars()
     {
-        return $this->hasMany(Car::class);
+        return $this->hasMany(CarDetail::class, 'car_owner_id');  // Make sure the foreign key is defined correctly
     }
-
     // Optional: If you need to send an email verification link manually after registration
     public function sendEmailVerificationNotification()
     {

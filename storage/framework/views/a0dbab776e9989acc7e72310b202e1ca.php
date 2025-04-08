@@ -14,7 +14,7 @@
     <div id="sidebar-content" class="sidebar-content">
         <ul class="sidebar-links">
             <li><a href="<?php echo e(route('carowner.login')); ?>">CAROWNER DASHBOARD</a></li>
-            <li><a href="<?php echo e(url('/car-admin')); ?>">ADMIN DASHBOARD</a></li>
+            <li><a href="<?php echo e(url('/car-admin')); ?>">ADMIN  DASHBOARD</a></li>
             <li><a href="<?php echo e(url('/customer')); ?>">CUSTOMER DASHBOARD</a></li>
             <li><a href="<?php echo e(url('/contact')); ?>">CONTACT</a></li>
         </ul>

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CarOwnerVerification;
-
+use Illuminate\Support\Facades\Auth;
 
 class VerificationController extends Controller
 {
@@ -48,28 +48,5 @@ class VerificationController extends Controller
         return view('auth.set-password', compact('token'));
     }
 
-    // Handle password setup
-    public function setPassword(Request $request, $token)
-    {
-        // Validate the password
-        $validated = $request->validate([
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        // Find the car owner by the verification token
-        $carOwner = CarOwner::where('verification_token', $token)->first();
-
-        if (!$carOwner) {
-            return redirect()->route('carowner.login')->with('error', 'Invalid verification token.');
-        }
-
-        // Set the password and save
-        $carOwner->password = Hash::make($validated['password']);
-        $carOwner->verification_token = null; // Remove verification token
-        $carOwner->save();
-
-        // Redirect to login with success message
-        return redirect()->route('carowner.login')
-            ->with('success', 'Your password has been set. You can now log in.');
-    }
+   
 }

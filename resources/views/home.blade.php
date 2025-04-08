@@ -14,7 +14,7 @@
     <div id="sidebar-content" class="sidebar-content">
         <ul class="sidebar-links">
             <li><a href="{{ route('carowner.login') }}">CAROWNER DASHBOARD</a></li>
-            <li><a href="{{ url('/car-admin') }}">ADMIN DASHBOARD</a></li>
+            <li><a href="{{ url('/car-admin') }}">ADMIN  DASHBOARD</a></li>
             <li><a href="{{ url('/customer') }}">CUSTOMER DASHBOARD</a></li>
             <li><a href="{{ url('/contact') }}">CONTACT</a></li>
         </ul>

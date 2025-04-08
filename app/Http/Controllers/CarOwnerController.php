@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\CarOwnerVerification;
+use App\Models\CarDetail;
 
 
 
@@ -52,46 +53,18 @@ class CarOwnerController extends Controller
             ->with('success', 'Registration successful! Please check your email to verify your account and set up your password.');
     }
     
-
-
-    // // Handle email verification
-    // public function verify($token)
-    // {
-    //     $carOwner = CarOwner::where('verification_token', $token)->first();
-
-    //     if (!$carOwner) {
-    //         return redirect()->route('carowner.login')
-    //             ->with('error', 'Invalid verification token.');
-    //     }
-
-    //     return view('CarOwner.set-password', ['token' => $token]);
-    // }
-
-    // Handle login
-    public function login(Request $request)
+    // Show the dashboard
+        public function dashboard()
     {
-        // Validate credentials
-        $credentials = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+        // Fetch the authenticated car owner
+        $carOwner = Auth::guard('carowner')->user();
 
-        // Attempt to log in
-        if (Auth::guard('carowner')->attempt($credentials, $request->remember)) {
-            $request->session()->regenerate();
-            return redirect()->intended(route('carowner.dashboard'));
+        // If no car owner is logged in, redirect to login page
+        if (!$carOwner) {
+            return redirect()->route('carowner.login');
         }
 
-        // Return errors if login fails
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
-    }
-
-    // Show the dashboard
-    public function dashboard()
-    {
-        $carOwner = Auth::guard('carowner')->user();
+        // Pass the car owner to the view
         return view('CarOwner.dashboard', compact('carOwner'));
     }
 
@@ -122,40 +95,102 @@ class CarOwnerController extends Controller
 
     // Show the set password form
     public function showSetPasswordForm($token)
-{
-    $carOwner = CarOwner::where('password_set_token', $token)->first();
-
-    if (!$carOwner) {
-        return redirect()->route('carowner.login')->with('error', 'Invalid or expired token.');
-    }
-
-    return view('CarOwner.set-password', compact('token'));
-}
-
-
-    // Set the password
-    public function setPassword(Request $request)
     {
-        $request->validate([
-            'password' => 'required|confirmed|min:8',
-        ]);
-
-        // Find the car owner by the token
-        $carOwner = CarOwner::where('password_set_token', $request->token)->first();
+        $carOwner = CarOwner::where('password_set_token', $token)->first();
 
         if (!$carOwner) {
             return redirect()->route('carowner.login')->with('error', 'Invalid or expired token.');
         }
 
-        // Set the new password
+        return view('CarOwner.set-password', compact('token'));
+    }
+
+
+    // Set the password
+    public function setPassword(Request $request, $token)
+    {
+        // Validate the password
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Find the car owner by the verification token
+        $carOwner = CarOwner::where('password_set_token', $token)->first();
+
+        if (!$carOwner) {
+            return redirect()->route('carowner.login')->with('error', 'Invalid or expired token.');
+        }
+
+        // Set the password and save
         $carOwner->password = Hash::make($request->password);
-        $carOwner->password_set_token = null; // Clear the token after setting the password
+        $carOwner->password_set_token = null; // Remove verification token
         $carOwner->save();
 
-        // Log the user in
-        Auth::login($carOwner);
+        // Log the car owner in
+        Auth::guard('carowner')->login($carOwner);
 
+        // Redirect to the dashboard
         return redirect()->route('carowner.dashboard')->with('success', 'Your password has been set successfully.');
     }
+
+    public function showRentCarForm()
+    {
+        return view('CarOwner.rent-car');  // This renders the rent car form view
+    }
+
+    // when car owner rent a car
+    public function storeRentCar(Request $request)
+    {
+        // Validation logic (optional)
+        $request->validate([
+            'maker' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
+            'vehicle_type' => 'required|string',
+            'car_condition' => 'required|string',
+            'mileage' => 'required|numeric',
+            'price' => 'required|numeric',
+            'registration_no' => 'required|string',
+            'status' => 'required|string',
+            'description' => 'nullable|string',
+            'car_image' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',  // Add image validation
+        ]);
+
+        // Store car information in database (CarDetail model)
+        $car = new CarDetail();
+        $car->maker = $request->maker;
+        $car->model = $request->model;
+        $car->vehicle_type = $request->vehicle_type;
+        $car->car_condition = $request->car_condition;
+        $car->mileage = $request->mileage;
+        $car->price = $request->price;
+        $car->registration_no = $request->registration_no;
+        $car->status = $request->status;
+        $car->description = $request->description;
+
+        // Initialize $imagePath variable
+        $imagePath = null;
+
+        // Handle image upload
+        if ($request->hasFile('car_image')) {
+            $file = $request->file('car_image');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/cars'), $filename); // Store in the 'uploads/cars' directory
+            $imagePath = 'uploads/cars/' . $filename; // Store the path in the DB
+        }
+
+        // Assign the image path to the car record
+        $car->car_image = $imagePath;
+
+        // Assign the car to the logged-in car owner using the correct column: car_owner_id
+        $car->car_owner_id = auth()->guard('carowner')->id(); // Use car_owner_id to link to the owner
+
+        // Save the car record to the database
+        $car->save();
+
+        // Redirect with a success message
+        return redirect()->route('carowner.rentCar')->with('success', 'Car registered successfully!');
+    }
+
+
 
 }

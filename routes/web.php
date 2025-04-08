@@ -5,10 +5,12 @@ use App\Http\Controllers\CarOwnerController;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\CarOwner\AuthController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\HomeController;
 Route::get('/', function () {
     return view('home');
 
 });
+
 
 // Car Owner Registration Routes
 Route::get('/carowner/register', [CarOwnerController::class, 'showRegisterForm'])->name('carowner.register');
@@ -20,8 +22,8 @@ Route::post('/carowner/login', [AuthController::class, 'login'])->name('carowner
 
 // Dashboard (Protected - Only accessible if logged in)
 Route::get('/carowner/dashboard', [CarOwnerController::class, 'dashboard'])
-    ->name('carowner.dashboard')
-    ->middleware('carowner.auth');
+    ->middleware('auth:carowner') // Ensure this is set to 'auth:carowner'
+    ->name('carowner.dashboard');
 
 // Car Owner Logout
 Route::post('/carowner/logout', [CarOwnerController::class, 'logout'])->name('carowner.logout');
@@ -40,8 +42,9 @@ Route::post('set-password/{token}', [VerificationController::class, 'setPassword
 Route::get('/carowner/set-password/{token}', [CarOwnerController::class, 'showSetPasswordForm'])
     ->name('carowner.set-password');
 
-Route::post('/carowner/set-password', [CarOwnerController::class, 'setPassword'])
+Route::post('/carowner/set-password/{token}', [CarOwnerController::class, 'setPassword'])
     ->name('carowner.set-password.submit');
+
 
 // Password Reset Routes (if needed)
 Auth::routes(['reset' => true]);
@@ -60,3 +63,13 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 Route::get('/carowner/dashboard', function () {
     return view('CarOwner.dashboard');
 })->name('carowner.dashboard');
+
+
+
+Route::middleware('auth:carowner')->group(function () {
+    // Rent Car page (form)
+    Route::get('CarOwner/rent-car', [CarOwnerController::class, 'showRentCarForm'])->name('carowner.rentCar');
+    
+    // Post request to store car details
+    Route::post('CarOwner/rent-car', [CarOwnerController::class, 'storeRentCar'])->name('carowner.storeRentCar');
+});

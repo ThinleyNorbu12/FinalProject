@@ -1,29 +1,54 @@
 @extends('layouts.app')
 
-
 @section('content')
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Set Your Password</title>
-</head>
-<body>
-    <h1>Set Your Password</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">{{ __('Set Your Password') }}</div>
 
-    <form action="{{ route('carowner.set-password.submit') }}" method="POST">
-        @csrf
-        <input type="hidden" name="token" value="{{ $token }}">
+                    <div class="card-body">
+                        <form action="{{ route('carowner.set-password.submit', ['token' => $token]) }}" method="POST">
+                            @csrf
 
-        <label for="password">New Password:</label>
-        <input type="password" name="password" id="password" required>
+                            <!-- Hidden field for token -->
+                            <input type="hidden" name="token" value="{{ $token }}">
 
-        <label for="password_confirmation">Confirm Password:</label>
-        <input type="password" name="password_confirmation" id="password_confirmation" required>
+                            <!-- Password input field -->
+                            <div class="form-group row">
+                                <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('New Password') }}</label>
 
-        <button type="submit">Set Password</button>
-    </form>
-</body>
-</html>
-@endsection 
+                                <div class="col-md-6">
+                                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
+
+                                    @error('password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- Confirm password input field -->
+                            <div class="form-group row">
+                                <label for="password_confirmation" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
+
+                                <div class="col-md-6">
+                                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-0">
+                                <div class="col-md-8 offset-md-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        {{ __('Set Password') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

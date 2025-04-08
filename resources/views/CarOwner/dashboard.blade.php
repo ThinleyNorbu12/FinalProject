@@ -1,146 +1,49 @@
 @extends('layouts.app')
 
-@section('content')
-<h2>Welcome to Car Owner Dashboard</h2>
-<p>Hello, {{ Auth::user()->name }}!</p>
-<form method="POST" action="{{ route('carowner.logout') }}">
-    @csrf
-    <button type="submit">Logout</button>
-</form>
-@endsection 
-<!-- resources/views/carowner/dashboard.blade.php
-@extends('layouts.app') -->
-<!--  
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card">
-                <div class="card-header">
-                    {{ __('Car Owner Dashboard') }}
-                    <form action="{{ route('carowner.logout') }}" method="POST" class="float-end">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-danger">Logout</button>
-                    </form>
-                </div>
+<!-- Link to the external CSS file -->
+<link rel="stylesheet" href="{{ asset('assets/css/carowner/dashboard.css') }}">
 
-                <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
+@section('content')
+    <div class="container">
+        <div class="row">
+            <!-- First Container: Profile Section -->
+            <div class="col-md-4">
+                <div class="profile-section">
+                    <h2>Welcome to the Car Owner Dashboard</h2>
+
+                    @if(Auth::guard('carowner')->check())
+                        <p>Hello, {{ Auth::guard('carowner')->user()->name }}!</p>
+                        <form method="POST" action="{{ route('carowner.logout') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                    @else
+                        <p>Hello, Guest!</p>
                     @endif
+                </div>
+            </div>
 
-                    <h3>Welcome, {{ $carOwner->name }}!</h3>
-                    <p>Email: {{ $carOwner->email }}</p>
-                    <p>Phone: {{ $carOwner->phone }}</p>
-                    
-                    <div class="mt-4">
-                        <h4>Your Cars</h4>
-                        @if($carOwner->cars->count() > 0)
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Model</th>
-                                        <th>Year</th>
-                                        <th>License Plate</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($carOwner->cars as $car)
-                                    <tr>
-                                        <td>{{ $car->model }}</td>
-                                        <td>{{ $car->year }}</td>
-                                        <td>{{ $car->license_plate }}</td>
-                                        <td>{{ $car->status }}</td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-info">View</a>
-                                            <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @else
-                            <div class="alert alert-info">
-                                You haven't listed any cars yet. <a href="#">Add your first car</a>
-                            </div>
-                        @endif
+            <!-- Second Container: Dashboard Links -->
+            <div class="col-md-8">
+                <div class="dashboard-links">
+                    <p>This is where car owners can manage their cars.</p>
+
+                    <!-- Wrap the links in a div container for styling -->
+                    <div class="links-container">
+                        <a href="{{ url('CarOwner/rent-car') }}" class="btn btn-primary">1. RENT A CAR</a>
+                        <a href="{{ url('carowner/payment-summary') }}" class="btn btn-primary">2. PAYMENT SUMMARY</a>
+                        <a href="{{ url('carowner/view-rented-car') }}" class="btn btn-primary">3. VIEW RENTED CAR</a>
+                        <a href="{{ url('carowner/car-inspection') }}" class="btn btn-primary">
+                            4. CAR INSPECTION REQUIRED
+                            @if(isset($car) && $car->inspection_requested) 
+                                <span class="badge badge-warning">Inspection Requested</span>
+                            @endif
+                        </a>
+                        <a href="{{ url('carowner/car-approval-denied') }}" class="btn btn-primary">5. CAR APPROVAL DENIED</a>
+                        <a href="{{ url('carowner/approved-car') }}" class="btn btn-primary">6. APPROVED CAR</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-@endsection --}} -->
-
-<!-- 
-@extends('layouts.app')
-
-@section('content')
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>{{ __('Car Owner Dashboard') }}</span>
-
-                    <form action="{{ route('carowner.logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-danger">Logout</button>
-                    </form>
-                </div>
-
-                <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    <h3>Hello, {{ Auth::user()->name ?? 'Car Owner' }}!</h3>
-                    <p>Email: {{ Auth::user()->email }}</p>
-                    <p>Phone: {{ Auth::user()->phone ?? 'N/A' }}</p>
-
-                    <hr>
-
-                    <h4 class="mt-4">Your Cars</h4>
-                    @if(Auth::user()->cars && Auth::user()->cars->count() > 0)
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Model</th>
-                                    <th>Year</th>
-                                    <th>License Plate</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach(Auth::user()->cars as $car)
-                                <tr>
-                                    <td>{{ $car->model }}</td>
-                                    <td>{{ $car->year }}</td>
-                                    <td>{{ $car->license_plate }}</td>
-                                    <td>{{ ucfirst($car->status) }}</td>
-                                    <td>
-                                        <a href="#" class="btn btn-sm btn-info">View</a>
-                                        <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                        <div class="alert alert-info">
-                            You haven’t listed any cars yet. <a href="#">Add your first car</a>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection -->
+@endsection
