@@ -1,28 +1,17 @@
 <?php
 
-// namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-// use Illuminate\Http\Request;
+use Illuminate\Http\Request;
+use App\Models\CarDetail;
 
-// class HomeController extends Controller
-// {
-//     /**
-//      * Create a new controller instance.
-//      *
-//      * @return void
-//      */
-//     public function __construct()
-//     {
-//         $this->middleware('auth');
-//     }
 
-//     /**
-//      * Show the application dashboard.
-//      *
-//      * @return \Illuminate\Contracts\Support\Renderable
-//      */
-//     public function index()
-//     {
-//         return view('home');
-//     }
-// }
+class HomeController extends Controller
+{
+    
+public function index()
+{
+    $cars = CarDetail::latest()->get(); // Fetch the registered cars
+    return view('home', compact('cars'));
+}
+}

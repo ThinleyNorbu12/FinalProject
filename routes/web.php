@@ -10,7 +10,8 @@ Route::get('/', function () {
     return view('home');
 
 });
-
+// to display all the register car of carowner
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Car Owner Registration Routes
 Route::get('/carowner/register', [CarOwnerController::class, 'showRegisterForm'])->name('carowner.register');

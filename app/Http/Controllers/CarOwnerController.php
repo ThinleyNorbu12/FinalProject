@@ -141,7 +141,7 @@ class CarOwnerController extends Controller
     // when car owner rent a car
     public function storeRentCar(Request $request)
     {
-        // Validation logic (optional)
+        // Validation logic
         $request->validate([
             'maker' => 'required|string|max:255',
             'model' => 'required|string|max:255',
@@ -149,12 +149,15 @@ class CarOwnerController extends Controller
             'car_condition' => 'required|string',
             'mileage' => 'required|numeric',
             'price' => 'required|numeric',
-            'registration_no' => 'required|string',
+            'registration_no' => 'required|string|unique:car_details_tbl,registration_no',
             'status' => 'required|string',
             'description' => 'nullable|string',
-            'car_image' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',  // Add image validation
+            'car_image' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',
+        ], [
+            'registration_no.unique' => 'This registration number is already registered.',
         ]);
-
+        
+    
         // Store car information in database (CarDetail model)
         $car = new CarDetail();
         $car->maker = $request->maker;
@@ -166,10 +169,10 @@ class CarOwnerController extends Controller
         $car->registration_no = $request->registration_no;
         $car->status = $request->status;
         $car->description = $request->description;
-
+    
         // Initialize $imagePath variable
         $imagePath = null;
-
+    
         // Handle image upload
         if ($request->hasFile('car_image')) {
             $file = $request->file('car_image');
@@ -177,20 +180,19 @@ class CarOwnerController extends Controller
             $file->move(public_path('uploads/cars'), $filename); // Store in the 'uploads/cars' directory
             $imagePath = 'uploads/cars/' . $filename; // Store the path in the DB
         }
-
+    
         // Assign the image path to the car record
         $car->car_image = $imagePath;
-
+    
         // Assign the car to the logged-in car owner using the correct column: car_owner_id
         $car->car_owner_id = auth()->guard('carowner')->id(); // Use car_owner_id to link to the owner
-
+    
         // Save the car record to the database
         $car->save();
-
+    
         // Redirect with a success message
         return redirect()->route('carowner.rentCar')->with('success', 'Car registered successfully!');
     }
-
-
+    
 
 }

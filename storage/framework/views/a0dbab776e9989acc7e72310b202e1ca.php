@@ -1,6 +1,5 @@
 
 
-
 <?php $__env->startSection('content'); ?>
 <!-- Header -->
 <header id="header">
@@ -41,6 +40,24 @@
             <button onclick="searchCar()">Search Car</button>
         </div>
     </section>
+
+   <!-- Display Cars -->
+    <section class="cars">
+        <h2>Available Cars</h2>
+        <div class="car-container">
+            <?php $__currentLoopData = $cars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $car): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="car">
+                    <img src="<?php echo e(asset($car->car_image)); ?>" alt="<?php echo e($car->model); ?>" style="width: 200px; height: auto;">
+                    <h3><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
+                    <p><?php echo e($car->price); ?>/day</p>
+                    <div class="car-buttons">
+                        <a href="#" class="btn-details">CAR DETAILS</a>
+                        <a href="#" class="btn-contact">CONTACT OWNER</a>
+                    </div>
+                </div>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
+    </section>
 </div>
 
 <script>
@@ -50,34 +67,25 @@
         const header = document.getElementById('header');
         const footer = document.getElementById('footer');
         
-        // Toggle the sidebar open/close
         sidebar.classList.toggle('open');
-        
-        // Shift both header, footer, and content when sidebar is opened/closed
         mainContent.classList.toggle('shifted');
         header.classList.toggle('shifted');
         footer.classList.toggle('shifted');
     }
-    
+
     function searchCar() {
         alert("Searching for available cars...");
     }
-    
-    // Car owner authentication check
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Check if the carowner dashboard link exists
         const carOwnerLink = document.querySelector('a[href="<?php echo e(route("carowner.login")); ?>"]');
         
         if (carOwnerLink) {
-            // Override the click behavior
             carOwnerLink.addEventListener('click', function(e) {
-                // Check if user is logged in as car owner
                 const isLoggedIn = <?php echo e(Auth::guard('carowner')->check() ? 'true' : 'false'); ?>;
                 
                 if (!isLoggedIn) {
                     e.preventDefault();
-                    
-                    // Create modal or alert
                     const modal = document.createElement('div');
                     modal.className = 'custom-modal';
                     modal.innerHTML = `
@@ -90,10 +98,7 @@
                             </div>
                         </div>
                     `;
-                    
                     document.body.appendChild(modal);
-                    
-                    // Add style for the modal
                     const style = document.createElement('style');
                     style.textContent = `
                         .custom-modal {
@@ -137,8 +142,6 @@
                         }
                     `;
                     document.head.appendChild(style);
-                    
-                    // Close modal when clicking outside
                     modal.addEventListener('click', function(event) {
                         if (event.target === modal) {
                             document.body.removeChild(modal);
