@@ -28,6 +28,8 @@ class CarOwnerController extends Controller
             'email' => 'required|string|email|max:255|unique:car_owners',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
+        ], [
+            'email.unique' => 'Oops! This email is already registered. Please use a different one.', // Friendly tone message
         ]);
     
         // Generate a unique verification token
