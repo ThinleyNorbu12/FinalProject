@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('car_condition');
             $table->integer('mileage');
             $table->decimal('price', 10, 2);
-            $table->string('registration_no');
+            $table->string('registration_no')->unique();
             $table->string('status')->default('pending');
             $table->text('description');
             $table->string('car_image')->nullable();

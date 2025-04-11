@@ -9,10 +9,8 @@ class CarDetail extends Model
 {
     use HasFactory;
 
-    // Define the table name explicitly
-    protected $table = 'car_details_tbl';  // Ensure this matches the migration table name
+    protected $table = 'car_details_tbl';
 
-    // Define fillable attributes
     protected $fillable = [
         'maker', 
         'model', 
@@ -27,7 +25,11 @@ class CarDetail extends Model
         'car_owner_id'
     ];
 
-    // Define the relationship with the CarOwner model
+    protected $casts = [
+        'price' => 'float',
+        'mileage' => 'integer',
+    ];
+
     public function owner()
     {
         return $this->belongsTo(CarOwner::class, 'car_owner_id');

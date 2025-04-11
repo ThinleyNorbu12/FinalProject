@@ -147,12 +147,168 @@
 
 // ];
 
+
+    // car owner
+// return [
+//     'defaults' => [
+//         'guard' => 'web',
+//         'passwords' => 'users',
+//     ],
+
+//     'guards' => [
+//         'web' => [
+//             'driver' => 'session',
+//             'provider' => 'users',
+//         ],
+
+//         'api' => [
+//             'driver' => 'token',
+//             'provider' => 'users',
+//             'hash' => false,
+//         ],
+
+//         'carowner' => [
+//             'driver' => 'session',
+//             'provider' => 'car_owners',
+//         ],
+//     ],
+
+//     'providers' => [
+//         'users' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\User::class,
+//         ],
+
+//         'car_owners' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\CarOwner::class,
+//         ],
+//     ],
+
+//     'passwords' => [
+//         'users' => [
+//             'provider' => 'users',
+//             'table' => 'password_resets',
+//             'expire' => 60,
+//             'throttle' => 60,
+//         ],
+
+//         'car_owners' => [
+//             'provider' => 'car_owners',
+//             'table' => 'password_resets',
+//             'expire' => 60,
+//             'throttle' => 60,
+//         ],
+//     ],
+
+//     'password_timeout' => 10800,
+
+
+
+//     // admin 
+//     'guards' => [
+//     'web' => [
+//         'driver' => 'session',
+//         'provider' => 'users',
+//     ],
+
+//     'admin' => [
+//         'driver' => 'session',
+//         'provider' => 'admins',
+//     ],
+//     ],
+
+//     'providers' => [
+//         'users' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\User::class,
+//         ],
+
+//         'admins' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\Admin::class,
+//         ],
+//     ],
+
+// ];
+
+// second tym with admin and carowner together
+// return [
+
+//     'defaults' => [
+//         'guard' => 'web',
+//         'passwords' => 'users',
+//     ],
+
+//     'guards' => [
+//         'web' => [
+//             'driver' => 'session',
+//             'provider' => 'users',
+//         ],
+
+//         'api' => [
+//             'driver' => 'token',
+//             'provider' => 'users',
+//             'hash' => false,
+//         ],
+
+//         'carowner' => [
+//             'driver' => 'session',
+//             'provider' => 'car_owners',
+//         ],
+
+//         'admin' => [
+//             'driver' => 'session',
+//             'provider' => 'admins',
+//         ],
+//     ],
+
+//     'providers' => [
+//         'users' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\User::class,
+//         ],
+
+//         'car_owners' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\CarOwner::class,
+//         ],
+
+//         'admins' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\Admin::class,
+//         ],
+//     ],
+
+//     'passwords' => [
+//         'users' => [
+//             'provider' => 'users',
+//             'table' => 'password_resets',
+//             'expire' => 60,
+//             'throttle' => 60,
+//         ],
+
+//         'car_owners' => [
+//             'provider' => 'car_owners',
+//             'table' => 'password_resets',
+//             'expire' => 60,
+//             'throttle' => 60,
+//         ],
+//     ],
+
+//     'password_timeout' => 10800,
+// ];
+
+
+
 return [
+
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',
     ],
 
+    // Guards define how users are authenticated
     'guards' => [
         'web' => [
             'driver' => 'session',
@@ -165,12 +321,20 @@ return [
             'hash' => false,
         ],
 
+        // CarOwner Guard (Session-based login)
         'carowner' => [
             'driver' => 'session',
             'provider' => 'car_owners',
         ],
+
+        // Admin Guard (Session-based login)
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
     ],
 
+    // Providers define how users are retrieved
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
@@ -181,8 +345,14 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\CarOwner::class,
         ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
     ],
 
+    // Password reset settings
     'passwords' => [
         'users' => [
             'provider' => 'users',
@@ -197,7 +367,15 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+
+        'admins' => [
+            'provider' => 'admins',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
     ],
 
     'password_timeout' => 10800,
 ];
+

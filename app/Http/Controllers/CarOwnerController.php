@@ -28,8 +28,10 @@ class CarOwnerController extends Controller
             'email' => 'required|string|email|max:255|unique:car_owners',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
+        ], [
+            'email.unique' => 'Oops! This email is already registered. Please use a different one.', // Friendly tone message
         ]);
-    
+        
         // Generate a unique verification token
         $verificationToken = Str::random(64);
     
@@ -149,11 +151,12 @@ class CarOwnerController extends Controller
             'car_condition' => 'required|string',
             'mileage' => 'required|numeric',
             'price' => 'required|numeric',
-            'registration_no' => 'required|string',
+            'registration_no' => 'required|string|unique:car_details,registration_no',
             'status' => 'required|string',
             'description' => 'nullable|string',
-            'car_image' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',  // Add image validation
+            'car_image' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',
         ]);
+        
 
         // Store car information in database (CarDetail model)
         $car = new CarDetail();
