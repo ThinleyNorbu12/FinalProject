@@ -526,19 +526,28 @@ class ComposerStaticInit88970a0117c062eed55fa8728fc43833
     );
 
     public static $classMap = array (
+        'App\\Http\\Controllers\\Admin\\Auth\\AdminLoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/Auth/AdminLoginController.php',
+        'App\\Http\\Controllers\\Admin\\Auth\\AdminRegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/Auth/AdminRegisterController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmPasswordController.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
         'App\\Http\\Controllers\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
         'App\\Http\\Controllers\\Auth\\RegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
-        'App\\Http\\Controllers\\Auth\\VerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/VerificationController.php',
         'App\\Http\\Controllers\\CarOwnerController' => __DIR__ . '/../..' . '/app/Http/Controllers/CarOwnerController.php',
         'App\\Http\\Controllers\\CarOwner\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/CarOwner/AuthController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
+        'App\\Http\\Controllers\\VerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/VerificationController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
+        'App\\Http\\Middleware\\AdminMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/AdminMiddleware.php',
+        'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\CarOwnerAuth' => __DIR__ . '/../..' . '/app/Http/Middleware/CarOwnerAuth.php',
+        'App\\Mail\\AdminSetPasswordMail' => __DIR__ . '/../..' . '/app/Mail/AdminSetPasswordMail.php',
         'App\\Mail\\CarOwnerPasswordSetupMail' => __DIR__ . '/../..' . '/app/Mail/CarOwnerPasswordSetupMail.php',
         'App\\Mail\\CarOwnerVerification' => __DIR__ . '/../..' . '/app/Mail/CarOwnerVerification.php',
+        'App\\Mail\\VerifyEmail' => __DIR__ . '/../..' . '/app/Mail/VerifyEmail.php',
+        'App\\Models\\Admin' => __DIR__ . '/../..' . '/app/Models/Admin.php',
+        'App\\Models\\CarDetail' => __DIR__ . '/../..' . '/app/Models/CarDetail.php',
         'App\\Models\\CarOwner' => __DIR__ . '/../..' . '/app/Models/CarOwner.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Notifications\\CustomPasswordReset' => __DIR__ . '/../..' . '/app/Notifications/CustomPasswordReset.php',
@@ -6655,5 +6664,3 @@ class ComposerStaticInit88970a0117c062eed55fa8728fc43833
         }, null, ClassLoader::class);
     }
 }
-
-

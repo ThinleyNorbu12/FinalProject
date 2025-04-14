@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
@@ -21,6 +20,6 @@ class AdminLoginController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return back()->with('error', 'Invalid email or password.');
+        return back()->withErrors(['email' => 'Invalid credentials.']);
     }
 }

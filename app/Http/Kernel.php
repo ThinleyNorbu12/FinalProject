@@ -60,5 +60,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'carowner.auth' => \App\Http\Middleware\CarOwnerAuth::class,  // Add this line
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+
     ];
 }

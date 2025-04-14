@@ -76,32 +76,43 @@ Route::middleware('auth:carowner')->group(function () {
 });
 
 
-// // admin 
-// use App\Http\Controllers\Admin\Auth\AdminLoginController;
-// use App\Http\Controllers\Admin\Auth\AdminRegisterController;
+// admin 
+use App\Http\Controllers\Admin\Auth\AdminLoginController;
+use App\Http\Controllers\Admin\Auth\AdminRegisterController;
+use App\Http\Controllers\CarAdminController;
+// Admin Routes
+Route::prefix('admin')->name('admin.')->group(function () {
 
-// // Admin Routes
-// Route::prefix('admin')->name('admin.')->group(function () {
+    // Admin Login Routes
+    Route::get('login', [AdminLoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [AdminLoginController::class, 'login']);
 
-//     // Admin Login Routes
-//     Route::get('login', [AdminLoginController::class, 'showLoginForm'])->name('login');
-//     Route::post('login', [AdminLoginController::class, 'login']);
+    // Admin Register & Set Password Routes
+    Route::get('register', [AdminRegisterController::class, 'showRegisterForm'])->name('register');
+    Route::post('register', [AdminRegisterController::class, 'register']);
+    Route::get('set-password/{token}', [AdminRegisterController::class, 'showSetPasswordForm'])->name('set-password');
+    Route::post('set-password/{token}', [AdminRegisterController::class, 'setPassword'])->name('set-password.submit');
 
-//     // Admin Register & Set Password Routes
-//     Route::get('register', [AdminRegisterController::class, 'showRegisterForm'])->name('register');
-//     Route::post('register', [AdminRegisterController::class, 'register']);
-//     Route::get('set-password/{token}', [AdminRegisterController::class, 'showSetPasswordForm'])->name('set-password');
-//     Route::post('set-password/{token}', [AdminRegisterController::class, 'setPassword'])->name('set-password.submit');
-
-//     // Admin Dashboard (Protected by Admin Middleware)
-//     Route::get('dashboard', function () {
-//         return view('admin.dashboard');
-//     })->middleware('admin')->name('dashboard');
+    // Admin Dashboard (Protected by Admin Middleware)
+    Route::get('dashboard', function () {
+        return view('admin.auth.dashboard');
+    })->middleware('auth:admin')->name('dashboard');
     
-//     // Optional Admin Logout Route
-//     Route::post('logout', function () {
-//         Auth::guard('admin')->logout();
-//         return redirect()->route('admin.login');
-//     })->name('logout');
-// });
+    // Optional Admin Logout Route
+    Route::post('logout', function () {
+        Auth::guard('admin')->logout();
+        return redirect()->route('admin.login');
+    })->name('logout');
+});
 
+    // Newly Registered Cars Route
+    Route::prefix('car-admin')->name('car-admin.')->middleware('auth:admin')->group(function () {
+    Route::get('new-registration-cars', [CarAdminController::class, 'showRegisteredCars'])->name('new-registration-cars');
+
+    // Route for viewing a specific car's details (if needed)
+    Route::get('view-car/{id}', [CarAdminController::class, 'viewCar'])->name('view-car');
+
+    // Route definition for Request for Inspection in CarAdminController
+    Route::get('admin/request-inspection/{car}', [CarAdminController::class, 'requestInspection'])->name('car.requestInspection');
+
+});

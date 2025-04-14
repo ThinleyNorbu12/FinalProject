@@ -41,7 +41,7 @@ class AdminRegisterController extends Controller
 
         Mail::to($admin->email)->send(new AdminSetPasswordMail($token));
 
-        return redirect()->route('admin.register')->with('success', 'Registration successful! Please check your email to set your password.');
+        return redirect()->route('admin.login')->with('success', 'Registration successful! Please check your email to set your password.');
     }
 
     public function showSetPasswordForm($token)

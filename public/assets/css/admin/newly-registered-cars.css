@@ -1,0 +1,142 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-top: 20px;
+    color: #0b0b0c;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    overflow-x: auto; /* Allow horizontal scroll */
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+}
+
+table th {
+    background-color: #BCCCDC;
+    color: rgb(15, 14, 14);
+}
+
+table td {
+    background-color: #ecf0f1;
+    color: #0f1113;
+}
+
+
+/* Responsive Styles */
+@media screen and (max-width: 1200px) {
+    table th, table td {
+        font-size: 0.95rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    table {
+        margin: 0 10px;
+    }
+
+    table th, table td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    /* Allow horizontal scroll */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    table th, table td {
+        white-space: nowrap;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    /* Wrap the table in a scrollable container for smaller screens */
+    table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+    }
+
+    table th, table td {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    /* Add horizontal scrolling for small screens */
+    table {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+        white-space: nowrap;
+    }
+
+    table th, table td {
+        white-space: nowrap;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    table th, table td {
+        font-size: 0.85rem;
+        padding: 6px;
+    }
+
+    /* Further reduce the padding and font size */
+    table th {
+        font-size: 1rem;
+    }
+
+    table td {
+        font-size: 0.85rem;
+    }
+}
+/* View Button Styling */
+.view-btn {
+    background-color: #9AA6B2;
+    color: black;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.view-btn:hover {
+    background-color: #D9EAFD;
+}
+
+
+
+
