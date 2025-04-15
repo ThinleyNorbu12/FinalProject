@@ -31,16 +31,16 @@
                     <!-- Wrap the links in a div container for styling -->
                     <div class="links-container">
                         <a href="{{ url('CarOwner/rent-car') }}" class="btn btn-primary">1. RENT A CAR</a>
-                        <a href="{{ url('carowner/payment-summary') }}" class="btn btn-primary">2. PAYMENT SUMMARY</a>
-                        <a href="{{ url('carowner/view-rented-car') }}" class="btn btn-primary">3. VIEW RENTED CAR</a>
+                        <a href="{{ url('carowner/view-rented-car') }}" class="btn btn-primary">2. VIEW CAR REGISTRARION REQUEST</a>  <!--VIEW RENTED CAR change to VIEW REGISTRARION REQUEST -->
                         <a href="{{ url('carowner/car-inspection') }}" class="btn btn-primary">
-                            4. CAR INSPECTION REQUIRED
+                            3. CAR INSPECTION REQUIRED
                             @if(isset($car) && $car->inspection_requested) 
                                 <span class="badge badge-warning">Inspection Requested</span>
                             @endif
                         </a>
-                        <a href="{{ url('carowner/car-approval-denied') }}" class="btn btn-primary">5. CAR APPROVAL DENIED</a>
-                        <a href="{{ url('carowner/approved-car') }}" class="btn btn-primary">6. APPROVED CAR</a>
+                        <a href="{{ url('carowner/car-approval-denied') }}" class="btn btn-primary">4. CAR APPROVAL DENIED</a>
+                        <a href="{{ url('carowner/approved-car') }}" class="btn btn-primary">5. APPROVED CAR</a>
+                        <a href="{{ url('carowner/payment-summary') }}" class="btn btn-primary">6. PAYMENT SUMMARY</a>
                     </div>
                 </div>
             </div>

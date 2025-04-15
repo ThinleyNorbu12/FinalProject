@@ -195,6 +195,26 @@ class CarOwnerController extends Controller
         // Redirect with a success message
         return redirect()->route('carowner.rentCar')->with('success', 'Car registered successfully!');
     }
+
+
+    // 2.view rented car 
+    
+
+    public function viewRentedCar()
+    {
+        $carowner = Auth::guard('carowner')->user();
+    
+        // Fetch both rented and pending cars
+        $rentedCars = $carowner->cars()->whereIn('status', ['pending', 'rented'])->get();
+    
+        if ($rentedCars->isEmpty()) {
+            return view('CarOwner.view-rented-car')->with('message', 'No rented or pending cars found.');
+        }
+    
+        return view('CarOwner.view-rented-car', compact('rentedCars'));
+    }
+    
+
     
 
 }

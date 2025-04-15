@@ -26,7 +26,7 @@
             <p><strong>Description:</strong> {{ $car->description }}</p>
         </div>
 
-        {{-- Car Owner Information --}}
+        {{-- Car Owner Information
         <div class="car-owner-info mt-4">
             <h4>Registered By:</h4>
             @if($car->owner)
@@ -35,18 +35,19 @@
             @else
                 <p>Unknown Owner</p>
             @endif
-        </div>
+        </div> --}}
 
         {{-- Admin Actions --}}
         <div class="car-actions mt-4">
-            <form action="{{ url('admin/request-inspection/' . $car->id) }}" method="GET" class="d-inline">
+            <form action="{{ route('car-admin.admin.requestInspection', ['car' => $car->id]) }}" method="GET" class="d-inline">
                 <button type="submit" class="btn btn-primary">Request for Inspection</button>
             </form>
 
-            <form action="{{ url('admin/reject-car/' . $car->id) }}" method="POST" class="d-inline">
-                @csrf
+            {{-- Reject Button that redirects to the rejection form --}}
+            <form action="{{ route('car-admin.showRejectForm', ['car' => $car->id]) }}" method="GET" class="d-inline">
                 <button type="submit" class="btn btn-danger">Reject</button>
             </form>
+            
         </div>
     </div>
 @endsection

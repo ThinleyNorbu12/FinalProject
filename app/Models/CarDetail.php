@@ -32,4 +32,6 @@ class CarDetail extends Model
     {
         return $this->belongsTo(CarOwner::class, 'car_owner_id');
     }
+
+    
 }

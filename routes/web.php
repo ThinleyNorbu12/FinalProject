@@ -76,6 +76,14 @@ Route::middleware('auth:carowner')->group(function () {
 });
 
 
+// 2.view rented cars
+Route::get('carowner/view-rented-car', [CarOwnerController::class, 'viewRentedCar'])
+    ->middleware('auth:carowner')
+    ->name('carowner.view.rented');
+
+
+
+
 // admin 
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\Auth\AdminRegisterController;
@@ -113,6 +121,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('view-car/{id}', [CarAdminController::class, 'viewCar'])->name('view-car');
 
     // Route definition for Request for Inspection in CarAdminController
-    Route::get('admin/request-inspection/{car}', [CarAdminController::class, 'requestInspection'])->name('car.requestInspection');
+     // ✅ Fix here
+     Route::get('request-inspection/{car}', [CarAdminController::class, 'requestInspection'])->name('admin.requestInspection');
+     // Optional: form submit handler
+     Route::post('submit-inspection-request/{car}', [CarAdminController::class, 'submitInspectionRequest'])->name('admin.submitInspectionRequest');
 
+     // Route for rejecting cars
+     Route::get('reject-car/{car}', [CarAdminController::class, 'showRejectForm'])->name('showRejectForm');
+     Route::post('reject-car/{car}', [CarAdminController::class, 'rejectCar'])->name('rejectCar');
+
+     
 });

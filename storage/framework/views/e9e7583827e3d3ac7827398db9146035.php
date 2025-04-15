@@ -27,26 +27,18 @@
         </div>
 
         
-        <div class="car-owner-info mt-4">
-            <h4>Registered By:</h4>
-            <?php if($car->owner): ?>
-                <p><strong>Name:</strong> <?php echo e($car->owner->name); ?></p>
-                <p><strong>Email:</strong> <?php echo e($car->owner->email); ?></p>
-            <?php else: ?>
-                <p>Unknown Owner</p>
-            <?php endif; ?>
-        </div>
 
         
         <div class="car-actions mt-4">
-            <form action="<?php echo e(url('admin/request-inspection/' . $car->id)); ?>" method="GET" class="d-inline">
+            <form action="<?php echo e(route('car-admin.admin.requestInspection', ['car' => $car->id])); ?>" method="GET" class="d-inline">
                 <button type="submit" class="btn btn-primary">Request for Inspection</button>
             </form>
 
-            <form action="<?php echo e(url('admin/reject-car/' . $car->id)); ?>" method="POST" class="d-inline">
-                <?php echo csrf_field(); ?>
+            
+            <form action="<?php echo e(route('car-admin.showRejectForm', ['car' => $car->id])); ?>" method="GET" class="d-inline">
                 <button type="submit" class="btn btn-danger">Reject</button>
             </form>
+            
         </div>
     </div>
 <?php $__env->stopSection(); ?>
