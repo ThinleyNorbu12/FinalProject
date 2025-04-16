@@ -80,6 +80,8 @@ Route::middleware('auth:carowner')->group(function () {
 Route::get('carowner/view-rented-car', [CarOwnerController::class, 'viewRentedCar'])
     ->middleware('auth:carowner')
     ->name('carowner.view.rented');
+// resources/views/CarOwner/inspection-messages.blade.php
+Route::get('carowner/car-inspection', [CarOwnerController::class, 'showInspectionMessages'])->name('carowner.car-inspection');
 
 
 

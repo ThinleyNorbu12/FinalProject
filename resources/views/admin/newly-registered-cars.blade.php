@@ -42,8 +42,12 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('car-admin.view-car', $car->id) }}" class="btn btn-info">View</a>
-                            </td>
+                                @if(strtolower($car->status) === 'rejected')
+                                    <span class="text-danger">Rejected</span>
+                                @else
+                                    <a href="{{ route('car-admin.view-car', $car->id) }}" class="btn btn-info">View</a>
+                                @endif
+                            </td>                            
                         </tr>
                     @endforeach
                 </tbody>

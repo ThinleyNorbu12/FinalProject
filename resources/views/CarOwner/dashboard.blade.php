@@ -33,11 +33,7 @@
                         <a href="{{ url('CarOwner/rent-car') }}" class="btn btn-primary">1. RENT A CAR</a>
                         <a href="{{ url('carowner/view-rented-car') }}" class="btn btn-primary">2. VIEW CAR REGISTRARION REQUEST</a>  <!--VIEW RENTED CAR change to VIEW REGISTRARION REQUEST -->
                         <a href="{{ url('carowner/car-inspection') }}" class="btn btn-primary">
-                            3. CAR INSPECTION REQUIRED
-                            @if(isset($car) && $car->inspection_requested) 
-                                <span class="badge badge-warning">Inspection Requested</span>
-                            @endif
-                        </a>
+                            3. CAR INSPECTION REQUIRED </a>
                         <a href="{{ url('carowner/car-approval-denied') }}" class="btn btn-primary">4. CAR APPROVAL DENIED</a>
                         <a href="{{ url('carowner/approved-car') }}" class="btn btn-primary">5. APPROVED CAR</a>
                         <a href="{{ url('carowner/payment-summary') }}" class="btn btn-primary">6. PAYMENT SUMMARY</a>

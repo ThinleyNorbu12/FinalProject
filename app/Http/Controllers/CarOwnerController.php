@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\CarOwnerVerification;
 use App\Models\CarDetail;
+use App\Models\InspectionRequest;
+
 
 
 
@@ -213,8 +215,20 @@ class CarOwnerController extends Controller
     
         return view('CarOwner.view-rented-car', compact('rentedCars'));
     }
-    
 
+// car inspection send by admin
+    public function showInspectionMessages()
+    {
+        $carOwner = Auth::guard('carowner')->user();
+
+        // Use the car_detail relationship to get inspections for cars owned by this car owner
+        $inspectionRequests = InspectionRequest::whereHas('car', function ($query) use ($carOwner) {
+            $query->where('car_owner_id', $carOwner->id);
+        })->latest()->get();
+
+        return view('CarOwner.inspection-messages', compact('inspectionRequests'));
+    }
     
 
 }
+    

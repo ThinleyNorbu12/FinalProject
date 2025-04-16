@@ -42,8 +42,12 @@
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <a href="<?php echo e(route('car-admin.view-car', $car->id)); ?>" class="btn btn-info">View</a>
-                            </td>
+                                <?php if(strtolower($car->status) === 'rejected'): ?>
+                                    <span class="text-danger">Rejected</span>
+                                <?php else: ?>
+                                    <a href="<?php echo e(route('car-admin.view-car', $car->id)); ?>" class="btn btn-info">View</a>
+                                <?php endif; ?>
+                            </td>                            
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </tbody>

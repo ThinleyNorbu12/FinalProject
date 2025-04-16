@@ -332,6 +332,8 @@ namespace App\Models {
      * @property string $maker
      * @property int $id
      * @property-read \App\Models\CarOwner $owner
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InspectionRequest> $inspectionRequests
+     * @property-read int|null $inspectionRequests_count
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereMaker($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereModel($value)
@@ -972,7 +974,7 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string $status
+     * @property mixed $status
      * @property string|null $details
      * @property string $location
      * @property string $inspection_time

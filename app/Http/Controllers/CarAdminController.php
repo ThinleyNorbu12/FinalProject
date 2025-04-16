@@ -62,7 +62,7 @@ class CarAdminController extends Controller
             'inspection_time' => $request->time,
             'location' => $request->location,
             'details' => $request->details,
-            'status' => 'pending',
+            'status' => 'booked',
         ]);
 
         // Eager load the 'car' and 'owner' relationships for the inspection request
