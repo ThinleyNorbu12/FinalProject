@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CarInspectionRequested;
 use App\Mail\CarRejected;
+use Illuminate\Support\Facades\Log;
+
 
 
 
@@ -34,10 +36,16 @@ class CarAdminController extends Controller
         return view('admin.view-car', compact('car'));
     }
 
+    // public function requestInspection(CarDetail $car)
+    // {
+    //     return view('admin.request-inspection', compact('car'));
+    // }
+
     public function requestInspection(CarDetail $car)
     {
         return view('admin.request-inspection', compact('car'));
     }
+
 
 
     // Method to handle the inspection request submission
@@ -106,6 +114,38 @@ class CarAdminController extends Controller
 
         return redirect()->route('car-admin.new-registration-cars')->with('success', 'Car has been rejected with a reason, and email has been sent to the car owner.');
     }
+     
+public function getAvailableTimes(Request $request)
+{
+    try {
+        $timeSlots = [
+            '9:00 - 10:00 AM',
+            '10:30 - 11:30 AM',
+            '11:30 - 12:30 AM',
+            '02:00 - 03:00 PM',
+            '03:15 - 04:15 PM',
+            '04:30 - 05:30 PM'
+        ];
+
+        $selectedDate = $request->input('date');
+
+        if (!$selectedDate) {
+            return response()->json(['error' => 'No date provided'], 400);
+        }
+
+        $bookedSlots = InspectionRequest::where('inspection_date', $selectedDate)
+                            ->pluck('inspection_time')
+                            ->toArray();
+
+        $availableSlots = array_values(array_diff($timeSlots, $bookedSlots));
+
+        return response()->json($availableSlots);
+        
+    } catch (\Exception $e) {
+        \Log::error('getAvailableTimes error: ' . $e->getMessage());
+        return response()->json(['error' => 'Server error'], 500);
+    }
+}
 
     
 

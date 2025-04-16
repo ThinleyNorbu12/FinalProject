@@ -132,5 +132,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
      Route::get('reject-car/{car}', [CarAdminController::class, 'showRejectForm'])->name('showRejectForm');
      Route::post('reject-car/{car}', [CarAdminController::class, 'rejectCar'])->name('rejectCar');
 
-     
+    
+// Route::get('/car-admin/get-available-times', [CarAdminController::class, 'getAvailableTimes'])->name('admin.getAvailableTimes');
+
+Route::get('/get-available-times', [CarAdminController::class, 'getAvailableTimes'])->name('getAvailableTimes');
+
 });

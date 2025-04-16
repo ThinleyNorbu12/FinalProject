@@ -58,33 +58,38 @@
         <button type="submit" class="btn btn-primary">Submit Inspection Request</button>
     </form>
 </div>
-
 {{-- Include jQuery --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    const timeSlots = [
-        '9:00 - 10:00 AM',
-        '10:30 - 11:30 AM',
-        '11:30 - 12:30 AM',
-        '02:00 - 03:00 PM',
-        '03:15 - 04:15 PM',
-        '04:30 - 05:30 PM'
-    ];
+    $('#date').on('change', function () {
+    const selectedDate = $(this).val();
 
-    $(document).ready(function () {
-        $('#date').on('change', function () {
-            const selectedDate = $(this).val();
-            if (selectedDate) {
-                let options = '<option value="">-- Select Time Slot --</option>';
-                timeSlots.forEach(slot => {
+    $.ajax({
+        url: "{{ route('car-admin.getAvailableTimes') }}",
+        type: "GET",
+        data: { date: selectedDate },
+        success: function (response) {
+            let options = '<option value="">-- Select Time Slot --</option>';
+
+            if (response.length === 0) {
+                options += '<option disabled>No available time slots</option>';
+            } else {
+                response.forEach(slot => {
                     options += `<option value="${slot}">${slot}</option>`;
                 });
-                $('#time').html(options);
-            } else {
-                $('#time').html('<option value="">-- Select Date First --</option>');
             }
-        });
+
+            $('#time').html(options);
+        },
+        error: function () {
+            alert('Failed to load time slots. Please try again.');
+            $('#time').html('<option value="">-- Select Date First --</option>');
+        }
     });
+});
+
 </script>
+
+
 @endsection
