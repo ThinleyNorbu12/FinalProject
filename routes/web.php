@@ -61,9 +61,9 @@ Route::get('password/reset/{token}', [ResetPasswordController::class, 'showReset
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('carowner.password.update');
 
 
-Route::get('/carowner/dashboard', function () {
-    return view('CarOwner.dashboard');
-})->name('carowner.dashboard');
+// Route::get('/carowner/dashboard', function () {
+//     return view('CarOwner.dashboard');
+// })->name('carowner.dashboard');
 
 
 
@@ -82,6 +82,20 @@ Route::get('carowner/view-rented-car', [CarOwnerController::class, 'viewRentedCa
     ->name('carowner.view.rented');
 // resources/views/CarOwner/inspection-messages.blade.php
 Route::get('carowner/car-inspection', [CarOwnerController::class, 'showInspectionMessages'])->name('carowner.car-inspection');
+
+//  route for canceling the inspection request from admin
+Route::post('/inspection-request/{id}/cancel', [CarOwnerController::class, 'cancel'])->name('inspection.cancel');
+
+// Edit Inspection Date & Time
+Route::get('/inspection-request/{id}/edit-datetime', [CarOwnerController::class, 'editDateTime'])->name('inspection.editdatetime');
+//  Update Inspection Date & Time
+Route::post('/inspection-request/{id}/update-datetime', [CarOwnerController::class, 'updateDateTime'])->name('inspection.updatedatetime');
+//  Get Available Time Slots (AJAX)
+Route::get('/inspection/available-slots', [CarOwnerController::class, 'getAvailableTimeSlots'])->name('inspection.available-slots');
+// this will redirect to this page redirect-inpection-messagepage.blade
+Route::get('/carowner/inspection-messages', [CarOwnerController::class, 'showInspectionMessages'])->name('CarOwner.inspection-messages');
+
+
 
 
 
@@ -132,9 +146,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
      Route::get('reject-car/{car}', [CarAdminController::class, 'showRejectForm'])->name('showRejectForm');
      Route::post('reject-car/{car}', [CarAdminController::class, 'rejectCar'])->name('rejectCar');
 
-    
-// Route::get('/car-admin/get-available-times', [CarAdminController::class, 'getAvailableTimes'])->name('admin.getAvailableTimes');
-
-Route::get('/get-available-times', [CarAdminController::class, 'getAvailableTimes'])->name('getAvailableTimes');
+    // route for set the date and time in request-inspection blade
+    Route::get('/get-available-times', [CarAdminController::class, 'getAvailableTimes'])->name('getAvailableTimes');
 
 });

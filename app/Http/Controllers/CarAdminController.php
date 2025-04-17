@@ -119,12 +119,12 @@ public function getAvailableTimes(Request $request)
 {
     try {
         $timeSlots = [
-            '9:00 - 10:00 AM',
-            '10:30 - 11:30 AM',
-            '11:30 - 12:30 AM',
-            '02:00 - 03:00 PM',
-            '03:15 - 04:15 PM',
-            '04:30 - 05:30 PM'
+            '09:00 AM - 10:00 AM',
+            '10:30 AM - 11:30 AM',
+            '11:30 AM - 12:30 AM',
+            '02:00 PM - 03:00 PM',
+            '03:15 PM - 04:15 PM',
+            '04:30 PM - 05:30 PM'
         ];
 
         $selectedDate = $request->input('date');

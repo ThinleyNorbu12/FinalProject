@@ -19,7 +19,7 @@ return new class extends Migration
         $table->time('inspection_time');
         $table->string('location');
         $table->text('details')->nullable();
-        $table->enum('status', ['available', 'booked'])->default('available');
+        $table->enum('status', ['available', 'booked', 'canceled'])->default('available');
         $table->timestamps();
     
         $table->foreign('car_id')->references('id')->on('car_details')->onDelete('cascade');

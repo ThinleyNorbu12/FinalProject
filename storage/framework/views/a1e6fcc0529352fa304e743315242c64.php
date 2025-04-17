@@ -3,7 +3,12 @@
 <?php $__env->startSection('content'); ?>
 <div class="container">
     <h2>Inspection Requests from Admin</h2>
+    <?php if(session('success')): ?>
+        <div class="alert alert-success">
+            <?php echo e(session('success')); ?>
 
+        </div>
+    <?php endif; ?>
     <?php if($inspectionRequests->count() > 0): ?>
         <ul class="list-group mt-4">
             <?php $__currentLoopData = $inspectionRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -21,8 +26,25 @@
                     </small>                    
                 
                     <div class="mt-3 d-flex gap-2">
-                        <button class="btn btn-danger btn-sm" disabled>Cancel</button>
-                        <button class="btn btn-warning btn-sm" disabled>Request Edit</button>
+                        <?php if($request->status !== 'canceled'): ?>
+                            <form action="<?php echo e(route('inspection.cancel', $request->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to cancel this request?');">
+                                <?php echo csrf_field(); ?>
+                                <button class="btn btn-danger btn-sm" type="submit">Cancel for Inspection Request</button>
+                            </form>
+                        <?php else: ?>
+                            <!-- Disabled button if already canceled -->
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled</button>
+                        <?php endif; ?>
+                    
+                        <?php if($request->status !== 'canceled'): ?>
+                            <form action="<?php echo e(route('inspection.editdatetime', $request->id)); ?>" method="GET" onsubmit="return confirm('Are you sure you want to edit this request?');">
+                                <?php echo csrf_field(); ?>
+                                <button class="btn btn-warning btn-sm" type="submit">Request for New Date</button>
+                            </form>
+                        <?php else: ?>
+                            <!-- Disabled button if already canceled -->
+                            <button class="btn btn-secondary btn-sm" disabled>New Date Requested</button>
+                        <?php endif; ?>
                     </div>
                 </li>  
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

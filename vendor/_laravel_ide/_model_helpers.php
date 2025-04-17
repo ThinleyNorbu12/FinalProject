@@ -320,7 +320,7 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property mixed $car_owner_id
-     * @property string|null $car_image
+     * @property mixed $car_image
      * @property string $description
      * @property string $status
      * @property string $registration_no

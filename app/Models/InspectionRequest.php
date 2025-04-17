@@ -23,5 +23,8 @@ class InspectionRequest extends Model
         return $this->belongsTo(CarDetail::class, 'car_id');
     }
 
+    
+
+
 }
 

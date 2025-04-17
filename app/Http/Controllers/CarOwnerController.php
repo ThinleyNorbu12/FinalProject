@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 use App\Mail\CarOwnerVerification;
 use App\Models\CarDetail;
 use App\Models\InspectionRequest;
+use Illuminate\Support\Facades\DB;
+
 
 
 
@@ -58,20 +60,32 @@ class CarOwnerController extends Controller
     }
     
     // Show the dashboard
-        public function dashboard()
+    //     public function dashboard()
+    // {
+    //     // Fetch the authenticated car owner
+    //     $carOwner = Auth::guard('carowner')->user();
+
+    //     // If no car owner is logged in, redirect to login page
+    //     if (!$carOwner) {
+    //         return redirect()->route('carowner.login');
+    //     }
+
+    //     // Pass the car owner to the view
+    //     return view('CarOwner.dashboard', compact('carOwner'));
+    // }
+
+    public function dashboard()
     {
-        // Fetch the authenticated car owner
-        $carOwner = Auth::guard('carowner')->user();
+        $carOwnerId = auth('carowner')->id();
 
-        // If no car owner is logged in, redirect to login page
-        if (!$carOwner) {
-            return redirect()->route('carowner.login');
-        }
+        $pendingInspectionCount = DB::table('inspection_requests')
+            ->join('car_details_tbl', 'inspection_requests.car_id', '=', 'car_details_tbl.id')
+            ->where('car_details_tbl.car_owner_id', $carOwnerId)
+            ->where('inspection_requests.status', 'pending')
+            ->count();
 
-        // Pass the car owner to the view
-        return view('CarOwner.dashboard', compact('carOwner'));
+        return view('CarOwner.dashboard', compact('pendingInspectionCount'));
     }
-
     // Handle logout
     public function logout(Request $request)
     {
@@ -228,6 +242,125 @@ class CarOwnerController extends Controller
 
         return view('CarOwner.inspection-messages', compact('inspectionRequests'));
     }
+    
+
+
+    // inspection cancel by carowner when admin send inspection request to car owner
+    public function cancel($id)
+{
+    // Find the inspection request
+    $request = InspectionRequest::findOrFail($id);
+
+    // Check if the request is already canceled
+    if ($request->status === 'canceled') {
+        return redirect()->back()->with('info', 'This request is already canceled.');
+    }
+
+    // Update the status to 'canceled'
+    $request->status = 'canceled';
+    $request->save();
+
+    return redirect()->back()->with('success', 'Inspection request canceled successfully.');
+}
+
+    public function inspectionMessages()
+{
+    $user = Auth::guard('carowner')->user(); // Make sure to use the correct guard
+
+    if (!$user) {
+        return redirect()->route('carowner.login')->with('error', 'You need to be logged in as a Car Owner.');
+    }
+
+    // Get inspection requests for the logged-in car owner
+    $inspectionRequests = InspectionRequest::where('car_id', $user->id)->get();
+
+    // Check if there are any inspection requests
+    if ($inspectionRequests->isEmpty()) {
+        return view('CarOwner.inspection-messages', compact('inspectionRequests'))->with('message', 'No inspection requests found.');
+    }
+
+    return view('CarOwner.inspection_requests.redirect-inpection-messagepage', compact('inspectionRequests'));
+}
+
+
+
+
+
+    public function editdatetime($id)
+    {
+        $request = InspectionRequest::findOrFail($id);
+
+        $allSlots = [
+            '09:00 AM - 10:00 AM',
+            '10:30 AM - 11:30 AM',
+            '11:30 AM - 12:30 AM',
+            '02:00 PM - 03:00 PM',
+            '03:15 PM - 04:15 PM',
+            '04:30 PM - 05:30 PM'
+        ];
+
+        // Get all times already taken for the same inspection date (excluding current one)
+        $takenSlots = \App\Models\InspectionRequest::where('inspection_date', $request->inspection_date)
+            ->where('id', '!=', $request->id)
+            ->pluck('inspection_time')
+            ->toArray();
+
+        // Remove taken slots but keep the current one in case it's in the list
+        $availableSlots = array_filter($allSlots, function ($slot) use ($takenSlots, $request) {
+            return $slot == $request->inspection_time || !in_array($slot, $takenSlots);
+        });
+
+        return view('CarOwner.inspection_requests.editdatetime', [
+            'request' => $request,
+            'timeSlots' => $availableSlots,
+        ]);
+    }
+
+    public function updateDateTime(Request $request, $id)
+    {
+        $request->validate([
+            'inspection_date' => 'required|date|after_or_equal:today',
+            'inspection_time' => 'required|string',
+        ]);
+
+        $inspection = InspectionRequest::findOrFail($id);
+        $inspection->inspection_date = $request->inspection_date;
+        $inspection->inspection_time = $request->inspection_time;
+        $inspection->save();
+
+        return redirect()->route('CarOwner.inspection-messages')->with('success', 'Inspection schedule updated successfully.');
+    }
+
+    public function getAvailableTimeSlots(Request $request)
+    {
+        $date = $request->input('date');
+        $id = $request->input('id'); // Current request ID (for edit mode)
+
+        $allSlots = [
+            '09:00 AM - 10:00 AM',
+            '10:30 AM - 11:30 AM',
+            '11:30 AM - 12:30 AM',
+            '02:00 PM - 03:00 PM',
+            '03:15 PM - 04:15 PM',
+            '04:30 PM - 05:30 PM'
+        ];
+
+        $takenSlots = \App\Models\InspectionRequest::where('inspection_date', $date)
+            ->when($id, fn($q) => $q->where('id', '!=', $id))
+            ->pluck('inspection_time')
+            ->toArray();
+
+        $availableSlots = array_filter($allSlots, fn($slot) => !in_array($slot, $takenSlots));
+
+        return response()->json(array_values($availableSlots));
+    }
+
+
+
+
+
+
+
     
 
 }

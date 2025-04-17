@@ -3,7 +3,11 @@
 @section('content')
 <div class="container">
     <h2>Inspection Requests from Admin</h2>
-
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     @if($inspectionRequests->count() > 0)
         <ul class="list-group mt-4">
             @foreach($inspectionRequests as $request)
@@ -20,8 +24,25 @@
                     </small>                    
                 
                     <div class="mt-3 d-flex gap-2">
-                        <button class="btn btn-danger btn-sm" disabled>Cancel</button>
-                        <button class="btn btn-warning btn-sm" disabled>Request Edit</button>
+                        @if($request->status !== 'canceled')
+                            <form action="{{ route('inspection.cancel', $request->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this request?');">
+                                @csrf
+                                <button class="btn btn-danger btn-sm" type="submit">Cancel for Inspection Request</button>
+                            </form>
+                        @else
+                            <!-- Disabled button if already canceled -->
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled</button>
+                        @endif
+                    
+                        @if($request->status !== 'canceled')
+                            <form action="{{ route('inspection.editdatetime', $request->id) }}" method="GET" onsubmit="return confirm('Are you sure you want to edit this request?');">
+                                @csrf
+                                <button class="btn btn-warning btn-sm" type="submit">Request for New Date</button>
+                            </form>
+                        @else
+                            <!-- Disabled button if already canceled -->
+                            <button class="btn btn-secondary btn-sm" disabled>New Date Requested</button>
+                        @endif
                     </div>
                 </li>  
             @endforeach
