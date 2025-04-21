@@ -34,10 +34,6 @@
                         <a href="{{ url('carowner/view-rented-car') }}" class="btn btn-primary">2. VIEW CAR REGISTRARION REQUEST</a>  <!--VIEW RENTED CAR change to VIEW REGISTRARION REQUEST -->
                         <div class="position-relative d-inline-block">
                             <a href="{{ url('carowner/car-inspection') }}" class="btn btn-primary position-relative">
-                                @if($pendingInspectionCount > 0)
-                                    <i class="fas fa-bell"></i>
-                                    <span class="notification-badge">{{ $pendingInspectionCount }}</span>
-                                @endif
                                 <span class="ms-2">CAR INSPECTION REQUEST FROM ADMIN</span>
                             </a>
                         </div>

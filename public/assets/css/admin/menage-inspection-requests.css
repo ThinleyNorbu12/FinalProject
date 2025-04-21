@@ -1,0 +1,73 @@
+/* General container styling */
+.container {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Heading style */
+h2 {
+    font-size: 26px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Table styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table thead {
+    background-color: #f8f9fa;
+}
+
+.table th {
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Button styling */
+.btn-sm {
+    padding: 6px 10px;
+    font-size: 14px;
+    margin: 2px;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border: none;
+    color: #212529;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+.badge {
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 5px;
+}
+
+/* Alert messages */
+.alert {
+    margin-top: 20px;
+}

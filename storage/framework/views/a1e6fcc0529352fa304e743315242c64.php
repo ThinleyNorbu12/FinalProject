@@ -43,7 +43,7 @@
                             </form>
                         <?php else: ?>
                             <!-- Disabled button if already canceled -->
-                            <button class="btn btn-secondary btn-sm" disabled>New Date Requested</button>
+                            <button class="btn btn-secondary btn-sm" disabled>New Date Requested </button>
                         <?php endif; ?>
                     </div>
                 </li>  

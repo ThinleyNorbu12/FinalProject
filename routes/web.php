@@ -137,7 +137,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('view-car/{id}', [CarAdminController::class, 'viewCar'])->name('view-car');
 
     // Route definition for Request for Inspection in CarAdminController
-     // ✅ Fix here
+
      Route::get('request-inspection/{car}', [CarAdminController::class, 'requestInspection'])->name('admin.requestInspection');
      // Optional: form submit handler
      Route::post('submit-inspection-request/{car}', [CarAdminController::class, 'submitInspectionRequest'])->name('admin.submitInspectionRequest');
@@ -148,5 +148,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // route for set the date and time in request-inspection blade
     Route::get('/get-available-times', [CarAdminController::class, 'getAvailableTimes'])->name('getAvailableTimes');
+
+   // ✅ Corrected route for inspection requests
+   Route::get('/', [CarAdminController::class, 'showInspectionRequests'])->name('inspection-requests');
+
+//    "Ok" and "Send Mail"  under the Admin/menage-inspection-requests.blade
+   // For confirming date and time (Ok button)
+   Route::post('confirm-inspection/{id}', [CarAdminController::class, 'confirm'])->name('inspection.confirm');
+
+// For sending custom mail (Send Mail button)
+Route::post('send-inspection-mail/{id}', [CarAdminController::class, 'sendMail'])->name('inspection.sendMail');
+
+
+
 
 });

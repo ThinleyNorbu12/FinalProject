@@ -17,11 +17,12 @@
             </form>
 
             <div class="links-container" style="margin-top: 20px;">
-                <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>">1. CAR REGISTRATION REQUEST </a><br>
-                <a href="<?php echo e(url('car-admin/view-payments')); ?>">2. VIEW PAYMENTS</a><br>
-                <a href="<?php echo e(url('car-admin/update-car-registration')); ?>">3. UPDATE CAR REGISTRATION</a><br>
-                <a href="<?php echo e(url('car-admin/car-information-update')); ?>">4. CAR INFORMATION UPDATE</a><br>
-                <a href="<?php echo e(url('car-admin/booked-car')); ?>">5. BOOKED CAR</a>
+                <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>">CAR REGISTRATION REQUEST </a><br>
+                <a href="<?php echo e(route('car-admin.inspection-requests')); ?>">MANAGE INSPECTION REQUEST</a><br>
+                <a href="<?php echo e(url('admin/view-payments')); ?>"> VIEW PAYMENTS</a><br>
+                <a href="<?php echo e(url('admin/update-car-registration')); ?>">3. UPDATE CAR REGISTRATION</a><br>
+                <a href="<?php echo e(url('admin/car-information-update')); ?>">4. CAR INFORMATION UPDATE</a><br>
+                <a href="<?php echo e(url('admin/booked-car')); ?>">5. BOOKED CAR</a>
             </div>
             
 

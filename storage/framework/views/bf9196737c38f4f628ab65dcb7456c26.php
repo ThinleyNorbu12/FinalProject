@@ -34,10 +34,6 @@
                         <a href="<?php echo e(url('carowner/view-rented-car')); ?>" class="btn btn-primary">2. VIEW CAR REGISTRARION REQUEST</a>  <!--VIEW RENTED CAR change to VIEW REGISTRARION REQUEST -->
                         <div class="position-relative d-inline-block">
                             <a href="<?php echo e(url('carowner/car-inspection')); ?>" class="btn btn-primary position-relative">
-                                <?php if($pendingInspectionCount > 0): ?>
-                                    <i class="fas fa-bell"></i>
-                                    <span class="notification-badge"><?php echo e($pendingInspectionCount); ?></span>
-                                <?php endif; ?>
                                 <span class="ms-2">CAR INSPECTION REQUEST FROM ADMIN</span>
                             </a>
                         </div>

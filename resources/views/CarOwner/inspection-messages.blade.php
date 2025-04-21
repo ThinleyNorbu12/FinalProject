@@ -41,7 +41,7 @@
                             </form>
                         @else
                             <!-- Disabled button if already canceled -->
-                            <button class="btn btn-secondary btn-sm" disabled>New Date Requested</button>
+                            <button class="btn btn-secondary btn-sm" disabled>New Date Requested </button>
                         @endif
                     </div>
                 </li>  
