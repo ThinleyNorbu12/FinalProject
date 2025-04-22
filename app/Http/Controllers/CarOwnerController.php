@@ -12,8 +12,8 @@ use App\Mail\CarOwnerVerification;
 use App\Models\CarDetail;
 use App\Models\InspectionRequest;
 use Illuminate\Support\Facades\DB;
-
-
+use App\Models\Admin; 
+use App\Mail\InspectionAcceptedNotification;
 
 
 
@@ -279,43 +279,92 @@ class CarOwnerController extends Controller
         return view('CarOwner.inspection-messages', compact('inspectionRequests'))->with('message', 'No inspection requests found.');
     }
 
-    return view('CarOwner.inspection_requests.redirect-inpection-messagepage', compact('inspectionRequests'));
+    // return view('CarOwner.inspection_requests.redirect-inpection-messagepage', compact('inspectionRequests'));
 }
 
 
+    // public function editdatetime($id)
+    // {
+    //     $request = InspectionRequest::findOrFail($id);
 
+    //     $allSlots = [
+    //         '09:00 AM - 10:00 AM',
+    //         '10:30 AM - 11:30 AM',
+    //         '11:30 AM - 12:30 AM',
+    //         '02:00 PM - 03:00 PM',
+    //         '03:15 PM - 04:15 PM',
+    //         '04:30 PM - 05:30 PM'
+    //     ];
 
+    //     // Get all times already taken for the same inspection date (excluding current one)
+    //     $takenSlots = \App\Models\InspectionRequest::where('inspection_date', $request->inspection_date)
+    //         ->where('id', '!=', $request->id)
+    //         ->pluck('inspection_time')
+    //         ->toArray();
+
+    //     // Remove taken slots but keep the current one in case it's in the list
+    //     $availableSlots = array_filter($allSlots, function ($slot) use ($takenSlots, $request) {
+    //         return $slot == $request->inspection_time || !in_array($slot, $takenSlots);
+    //     });
+
+    //     return view('CarOwner.inspection_requests.editdatetime', [
+    //         'request' => $request,
+    //         'timeSlots' => $availableSlots,
+    //     ]);
+    // }
 
     public function editdatetime($id)
-    {
-        $request = InspectionRequest::findOrFail($id);
+{
+    $request = InspectionRequest::findOrFail($id);
 
-        $allSlots = [
-            '09:00 AM - 10:00 AM',
-            '10:30 AM - 11:30 AM',
-            '11:30 AM - 12:30 AM',
-            '02:00 PM - 03:00 PM',
-            '03:15 PM - 04:15 PM',
-            '04:30 PM - 05:30 PM'
-        ];
-
-        // Get all times already taken for the same inspection date (excluding current one)
-        $takenSlots = \App\Models\InspectionRequest::where('inspection_date', $request->inspection_date)
-            ->where('id', '!=', $request->id)
-            ->pluck('inspection_time')
-            ->toArray();
-
-        // Remove taken slots but keep the current one in case it's in the list
-        $availableSlots = array_filter($allSlots, function ($slot) use ($takenSlots, $request) {
-            return $slot == $request->inspection_time || !in_array($slot, $takenSlots);
-        });
-
-        return view('CarOwner.inspection_requests.editdatetime', [
-            'request' => $request,
-            'timeSlots' => $availableSlots,
-        ]);
+    // Check if the user already made a request
+    if ($request->request_new_date_sent) {
+        return redirect()->back()->with('success', 'You have already requested for a new date.');
     }
 
+    // Mark that a request has been sent
+    $request->request_new_date_sent = true;
+    $request->save();
+
+    $allSlots = [
+        '09:00 AM - 10:00 AM',
+        '10:30 AM - 11:30 AM',
+        '11:30 AM - 12:30 AM',
+        '02:00 PM - 03:00 PM',
+        '03:15 PM - 04:15 PM',
+        '04:30 PM - 05:30 PM'
+    ];
+
+    $takenSlots = \App\Models\InspectionRequest::where('inspection_date', $request->inspection_date)
+        ->where('id', '!=', $request->id)
+        ->pluck('inspection_time')
+        ->toArray();
+
+    $availableSlots = array_filter($allSlots, function ($slot) use ($takenSlots, $request) {
+        return $slot == $request->inspection_time || !in_array($slot, $takenSlots);
+    });
+
+    return view('CarOwner.inspection_requests.editdatetime', [
+        'request' => $request,
+        'timeSlots' => $availableSlots,
+    ]);
+}
+
+
+    // public function updateDateTime(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'inspection_date' => 'required|date|after_or_equal:today',
+    //         'inspection_time' => 'required|string',
+    //     ]);
+
+    //     $inspection = InspectionRequest::findOrFail($id);
+    //     $inspection->inspection_date = $request->inspection_date;
+    //     $inspection->inspection_time = $request->inspection_time;
+    //     $inspection->save();
+
+    //     return redirect()->route('CarOwner.inspection-messages')->with('success', 'Inspection schedule updated successfully.');
+    // }
     public function updateDateTime(Request $request, $id)
     {
         $request->validate([
@@ -324,12 +373,27 @@ class CarOwnerController extends Controller
         ]);
 
         $inspection = InspectionRequest::findOrFail($id);
-        $inspection->inspection_date = $request->inspection_date;
-        $inspection->inspection_time = $request->inspection_time;
-        $inspection->save();
 
-        return redirect()->route('CarOwner.inspection-messages')->with('success', 'Inspection schedule updated successfully.');
+        // Check if anything actually changed
+        if (
+            $inspection->inspection_date !== $request->inspection_date ||
+            $inspection->inspection_time !== $request->inspection_time
+        ) {
+            $inspection->inspection_date = $request->inspection_date;
+            $inspection->inspection_time = $request->inspection_time;
+
+            // ✅ Mark that a new date was actually requested
+            $inspection->request_new_date_sent = true;
+
+            $inspection->save();
+
+            return redirect()->route('CarOwner.inspection-messages')->with('success', 'Inspection schedule updated successfully.');
+        }
+
+        // ⚠️ Nothing was changed, don't set the flag
+        return redirect()->route('CarOwner.inspection-messages')->with('info', 'No changes were made.');
     }
+
 
     public function getAvailableTimeSlots(Request $request)
     {
@@ -356,6 +420,25 @@ class CarOwnerController extends Controller
     }
 
 
+    public function accept($id)
+    {
+        // Find the inspection request
+        $request = InspectionRequest::findOrFail($id);
+
+        // Update the status
+        $request->request_accepted = true;
+        $request->save();
+
+        // Get all admins
+        $admins = Admin::all();
+
+        // Loop through each admin and send an email
+        foreach ($admins as $admin) {
+            Mail::to($admin->email)->send(new InspectionAcceptedNotification($request, $admin->name));
+        }
+
+        return redirect()->back()->with('success', 'You have accepted the inspection date and time. All admins have been notified.');
+    }
 
 
 

@@ -972,8 +972,12 @@ namespace App\Models {
     /**
      * App\Models\InspectionRequest
      *
+     * @property mixed $created_by
+     * @property bool $is_confirmed_by_admin
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
+     * @property bool $request_accepted
+     * @property bool $request_new_date_sent
      * @property mixed $status
      * @property string|null $details
      * @property string $location
@@ -989,8 +993,12 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest whereLocation($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest whereDetails($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest whereRequestNewDateSent($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest whereRequestAccepted($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest whereIsConfirmedByAdmin($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest whereCreatedBy($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionRequest>|InspectionRequest query()

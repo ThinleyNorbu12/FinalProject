@@ -163,14 +163,22 @@ class CarAdminController extends Controller
     {
         $request = InspectionRequest::findOrFail($id);
 
-        // No need to update status — just send the email about confirmation
+        if (!$request->is_confirmed_by_admin) {
+            // Send email to car owner
+            $carOwner = $request->car->owner;
+            if ($carOwner) {
+                \Mail::to($carOwner->email)->send(new \App\Mail\InspectionConfirmedMail($request));
+            }
 
-        $carOwner = $request->car->owner;
-        if ($carOwner) {
-            \Mail::to($carOwner->email)->send(new \App\Mail\InspectionConfirmedMail($request));
+            // Update status and confirmation flag
+            $request->status = 'booked';
+            $request->is_confirmed_by_admin = true;
+            $request->save();
+
+            return redirect()->back()->with('success', 'Inspection confirmed and email sent.');
         }
 
-        return redirect()->back()->with('success', 'Inspection date and time confirmed. Email sent to the owner.');
+        return redirect()->back()->with('info', 'This inspection has already been confirmed.');
     }
 
 

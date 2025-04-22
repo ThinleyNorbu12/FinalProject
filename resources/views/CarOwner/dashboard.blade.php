@@ -32,15 +32,7 @@
                     <div class="links-container">
                         <a href="{{ url('CarOwner/rent-car') }}" class="btn btn-primary">1. RENT A CAR</a>
                         <a href="{{ url('carowner/view-rented-car') }}" class="btn btn-primary">2. VIEW CAR REGISTRARION REQUEST</a>  <!--VIEW RENTED CAR change to VIEW REGISTRARION REQUEST -->
-                        <div class="position-relative d-inline-block">
-                            <a href="{{ url('carowner/car-inspection') }}" class="btn btn-primary position-relative">
-                                <span class="ms-2">CAR INSPECTION REQUEST FROM ADMIN</span>
-                            </a>
-                        </div>
-                        
-                        
-                        
-                        
+                        <a href="{{ url('carowner/car-inspection') }}" class="btn btn-primary position-relative">CAR INSPECTION REQUEST FROM ADMIN</a>
                         <a href="{{ url('carowner/car-approval-denied') }}" class="btn btn-primary">4. CAR APPROVAL DENIED</a>
                         <a href="{{ url('carowner/approved-car') }}" class="btn btn-primary">5. APPROVED CAR</a>
                         <a href="{{ url('carowner/payment-summary') }}" class="btn btn-primary">6. PAYMENT SUMMARY</a>

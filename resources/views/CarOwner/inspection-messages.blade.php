@@ -3,11 +3,13 @@
 @section('content')
 <div class="container">
     <h2>Inspection Requests from Admin</h2>
+    
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
     @endif
+
     @if($inspectionRequests->count() > 0)
         <ul class="list-group mt-4">
             @foreach($inspectionRequests as $request)
@@ -21,30 +23,56 @@
                     <strong>Status:</strong> {{ ucfirst($request->status) }}<br>
                     <small class="text-muted">
                         Sent on {{ $request->created_at->timezone('Asia/Thimphu')->format('d M Y, h:i A') }}
-                    </small>                    
-                
+                    </small>
+
                     <div class="mt-3 d-flex gap-2">
-                        @if($request->status !== 'canceled')
-                            <form action="{{ route('inspection.cancel', $request->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this request?');">
+                        {{-- Cancel Button --}}
+                        @if($request->status !== 'canceled' && !$request->request_accepted)
+                            <form action="{{ route('inspection.cancel', $request->id) }}" method="POST" class="d-inline cancel-form">
                                 @csrf
-                                <button class="btn btn-danger btn-sm" type="submit">Cancel for Inspection Request</button>
+                                <button type="button" class="btn btn-danger btn-sm show-confirm-modal" 
+                                    data-message="Are you sure you want to cancel this request?" 
+                                    data-form-id="{{ $request->id }}">
+                                    Cancel for Inspection Request
+                                </button>
                             </form>
                         @else
-                            <!-- Disabled button if already canceled -->
-                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled</button>
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled or Accepted</button>
                         @endif
-                    
-                        @if($request->status !== 'canceled')
-                            <form action="{{ route('inspection.editdatetime', $request->id) }}" method="GET" onsubmit="return confirm('Are you sure you want to edit this request?');">
-                                @csrf
-                                <button class="btn btn-warning btn-sm" type="submit">Request for New Date</button>
-                            </form>
+
+                        {{-- Request for New Date --}}
+                        @if($request->status !== 'canceled' && !$request->request_accepted)
+                            @if($request->request_new_date_sent)
+                                <button class="btn btn-secondary btn-sm" disabled>New Date Already Requested</button>
+                            @else
+                                <form action="{{ route('inspection.editdatetime', $request->id) }}" method="GET" class="d-inline edit-form">
+                                    @csrf
+                                    <button type="button" class="btn btn-warning btn-sm show-confirm-modal" 
+                                        data-message="Are you sure you want to edit this request?" 
+                                        data-form-id="{{ $request->id }}">
+                                        Request for New Date
+                                    </button>
+                                </form>
+                            @endif
                         @else
-                            <!-- Disabled button if already canceled -->
-                            <button class="btn btn-secondary btn-sm" disabled>New Date Requested </button>
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled or Accepted</button>
+                        @endif
+
+                        {{-- Accept Button --}}
+                        @if($request->status !== 'canceled' && !$request->request_accepted)
+                            <form action="{{ route('inspection.accept', $request->id) }}" method="POST" class="d-inline accept-form">
+                                @csrf
+                                <button type="button" class="btn btn-success btn-sm show-confirm-modal" 
+                                    data-message="Do you accept the scheduled date and time?" 
+                                    data-form-id="{{ $request->id }}">
+                                    OK with Inspection Date/Time
+                                </button>
+                            </form>
+                        @elseif($request->request_accepted)
+                            <button class="btn btn-success btn-sm" disabled>Accepted by You</button>
                         @endif
                     </div>
-                </li>  
+                </li>
             @endforeach
         </ul>
     @else
@@ -53,4 +81,45 @@
         </div>
     @endif
 </div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="confirmModalLabel">Please Confirm</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmMessage">
+        Are you sure?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmBtn">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+    let selectedForm = null;
+
+    document.querySelectorAll('.show-confirm-modal').forEach(button => {
+        button.addEventListener('click', function () {
+            const message = this.getAttribute('data-message');
+            selectedForm = this.closest('form');
+            document.getElementById('confirmMessage').textContent = message;
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+        });
+    });
+
+    document.getElementById('confirmBtn').addEventListener('click', function () {
+        if (selectedForm) {
+            selectedForm.submit();
+        }
+    });
+</script>
 @endsection

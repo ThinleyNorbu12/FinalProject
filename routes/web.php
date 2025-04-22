@@ -94,7 +94,8 @@ Route::post('/inspection-request/{id}/update-datetime', [CarOwnerController::cla
 Route::get('/inspection/available-slots', [CarOwnerController::class, 'getAvailableTimeSlots'])->name('inspection.available-slots');
 // this will redirect to this page redirect-inpection-messagepage.blade
 Route::get('/carowner/inspection-messages', [CarOwnerController::class, 'showInspectionMessages'])->name('CarOwner.inspection-messages');
-
+// when caronwer is ok with the date and time that are set by the admin under carowner/inspection-messages.php
+Route::post('/inspection/accept/{id}', [CarOwnerController::class, 'accept'])->name('inspection.accept');
 
 
 

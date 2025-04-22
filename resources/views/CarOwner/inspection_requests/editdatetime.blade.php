@@ -16,7 +16,6 @@
 
     <form method="POST" action="{{ route('inspection.updatedatetime', $request->id) }}">
         @csrf
-        {{-- Removed @method('PUT') to match the POST route --}}
         
         <div class="mb-3">
             <label for="inspection_date">Inspection Date:</label>
@@ -66,12 +65,8 @@
                 });
             });
         </script>
+
         <button class="btn btn-primary">Update</button>
     </form>
 </div>
 @endsection
-
-
-
-
-

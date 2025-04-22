@@ -17,7 +17,6 @@
     <form method="POST" action="<?php echo e(route('inspection.updatedatetime', $request->id)); ?>">
         <?php echo csrf_field(); ?>
         
-        
         <div class="mb-3">
             <label for="inspection_date">Inspection Date:</label>
             <input type="date" name="inspection_date" id="inspection_date" class="form-control"
@@ -66,14 +65,10 @@
                 });
             });
         </script>
+
         <button class="btn btn-primary">Update</button>
     </form>
 </div>
 <?php $__env->stopSection(); ?>
-
-
-
-
-
 
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/CarOwner/inspection_requests/editdatetime.blade.php ENDPATH**/ ?>

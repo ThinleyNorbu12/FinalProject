@@ -17,8 +17,8 @@
             </form>
 
             <div class="links-container" style="margin-top: 20px;">
-                <a href="{{ route('car-admin.new-registration-cars') }}">CAR REGISTRATION REQUEST </a><br>
-                <a href="{{ route('car-admin.inspection-requests') }}">MANAGE INSPECTION REQUEST</a><br>
+                <a href="{{ route('car-admin.new-registration-cars') }}">CAR REGISTRATION REQUEST FROM CAROWNER </a><br>
+                <a href="{{ route('car-admin.inspection-requests') }}">MANAGE INSPECTION REQUEST FROM CAROWNER</a><br>
                 <a href="{{ url('admin/view-payments') }}"> VIEW PAYMENTS</a><br>
                 <a href="{{ url('admin/update-car-registration') }}">3. UPDATE CAR REGISTRATION</a><br>
                 <a href="{{ url('admin/car-information-update') }}">4. CAR INFORMATION UPDATE</a><br>
