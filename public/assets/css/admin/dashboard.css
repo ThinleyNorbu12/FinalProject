@@ -1,51 +1,67 @@
-/* Styling the container to ensure proper spacing and layout */
+/* Main container styling */
 .container {
     width: 80%;
     margin: 0 auto;
     padding-top: 20px;
 }
 
-/* Styling the main section */
+/* Center align main content */
 main {
     text-align: center;
 }
 
-/* Styling the heading */
+/* Heading styles */
 h1 {
     font-size: 2em;
-    color: #333;
-    margin-bottom: 10px;
+    color: #2c3e50;
+    margin-bottom: 15px;
 }
 
-/* Styling the paragraph */
+/* Paragraph text styling */
 p {
-    font-size: 1.2em;
-    color: #666;
+    font-size: 1.1em;
+    color: #555;
     margin-bottom: 20px;
 }
 
-/* Styling the link container */
+/* Link container layout */
 .links-container {
-    display: block; /* Change to block to stack items vertically */
+    display: block;
     margin-top: 30px;
     text-align: center;
 }
 
-/* Styling individual links */
+/* Individual dashboard links */
 .links-container a {
-    display: block; /* Ensure each link takes up a full line */
+    display: block;
     text-decoration: none;
-    color: #050101;
+    color: #1a1a1a;
     background-color: #BCCCDC;
-    padding: 10px 20px;
-    border-radius: 5px;
-    margin-bottom: 10px; /* Add space between the links */
-    transition: background-color 0.3s ease;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     text-align: left;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Styling for links when hovered */
+/* Hover effect on links */
 .links-container a:hover {
     background-color: #9AA6B2;
+    transform: translateX(5px);
 }
 
+/* Notification badge styling */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: #fff;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}

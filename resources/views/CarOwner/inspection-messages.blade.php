@@ -27,7 +27,7 @@
 
                     <div class="mt-3 d-flex gap-2">
                         {{-- Cancel Button --}}
-                        @if($request->status !== 'canceled' && !$request->request_accepted)
+                        @if($request->status !== 'canceled' && !$request->request_accepted && !$request->date_time_updated)
                             <form action="{{ route('inspection.cancel', $request->id) }}" method="POST" class="d-inline cancel-form">
                                 @csrf
                                 <button type="button" class="btn btn-danger btn-sm show-confirm-modal" 
@@ -37,11 +37,11 @@
                                 </button>
                             </form>
                         @else
-                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled or Accepted</button>
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled / Accepted / Edited</button>
                         @endif
-
+                    
                         {{-- Request for New Date --}}
-                        @if($request->status !== 'canceled' && !$request->request_accepted)
+                        @if($request->status !== 'canceled' && !$request->request_accepted && !$request->date_time_updated)
                             @if($request->request_new_date_sent)
                                 <button class="btn btn-secondary btn-sm" disabled>New Date Already Requested</button>
                             @else
@@ -55,11 +55,11 @@
                                 </form>
                             @endif
                         @else
-                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled or Accepted</button>
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled / Accepted / Edited</button>
                         @endif
-
+                    
                         {{-- Accept Button --}}
-                        @if($request->status !== 'canceled' && !$request->request_accepted)
+                        @if($request->status !== 'canceled' && !$request->request_accepted && !$request->date_time_updated)
                             <form action="{{ route('inspection.accept', $request->id) }}" method="POST" class="d-inline accept-form">
                                 @csrf
                                 <button type="button" class="btn btn-success btn-sm show-confirm-modal" 
@@ -70,8 +70,12 @@
                             </form>
                         @elseif($request->request_accepted)
                             <button class="btn btn-success btn-sm" disabled>Accepted by You</button>
+                        @else
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled / Accepted / Edited</button>
                         @endif
                     </div>
+                    
+                    
                 </li>
             @endforeach
         </ul>

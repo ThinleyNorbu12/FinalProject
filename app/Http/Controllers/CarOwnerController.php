@@ -382,15 +382,15 @@ class CarOwnerController extends Controller
             $inspection->inspection_date = $request->inspection_date;
             $inspection->inspection_time = $request->inspection_time;
 
-            // ✅ Mark that a new date was actually requested
+            // ✅ Set both flags
             $inspection->request_new_date_sent = true;
+            $inspection->date_time_updated = true;
 
             $inspection->save();
 
             return redirect()->route('CarOwner.inspection-messages')->with('success', 'Inspection schedule updated successfully.');
         }
 
-        // ⚠️ Nothing was changed, don't set the flag
         return redirect()->route('CarOwner.inspection-messages')->with('info', 'No changes were made.');
     }
 
@@ -439,6 +439,22 @@ class CarOwnerController extends Controller
 
         return redirect()->back()->with('success', 'You have accepted the inspection date and time. All admins have been notified.');
     }
+
+    // for approved car 
+    public function showApprovedCars()
+{
+    $approvedCars = DB::table('car_details_tbl')
+        ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
+        ->join('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
+        ->where('inspection_decisions.decision', 'approved')
+        ->where('car_details_tbl.car_owner_id', auth('carowner')->id())
+        ->select('car_details_tbl.*')
+        ->get();
+
+    return view('CarOwner.approved-cars', compact('approvedCars'));
+}
+
+
 
 
 

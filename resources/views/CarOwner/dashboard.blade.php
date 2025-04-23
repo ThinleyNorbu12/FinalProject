@@ -30,11 +30,12 @@
 
                     <!-- Wrap the links in a div container for styling -->
                     <div class="links-container">
-                        <a href="{{ url('CarOwner/rent-car') }}" class="btn btn-primary">1. RENT A CAR</a>
-                        <a href="{{ url('carowner/view-rented-car') }}" class="btn btn-primary">2. VIEW CAR REGISTRARION REQUEST</a>  <!--VIEW RENTED CAR change to VIEW REGISTRARION REQUEST -->
-                        <a href="{{ url('carowner/car-inspection') }}" class="btn btn-primary position-relative">CAR INSPECTION REQUEST FROM ADMIN</a>
+                        <a href="{{ route('carowner.rentCar') }}" class="btn btn-primary">RENT A CAR</a>
+                        <a href="{{ route('carowner.view.rented') }}" class="btn btn-primary">2. VIEW REGISTRATION REQUEST</a>
+                        <a href="{{ route('carowner.car-inspection') }}" class="btn btn-primary position-relative">CAR INSPECTION REQUEST FROM ADMIN</a>
+                        <a href="{{ route('carowner.approved') }}" class="btn btn-primary">VIEW APPROVED INSPECTED CAR</a>
+
                         <a href="{{ url('carowner/car-approval-denied') }}" class="btn btn-primary">4. CAR APPROVAL DENIED</a>
-                        <a href="{{ url('carowner/approved-car') }}" class="btn btn-primary">5. APPROVED CAR</a>
                         <a href="{{ url('carowner/payment-summary') }}" class="btn btn-primary">6. PAYMENT SUMMARY</a>
                     </div>
                 </div>
@@ -42,3 +43,14 @@
         </div>
     </div>
 @endsection
+
+{{-- 
+<!-- Wrap the links in a div container for styling -->
+<div class="links-container">
+    <a href="{{ url('CarOwner/rent-car') }}" class="btn btn-primary">1. RENT A CAR</a>
+    <a href="{{ url('carowner/view-rented-car') }}" class="btn btn-primary">2. VIEW CAR REGISTRARION REQUEST</a>  <!--VIEW RENTED CAR change to VIEW REGISTRARION REQUEST -->
+    <a href="{{ url('carowner/car-inspection') }}" class="btn btn-primary position-relative">CAR INSPECTION REQUEST FROM ADMIN</a>
+    <a href="{{ url('carowner/approved-car') }}" class="btn btn-primary">APPROVED INSPECTED CAR</a>
+    <a href="{{ url('carowner/car-approval-denied') }}" class="btn btn-primary">4. CAR APPROVAL DENIED</a>
+    <a href="{{ url('carowner/payment-summary') }}" class="btn btn-primary">6. PAYMENT SUMMARY</a>
+</div> --}}

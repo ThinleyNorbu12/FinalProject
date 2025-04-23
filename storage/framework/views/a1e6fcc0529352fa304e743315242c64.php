@@ -29,7 +29,7 @@
 
                     <div class="mt-3 d-flex gap-2">
                         
-                        <?php if($request->status !== 'canceled' && !$request->request_accepted): ?>
+                        <?php if($request->status !== 'canceled' && !$request->request_accepted && !$request->date_time_updated): ?>
                             <form action="<?php echo e(route('inspection.cancel', $request->id)); ?>" method="POST" class="d-inline cancel-form">
                                 <?php echo csrf_field(); ?>
                                 <button type="button" class="btn btn-danger btn-sm show-confirm-modal" 
@@ -39,11 +39,11 @@
                                 </button>
                             </form>
                         <?php else: ?>
-                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled or Accepted</button>
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled / Accepted / Edited</button>
                         <?php endif; ?>
-
+                    
                         
-                        <?php if($request->status !== 'canceled' && !$request->request_accepted): ?>
+                        <?php if($request->status !== 'canceled' && !$request->request_accepted && !$request->date_time_updated): ?>
                             <?php if($request->request_new_date_sent): ?>
                                 <button class="btn btn-secondary btn-sm" disabled>New Date Already Requested</button>
                             <?php else: ?>
@@ -57,11 +57,11 @@
                                 </form>
                             <?php endif; ?>
                         <?php else: ?>
-                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled or Accepted</button>
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled / Accepted / Edited</button>
                         <?php endif; ?>
-
+                    
                         
-                        <?php if($request->status !== 'canceled' && !$request->request_accepted): ?>
+                        <?php if($request->status !== 'canceled' && !$request->request_accepted && !$request->date_time_updated): ?>
                             <form action="<?php echo e(route('inspection.accept', $request->id)); ?>" method="POST" class="d-inline accept-form">
                                 <?php echo csrf_field(); ?>
                                 <button type="button" class="btn btn-success btn-sm show-confirm-modal" 
@@ -72,8 +72,12 @@
                             </form>
                         <?php elseif($request->request_accepted): ?>
                             <button class="btn btn-success btn-sm" disabled>Accepted by You</button>
+                        <?php else: ?>
+                            <button class="btn btn-secondary btn-sm" disabled>Request Canceled / Accepted / Edited</button>
                         <?php endif; ?>
                     </div>
+                    
+                    
                 </li>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </ul>

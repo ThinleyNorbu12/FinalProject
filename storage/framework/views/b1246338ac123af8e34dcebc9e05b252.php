@@ -1,5 +1,10 @@
 
 
+
+
+
+
+
 <?php $__env->startSection('content'); ?>
 <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/menage-inspection-requests.css')); ?>">
 
@@ -26,6 +31,7 @@
                         <th>Date</th>
                         <th>Time</th>
                         <th>Location</th>
+                        <th>Response</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -40,6 +46,17 @@
                             <td><?php echo e($request->inspection_date); ?></td>
                             <td><?php echo e($request->inspection_time); ?></td>
                             <td><?php echo e($request->location); ?></td>
+                            <td>
+                                <?php if($request->request_accepted): ?>
+                                    <span class="badge bg-success">Accepted</span>
+                                <?php elseif($request->status === 'canceled'): ?>
+                                    <span class="badge bg-danger">Cancelled</span>
+                                <?php elseif($request->request_new_date_sent): ?>
+                                    <span class="badge bg-warning text-dark">Requested New Date</span>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary">Pending</span>
+                                <?php endif; ?>
+                            </td>                           
                             <td>
                                 <span class="badge bg-<?php echo e($request->status === 'canceled' ? 'danger' : 'primary'); ?>">
                                     <?php echo e(ucfirst($request->status)); ?>
@@ -68,7 +85,7 @@
             </table>
         </div>
     <?php else: ?>
-        <div class="alert alert-info text-center">No inspection requests found.</div>
+        <div class="alert alert-info text-center">No inspection responses found from car owners.</div>
     <?php endif; ?>
 </div>
 
@@ -82,13 +99,12 @@
         const originalText = btn.innerHTML;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
 
-        // Fake delay (adjust to your liking)
         setTimeout(() => {
             btn.innerHTML = '<i class="bi bi-check2-circle"></i> Done';
             btn.classList.remove('btn-success');
             btn.classList.add('btn-secondary');
-        }, 1000); // 1 second delay
-        return true; // Allow form to continue submitting
+        }, 1000);
+        return true;
     }
 </script>
 <?php $__env->stopSection(); ?>

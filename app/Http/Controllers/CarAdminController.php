@@ -9,7 +9,8 @@ use App\Mail\CarInspectionRequested;
 use App\Mail\CarRejected;
 use Illuminate\Support\Facades\Log;
 use App\Mail\InspectionConfirmedMail;
-
+use App\Models\InspectionDecision;
+use App\Mail\InspectionDecisionMail;
 
 
 
@@ -150,11 +151,29 @@ class CarAdminController extends Controller
     }
 // 21/4/2025
     // resources/views/car-admin/menage-inspection-requests.blade.php
+    // public function showInspectionRequests()
+    // {
+    //     $inspectionRequests = InspectionRequest::with('car.owner')->latest()->get();
+    //     return view('admin.menage-inspection-requests', compact('inspectionRequests'));
+    // }
+
+    //     // to only show inspection requests that were responded to by the car owner 
     public function showInspectionRequests()
     {
-        $inspectionRequests = InspectionRequest::with('car.owner')->latest()->get();
+        $inspectionRequests = InspectionRequest::where(function ($query) {
+            $query->where('status', 'canceled')  // Canceled by admin or owner
+                ->orWhere('request_new_date_sent', true)  // Owner requested new date
+                ->orWhere('is_confirmed_by_admin', true)  // Admin confirmed schedule
+                ->orWhere('is_confirmed_by_owner', true)  // Owner confirmed
+                ->orWhere('request_accepted', true);      // Accepted by admin
+        })  
+        ->with(['car.owner'])  // Eager load car and owner details
+        ->latest()  // Show most recent first
+        ->get();
+        
         return view('admin.menage-inspection-requests', compact('inspectionRequests'));
     }
+
 
 
     // this is confirm and  sendMail is to notify to the carowner 
@@ -182,24 +201,51 @@ class CarAdminController extends Controller
     }
 
 
+    public function showInspectionApprovals()
+    {
+        $inspectionRequests = InspectionRequest::with(['car', 'car.owner'])
+            ->where('is_confirmed_by_admin', true)
+            ->where('status', '!=', 'canceled')
+            ->whereDoesntHave('decision') // Only show requests without a decision
+            ->get();
 
+        return view('admin.inspection-approval', compact('inspectionRequests'));
+    }
 
+    public function processInspectionApproval(Request $request)
+    {
+        $request->validate([
+            'car_id' => 'required|exists:car_details_tbl,id', // Updated table name here
+            'decision' => 'required|in:approved,rejected',
+        ]);
+
+        // Find inspection request
+        $inspectionRequest = InspectionRequest::where('car_id', $request->car_id)
+            ->where('is_confirmed_by_admin', true)
+            ->where('status', '!=', 'canceled')
+            ->firstOrFail();
+
+        // Save decision
+        InspectionDecision::create([
+            'inspection_request_id' => $inspectionRequest->id,
+            'decision' => $request->decision,
+            'admin_id' => auth()->id(),
+            'remarks' => null,
+        ]);
+
+        // Send mail to car owner
+        if ($inspectionRequest->car && $inspectionRequest->car->owner) {
+            Mail::to($inspectionRequest->car->owner->email)
+                ->send(new InspectionDecisionMail($inspectionRequest, $request->decision));
+        }
+
+        return redirect()->route('car-admin.approve-inspected-cars')
+            ->with('status', 'Car has been ' . $request->decision . ' successfully and the owner has been notified.');
+    }
 
     
 
-// Send mail with custom details
-// public function sendMail($id)
-// {
-//     $request = InspectionRequest::findOrFail($id);
-//     $carOwner = $request->car->owner;
-
-//     if ($carOwner) {
-//         \Mail::to($carOwner->email)->send(new \App\Mail\InspectionDetails($request));
-//     }
-
-//     return redirect()->back()->with('success', 'Custom mail sent to the car owner.');
-// }
-
+ 
 
 
 

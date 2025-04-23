@@ -22,6 +22,12 @@ class InspectionRequest extends Model
     {
         return $this->belongsTo(CarDetail::class, 'car_id');
     }
+    
+    public function decision()
+    {
+        return $this->hasOne(InspectionDecision::class);
+    }
+
 
     
 

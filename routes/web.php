@@ -96,7 +96,10 @@ Route::get('/inspection/available-slots', [CarOwnerController::class, 'getAvaila
 Route::get('/carowner/inspection-messages', [CarOwnerController::class, 'showInspectionMessages'])->name('CarOwner.inspection-messages');
 // when caronwer is ok with the date and time that are set by the admin under carowner/inspection-messages.php
 Route::post('/inspection/accept/{id}', [CarOwnerController::class, 'accept'])->name('inspection.accept');
-
+// link to aprovedcar 
+Route::get('carowner/approved-car', [CarOwnerController::class, 'showApprovedCars'])
+    ->middleware('auth:carowner')
+    ->name('carowner.approved');
 
 
 
@@ -153,14 +156,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
    // ✅ Corrected route for inspection requests
    Route::get('/', [CarAdminController::class, 'showInspectionRequests'])->name('inspection-requests');
 
-//    "Ok" and "Send Mail"  under the Admin/menage-inspection-requests.blade
-   // For confirming date and time (Ok button)
-   Route::post('confirm-inspection/{id}', [CarAdminController::class, 'confirm'])->name('inspection.confirm');
+    //    "Ok" and "Send Mail"  under the Admin/menage-inspection-requests.blade
+    // For confirming date and time (Ok button)
+    Route::post('confirm-inspection/{id}', [CarAdminController::class, 'confirm'])->name('inspection.confirm');
 
-// For sending custom mail (Send Mail button)
-Route::post('send-inspection-mail/{id}', [CarAdminController::class, 'sendMail'])->name('inspection.sendMail');
+    // For sending custom mail (Send Mail button)
+    Route::post('send-inspection-mail/{id}', [CarAdminController::class, 'sendMail'])->name('inspection.sendMail');
 
+    // this is under >APPROVE/REJECT INSPECTED CARS<
+    // Display the approval page (GET)
+    Route::get('/approve-inspected-cars', [CarAdminController::class, 'showInspectionApprovals'])->name('approve-inspected-cars');
 
+    // Handle the approval or rejection form (POST)
+    Route::post('/approve-inspected-cars', [CarAdminController::class, 'processInspectionApproval'])->name('inspection-approval');
 
 
 });

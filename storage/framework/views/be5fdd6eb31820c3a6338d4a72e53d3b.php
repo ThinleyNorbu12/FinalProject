@@ -6,30 +6,42 @@
 
 <?php $__env->startSection('content'); ?>
     <div class="container">
-        <h1>Welcome to the Admin Dashboard</h1>
+        <div class="row">
+            <!-- Left Panel: Profile Section -->
+            <div class="col-md-4">
+                <div class="profile-section">
+                    <h2>Welcome to the Admin Dashboard</h2>
 
-        <?php if(Auth::guard('admin')->check()): ?>
-            <p>Hello, <?php echo e(Auth::guard('admin')->user()->name); ?>!</p>
-
-            <form method="POST" action="<?php echo e(route('admin.logout')); ?>">
-                <?php echo csrf_field(); ?>
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
-
-            <div class="links-container" style="margin-top: 20px;">
-                <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>">CAR REGISTRATION REQUEST FROM CAROWNER </a><br>
-                <a href="<?php echo e(route('car-admin.inspection-requests')); ?>">MANAGE INSPECTION REQUEST FROM CAROWNER</a><br>
-                <a href="<?php echo e(url('admin/view-payments')); ?>"> VIEW PAYMENTS</a><br>
-                <a href="<?php echo e(url('admin/update-car-registration')); ?>">3. UPDATE CAR REGISTRATION</a><br>
-                <a href="<?php echo e(url('admin/car-information-update')); ?>">4. CAR INFORMATION UPDATE</a><br>
-                <a href="<?php echo e(url('admin/booked-car')); ?>">5. BOOKED CAR</a>
+                    <?php if(Auth::guard('admin')->check()): ?>
+                        <p>Hello, <?php echo e(Auth::guard('admin')->user()->name); ?>!</p>
+                        <form method="POST" action="<?php echo e(route('admin.logout')); ?>">
+                            <?php echo csrf_field(); ?>
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                    <?php else: ?>
+                        <p>You are not logged in as Admin.</p>
+                        <a href="<?php echo e(route('admin.login')); ?>" class="btn btn-primary">Login as Admin</a>
+                    <?php endif; ?>
+                </div>
             </div>
-            
 
-        <?php else: ?>
-            <p>You are not logged in as an admin.</p>
-            <a href="<?php echo e(route('admin.login')); ?>" class="btn btn-primary">Login as Admin</a>
-        <?php endif; ?>
+            <!-- Right Panel: Dashboard Links -->
+            <div class="col-md-8">
+                <div class="dashboard-links">
+                    <p>Manage system operations and view key updates from car owners here.</p>
+
+                    <div class="links-container">
+                        <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="btn btn-primary"> CAR REGISTRATION REQUEST</a>
+                        <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="btn btn-primary"> MANAGE INSPECTION REQUESTS</a>
+                        <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="btn btn-primary">APPROVE/REJECT INSPECTED CARS</a>
+                        <a href="<?php echo e(url('admin/view-payments')); ?>" class="btn btn-primary">3. VIEW PAYMENTS</a>
+                        <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="btn btn-primary">4. UPDATE CAR REGISTRATION</a>
+                        <a href="<?php echo e(url('admin/car-information-update')); ?>" class="btn btn-primary">5. CAR INFORMATION UPDATE</a>
+                        <a href="<?php echo e(url('admin/booked-car')); ?>" class="btn btn-primary">6. BOOKED CAR</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 <?php $__env->stopSection(); ?>
 

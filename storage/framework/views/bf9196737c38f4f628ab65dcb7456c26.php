@@ -30,11 +30,12 @@
 
                     <!-- Wrap the links in a div container for styling -->
                     <div class="links-container">
-                        <a href="<?php echo e(url('CarOwner/rent-car')); ?>" class="btn btn-primary">1. RENT A CAR</a>
-                        <a href="<?php echo e(url('carowner/view-rented-car')); ?>" class="btn btn-primary">2. VIEW CAR REGISTRARION REQUEST</a>  <!--VIEW RENTED CAR change to VIEW REGISTRARION REQUEST -->
-                        <a href="<?php echo e(url('carowner/car-inspection')); ?>" class="btn btn-primary position-relative">CAR INSPECTION REQUEST FROM ADMIN</a>
+                        <a href="<?php echo e(route('carowner.rentCar')); ?>" class="btn btn-primary">RENT A CAR</a>
+                        <a href="<?php echo e(route('carowner.view.rented')); ?>" class="btn btn-primary">2. VIEW REGISTRATION REQUEST</a>
+                        <a href="<?php echo e(route('carowner.car-inspection')); ?>" class="btn btn-primary position-relative">CAR INSPECTION REQUEST FROM ADMIN</a>
+                        <a href="<?php echo e(route('carowner.approved')); ?>" class="btn btn-primary">VIEW APPROVED INSPECTED CAR</a>
+
                         <a href="<?php echo e(url('carowner/car-approval-denied')); ?>" class="btn btn-primary">4. CAR APPROVAL DENIED</a>
-                        <a href="<?php echo e(url('carowner/approved-car')); ?>" class="btn btn-primary">5. APPROVED CAR</a>
                         <a href="<?php echo e(url('carowner/payment-summary')); ?>" class="btn btn-primary">6. PAYMENT SUMMARY</a>
                     </div>
                 </div>
@@ -42,5 +43,6 @@
         </div>
     </div>
 <?php $__env->stopSection(); ?>
+
 
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/CarOwner/dashboard.blade.php ENDPATH**/ ?>
