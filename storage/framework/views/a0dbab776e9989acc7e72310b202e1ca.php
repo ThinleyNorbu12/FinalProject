@@ -14,9 +14,14 @@
         <ul class="sidebar-links">
             <li><a href="<?php echo e(route('carowner.login')); ?>">CAROWNER DASHBOARD</a></li>
             <li><a href="<?php echo e(route('admin.dashboard')); ?>">ADMIN DASHBOARD</a></li>
-            <li><a href="<?php echo e(url('/customer')); ?>">CUSTOMER DASHBOARD</a></li>
+            <?php if(auth()->guard('customer')->check()): ?>
+                <li><a href="<?php echo e(route('customer.dashboard')); ?>">CUSTOMER DASHBOARD</a></li>
+            <?php else: ?>
+                <li><a href="<?php echo e(route('customer.login')); ?>">LOGIN AS CUSTOMER</a></li>
+            <?php endif; ?>
             <li><a href="<?php echo e(url('/contact')); ?>">CONTACT</a></li>
         </ul>
+        
     </div>
 </div>
 

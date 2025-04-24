@@ -14,9 +14,14 @@
         <ul class="sidebar-links">
             <li><a href="{{ route('carowner.login') }}">CAROWNER DASHBOARD</a></li>
             <li><a href="{{ route('admin.dashboard') }}">ADMIN DASHBOARD</a></li>
-            <li><a href="{{ url('/customer') }}">CUSTOMER DASHBOARD</a></li>
+            @auth('customer')
+                <li><a href="{{ route('customer.dashboard') }}">CUSTOMER DASHBOARD</a></li>
+            @else
+                <li><a href="{{ route('customer.login') }}">LOGIN AS CUSTOMER</a></li>
+            @endauth
             <li><a href="{{ url('/contact') }}">CONTACT</a></li>
         </ul>
+        
     </div>
 </div>
 

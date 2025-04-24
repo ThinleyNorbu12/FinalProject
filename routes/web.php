@@ -96,10 +96,14 @@ Route::get('/inspection/available-slots', [CarOwnerController::class, 'getAvaila
 Route::get('/carowner/inspection-messages', [CarOwnerController::class, 'showInspectionMessages'])->name('CarOwner.inspection-messages');
 // when caronwer is ok with the date and time that are set by the admin under carowner/inspection-messages.php
 Route::post('/inspection/accept/{id}', [CarOwnerController::class, 'accept'])->name('inspection.accept');
-// link to aprovedcar 
+// link to aproved car 
 Route::get('carowner/approved-car', [CarOwnerController::class, 'showApprovedCars'])
     ->middleware('auth:carowner')
     ->name('carowner.approved');
+// this is for car-approval-denied
+    Route::get('carowner/car-approval-denied', [CarOwnerController::class, 'showRejectedCars'])
+    ->middleware('auth:carowner')
+    ->name('carowner.rejected');
 
 
 
@@ -172,3 +176,49 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 });
+
+
+
+
+
+
+
+// customer web.php
+
+
+
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\Customer\Auth\LoginController;
+use App\Http\Controllers\Customer\Auth\RegisterController;
+use App\Http\Controllers\Customer\Auth\ForgotPasswordController as CustomerForgotPasswordController;
+use App\Http\Controllers\Customer\Auth\ResetPasswordController as CustomerResetPasswordController;
+
+// Customer dashboard (protected route)
+Route::middleware('auth:customer')->get('/customer', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
+
+// Group all customer-related routes
+Route::prefix('customer')->name('customer.')->group(function () {
+
+    // Login routes
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Register routes
+    Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+
+    // Password Reset routes
+    Route::get('/password/reset', [CustomerForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/password/email', [CustomerForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/password/reset/{token}', [CustomerResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/password/reset', [CustomerResetPasswordController::class, 'reset'])->name('password.update');
+
+    // to set the password
+    Route::get('password/set/{token}', [\App\Http\Controllers\Customer\Auth\ResetPasswordController::class, 'showResetForm'])
+    ->name('password.set');
+
+
+
+});
+

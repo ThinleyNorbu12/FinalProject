@@ -454,6 +454,20 @@ class CarOwnerController extends Controller
     return view('CarOwner.approved-cars', compact('approvedCars'));
 }
 
+public function showRejectedCars()
+{
+    $rejectedCars = DB::table('car_details_tbl')
+        ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
+        ->join('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
+        ->where('inspection_decisions.decision', 'rejected')
+        ->where('car_details_tbl.car_owner_id', auth('carowner')->id())
+        ->select('car_details_tbl.*')
+        ->get();
+
+    return view('CarOwner.rejected-cars', compact('rejectedCars'));
+}
+
+
 
 
 

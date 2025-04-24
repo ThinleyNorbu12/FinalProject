@@ -148,15 +148,104 @@
 // ];
 
 // 
+// carowner and amdin 
+
+// return [
+
+
+//     'defaults' => [
+//         'guard' => 'web',
+//         'passwords' => 'users',
+//     ],
+
+
+//     // Guards define how users are authenticated
+//     'guards' => [
+//         'web' => [
+//             'driver' => 'session',
+//             'provider' => 'users',
+//         ],
+
+
+//         'api' => [
+//             'driver' => 'token',
+//             'provider' => 'users',
+//             'hash' => false,
+//         ],
+
+
+//         // CarOwner Guard (Session-based login)
+//         'carowner' => [
+//             'driver' => 'session',
+//             'provider' => 'car_owners',
+//         ],
+
+
+//         // Admin Guard (Session-based login)
+//         'admin' => [
+//             'driver' => 'session',
+//             'provider' => 'admins',
+//         ],
+//     ],
+
+
+//     // Providers define how users are retrieved
+//     'providers' => [
+//         'users' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\User::class,
+//         ],
+
+
+//         'car_owners' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\CarOwner::class,
+//         ],
+
+
+//         'admins' => [
+//             'driver' => 'eloquent',
+//             'model' => App\Models\Admin::class,
+//         ],
+//     ],
+
+
+//     // Password reset settings
+//     'passwords' => [
+//         'users' => [
+//             'provider' => 'users',
+//             'table' => 'password_resets',
+//             'expire' => 60,
+//             'throttle' => 60,
+//         ],
+
+
+//         'car_owners' => [
+//             'provider' => 'car_owners',
+//             'table' => 'password_resets',
+//             'expire' => 60,
+//             'throttle' => 60,
+//         ],
+
+
+//         'admins' => [
+//             'provider' => 'admins',
+//             'table' => 'password_resets',
+//             'expire' => 60,
+//             'throttle' => 60,
+//         ],
+//     ],
+
+
+//     'password_timeout' => 10800,
+// ];
 
 return [
-
 
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',
     ],
-
 
     // Guards define how users are authenticated
     'guards' => [
@@ -165,28 +254,30 @@ return [
             'provider' => 'users',
         ],
 
-
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
             'hash' => false,
         ],
 
-
-        // CarOwner Guard (Session-based login)
+        // CarOwner Guard
         'carowner' => [
             'driver' => 'session',
             'provider' => 'car_owners',
         ],
 
-
-        // Admin Guard (Session-based login)
+        // Admin Guard
         'admin' => [
             'driver' => 'session',
             'provider' => 'admins',
         ],
-    ],
 
+        // Customer Guard
+        'customer' => [
+            'driver' => 'session',
+            'provider' => 'customers',
+        ],
+    ],
 
     // Providers define how users are retrieved
     'providers' => [
@@ -195,19 +286,21 @@ return [
             'model' => App\Models\User::class,
         ],
 
-
         'car_owners' => [
             'driver' => 'eloquent',
             'model' => App\Models\CarOwner::class,
         ],
 
-
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
-    ],
 
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,
+        ],
+    ],
 
     // Password reset settings
     'passwords' => [
@@ -218,7 +311,6 @@ return [
             'throttle' => 60,
         ],
 
-
         'car_owners' => [
             'provider' => 'car_owners',
             'table' => 'password_resets',
@@ -226,19 +318,23 @@ return [
             'throttle' => 60,
         ],
 
-
         'admins' => [
             'provider' => 'admins',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
         ],
-    ],
 
+        'customers' => [
+            'provider' => 'customers',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+    ],
 
     'password_timeout' => 10800,
 ];
-
 
 
 
