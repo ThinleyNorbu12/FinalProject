@@ -8,7 +8,11 @@
     <h2>Welcome to Our Service!</h2>
     <p>We received a request to create your account. To set your password, click the link below:</p>
 
-    <p><a href="{{ route('customer.password.set', ['token' => $token]) }}">Set Your Password</a></p>
+    @if (Route::has('customer.password.set'))
+        <p><a href="{{ route('customer.password.set', ['token' => $token]) }}">Set Your Password</a></p>
+    @else
+        <p>❌ Route not found.</p>
+    @endif
 
     <p>If you did not request this, please ignore this email.</p>
 </body>

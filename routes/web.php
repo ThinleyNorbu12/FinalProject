@@ -215,9 +215,9 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::post('/password/reset', [CustomerResetPasswordController::class, 'reset'])->name('password.update');
 
     // to set the password
-    Route::get('password/set/{token}', [\App\Http\Controllers\Customer\Auth\ResetPasswordController::class, 'showResetForm'])
-    ->name('password.set');
-
+    // To set the password (for new users)
+    Route::get('password/set/{token}', [CustomerController::class, 'showSetPasswordForm'])->name('password.set');
+    Route::post('password/set', [CustomerController::class, 'setPassword'])->name('password.save');
 
 
 });
