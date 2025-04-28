@@ -319,8 +319,17 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
+     * @property string $bluetooth
+     * @property string $backup_camera
+     * @property string $air_conditioning
+     * @property string $fuel_type
+     * @property mixed $small_bags_capacity
+     * @property mixed $large_bags_capacity
+     * @property string $transmission_type
+     * @property mixed $number_of_seats
+     * @property mixed $number_of_doors
      * @property mixed $car_owner_id
-     * @property mixed $car_image
+     * @property string|null $car_image
      * @property string $description
      * @property string $status
      * @property string $registration_no
@@ -334,6 +343,7 @@ namespace App\Models {
      * @property-read \App\Models\CarOwner $owner
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InspectionRequest> $inspectionRequests
      * @property-read int|null $inspectionRequests_count
+     * @property-read \App\Models\InspectionDecision $inspectionDecision
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereMaker($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereModel($value)
@@ -346,6 +356,15 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereDescription($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereCarImage($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereCarOwnerId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereNumberOfDoors($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereNumberOfSeats($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereTransmissionType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereLargeBagsCapacity($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereSmallBagsCapacity($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereFuelType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereAirConditioning($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereBackupCamera($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereBluetooth($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail newModelQuery()

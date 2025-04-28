@@ -10,6 +10,12 @@ Route::get('/', function () {
     return view('home');
 
 });
+// If you're using Laravel 8+ with the new route syntax:
+Route::get('/cars/{id}/details', [App\Http\Controllers\HomeController::class, 'getCarDetails'])->name('car.details');
+
+// OR for older Laravel versions:
+// Route::get('/cars/{id}/details', 'App\Http\Controllers\HomeController@getCarDetails')->name('car.details');
+
 // to display all the register car of carowner
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
