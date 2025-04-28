@@ -50,19 +50,84 @@
     <section class="cars">
         <h2>Available Cars</h2>
         <div class="car-container">
-            <?php $__currentLoopData = $cars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $car): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="car">
-                    <img src="<?php echo e(asset($car->car_image)); ?>" alt="<?php echo e($car->model); ?>" style="width: 200px; height: auto;">
-                    <h3><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
-                    <p><?php echo e($car->price); ?>/day</p>
-                    <div class="car-buttons">
-                        <a href="#" class="btn-details">DETAILS</a>
-                        <a href="#" class="btn-contact">CONTACT OWNER</a>
+            <?php if($cars->count()): ?>
+                <?php $__currentLoopData = $cars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $car): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="car">
+                        <img src="<?php echo e(asset($car->car_image)); ?>" alt="<?php echo e($car->model); ?>" style="width: 200px; height: auto;">
+                        <h3><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
+                        <p><?php echo e($car->price); ?>/day</p>
+                        <div class="car-buttons">
+                            <a href="#" class="btn-details" data-car-id="<?php echo e($car->id); ?>">DETAILS</a>
+                            <a href="#" class="btn-contact">RENTING</a>
+                        </div>
                     </div>
-                </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php else: ?>
+                <p>No cars available at the moment.</p>
+            <?php endif; ?>
         </div>
     </section>
+    
+</div>
+
+<!-- Car Details Modal -->
+<div id="carDetailsModal" class="car-details-modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="modalCarTitle">Car Details</h2>
+        <div class="car-specs-container">
+            <div class="car-specs-row">
+                <div class="car-spec">
+                    <i class="spec-icon">🚪</i>
+                    <span id="doors">4 Doors</span>
+                </div>
+                <div class="car-spec">
+                    <i class="spec-icon">👤</i>
+                    <span id="seats">7 Seats</span>
+                </div>
+            </div>
+            <div class="car-specs-row">
+                <div class="car-spec">
+                    <i class="spec-icon">❄️</i>
+                    <span id="ac">Air Conditioning</span>
+                </div>
+                <div class="car-spec">
+                    <i class="spec-icon">🔄</i>
+                    <span id="transmission">Automatic</span>
+                </div>
+            </div>
+            <div class="car-specs-row">
+                <div class="car-spec">
+                    <i class="spec-icon">🧳</i>
+                    <span id="largeBags">2 Large Bags</span>
+                </div>
+                <div class="car-spec">
+                    <i class="spec-icon">💼</i>
+                    <span id="smallBags">2 Small Bags</span>
+                </div>
+            </div>
+            <div class="car-specs-row">
+                <div class="car-spec">
+                    <i class="spec-icon">⛽</i>
+                    <span id="mpg">16-21 mpg</span>
+                </div>
+                <div class="car-spec">
+                    <i class="spec-icon">🔵</i>
+                    <span id="bluetooth">Bluetooth</span>
+                </div>
+            </div>
+            <div class="car-specs-row">
+                <div class="car-spec">
+                    <i class="spec-icon">📹</i>
+                    <span id="camera">Backup Camera</span>
+                </div>
+                <div class="car-spec">
+                    <i class="spec-icon">⛽</i>
+                    <span id="fuelType">Gasoline</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -121,6 +186,77 @@
                     );
                 }
             });
+        }
+
+        // Car Details Modal
+        const detailButtons = document.querySelectorAll('.btn-details');
+        const carDetailsModal = document.getElementById('carDetailsModal');
+        const closeModal = document.querySelector('.close-modal');
+
+        detailButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const carId = this.getAttribute('data-car-id');
+                
+                // Show loading state
+                document.getElementById('modalCarTitle').textContent = "Loading...";
+                carDetailsModal.style.display = 'block';
+                
+                // Fetch car details from the server
+                fetchCarDetails(carId);
+            });
+        });
+
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                carDetailsModal.style.display = 'none';
+            });
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === carDetailsModal) {
+                carDetailsModal.style.display = 'none';
+            }
+        });
+
+        function fetchCarDetails(carId) {
+            console.log('Fetching details for car ID:', carId);
+            fetch(`/cars/${carId}/details`)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data:', data);
+                    if (data.success) {
+                        showCarDetails(data.details);
+                    } else {
+                        throw new Error(data.message || 'Error fetching car details');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('modalCarTitle').textContent = "Error loading details";
+                });
+        }
+
+        function showCarDetails(carData) {
+            // Update the modal with car details from the database
+            document.getElementById('modalCarTitle').textContent = carData.title;
+            document.getElementById('doors').textContent = carData.doors;
+            document.getElementById('seats').textContent = carData.seats;
+            document.getElementById('ac').textContent = carData.ac;
+            document.getElementById('transmission').textContent = carData.transmission;
+            document.getElementById('largeBags').textContent = carData.largeBags;
+            document.getElementById('smallBags').textContent = carData.smallBags;
+            document.getElementById('mpg').textContent = carData.mpg;
+            document.getElementById('bluetooth').textContent = carData.bluetooth;
+            document.getElementById('camera').textContent = carData.camera;
+            document.getElementById('fuelType').textContent = carData.fuelType;
         }
 
         function showModal(title, message, registerUrl, loginUrl) {
@@ -193,6 +329,81 @@
         }
     });
 </script>
-<?php $__env->stopSection(); ?>
 
+<style>
+    /* Car Details Modal Styles */
+    .car-details-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .car-details-modal .modal-content {
+        background-color: #f8f8f8;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .close-modal {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close-modal:hover,
+    .close-modal:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .car-specs-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+        background-color: #f0f0f0;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .car-specs-row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .car-spec {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 48%;
+        background-color: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .spec-icon {
+        font-style: normal;
+        font-size: 18px;
+    }
+
+    #modalCarTitle {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+</style>
+<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/home.blade.php ENDPATH**/ ?>
