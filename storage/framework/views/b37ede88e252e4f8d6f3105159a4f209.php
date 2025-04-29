@@ -1,20 +1,20 @@
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <div class="container py-4">
         <div class="row">
             <div class="col-lg-10 col-md-12 mx-auto">
                 <!-- Car Image Carousel -->
-                <h3 class="text-center mb-3">{{ $car->maker }} {{ $car->model }}</h3>
-                @if($car->images && count($car->images))
+                <h3 class="text-center mb-3"><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
+                <?php if($car->images && count($car->images)): ?>
             <div class="carousel-container mb-4">
                 <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
-                        @foreach($car->images as $key => $image)
-                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                <img src="{{ asset($image->image_path) }}" class="d-block mx-auto" alt="Car Image">
+                        <?php $__currentLoopData = $car->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <div class="carousel-item <?php echo e($key == 0 ? 'active' : ''); ?>">
+                                <img src="<?php echo e(asset($image->image_path)); ?>" class="d-block mx-auto" alt="Car Image">
                             </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                     
                     <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
@@ -27,45 +27,49 @@
                     </button>
                     
                     <div class="carousel-indicators">
-                        @foreach($car->images as $key => $image)
-                            <button type="button" data-bs-target="#carImageCarousel" data-bs-slide-to="{{ $key }}" 
-                                class="{{ $key == 0 ? 'active' : '' }}" aria-current="{{ $key == 0 ? 'true' : 'false' }}" 
-                                aria-label="Slide {{ $key + 1 }}"></button>
-                        @endforeach
+                        <?php $__currentLoopData = $car->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <button type="button" data-bs-target="#carImageCarousel" data-bs-slide-to="<?php echo e($key); ?>" 
+                                class="<?php echo e($key == 0 ? 'active' : ''); ?>" aria-current="<?php echo e($key == 0 ? 'true' : 'false'); ?>" 
+                                aria-label="Slide <?php echo e($key + 1); ?>"></button>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
             </div>
-        @else
+        <?php else: ?>
             <div class="alert alert-info mb-4">No images available for this car</div>
-        @endif
+        <?php endif; ?>
             </div>
         </div>
 
         <!-- Car Information -->
         <div class="car-details-card mb-4">
-            <h4>{{ $car->maker }} {{ $car->model }}</h4>
+            <h4><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h4>
             
             <div class="car-info-row">
                 <div>
-                    <strong>Brand:</strong> {{ $car->maker }}
+                    <strong>Brand:</strong> <?php echo e($car->maker); ?>
+
                 </div>
                 <div>
-                    <strong>Body Type:</strong> {{ $car->vehicle_type }}
+                    <strong>Body Type:</strong> <?php echo e($car->vehicle_type); ?>
+
                 </div>
                 <div>
-                    <strong>Condition:</strong> {{ $car->car_condition }}
+                    <strong>Condition:</strong> <?php echo e($car->car_condition); ?>
+
                 </div>
             </div>
             
             <div class="car-info-row">
                 <div>
-                    <strong>Registration:</strong> {{ $car->registration_no }}
+                    <strong>Registration:</strong> <?php echo e($car->registration_no); ?>
+
                 </div>
                 <div>
-                    <strong>Mileage:</strong> {{ $car->mileage }} km
+                    <strong>Mileage:</strong> <?php echo e($car->mileage); ?> km
                 </div>
                 <div>
-                    <strong>Price:</strong> ${{ $car->price }}/day
+                    <strong>Price:</strong> $<?php echo e($car->price); ?>/day
                 </div>
             </div>
             
@@ -84,18 +88,18 @@
                 </div>
             </div>
             
-            @if($car->description)
+            <?php if($car->description): ?>
                 <div class="mt-3">
-                    <p><strong>Description:</strong> {{ $car->description }}</p>
+                    <p><strong>Description:</strong> <?php echo e($car->description); ?></p>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
 
         <!-- Booking Time Form -->
         <div class="booking-section mb-4">
             <h4>Book this Car</h4>
-            <form action="{{ route('car.booking.submit', $car->id) }}" method="POST">
-                @csrf
+            <form action="<?php echo e(route('car.booking.submit', $car->id)); ?>" method="POST">
+                <?php echo csrf_field(); ?>
                 <div class="booking-inputs">
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -131,9 +135,9 @@
             </form>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     body {
         background-color: #f7f9fc;
@@ -240,9 +244,9 @@
         width: 100%;
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize the carousel with auto-play
@@ -252,4 +256,5 @@
         });
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/cars/book.blade.php ENDPATH**/ ?>

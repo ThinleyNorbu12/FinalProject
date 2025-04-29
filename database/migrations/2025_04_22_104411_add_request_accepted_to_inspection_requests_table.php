@@ -20,7 +20,7 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void
-    {
+    {  
         Schema::table('inspection_requests', function (Blueprint $table) {
             $table->dropColumn('request_accepted');
         });

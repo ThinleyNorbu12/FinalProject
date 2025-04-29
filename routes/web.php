@@ -26,6 +26,8 @@ Route::get('/available-cars', [HomeController::class, 'showAvailableCars'])->nam
 Route::get('/cars/{id}/book', [HomeController::class, 'book'])->name('book.car');
 
 
+// Route to handle the booking form submission
+Route::post('/cars/{id}/booking', [App\Http\Controllers\BookingController::class, 'submit'])->name('car.booking.submit');
 
 // to display all the register car of carowner
 Route::get('/', [HomeController::class, 'index'])->name('home');

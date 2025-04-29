@@ -1,6 +1,6 @@
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <!-- Header -->
 <header id="header">
     <nav>
@@ -12,14 +12,14 @@
 <div id="sidebar" class="sidebar">
     <div id="sidebar-content" class="sidebar-content">
         <ul class="sidebar-links">
-            <li><a href="{{ route('carowner.login') }}">CAROWNER DASHBOARD</a></li>
-            <li><a href="{{ route('admin.dashboard') }}">ADMIN DASHBOARD</a></li>
-            @auth('customer')
-                <li><a href="{{ route('customer.dashboard') }}">CUSTOMER DASHBOARD</a></li>
-            @else
-                <li><a href="{{ route('customer.login') }}">LOGIN AS CUSTOMER</a></li>
-            @endauth
-            <li><a href="{{ url('/contact') }}">CONTACT</a></li>
+            <li><a href="<?php echo e(route('carowner.login')); ?>">CAROWNER DASHBOARD</a></li>
+            <li><a href="<?php echo e(route('admin.dashboard')); ?>">ADMIN DASHBOARD</a></li>
+            <?php if(auth()->guard('customer')->check()): ?>
+                <li><a href="<?php echo e(route('customer.dashboard')); ?>">CUSTOMER DASHBOARD</a></li>
+            <?php else: ?>
+                <li><a href="<?php echo e(route('customer.login')); ?>">LOGIN AS CUSTOMER</a></li>
+            <?php endif; ?>
+            <li><a href="<?php echo e(url('/contact')); ?>">CONTACT</a></li>
         </ul>
         
     </div>
@@ -35,7 +35,7 @@
 
     <!-- Search Form -->
     <section class="search" style="padding: 20px; text-align: center;">
-        <form action="{{ route('search.car') }}" method="GET">
+        <form action="<?php echo e(route('search.car')); ?>" method="GET">
             <!-- Pickup Location -->
             <input type="text" id="pickup_location" name="pickup_location" placeholder="Pickup Location" required style="margin: 5px; padding: 10px; width: 200px;">
 
@@ -43,19 +43,19 @@
             <div style="display: inline-flex; align-items: center; gap: 5px;">
                 <input type="date" id="pickup_date" name="pickup_date" required
                     style="margin: 5px; padding: 10px; width: 150px;"
-                    min="{{ \Carbon\Carbon::today()->toDateString() }}">
+                    min="<?php echo e(\Carbon\Carbon::today()->toDateString()); ?>">
 
                 <select name="pickup_time" id="pickup_time" required style="margin: 5px; padding: 10px; width: 130px;">
-                    @for ($h = 0; $h < 24; $h++)
-                        @foreach (['00', '30'] as $min)
-                            @php
+                    <?php for($h = 0; $h < 24; $h++): ?>
+                        <?php $__currentLoopData = ['00', '30']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $min): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
                                 $hour = str_pad($h, 2, '0', STR_PAD_LEFT);
                                 $time = "$hour:$min";
                                 $ampm = \Carbon\Carbon::createFromTime($h, $min)->format('h:i A');
-                            @endphp
-                            <option value="{{ $time }}" {{ $time == '12:00' ? 'selected' : '' }}>{{ $ampm }}</option>
-                        @endforeach
-                    @endfor
+                            ?>
+                            <option value="<?php echo e($time); ?>" <?php echo e($time == '12:00' ? 'selected' : ''); ?>><?php echo e($ampm); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php endfor; ?>
                 </select>
             </div>
 
@@ -66,19 +66,19 @@
             <div style="display: inline-flex; align-items: center; gap: 5px;">
                 <input type="date" id="dropoff_date" name="dropoff_date" required
                     style="margin: 5px; padding: 10px; width: 150px;"
-                    min="{{ \Carbon\Carbon::tomorrow()->toDateString() }}">
+                    min="<?php echo e(\Carbon\Carbon::tomorrow()->toDateString()); ?>">
 
                 <select name="dropoff_time" id="dropoff_time" required style="margin: 5px; padding: 10px; width: 130px;">
-                    @for ($h = 0; $h < 24; $h++)
-                        @foreach (['00', '30'] as $min)
-                            @php
+                    <?php for($h = 0; $h < 24; $h++): ?>
+                        <?php $__currentLoopData = ['00', '30']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $min): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
                                 $hour = str_pad($h, 2, '0', STR_PAD_LEFT);
                                 $time = "$hour:$min";
                                 $ampm = \Carbon\Carbon::createFromTime($h, $min)->format('h:i A');
-                            @endphp
-                            <option value="{{ $time }}" {{ $time == '12:00' ? 'selected' : '' }}>{{ $ampm }}</option>
-                        @endforeach
-                    @endfor
+                            ?>
+                            <option value="<?php echo e($time); ?>" <?php echo e($time == '12:00' ? 'selected' : ''); ?>><?php echo e($ampm); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php endfor; ?>
                 </select>
             </div>
 
@@ -113,21 +113,21 @@
     <section class="cars">
         <h2>Available Cars</h2>
         <div class="car-container">
-            @if($cars->count())
-                @foreach($cars as $car)
+            <?php if($cars->count()): ?>
+                <?php $__currentLoopData = $cars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $car): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="car">
-                        <img src="{{ asset($car->car_image) }}" alt="{{ $car->model }}" style="width: 200px; height: auto;">
-                        <h3>{{ $car->maker }} {{ $car->model }}</h3>
-                        <p>{{ $car->price }}/day</p>
+                        <img src="<?php echo e(asset($car->car_image)); ?>" alt="<?php echo e($car->model); ?>" style="width: 200px; height: auto;">
+                        <h3><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
+                        <p><?php echo e($car->price); ?>/day</p>
                         <div class="car-buttons">
-                            <a href="#" class="btn-details" data-car-id="{{ $car->id }}">DETAILS</a>
-                            <a href="{{ route('book.car', $car->id) }}" class="btn-contact">BOOK NOW</a>
+                            <a href="#" class="btn-details" data-car-id="<?php echo e($car->id); ?>">DETAILS</a>
+                            <a href="<?php echo e(route('book.car', $car->id)); ?>" class="btn-contact">BOOK NOW</a>
                         </div>
                     </div>
-                @endforeach
-            @else
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php else: ?>
                 <p>No cars available at the moment.</p>
-            @endif
+            <?php endif; ?>
         </div>
     </section>
     
@@ -214,38 +214,38 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         // Car Owner Modal
-        const carOwnerLink = document.querySelector('a[href="{{ route("carowner.login") }}"]');
+        const carOwnerLink = document.querySelector('a[href="<?php echo e(route("carowner.login")); ?>"]');
 
         if (carOwnerLink) {
             carOwnerLink.addEventListener('click', function(e) {
-                const isLoggedIn = {{ Auth::guard('carowner')->check() ? 'true' : 'false' }};
+                const isLoggedIn = <?php echo e(Auth::guard('carowner')->check() ? 'true' : 'false'); ?>;
 
                 if (!isLoggedIn) {
                     e.preventDefault();
                     showModal(
                         'Car Owner Access Required',
                         'You need to register or login as a car owner first.',
-                        '{{ route("carowner.register") }}',
-                        '{{ route("carowner.login") }}'
+                        '<?php echo e(route("carowner.register")); ?>',
+                        '<?php echo e(route("carowner.login")); ?>'
                     );
                 }
             });
         }
 
         // Admin Modal
-        const adminLink = document.querySelector('a[href="{{ url("/car-admin") }}"]');
+        const adminLink = document.querySelector('a[href="<?php echo e(url("/car-admin")); ?>"]');
 
         if (adminLink) {
             adminLink.addEventListener('click', function(e) {
-                const isAdminLoggedIn = {{ Auth::guard('admin')->check() ? 'true' : 'false' }};
+                const isAdminLoggedIn = <?php echo e(Auth::guard('admin')->check() ? 'true' : 'false'); ?>;
 
                 if (!isAdminLoggedIn) {
                     e.preventDefault();
                     showModal(
                         'Admin Access Required',
                         'You need to register or login as an admin first.',
-                        '{{ route("admin.register") }}',
-                        '{{ route("admin.login") }}'
+                        '<?php echo e(route("admin.register")); ?>',
+                        '<?php echo e(route("admin.login")); ?>'
                     );
                 }
             });
@@ -468,4 +468,5 @@
         margin-bottom: 20px;
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/home.blade.php ENDPATH**/ ?>
