@@ -112,4 +112,10 @@ class CarDetail extends Model
             'id'                                    // Local key on inspection_requests
         );
     }
+
+    public function images()
+    {
+        return $this->hasMany(CarImage::class, 'car_id');
+    }
+
 }

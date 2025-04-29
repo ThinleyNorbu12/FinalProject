@@ -34,17 +34,80 @@
     </section>
 
     <!-- Search Form -->
-    <section class="search">
-        <form action="#" method="GET">
-            <input type="text" name="pickup_location" placeholder="Pickup Location">
-            <input type="date" name="pickup_date">
-            <input type="text" name="dropoff_location" placeholder="Drop-off Location">
-            <input type="date" name="dropoff_date">
+    <section class="search" style="padding: 20px; text-align: center;">
+        <form action="<?php echo e(route('search.car')); ?>" method="GET">
+            <!-- Pickup Location -->
+            <input type="text" id="pickup_location" name="pickup_location" placeholder="Pickup Location" required style="margin: 5px; padding: 10px; width: 200px;">
+
+            <!-- Pickup Date + Time -->
+            <div style="display: inline-flex; align-items: center; gap: 5px;">
+                <input type="date" id="pickup_date" name="pickup_date" required
+                    style="margin: 5px; padding: 10px; width: 150px;"
+                    min="<?php echo e(\Carbon\Carbon::today()->toDateString()); ?>">
+
+                <select name="pickup_time" id="pickup_time" required style="margin: 5px; padding: 10px; width: 130px;">
+                    <?php for($h = 0; $h < 24; $h++): ?>
+                        <?php $__currentLoopData = ['00', '30']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $min): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
+                                $hour = str_pad($h, 2, '0', STR_PAD_LEFT);
+                                $time = "$hour:$min";
+                                $ampm = \Carbon\Carbon::createFromTime($h, $min)->format('h:i A');
+                            ?>
+                            <option value="<?php echo e($time); ?>" <?php echo e($time == '12:00' ? 'selected' : ''); ?>><?php echo e($ampm); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php endfor; ?>
+                </select>
+            </div>
+
+            <!-- Drop-off Location -->
+            <input type="text" id="dropoff_location" name="dropoff_location" placeholder="Drop-off Location" required style="margin: 5px; padding: 10px; width: 200px;" readonly>
+
+            <!-- Drop-off Date + Time -->
+            <div style="display: inline-flex; align-items: center; gap: 5px;">
+                <input type="date" id="dropoff_date" name="dropoff_date" required
+                    style="margin: 5px; padding: 10px; width: 150px;"
+                    min="<?php echo e(\Carbon\Carbon::tomorrow()->toDateString()); ?>">
+
+                <select name="dropoff_time" id="dropoff_time" required style="margin: 5px; padding: 10px; width: 130px;">
+                    <?php for($h = 0; $h < 24; $h++): ?>
+                        <?php $__currentLoopData = ['00', '30']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $min): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
+                                $hour = str_pad($h, 2, '0', STR_PAD_LEFT);
+                                $time = "$hour:$min";
+                                $ampm = \Carbon\Carbon::createFromTime($h, $min)->format('h:i A');
+                            ?>
+                            <option value="<?php echo e($time); ?>" <?php echo e($time == '12:00' ? 'selected' : ''); ?>><?php echo e($ampm); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php endfor; ?>
+                </select>
+            </div>
+
+            <!-- Search Button -->
+            <div style="margin-top: 10px;">
+                <button type="submit" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+                    Search Car
+                </button>
+            </div>
         </form>
-        <div style="text-align: center; margin-top: 10px;">
-            <button onclick="searchCar()">Search Car</button>
-        </div>
     </section>
+
+    <script>
+        // Autofill dropoff location
+        document.getElementById('pickup_location').addEventListener('input', function () {
+            document.getElementById('dropoff_location').value = this.value + ' (Return)';
+        });
+
+        // Update dropoff date min
+        document.getElementById('pickup_date').addEventListener('change', function () {
+            const pickupDate = new Date(this.value);
+            pickupDate.setDate(pickupDate.getDate() + 1);
+            const dropoffDateInput = document.getElementById('dropoff_date');
+            dropoffDateInput.min = pickupDate.toISOString().split('T')[0];
+        });
+    </script>
+
+    
+    
 
     <!-- Display Cars -->
     <section class="cars">
@@ -58,7 +121,7 @@
                         <p><?php echo e($car->price); ?>/day</p>
                         <div class="car-buttons">
                             <a href="#" class="btn-details" data-car-id="<?php echo e($car->id); ?>">DETAILS</a>
-                            <a href="#" class="btn-contact">RENTING</a>
+                            <a href="<?php echo e(route('book.car', $car->id)); ?>" class="btn-contact">BOOK NOW</a>
                         </div>
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

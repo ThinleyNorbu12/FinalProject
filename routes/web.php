@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\CarOwner\AuthController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\HomeController;
+// homecontroller
+// home.blade.php
 Route::get('/', function () {
     return view('home');
 
@@ -13,8 +15,17 @@ Route::get('/', function () {
 // If you're using Laravel 8+ with the new route syntax:
 Route::get('/cars/{id}/details', [App\Http\Controllers\HomeController::class, 'getCarDetails'])->name('car.details');
 
-// OR for older Laravel versions:
-// Route::get('/cars/{id}/details', 'App\Http\Controllers\HomeController@getCarDetails')->name('car.details');
+Route::get('/search-car', [HomeController::class, 'searchCar'])->name('search.car');
+// Route to set the pickup and dropoff dates  cars in search_results.php
+Route::post('/set-dates', [HomeController::class, 'setDates'])->name('set.dates');
+
+// Route to display the available cars in search_results.php
+Route::get('/available-cars', [HomeController::class, 'showAvailableCars'])->name('available.cars');
+
+// when i click on Book Now  in home.blade.php 
+Route::get('/cars/{id}/book', [HomeController::class, 'book'])->name('book.car');
+
+
 
 // to display all the register car of carowner
 Route::get('/', [HomeController::class, 'index'])->name('home');

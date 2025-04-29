@@ -14,6 +14,8 @@ use App\Models\InspectionRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\Admin; 
 use App\Mail\InspectionAcceptedNotification;
+use App\Models\CarImage;
+
 
 
 
@@ -212,83 +214,176 @@ class CarOwnerController extends Controller
     //     return redirect()->route('carowner.rentCar')->with('success', 'Car registered successfully!');
     // }
 
+    //     public function storeRentCar(Request $request)
+    // {
+    //     // Validation logic
+    //     $request->validate([
+    //         'maker' => 'required|string|max:255',
+    //         'model' => 'required|string|max:255',
+    //         'vehicle_type' => 'required|string',
+    //         'car_condition' => 'required|string',
+    //         'mileage' => 'required|numeric',
+    //         'price' => 'required|numeric',
+    //         'registration_no' => 'required|string|unique:car_details_tbl,registration_no',
+    //         'status' => 'required|string',
+    //         'description' => 'nullable|string',
+    //         'car_image' => 'required|image|mimes:jpeg,webp,png,jpg,gif|max:2048',
+    //         'number_of_doors' => 'nullable|integer',
+    //         'number_of_seats' => 'nullable|integer',
+    //         'transmission_type' => 'required|string|in:Automatic,Manual', // Make it required with specific valid values
+    //         'large_bags_capacity' => 'nullable|integer',
+    //         'small_bags_capacity' => 'nullable|integer',
+    //         'fuel_type' => 'required|string', 
+    //         'air_conditioning' => 'required|string|in:Yes,No',
+    //         'backup_camera' => 'required|string|in:Yes,No',
+    //         'bluetooth' => 'required|string|in:Yes,No',
+    //     ], [
+    //         'registration_no.unique' => 'This registration number is already registered.',
+    //         'transmission_type.required' => 'Transmission type is required.', // Custom error message
+    //         'transmission_type.in' => 'The transmission type must be either Automatic or Manual.', // Custom message for invalid values
+    //     ]);
+
+    //     // Store car information in the database (CarDetail model)
+    //     $car = new CarDetail();
+    //     $car->maker = $request->maker;
+    //     $car->model = $request->model;
+    //     $car->vehicle_type = $request->vehicle_type;
+    //     $car->car_condition = $request->car_condition;
+    //     $car->mileage = $request->mileage;
+    //     $car->price = $request->price;
+    //     $car->registration_no = $request->registration_no;
+    //     $car->status = $request->status;
+    //     $car->description = $request->description;
+
+    //     // Handle new fields
+    //     $car->number_of_doors = $request->number_of_doors;
+    //     $car->number_of_seats = $request->number_of_seats;
+    //     $car->transmission_type = $request->transmission_type;
+    //     $car->large_bags_capacity = $request->large_bags_capacity;
+    //     $car->small_bags_capacity = $request->small_bags_capacity;
+    //     $car->fuel_type = $request->fuel_type;
+    //     $car->air_conditioning = $request->air_conditioning;
+    //     $car->backup_camera = $request->backup_camera;
+    //     $car->bluetooth = $request->bluetooth;
+
+    //     // Initialize $imagePath variable
+    //     $imagePath = null;
+
+    //     // Handle image upload
+    //     if ($request->hasFile('car_image')) {
+    //         $file = $request->file('car_image');
+    //         $filename = time() . '.' . $file->getClientOriginalExtension();
+    //         $file->move(public_path('uploads/cars'), $filename); // Store in the 'uploads/cars' directory
+    //         $imagePath = 'uploads/cars/' . $filename; // Store the path in the DB
+    //     }
+
+    //     // Assign the image path to the car record
+    //     $car->car_image = $imagePath;
+
+    //     // Assign the car to the logged-in car owner using the correct column: car_owner_id
+    //     $car->car_owner_id = auth()->guard('carowner')->id(); // Use car_owner_id to link to the owner
+
+    //     // Save the car record to the database
+    //     $car->save();
+
+    //     // Redirect with a success message
+    //     return redirect()->route('carowner.rentCar')->with('success', 'Car registered successfully!');
+    // }
+
     public function storeRentCar(Request $request)
-{
-    // Validation logic
-    $request->validate([
-        'maker' => 'required|string|max:255',
-        'model' => 'required|string|max:255',
-        'vehicle_type' => 'required|string',
-        'car_condition' => 'required|string',
-        'mileage' => 'required|numeric',
-        'price' => 'required|numeric',
-        'registration_no' => 'required|string|unique:car_details_tbl,registration_no',
-        'status' => 'required|string',
-        'description' => 'nullable|string',
-        'car_image' => 'required|image|mimes:jpeg,webp,png,jpg,gif|max:2048',
-        'number_of_doors' => 'nullable|integer',
-        'number_of_seats' => 'nullable|integer',
-        'transmission_type' => 'required|string|in:Automatic,Manual', // Make it required with specific valid values
-        'large_bags_capacity' => 'nullable|integer',
-        'small_bags_capacity' => 'nullable|integer',
-        'fuel_type' => 'required|string', 
-        'air_conditioning' => 'required|string|in:Yes,No',
-        'backup_camera' => 'required|string|in:Yes,No',
-        'bluetooth' => 'required|string|in:Yes,No',
-    ], [
-        'registration_no.unique' => 'This registration number is already registered.',
-        'transmission_type.required' => 'Transmission type is required.', // Custom error message
-        'transmission_type.in' => 'The transmission type must be either Automatic or Manual.', // Custom message for invalid values
-    ]);
-
-    // Store car information in the database (CarDetail model)
-    $car = new CarDetail();
-    $car->maker = $request->maker;
-    $car->model = $request->model;
-    $car->vehicle_type = $request->vehicle_type;
-    $car->car_condition = $request->car_condition;
-    $car->mileage = $request->mileage;
-    $car->price = $request->price;
-    $car->registration_no = $request->registration_no;
-    $car->status = $request->status;
-    $car->description = $request->description;
-
-    // Handle new fields
-    $car->number_of_doors = $request->number_of_doors;
-    $car->number_of_seats = $request->number_of_seats;
-    $car->transmission_type = $request->transmission_type;
-    $car->large_bags_capacity = $request->large_bags_capacity;
-    $car->small_bags_capacity = $request->small_bags_capacity;
-    $car->fuel_type = $request->fuel_type;
-    $car->air_conditioning = $request->air_conditioning;
-    $car->backup_camera = $request->backup_camera;
-    $car->bluetooth = $request->bluetooth;
-
-    // Initialize $imagePath variable
-    $imagePath = null;
-
-    // Handle image upload
-    if ($request->hasFile('car_image')) {
-        $file = $request->file('car_image');
-        $filename = time() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('uploads/cars'), $filename); // Store in the 'uploads/cars' directory
-        $imagePath = 'uploads/cars/' . $filename; // Store the path in the DB
+    {
+        // Validate the input fields
+        $request->validate([
+            'maker' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
+            'vehicle_type' => 'required|string',
+            'car_condition' => 'required|string',
+            'mileage' => 'required|numeric',
+            'price' => 'required|numeric',
+            'registration_no' => 'required|string|unique:car_details_tbl,registration_no',
+            'status' => 'required|string',
+            'description' => 'nullable|string',
+            'car_images' => 'required|array|min:1', // Ensure at least one image is uploaded
+            'car_images.*' => 'image|mimes:jpeg,webp,png,jpg,gif|max:2048', // Validate image formats and size
+            'number_of_doors' => 'nullable|integer',
+            'number_of_seats' => 'nullable|integer',
+            'transmission_type' => 'required|string|in:Automatic,Manual',
+            'large_bags_capacity' => 'nullable|integer',
+            'small_bags_capacity' => 'nullable|integer',
+            'fuel_type' => 'required|string',
+            'air_conditioning' => 'required|string|in:Yes,No',
+            'backup_camera' => 'required|string|in:Yes,No',
+            'bluetooth' => 'required|string|in:Yes,No',
+        ], [
+            'registration_no.unique' => 'This registration number is already registered.',
+            'transmission_type.required' => 'Transmission type is required.',
+            'transmission_type.in' => 'The transmission type must be either Automatic or Manual.',
+            'car_images.required' => 'Please upload at least one car image.',
+            'car_images.*.image' => 'All uploaded files must be images.',
+            'car_images.*.mimes' => 'Only jpeg, webp, png, jpg, and gif formats are allowed.',
+            'car_images.*.max' => 'Image size should not exceed 2MB.',
+        ]);
+    
+        // Create new CarDetail instance
+        $car = new CarDetail();
+        $car->maker = $request->maker;
+        $car->model = $request->model;
+        $car->vehicle_type = $request->vehicle_type;
+        $car->car_condition = $request->car_condition;
+        $car->mileage = $request->mileage;
+        $car->price = $request->price;
+        $car->registration_no = $request->registration_no;
+        $car->status = $request->status;
+        $car->description = $request->description;
+    
+        // Optional fields
+        $car->number_of_doors = $request->number_of_doors;
+        $car->number_of_seats = $request->number_of_seats;
+        $car->transmission_type = $request->transmission_type;
+        $car->large_bags_capacity = $request->large_bags_capacity;
+        $car->small_bags_capacity = $request->small_bags_capacity;
+        $car->fuel_type = $request->fuel_type;
+        $car->air_conditioning = $request->air_conditioning;
+        $car->backup_camera = $request->backup_camera;
+        $car->bluetooth = $request->bluetooth;
+    
+        // Assign to authenticated car owner
+        $car->car_owner_id = auth()->guard('carowner')->id();
+    
+        // Save the car record first to get the ID
+        $car->save();
+    
+        // Handle multiple image uploads
+        if ($request->hasFile('car_images')) {
+            $imagesPaths = []; // Array to store image paths
+            
+            foreach ($request->file('car_images') as $image) {
+                // Generate unique file name for each image
+                $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('uploads/cars'), $filename);
+                $imagePath = 'uploads/cars/' . $filename;
+                
+                // Add image path to the array
+                $imagesPaths[] = $imagePath;
+                
+                // Create a new car image record in the database
+                $carImage = new CarImage(); // Assuming you have a CarImage model
+                $carImage->car_id = $car->id;
+                $carImage->image_path = $imagePath;
+                $carImage->save();
+            }
+            
+            // Set the primary image (first image in the array) for the car
+            if (!empty($imagesPaths)) {
+                $car->car_image = $imagesPaths[0]; // Set the first image as the car's primary image
+                $car->save(); // Save the updated car record
+            }
+        }
+    
+        // Redirect with a success message
+        return redirect()->route('carowner.rentCar')->with('success', 'Car registered successfully!');
     }
-
-    // Assign the image path to the car record
-    $car->car_image = $imagePath;
-
-    // Assign the car to the logged-in car owner using the correct column: car_owner_id
-    $car->car_owner_id = auth()->guard('carowner')->id(); // Use car_owner_id to link to the owner
-
-    // Save the car record to the database
-    $car->save();
-
-    // Redirect with a success message
-    return redirect()->route('carowner.rentCar')->with('success', 'Car registered successfully!');
-}
-
-
+    
 
     // 2.view rented car 
     

@@ -65,4 +65,72 @@ class HomeController extends Controller
             'details' => $details
         ]);
     }
+
+    public function searchCar(Request $request)
+    {
+        $pickupDate = $request->pickup_date;
+        $dropoffDate = $request->dropoff_date;
+
+        $availableCarsQuery = DB::table('car_details_tbl');
+
+        if ($pickupDate && $dropoffDate) {
+            $availableCarsQuery->whereNotIn('id', function($query) use ($pickupDate, $dropoffDate) {
+                $query->select('car_id')
+                    ->from('car_bookings')
+                    ->where(function ($q) use ($pickupDate, $dropoffDate) {
+                        $q->where('pickup_date', '<=', $dropoffDate)
+                        ->where('dropoff_date', '>=', $pickupDate);
+                    });
+            });
+        }
+
+        $availableCars = $availableCarsQuery->get();
+
+        return view('search_results', compact('availableCars'));
+    }
+
+// Method to set pickup and dropoff dates
+    public function setDates(Request $request)
+    {
+        // Redirect to the available cars page with the pickup and dropoff dates as query parameters
+        return redirect()->route('available.cars', [
+            'pickup_date' => $request->pickup_date,
+            'dropoff_date' => $request->dropoff_date,
+        ]);
+    }
+
+    // Method to show available cars
+    public function showAvailableCars(Request $request)
+    {
+        // Fetch cars from the database (or perform your own logic)
+        $availableCars = Car::all(); // Example, replace with your actual query
+
+        // Pass the available cars and the dates from the query parameters to the view
+        return view('search_results', [
+            'availableCars' => $availableCars,
+            'pickupDate' => $request->pickup_date,  // Pass the pickup date
+            'dropoffDate' => $request->dropoff_date,  // Pass the dropoff date
+        ]);
+    }
+
+
+    // when i click on Book Now buotton in home.blade.php
+
+    public function book($id)
+    {
+        $car = CarDetail::findOrFail($id);
+        return view('cars.book', compact('car')); // Make sure this view exists
+    }
+
+
+    public function show($id)
+{
+    $car = CarDetail::with('images')->findOrFail($id);
+    return view('cars.book', compact('car'));
+}
+
+
+
+
+
 }

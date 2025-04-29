@@ -3,7 +3,84 @@
 <?php $__env->startSection('content'); ?>
     <h1>Rent a Car</h1>
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/carowner/rent-car.css')); ?>">
-    <form action="<?php echo e(route('carowner.storeRentCar')); ?>" method="POST" enctype="multipart/form-data">
+    
+    <style>
+        /* Drag & Drop File Upload Area */
+        .file-upload-container {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: border 0.3s ease;
+            background-color: #f8f9fa;
+        }
+        
+        .file-upload-container.active {
+            border-color: #0d6efd;
+            background-color: #e8f0fe;
+        }
+        
+        .file-upload-container h3 {
+            margin-bottom: 15px;
+        }
+        
+        .file-upload-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            background-color: #0d6efd;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        
+        /* Image Preview */
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .image-preview {
+            position: relative;
+            width: 150px;
+            height: 100px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-preview .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+    
+    <form action="<?php echo e(route('carowner.storeRentCar')); ?>" method="POST" enctype="multipart/form-data" id="carForm">
         <?php echo csrf_field(); ?>
 
         <?php if(session('success')): ?>
@@ -235,6 +312,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
          <br>
+         
         <!-- Air Conditioning -->
         <label for="air_conditioning">Air Conditioning:</label><br>
         <input type="radio" name="air_conditioning" value="Yes" 
@@ -289,9 +367,6 @@ endif;
 unset($__errorArgs, $__bag); ?>
         <br><br>
 
-
-
-
         
 
         <label for="description">Description:</label>
@@ -308,22 +383,168 @@ endif;
 unset($__errorArgs, $__bag); ?>
         <br>
 
-        <label for="car_image">Car Image:</label>
-        <input type="file" name="car_image" id="car_image">
-        <?php $__errorArgs = ['car_image'];
+        <!-- Drag & Drop Image Upload -->
+        <div class="file-upload-section">
+            <label>Car Images:</label>
+            <div class="file-upload-container" id="dropZone">
+                <h3>Drop car images here</h3>
+                <p>or</p>
+                <label for="car_images" class="browse-btn">Browse Files</label>
+                <input type="file" name="car_images[]" id="car_images" class="file-upload-input" multiple accept="image/*">
+                <p class="small-text">Supported formats: JPEG, PNG, JPG, WEBP, GIF (max 2MB each)</p>
+                
+                <!-- Hidden input to store selected files -->
+                <div id="selectedFiles" class="image-preview-container">
+                    <!-- Image previews will be inserted here -->
+                </div>
+            </div>
+            
+            <?php $__errorArgs = ['car_images'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-            <span style="color: red;"><?php echo e($message); ?></span>
-        <?php unset($message);
+                <span style="color: red;"><?php echo e($message); ?></span>
+            <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
-        <br>
+            <?php if($errors->has('car_images.*')): ?>
+                <?php $__currentLoopData = $errors->get('car_images.*'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $messages): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php $__currentLoopData = $messages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $message): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <span style="color: red;"><?php echo e($message); ?></span><br>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php endif; ?>
+        </div>
 
         <button type="submit">Submit</button>
     </form>
-<?php $__env->stopSection(); ?>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('car_images');
+            const previewContainer = document.getElementById('selectedFiles');
+            const form = document.getElementById('carForm');
+            
+            // Track selected files
+            let selectedFiles = new DataTransfer();
+            
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            // Highlight drop zone when dragging over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+            
+            // Handle dropped files
+            dropZone.addEventListener('drop', handleDrop, false);
+            
+            // Handle files from file input
+            fileInput.addEventListener('change', function(e) {
+                handleFiles(this.files);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            function highlight() {
+                dropZone.classList.add('active');
+            }
+            
+            function unhighlight() {
+                dropZone.classList.remove('active');
+            }
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    // Process each file
+                    Array.from(files).forEach(file => {
+                        if (file.type.startsWith('image/')) {
+                            // Add to DataTransfer object
+                            selectedFiles.items.add(file);
+                            
+                            // Create preview
+                            createImagePreview(file);
+                        }
+                    });
+                    
+                    // Update file input with selected files
+                    updateFileInput();
+                }
+            }
+            
+            function createImagePreview(file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const preview = document.createElement('div');
+                    preview.className = 'image-preview';
+                    preview.dataset.name = file.name;
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.addEventListener('click', function() {
+                        removeFile(file.name);
+                        preview.remove();
+                    });
+                    
+                    preview.appendChild(img);
+                    preview.appendChild(removeBtn);
+                    previewContainer.appendChild(preview);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            function removeFile(fileName) {
+                // Create a new DataTransfer object
+                const newFiles = new DataTransfer();
+                
+                // Copy all files except the one to be removed
+                for (let i = 0; i < selectedFiles.files.length; i++) {
+                    const file = selectedFiles.files[i];
+                    if (file.name !== fileName) {
+                        newFiles.items.add(file);
+                    }
+                }
+                
+                // Replace old DataTransfer with new one
+                selectedFiles = newFiles;
+                updateFileInput();
+            }
+            
+            function updateFileInput() {
+                // Update the file input with current selections
+                fileInput.files = selectedFiles.files;
+            }
+            
+            // Submit the form with the updated file input
+            form.addEventListener('submit', function(e) {
+                // The file input is already updated, so just let the form submit
+            });
+        });
+    </script>
+<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/CarOwner/rent-car.blade.php ENDPATH**/ ?>
