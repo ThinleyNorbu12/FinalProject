@@ -2,8 +2,23 @@
 
 <?php $__env->startSection('content'); ?>
 <div class="container">
-    <h1>Welcome to Customer Dashboard</h1>
-    <p>Here you can browse, book, and manage your rentals.</p>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="profile-section">
+                <h2>Welcome to the Customer Dashboard</h2>
+
+                <?php if(Auth::guard('customer')->check()): ?>
+                    <p>Hello, <?php echo e(Auth::guard('customer')->user()->name); ?>!</p>
+                    <form method="POST" action="<?php echo e(route('customer.logout')); ?>">
+                        <?php echo csrf_field(); ?>
+                        <button type="submit" class="btn btn-danger">Logout</button>
+                    </form>
+                <?php else: ?>
+                    <p>Hello, Guest!</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 </div>
 <?php $__env->stopSection(); ?>
 

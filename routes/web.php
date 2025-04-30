@@ -6,14 +6,17 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\CarOwner\AuthController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PaymentController;
 // homecontroller
 // home.blade.php
 Route::get('/', function () {
     return view('home');
 
 });
-// If you're using Laravel 8+ with the new route syntax:
-Route::get('/cars/{id}/details', [App\Http\Controllers\HomeController::class, 'getCarDetails'])->name('car.details');
+
+// Car Details Page
+Route::get('/cars/{id}/details', [HomeController::class, 'getCarDetails'])->name('car.details');
 
 Route::get('/search-car', [HomeController::class, 'searchCar'])->name('search.car');
 // Route to set the pickup and dropoff dates  cars in search_results.php
@@ -22,13 +25,26 @@ Route::post('/set-dates', [HomeController::class, 'setDates'])->name('set.dates'
 // Route to display the available cars in search_results.php
 Route::get('/available-cars', [HomeController::class, 'showAvailableCars'])->name('available.cars');
 
-// when i click on Book Now  in home.blade.php 
+// Book Now (shows the booking form)
 Route::get('/cars/{id}/book', [HomeController::class, 'book'])->name('book.car');
 
 
 // Route to handle the booking form submission
-Route::post('/cars/{id}/booking', [App\Http\Controllers\BookingController::class, 'submit'])->name('car.booking.submit');
+// Submit Booking Form (for both logged in and non-logged in users)
+Route::post('/car/{id}/book', [BookingController::class, 'submit'])
+    ->name('car.booking.submit');
 
+// Booking Summary Page (protected with middleware)
+Route::get('/booking/summary', [BookingController::class, 'summary'])
+    ->name('booking.summary')
+    ->middleware('auth:customer'); // Use customer guard
+// when i click pay now in booking summary page
+Route::get('/payment', [PaymentController::class, 'show'])->name('payment.page');
+Route::post('/payment/process', [PaymentController::class, 'process'])->name('payment.process');
+    
+
+
+    // car owner page
 // to display all the register car of carowner
 Route::get('/', [HomeController::class, 'index'])->name('home');
 

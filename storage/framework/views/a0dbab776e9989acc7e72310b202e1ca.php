@@ -141,7 +141,7 @@
         <div class="car-specs-container">
             <div class="car-specs-row">
                 <div class="car-spec">
-                    <i class="spec-icon">🚪</i>
+                    <i class="spec-icon">🚘</i>
                     <span id="doors">4 Doors</span>
                 </div>
                 <div class="car-spec">

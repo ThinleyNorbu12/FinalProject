@@ -1,253 +1,136 @@
+<!-- Link to the external CSS file -->
+<link rel="stylesheet" href="{{ asset('assets/css/cars/book.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
-        <div class="row">
-            <div class="col-lg-10 col-md-12 mx-auto">
-                <!-- Car Image Carousel -->
-                <h3 class="text-center mb-3">{{ $car->maker }} {{ $car->model }}</h3>
-                @if($car->images && count($car->images))
-            <div class="carousel-container mb-4">
-                <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @foreach($car->images as $key => $image)
-                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                <img src="{{ asset($image->image_path) }}" class="d-block mx-auto" alt="Car Image">
-                            </div>
-                        @endforeach
-                    </div>
-                    
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                    
-                    <div class="carousel-indicators">
-                        @foreach($car->images as $key => $image)
-                            <button type="button" data-bs-target="#carImageCarousel" data-bs-slide-to="{{ $key }}" 
-                                class="{{ $key == 0 ? 'active' : '' }}" aria-current="{{ $key == 0 ? 'true' : 'false' }}" 
-                                aria-label="Slide {{ $key + 1 }}"></button>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        @else
-            <div class="alert alert-info mb-4">No images available for this car</div>
-        @endif
-            </div>
-        </div>
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-10 col-md-12 mx-auto">
+            <!-- Car Title -->
+            <h3 class="text-center mb-3">{{ $car->maker }} {{ $car->model }}</h3>
 
-        <!-- Car Information -->
-        <div class="car-details-card mb-4">
-            <h4>{{ $car->maker }} {{ $car->model }}</h4>
-            
-            <div class="car-info-row">
-                <div>
-                    <strong>Brand:</strong> {{ $car->maker }}
+            <!-- Image Section -->
+            @if($car->images && count($car->images))
+                <div class="carousel-container mb-4">
+                    <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @foreach($car->images as $key => $image)
+                                <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                    <img src="{{ asset($image->image_path) }}" class="d-block mx-auto" alt="Car Image">
+                                </div>
+                            @endforeach
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                        <div class="carousel-indicators">
+                            @foreach($car->images as $key => $image)
+                                <button type="button" data-bs-target="#carImageCarousel" data-bs-slide-to="{{ $key }}"
+                                    class="{{ $key == 0 ? 'active' : '' }}" aria-current="{{ $key == 0 ? 'true' : 'false' }}"
+                                    aria-label="Slide {{ $key + 1 }}"></button>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <strong>Body Type:</strong> {{ $car->vehicle_type }}
+            @elseif($car->car_image)
+                <div class="mb-4 text-center">
+                    <img src="{{ asset($car->car_image) }}" alt="Car Image" style="max-width: 100%; max-height: 300px;" class="img-fluid rounded">
                 </div>
-                <div>
-                    <strong>Condition:</strong> {{ $car->car_condition }}
-                </div>
-            </div>
-            
-            <div class="car-info-row">
-                <div>
-                    <strong>Registration:</strong> {{ $car->registration_no }}
-                </div>
-                <div>
-                    <strong>Mileage:</strong> {{ $car->mileage }} km
-                </div>
-                <div>
-                    <strong>Price:</strong> ${{ $car->price }}/day
-                </div>
-            </div>
-            
-            <div class="mt-3">
-                <div class="car-spec">
-                    <i class="spec-icon">🚗</i>
-                    <span id="doors">4 Doors</span>
-                </div>
-                <div class="car-spec">
-                    <i class="spec-icon">👥</i>
-                    <span id="seats">5 Seats</span>
-                </div>
-                <div class="car-spec">
-                    <i class="spec-icon">⚙️</i>
-                    <span id="transmission">Automatic</span>
-                </div>
-            </div>
-            
-            @if($car->description)
-                <div class="mt-3">
-                    <p><strong>Description:</strong> {{ $car->description }}</p>
-                </div>
+            @else
+                <div class="alert alert-info mb-4">No image available for this car</div>
             @endif
-        </div>
 
-        <!-- Booking Time Form -->
-        <div class="booking-section mb-4">
-            <h4>Book this Car</h4>
-            <form action="{{ route('car.booking.submit', $car->id) }}" method="POST">
-                @csrf
-                <div class="booking-inputs">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="name" class="form-label">Full Name:</label>
-                            <input type="text" class="form-control" name="name" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="email" class="form-label">Email Address:</label>
-                            <input type="email" class="form-control" name="email" required>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="pickup_date" class="form-label">Pickup Date:</label>
-                            <input type="date" class="form-control" name="pickup_date" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="return_date" class="form-label">Return Date:</label>
-                            <input type="date" class="form-control" name="return_date" required>
-                        </div>
-                    </div>
-                    
-                    <div class="booking-timeline mb-3">
-                        <div class="timeline-car">🚗</div>
-                        <div class="timeline-line"></div>
-                    </div>
-                    
-                    <div class="text-muted small mb-3">Note: Time will be rounded off to the hour</div>
-
-                    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+            <!-- Car Information -->
+            <div class="car-details-card mb-4">
+                <div class="car-info-row">
+                    <div><strong>Brand:</strong> {{ $car->maker }}</div>
+                    <div><strong>Body Type:</strong> {{ $car->vehicle_type }}</div>
+                    <div><strong>Condition:</strong> {{ $car->car_condition }}</div>
                 </div>
-            </form>
+                <div class="car-info-row">
+                    <div><strong>Registration:</strong> {{ $car->registration_no }}</div>
+                    <div><strong>Mileage:</strong> {{ number_format($car->mileage) }} km</div>
+                    <div><strong>Price:</strong> Nu {{ number_format($car->price) }}/day</div>
+                </div>
+                <div class="mt-3">
+                    <div class="car-spec"><i class="spec-icon">🚗</i><span>{{ $car->number_of_doors }} Doors</span></div>
+                    <div class="car-spec"><i class="spec-icon">👥</i><span>{{ $car->number_of_seats }} Seats</span></div>
+                    <div class="car-spec"><i class="spec-icon">⚙️</i><span>{{ ucfirst($car->transmission_type) }}</span></div>
+                    <div class="car-spec"><i class="spec-icon">🧳</i><span>{{ $car->large_bags_capacity }} Large Bags</span></div>
+                    <div class="car-spec"><i class="spec-icon">🎒</i><span>{{ $car->small_bags_capacity }} Small Bags</span></div>
+                    <div class="car-spec"><i class="spec-icon">⛽</i><span>{{ $car->fuel_type }}</span></div>
+                    <div class="car-spec"><i class="spec-icon">❄️</i><span>{{ $car->air_conditioning ? 'Air Conditioning' : 'No AC' }}</span></div>
+                    <div class="car-spec"><i class="spec-icon">🎥</i><span>{{ $car->backup_camera ? 'Backup Camera' : 'No Backup Camera' }}</span></div>
+                    <div class="car-spec"><i class="spec-icon">🔊</i><span>{{ $car->bluetooth ? 'Bluetooth Enabled' : 'No Bluetooth' }}</span></div>
+                </div>
+                @if($car->description)
+                    <div class="mt-3"><p><strong>Description:</strong> {{ $car->description }}</p></div>
+                @endif
+            </div>
+
+            <!-- Booking Form -->
+            <div class="booking-section mb-4">
+                <h4>Book this Car</h4>
+
+                @if(Auth::guard('customer')->check())
+                    <form action="{{ route('car.booking.submit', $car->id) }}" method="POST">
+                        @csrf
+                        <div class="booking-inputs">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="pickup_date" class="form-label">Pickup Date:</label>
+                                    <input type="date" class="form-control" name="pickup_date" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="return_date" class="form-label">Return Date:</label>
+                                    <input type="date" class="form-control" name="return_date" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="pickup_location" class="form-label">Pickup Location:</label>
+                                    <input type="text" class="form-control" name="pickup_location" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="drop_location" class="form-label">Drop Location:</label>
+                                    <input type="text" class="form-control" name="drop_location" required>
+                                </div>
+                            </div>
+                            <div class="booking-timeline mb-3">
+                                <div class="timeline-car">🚗</div>
+                                <div class="timeline-line"></div>
+                            </div>
+                            <div class="text-muted small mb-3">Note: Time will be rounded off to the hour</div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Book</button>
+                                <a href="{{ route('home') }}" class="btn btn-secondary">Cancel</a>
+                            </div>                        
+                        </div>
+                    </form>
+                @else
+                    <div class="alert alert-warning">You must be logged in to book a car.</div>
+                    <a href="{{ route('customer.login', ['redirectTo' => url()->full()]) }}" class="btn btn-primary">Login to Book</a>
+                    <a href="{{ route('home') }}" class="btn btn-secondary">Cancel</a>
+                @endif
+            </div>
         </div>
     </div>
-@endsection
-
-@section('styles')
-<style>
-    body {
-        background-color: #f7f9fc;
-    }
-    .carousel-container {
-        background-color: white;
-        padding: 15px;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    
-    .carousel-inner img {
-        max-height: 280px;
-        object-fit: contain;
-        margin: 0 auto;
-        width: auto;
-        max-width: 100%;
-        border-radius: 5px;
-    }
-    
-    .carousel-control-prev, .carousel-control-next {
-        width: 40px;
-        height: 40px;
-        background-color: rgba(0,0,0,0.5);
-        border-radius: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 0.7;
-    }
-    
-    .carousel-control-prev:hover, .carousel-control-next:hover {
-        background-color: rgba(0,0,0,0.8);
-        opacity: 0.9;
-    }
-    
-    .carousel-indicators {
-        bottom: -10px;
-    }
-    
-    .carousel-indicators button {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin: 0 5px;
-        background-color: #ccc;
-    }
-    
-    .carousel-indicators button.active {
-        background-color: #f00;
-    }
-    
-    .car-details-card {
-        background-color: white;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .car-info-row {
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px solid #eee;
-        padding: 10px 0;
-    }
-    
-    .car-spec {
-        display: inline-flex;
-        align-items: center;
-        margin-right: 20px;
-        margin-bottom: 10px;
-        color: #666;
-    }
-    
-    .spec-icon {
-        margin-right: 5px;
-        font-style: normal;
-    }
-    
-    .booking-section {
-        background-color: white;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .booking-timeline {
-        position: relative;
-        padding: 15px 0;
-        margin: 25px 0;
-    }
-    
-    .timeline-car {
-        color: red;
-        position: absolute;
-        top: -10px;
-        left: 20%;
-        font-size: 24px;
-    }
-    
-    .timeline-line {
-        border-top: 2px dashed #ccc;
-        width: 100%;
-    }
-</style>
+</div>
 @endsection
 
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the carousel with auto-play
         var carCarousel = new bootstrap.Carousel(document.getElementById('carImageCarousel'), {
-            interval: 3000, // Change slides every 3 seconds
+            interval: 3000,
             ride: 'carousel'
         });
     });
