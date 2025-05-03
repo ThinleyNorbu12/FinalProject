@@ -1,27 +1,281 @@
 
 
+<?php $__env->startSection('head'); ?>
+<!-- Additional styles for modern sidebar -->
+ 
+<style>
+    /* Main Layout Styles */
+    body {
+        transition: margin-left 0.3s ease;
+        overflow-x: hidden;
+    }
+
+    body.sidebar-open {
+        margin-left: 250px;
+    }
+
+    /* Header Styles */
+    #header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        transition: all 0.3s ease;
+    }
+
+    #header.sidebar-open {
+        left: 250px;
+        width: calc(100% - 250px);
+    }
+
+    #toggle-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #333;
+        margin-right: 20px;
+        transition: all 0.3s;
+    }
+
+    #toggle-btn:hover {
+        color: #007bff;
+    }
+
+    /* Modern Sidebar Styles */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -250px;
+        width: 250px;
+        height: 100%;
+        background-color: #2c3e50;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        box-shadow: 3px 0 5px rgba(0,0,0,0.2);
+        overflow-y: auto;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .sidebar-header {
+        padding: 20px 15px;
+        background-color: #1a2733;
+        color: white;
+        font-size: 22px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 60px;
+    }
+
+    .sidebar-header .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .sidebar-content {
+        padding: 15px 0;
+    }
+
+    .sidebar-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-links li {
+        margin-bottom: 5px;
+    }
+
+    .sidebar-links a {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.3s;
+        font-size: 15px;
+    }
+
+    .sidebar-links a:hover {
+        background-color: #34495e;
+        color: white;
+        padding-left: 25px;
+    }
+
+    .sidebar-links i {
+        margin-right: 15px;
+        font-size: 18px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .sidebar-divider {
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.1);
+        margin: 15px 0;
+    }
+
+    /* Main Content Adjustment */
+    #main-content {
+        transition: margin-left 0.3s ease;
+        margin-left: 0;
+        padding-top: 80px; /* To account for the fixed header */
+    }
+
+    #main-content.shifted {
+        margin-left: 250px;
+    }
+
+    /* Footer Adjustment */
+    #footer {
+        transition: margin-left 0.3s ease;
+    }
+
+    #footer.shifted {
+        margin-left: 250px;
+    }
+
+    /* Overlay when sidebar is open on mobile */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        body.sidebar-open {
+            margin-left: 0;
+        }
+
+        #header.sidebar-open {
+            left: 0;
+            width: 100%;
+        }
+
+        #main-content.shifted {
+            margin-left: 0;
+        }
+
+        #footer.shifted {
+            margin-left: 0;
+        }
+    }
+</style>
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
 <!-- Header -->
 <header id="header">
-    <nav>
-        <button onclick="toggleSidebar()">☰</button>
-    </nav>
+    <button id="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="logo">
+        <h3>Car Rental System</h3>
+    </div>
 </header>
+
+<!-- Sidebar Overlay (for mobile) -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- Sidebar -->
 <div id="sidebar" class="sidebar">
-    <div id="sidebar-content" class="sidebar-content">
+    <div class="sidebar-header">
+        <span>Menu</span>
+        <button class="close-btn" onclick="toggleSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="sidebar-content">
         <ul class="sidebar-links">
-            <li><a href="<?php echo e(route('carowner.login')); ?>">CAROWNER DASHBOARD</a></li>
-            <li><a href="<?php echo e(route('admin.dashboard')); ?>">ADMIN DASHBOARD</a></li>
+            <li>
+                <a href="<?php echo e(url('/')); ?>">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo e(route('carowner.login')); ?>">
+                    <i class="fas fa-car"></i>
+                    <span>Car Owner Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo e(route('admin.dashboard')); ?>">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Dashboard</span>
+                </a>
+            </li>
             <?php if(auth()->guard('customer')->check()): ?>
-                <li><a href="<?php echo e(route('customer.dashboard')); ?>">CUSTOMER DASHBOARD</a></li>
+                <li>
+                    <a href="<?php echo e(route('customer.dashboard')); ?>">
+                        <i class="fas fa-user"></i>
+                        <span>Customer Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                    <form id="logout-form" action="<?php echo e(route('customer.logout')); ?>" method="POST" style="display: none;">
+                        <?php echo csrf_field(); ?>
+                    </form>
+                </li>
             <?php else: ?>
-                <li><a href="<?php echo e(route('customer.login')); ?>">LOGIN AS CUSTOMER</a></li>
+                <li>
+                    <a href="<?php echo e(route('customer.login')); ?>">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login as Customer</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo e(route('customer.register')); ?>">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Register</span>
+                    </a>
+                </li>
             <?php endif; ?>
-            <li><a href="<?php echo e(url('/contact')); ?>">CONTACT</a></li>
+            
+            <div class="sidebar-divider"></div>
+            
+            <li>
+                <a href="<?php echo e(url('/contact')); ?>">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo e(url('/available-cars')); ?>">
+                    <i class="fas fa-car-side"></i>
+                    <span>Browse Cars</span>
+                </a>
+            </li>
         </ul>
-        
     </div>
 </div>
 
@@ -105,9 +359,6 @@
             dropoffDateInput.min = pickupDate.toISOString().split('T')[0];
         });
     </script>
-
-    
-    
 
     <!-- Display Cars -->
     <section class="cars">
@@ -199,17 +450,18 @@
         const mainContent = document.getElementById('main-content');
         const header = document.getElementById('header');
         const footer = document.getElementById('footer');
+        const body = document.body;
+        const overlay = document.querySelector('.sidebar-overlay');
 
         sidebar.classList.toggle('open');
         mainContent.classList.toggle('shifted');
-        header.classList.toggle('shifted');
+        header.classList.toggle('sidebar-open');
+        body.classList.toggle('sidebar-open');
+        overlay.classList.toggle('active');
+        
         if (footer) {
             footer.classList.toggle('shifted');
         }
-    }
-
-    function searchCar() {
-        alert("Searching for available cars...");
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -233,7 +485,7 @@
         }
 
         // Admin Modal
-        const adminLink = document.querySelector('a[href="<?php echo e(url("/car-admin")); ?>"]');
+        const adminLink = document.querySelector('a[href="<?php echo e(route("admin.dashboard")); ?>"]');
 
         if (adminLink) {
             adminLink.addEventListener('click', function(e) {
@@ -327,11 +579,15 @@
             modal.className = 'custom-modal';
             modal.innerHTML = `
                 <div class="modal-content">
-                    <h3>${title}</h3>
+                    <h2>${title}</h2>
                     <p>${message}</p>
                     <div class="modal-buttons">
-                        <a href="${registerUrl}" class="modal-btn register-btn">Register</a>
-                        <a href="${loginUrl}" class="modal-btn login-btn">Login</a>
+                        <a href="${registerUrl}" class="modal-btn register-btn">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                        <a href="${loginUrl}" class="modal-btn login-btn">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
                     </div>
                 </div>
             `;
@@ -353,43 +609,65 @@
                         left: 0;
                         width: 100%;
                         height: 100%;
-                        background-color: rgba(0,0,0,0.5);
+                        background-color: rgba(0,0,0,0.6);
                         display: flex;
                         align-items: center;
                         justify-content: center;
                         z-index: 1000;
+                        font-family: Arial, sans-serif;
                     }
                     .modal-content {
-                        background-color: white;
+                        background-color: #fff;
                         padding: 30px;
-                        border-radius: 5px;
+                        border-radius: 10px;
+                        box-shadow: 0 0 10px rgba(0,0,0,0.2);
                         text-align: center;
                         max-width: 400px;
+                        width: 90%;
+                    }
+                    .modal-content h2 {
+                        margin-bottom: 15px;
+                        color: #333;
+                    }
+                    .modal-content p {
+                        margin-bottom: 25px;
+                        color: #555;
                     }
                     .modal-buttons {
                         display: flex;
                         justify-content: center;
                         gap: 20px;
-                        margin-top: 20px;
                     }
                     .modal-btn {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
                         padding: 10px 20px;
                         border-radius: 5px;
                         text-decoration: none;
                         font-weight: bold;
+                        font-size: 14px;
+                        transition: background-color 0.3s ease;
                     }
                     .register-btn {
                         background-color: #4CAF50;
                         color: white;
                     }
+                    .register-btn:hover {
+                        background-color: #45a049;
+                    }
                     .login-btn {
                         background-color: #2196F3;
                         color: white;
+                    }
+                    .login-btn:hover {
+                        background-color: #1976d2;
                     }
                 `;
                 document.head.appendChild(style);
             }
         }
+
     });
 </script>
 

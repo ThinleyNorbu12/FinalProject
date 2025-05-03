@@ -1,6 +1,6 @@
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -535,15 +535,15 @@
         </div>
         
         <div class="header-user">
-            @if(Auth::guard('customer')->check())
-                <span class="header-user-name">{{ Auth::guard('customer')->user()->name }}</span>
+            <?php if(Auth::guard('customer')->check()): ?>
+                <span class="header-user-name"><?php echo e(Auth::guard('customer')->user()->name); ?></span>
                 <form method="POST" action="#" class="d-inline">
-                    @csrf
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="btn-logout">Logout</button>
                 </form>
-            @else
+            <?php else: ?>
                 <a href="#" class="btn-logout">Login</a>
-            @endif
+            <?php endif; ?>
         </div>
     </header>
 
@@ -635,11 +635,11 @@
         <div class="main-content">
             <div class="welcome-card">
                 <h2>Welcome to Your Car Rental Dashboard</h2>
-                @if(Auth::guard('customer')->check())
-                    <p>Hello, {{ Auth::guard('customer')->user()->name }}! Here's a summary of your rental activities.</p>
-                @else
+                <?php if(Auth::guard('customer')->check()): ?>
+                    <p>Hello, <?php echo e(Auth::guard('customer')->user()->name); ?>! Here's a summary of your rental activities.</p>
+                <?php else: ?>
                     <p>Hello, Guest! Please log in to access your car rental dashboard.</p>
-                @endif
+                <?php endif; ?>
             </div>
             
             <!-- Current Rental -->
@@ -859,4 +859,5 @@
     </script>
 </body>
 </html>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/customer/dashboard.blade.php ENDPATH**/ ?>

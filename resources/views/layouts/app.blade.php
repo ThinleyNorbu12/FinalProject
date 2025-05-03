@@ -20,7 +20,7 @@
 <body class="bg-light d-flex flex-column min-vh-100">
 
     <!-- Site Header -->
-    @include('layouts.header')
+    <!-- @include('layouts.header') -->
 
     <!-- Main Section -->
     <main class="flex-grow-1 py-4">

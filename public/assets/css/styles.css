@@ -1,75 +1,9 @@
-Basic Layout
+
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
 }
-
-/* Sidebar Styling */
-#sidebar {
-    position: fixed;
-    top: 0;
-    left: -250px;
-    /* Initially off-screen */
-    width: 250px;
-    height: 43vh;
-    background-color: #9AA6B2;
-    transition: all 0.3s ease;
-    padding-top: 60px;
-    z-index: 1000;
-    margin-top: 127px;
-}
-
-@media (max-width: 768px) {
-
-    /* Adjust sidebar for smaller screens */
-    #sidebar {
-        width: 200px;
-        /* Smaller width for mobile */
-        height: 50vh;
-        /* Adjust height for smaller screens */
-    }
-}
-    @media (max-width: 480px) {
-
-        /* Further adjustments for very small screens */
-        #sidebar {
-            width: 180px;
-            /* Even smaller sidebar width for very small screens */
-            height: 60vh;
-            /* More height on very small screens */
-        }
-    }
-
-        #sidebar.open {
-            left: 0;
-            /* Move sidebar into view */
-        }
-
-        #sidebar-content {
-            padding-left: 30px;
-        }
-
-        .sidebar-links {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar-links li {
-            padding: 10px 0;
-        }
-
-        .sidebar-links li a {
-            text-decoration: none;
-            color: #ecf0f1;
-            font-size: 18px;
-            display: block;
-            transition: color 0.3s;
-        }
-
-        .sidebar-links li a:hover {
-            color: #3498db;
-        }
 
         /* Main Content Styling */
         #main-content {
