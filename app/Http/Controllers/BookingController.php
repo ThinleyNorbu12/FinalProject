@@ -103,26 +103,20 @@
 // }
 
 
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CarBooking;
-use App\Models\CarDetail; // Make sure to include Car model
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Carbon\Carbon; // Add Carbon for date handling
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\URL; // Add URL facade
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
-    // Submit booking form
     public function submit(Request $request, $carId)
     {
-        // Check if user is logged in
         if (!Auth::guard('customer')->check()) {
-            // Store booking data in session to retrieve after login
             Session::put('booking_data', [
                 'car_id' => $carId,
                 'pickup_date' => $request->pickup_date,
@@ -130,16 +124,11 @@ class BookingController extends Controller
                 'pickup_location' => $request->pickup_location,
                 'drop_location' => $request->drop_location
             ]);
-            
-            // Store the current URL to redirect back after login
-            Session::put('url.intended', URL::previous());
-            
-            // Redirect to customer login with intended URL
+
             return redirect()->route('customer.login')
                 ->with('message', 'Please log in to complete your booking.');
         }
 
-        // Validate form inputs
         $request->validate([
             'pickup_date' => 'required|date',
             'return_date' => 'required|date|after_or_equal:pickup_date',
@@ -147,61 +136,36 @@ class BookingController extends Controller
             'drop_location' => 'required|string|max:255',
         ]);
 
-        // Get customer ID (if needed and field exists)
         $customerId = Auth::guard('customer')->id();
 
-        // Store booking
         $bookingData = [
             'car_id' => $carId,
             'pickup_location' => $request->pickup_location,
             'pickup_date' => $request->pickup_date,
             'dropoff_location' => $request->drop_location,
             'dropoff_date' => $request->return_date,
+            'status' => 'pending',
+            'customer_id' => $customerId,
         ];
-        
-        // Add customer_id if table has been migrated
-        if (Schema::hasColumn('car_bookings', 'customer_id')) {
-            $bookingData['customer_id'] = $customerId;
-        }
-        
+
         $booking = CarBooking::create($bookingData);
 
-        // Redirect to booking summary page with success message
-        return redirect()->route('booking.summary')
-            ->with('success', 'Car booked successfully!');
+        // ✅ Redirect to Booking Summary page instead of Payment page
+        return redirect()->route('booking.summary', ['bookingId' => $booking->id])
+        ->with('success', 'Car booked successfully! Your booking status is currently *Pending*. It will be confirmed only after payment has been completed.');
+
     }
 
-    // Booking summary view
-    public function summary()
+    // ✅ Summary page now expects bookingId
+    public function summary($bookingId)
     {
-        // If customer_id column exists
-        if (Schema::hasColumn('car_bookings', 'customer_id')) {
-            $customerId = Auth::guard('customer')->id();
-            $booking = CarBooking::where('customer_id', $customerId)
-                ->with('car')
-                ->latest()
-                ->first();
-        } else {
-            // Fallback to just getting latest booking (not ideal but works until migration)
-            $booking = CarBooking::with('car')->latest()->first();
-        }
-
+        $booking = CarBooking::with('car')->findOrFail($bookingId);
         return view('booking.summary', compact('booking'));
     }
 
     public function show($id)
     {
-        $booking = Booking::with('car.images')->findOrFail($id);
+        $booking = CarBooking::with('car.images')->findOrFail($id);
         return view('booking.summary', compact('booking'));
     }
-
-    /**
-     * Check if the car is available for the selected dates
-     *
-     * @param  int  $carId
-     * @param  string  $pickupDate
-     * @param  string  $returnDate
-     * @return bool
-     */
-    
 }

@@ -15,33 +15,36 @@ Route::get('/', function () {
 
 });
 
-// Car Details Page
+// Route for displaying car details page
 Route::get('/cars/{id}/details', [HomeController::class, 'getCarDetails'])->name('car.details');
 
+// Route to search for cars
 Route::get('/search-car', [HomeController::class, 'searchCar'])->name('search.car');
-// Route to set the pickup and dropoff dates  cars in search_results.php
+
+// Route to set the pickup and dropoff dates in search results page
 Route::post('/set-dates', [HomeController::class, 'setDates'])->name('set.dates');
 
-// Route to display the available cars in search_results.php
+// Route to display available cars in search results
 Route::get('/available-cars', [HomeController::class, 'showAvailableCars'])->name('available.cars');
 
-// Book Now (shows the booking form)
+// Route for booking form display
 Route::get('/cars/{id}/book', [HomeController::class, 'book'])->name('book.car');
 
-
-// Route to handle the booking form submission
-// Submit Booking Form (for both logged in and non-logged in users)
+// Route to handle the booking form submission (for both logged-in and non-logged-in users)
 Route::post('/car/{id}/book', [BookingController::class, 'submit'])
     ->name('car.booking.submit');
 
-// Booking Summary Page (protected with middleware)
-Route::get('/booking/summary', [BookingController::class, 'summary'])
+// Route for booking summary page (protected by middleware)
+// Route for booking summary page (protected by middleware)
+Route::get('/booking/summary/{bookingId}', [BookingController::class, 'summary'])
     ->name('booking.summary')
-    ->middleware('auth:customer'); // Use customer guard
-// when i click pay now in booking summary page
-Route::get('/payment', [PaymentController::class, 'show'])->name('payment.page');
-Route::post('/payment/process', [PaymentController::class, 'process'])->name('payment.process');
-    
+    ->middleware('auth:customer');
+
+
+// Route to show the payment form (payment page)
+Route::get('/payment/{bookingId}', [PaymentController::class, 'show'])->name('payment.page');
+// Route to process the payment (POST request)
+Route::post('/payment/{bookingId}', [PaymentController::class, 'process'])->name('payment.process');
 
 
     // car owner page

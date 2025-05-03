@@ -319,9 +319,10 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string $dropoff_date
+     * @property mixed $status
+     * @property \Illuminate\Support\Carbon $dropoff_date
      * @property string $dropoff_location
-     * @property string $pickup_date
+     * @property \Illuminate\Support\Carbon $pickup_date
      * @property string $pickup_location
      * @property mixed $customer_id
      * @property mixed $car_id
@@ -335,6 +336,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking wherePickupDate($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereDropoffLocation($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereDropoffDate($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking newModelQuery()

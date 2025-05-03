@@ -14,16 +14,27 @@ class CreateCarBookingsTable extends Migration
         Schema::create('car_bookings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('car_id');
+            $table->unsignedBigInteger('customer_id');  // Add customer_id column
             $table->string('pickup_location');
             $table->date('pickup_date');
             $table->string('dropoff_location');
             $table->date('dropoff_date');
+
+            // Add status column with default value
+            $table->enum('status', ['pending', 'confirmed'])->default('pending');
+
             $table->timestamps();
 
             // Foreign key to link car_id to car_details_tbl(id)
             $table->foreign('car_id')
                   ->references('id')
                   ->on('car_details_tbl')
+                  ->onDelete('cascade');
+            
+            // Foreign key to link customer_id to customers(id)
+            $table->foreign('customer_id')
+                  ->references('id')
+                  ->on('customers')
                   ->onDelete('cascade');
         });
     }

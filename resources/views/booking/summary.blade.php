@@ -25,8 +25,12 @@
                                 <p><strong>Booking ID:</strong> #{{ $booking->id }}</p>
                                 <p><strong>Booking Date:</strong> {{ $booking->created_at->format('M d, Y') }}</p>
                                 <p><strong>Status:</strong> 
-                                    <span class="badge bg-success">Confirmed</span>
-                                </p>
+                                    @if($booking->status === 'confirmed')
+                                        <span class="badge bg-success">Confirmed</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    @endif
+                                </p>                                
                                 
                                 <h5 class="border-bottom pb-2 mb-3 mt-4">Trip Details</h5>
                                 <div class="row">
@@ -155,10 +159,10 @@
                                     {{-- <a href="{{ route('home') }}" class="btn btn-secondary">
                                         Continue <i class="fas fa-arrow-right ms-2"></i>
                                     </a> --}}
-                                    
-                                    <a href="{{ route('payment.page') }}" class="btn btn-success">
+                                    <a href="{{ route('payment.page', ['bookingId' => $booking->id]) }}" class="btn btn-success">
                                         <i class="fas fa-credit-card me-2"></i>Pay Now
-                                    </a>                                    
+                                    </a>
+                               
                                     <a href="#" class="btn btn-primary" onclick="window.print()">
                                         <i class="fas fa-print me-2"></i>Print Booking
                                     </a>
