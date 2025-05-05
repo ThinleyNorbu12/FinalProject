@@ -20,7 +20,7 @@
 <body class="bg-light d-flex flex-column min-vh-100">
 
     <!-- Site Header -->
-    <!-- @include('layouts.header') -->
+     {{-- @include('layouts.header') --}}
 
     <!-- Main Section -->
     <main class="flex-grow-1 py-4">
@@ -30,7 +30,7 @@
     </main>
 
     <!-- Site Footer -->
-    @include('layouts.footer')
+    {{-- @include('layouts.footer') --}}
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

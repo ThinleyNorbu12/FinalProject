@@ -20,7 +20,7 @@
 <body class="bg-light d-flex flex-column min-vh-100">
 
     <!-- Site Header -->
-    <!-- <?php echo $__env->make('layouts.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?> -->
+     
 
     <!-- Main Section -->
     <main class="flex-grow-1 py-4">
@@ -30,7 +30,7 @@
     </main>
 
     <!-- Site Footer -->
-    <?php echo $__env->make('layouts.footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
