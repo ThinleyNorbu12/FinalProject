@@ -6,14 +6,33 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Customer;
+use Illuminate\Support\Facades\Auth;
+use App\Models\CarBooking;
 
 class CustomerController extends Controller
 {
     // Show dashboard
+    // public function dashboard()
+    // {
+    //     return view('customer.dashboard');
+    // }
+
     public function dashboard()
     {
-        return view('customer.dashboard');
+        $userId = Auth::id();
+
+        // Get the most recent active booking for the logged-in user
+        $booking = CarBooking::where('customer_id', $userId)
+                    ->where('status', 'active') // Assuming 'active' status indicates a current rental
+                    ->latest('pickup_date')
+                    ->first();
+
+        // Get the car details if a booking exists
+        $car = $booking ? Car::find($booking->car_id) : null;
+
+        return view('customer.dashboard', compact('booking', 'car'));
     }
+
 
     // Show Set Password Form
     public function showSetPasswordForm($token)

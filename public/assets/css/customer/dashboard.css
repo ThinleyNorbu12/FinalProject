@@ -1,0 +1,502 @@
+/* Main Layout */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.dashboard-container {
+    display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding-top: 56px; /* Height of header */
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    color: #3366ff;
+}
+
+.sidebar-brand img {
+    width: 30px;
+    margin-right: 10px;
+}
+
+.sidebar-brand span {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.sidebar-menu {
+    padding: 10px 0;
+}
+
+.sidebar-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: #0f0f0f;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.sidebar-menu-item:hover {
+    background-color: #f2f2f2;
+}
+
+.sidebar-menu-item.active {
+    background-color: #e5e5e5;
+    font-weight: 500;
+}
+
+.sidebar-menu-item i {
+    font-size: 18px;
+    width: 24px;
+    margin-right: 24px;
+    color: #606060;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background-color: #e5e5e5;
+    margin: 10px 0;
+}
+
+.sidebar-heading {
+    color: #606060;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    text-transform: uppercase;
+}
+
+/* Header */
+.main-header {
+    height: 56px;
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+}
+
+.header-menu-toggle {
+    margin-right: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    margin-right: 40px;
+}
+
+.header-logo i {
+    color: #3366ff;
+    font-size: 24px;
+    margin-right: 8px;
+}
+
+.header-logo span {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.header-search {
+    flex: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.header-search input {
+    width: 100%;
+    height: 36px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 0 40px 0 16px;
+    font-size: 14px;
+}
+
+.header-search button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 36px;
+    width: 36px;
+    border: none;
+    background: #f8f8f8;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+}
+
+.header-user {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.header-user-name {
+    margin-right: 12px;
+    font-weight: 500;
+}
+
+.btn-logout {
+    background-color: #3366ff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 240px;
+    padding: 76px 20px 20px;
+    width: calc(100% - 240px);
+}
+
+.welcome-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-card h2 {
+    margin-top: 0;
+    color: #0f0f0f;
+}
+
+/* Current Rental Section */
+.current-rental {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.current-rental h3 {
+    margin-top: 0;
+    color: #0f0f0f;
+}
+
+.rental-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.car-image {
+    flex: 0 0 300px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.car-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.rental-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.rental-info-row {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.rental-info-label {
+    font-weight: 500;
+    width: 150px;
+    color: #606060;
+}
+
+.rental-actions {
+    margin-top: 20px;
+}
+
+.btn-extend, .btn-return {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-right: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-extend {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-return {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: #3366ff;
+    margin: 10px 0;
+}
+
+.stat-label {
+    color: #606060;
+    font-size: 14px;
+}
+
+/* Rental History */
+.history-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.history-card h3 {
+    margin-top: 0;
+    color: #0f0f0f;
+}
+
+.rental-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.rental-table th, 
+.rental-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.rental-table th {
+    color: #606060;
+    font-weight: 500;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+}
+
+.badge-completed {
+    background-color: #28a745;
+}
+
+.badge-active {
+    background-color: #007bff;
+}
+
+.badge-reserved {
+    background-color: #17a2b8;
+}
+
+.badge-cancelled {
+    background-color: #dc3545;
+}
+
+/* Recommended Cars */
+.recommended-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.recommended-card h3 {
+    margin-top: 0;
+    color: #0f0f0f;
+}
+
+.cars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.car-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.car-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.car-details {
+    padding: 12px;
+}
+
+.car-title {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.car-specs {
+    color: #606060;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.car-price {
+    color: #3366ff;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.btn-book-now {
+    background-color: #3366ff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-book-now:hover {
+    background-color: #2952cc;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+        transform: translateX(0);
+        transition: all 0.3s;
+    }
+    
+    .sidebar-menu-item span,
+    .sidebar-heading {
+        display: none;
+    }
+    
+    .sidebar-menu-item i {
+        margin-right: 0;
+    }
+    
+    .sidebar-menu-item {
+        justify-content: center;
+        padding: 14px 0;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+    }
+    
+    .sidebar.expanded {
+        width: 240px;
+    }
+    
+    .sidebar.expanded .sidebar-menu-item span,
+    .sidebar.expanded .sidebar-heading {
+        display: block;
+    }
+    
+    .sidebar.expanded .sidebar-menu-item {
+        justify-content: flex-start;
+        padding: 10px 20px;
+    }
+    
+    .sidebar.expanded .sidebar-menu-item i {
+        margin-right: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid,
+    .cars-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .header-search {
+        max-width: 400px;
+    }
+    
+    .rental-details {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.expanded {
+        transform: translateX(0);
+        width: 240px;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .stats-grid,
+    .cars-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -23,7 +23,7 @@
                             <div class="col-md-6">
                                 <h5 class="border-bottom pb-2 mb-3">Booking Details</h5>
                                 <p><strong>Booking ID:</strong> #{{ $booking->id }}</p>
-                                <p><strong>Booking Date:</strong> {{ $booking->created_at->format('M d, Y') }}</p>
+                                <p><strong>Booking Date:</strong> {{ $booking->created_at->format('d M, Y h:i A') }}</p>
                                 <p><strong>Status:</strong> 
                                     @if($booking->status === 'confirmed')
                                         <span class="badge bg-success">Confirmed</span>
@@ -37,13 +37,27 @@
                                     <div class="col-md-6">
                                         <p><strong>Pick-up:</strong></p>
                                         <p>{{ $booking->pickup_location }}</p>
-                                        <p>{{ \Carbon\Carbon::parse($booking->pickup_date)->format('M d, Y') }}</p>
+                                        <p>
+                                            {{
+                                                \Carbon\Carbon::parse($booking->pickup_date . ' ' . $booking->pickup_time)
+                                                    ->setTimezone('Asia/Thimphu')
+                                                    ->format('d M, Y h:i A')
+                                            }}
+                                        </p>
                                     </div>
+                                    
                                     <div class="col-md-6">
                                         <p><strong>Drop-off:</strong></p>
                                         <p>{{ $booking->dropoff_location }}</p>
-                                        <p>{{ \Carbon\Carbon::parse($booking->dropoff_date)->format('M d, Y') }}</p>
-                                    </div>
+                                        <p>
+                                            {{
+                                                \Carbon\Carbon::parse($booking->dropoff_date . ' ' . $booking->dropoff_time)
+                                                    ->setTimezone('Asia/Thimphu')
+                                                    ->format('d M, Y h:i A')
+                                            }}
+                                        </p>
+                                    </div>                                    
+                                    
                                 </div>
                                 
                                 <div class="mt-4">
@@ -106,7 +120,6 @@
                         </div>
                         
                         <!-- Price Summary -->
-                        <!-- Price Summary -->
                         @if($booking->car)
                         @php
                             $days = \Carbon\Carbon::parse($booking->pickup_date)->diffInDays(\Carbon\Carbon::parse($booking->dropoff_date)) + 1;
@@ -148,21 +161,13 @@
                         </div>
                         @endif
 
-
                         <!-- Back to Home and Print Booking Buttons -->
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
-                                    {{-- <a href="{{ route('home') }}" class="btn btn-secondary">
-                                        <i class="fas fa-arrow-left me-2"></i>Back to Home
-                                    </a> --}}
-                                    {{-- <a href="{{ route('home') }}" class="btn btn-secondary">
-                                        Continue <i class="fas fa-arrow-right ms-2"></i>
-                                    </a> --}}
                                     <a href="{{ route('payment.page', ['bookingId' => $booking->id]) }}" class="btn btn-success">
                                         <i class="fas fa-credit-card me-2"></i>Pay Now
                                     </a>
-                               
                                     <a href="#" class="btn btn-primary" onclick="window.print()">
                                         <i class="fas fa-print me-2"></i>Print Booking
                                     </a>

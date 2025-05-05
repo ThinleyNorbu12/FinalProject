@@ -1,6 +1,9 @@
 <!-- Link to the external CSS file -->
 <link rel="stylesheet" href="{{ asset('assets/css/cars/book.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+<script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 
 
 @extends('layouts.app')
@@ -87,11 +90,19 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="pickup_date" class="form-label">Pickup Date:</label>
-                                    <input type="date" class="form-control" name="pickup_date" required>
+                                    <input type="date" class="form-control" name="pickup_date" id="pickup_date" required>
+                                    <div class="mt-2">
+                                        <label for="pickup_time" class="form-label">Pickup Time:</label>
+                                        <input type="time" class="form-control" name="pickup_time" id="pickup_time" required>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="return_date" class="form-label">Return Date:</label>
-                                    <input type="date" class="form-control" name="return_date" required>
+                                    <input type="date" class="form-control" name="return_date" id="return_date" required>
+                                    <div class="mt-2">
+                                        <label for="return_time" class="form-label">Return Time:</label>
+                                        <input type="time" class="form-control" name="return_time" id="return_time" required>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -133,6 +144,168 @@
             interval: 3000,
             ride: 'carousel'
         });
+        
+        // Set minimum date for date inputs (today)
+        const today = new Date();
+        const formattedToday = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+        
+        const pickupDateInput = document.getElementById('pickup_date');
+        const returnDateInput = document.getElementById('return_date');
+        const pickupTimeInput = document.getElementById('pickup_time');
+        const returnTimeInput = document.getElementById('return_time');
+        
+        let pickupDatepicker, returnDatepicker, pickupTextInput, returnTextInput;
+        
+        // Set default time values (9:00 AM for pickup, 6:00 PM for return)
+        if (pickupTimeInput) {
+            pickupTimeInput.value = '09:00';
+        }
+        
+        if (returnTimeInput) {
+            returnTimeInput.value = '18:00';
+        }
+        
+        // Time validation and sync logic
+        if (pickupDateInput && returnDateInput && pickupTimeInput && returnTimeInput) {
+            // Handle the case when pickup and return dates are the same
+            function validateTimes() {
+                if (pickupDateInput.value && returnDateInput.value && 
+                    pickupDateInput.value === returnDateInput.value) {
+                    // If same day, ensure return time is after pickup time
+                    const pickupTime = pickupTimeInput.value;
+                    const returnTime = returnTimeInput.value;
+                    
+                    if (returnTime <= pickupTime) {
+                        // If return time is earlier or same as pickup time, set it to pickup time + 1 hour
+                        const [hours, minutes] = pickupTime.split(':').map(Number);
+                        let newHours = hours + 1;
+                        if (newHours > 23) newHours = 23;
+                        returnTimeInput.value = `${String(newHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                    }
+                }
+            }
+            
+            pickupTimeInput.addEventListener('change', validateTimes);
+            returnTimeInput.addEventListener('change', validateTimes);
+        }
+        
+        // Function to format date as DD/MM/YYYY
+        function formatDateToDMY(date) {
+            const d = new Date(date);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+        
+        // Create custom date inputs that display DD/MM/YYYY
+        if (pickupDateInput) {
+            // Set min date
+            pickupDateInput.min = formattedToday;
+            
+            // Create a wrapper around the date input
+            const pickupWrapper = document.createElement('div');
+            pickupWrapper.className = 'date-input-wrapper';
+            pickupDateInput.parentNode.insertBefore(pickupWrapper, pickupDateInput);
+            
+            // Create a text input for DD/MM/YYYY display
+            pickupTextInput = document.createElement('input');
+            pickupTextInput.type = 'text';
+            pickupTextInput.className = 'form-control';
+            pickupTextInput.placeholder = 'DD/MM/YYYY';
+            pickupTextInput.required = true;
+            
+            // Move the date input out of view but keep it in the DOM for form submission
+            pickupDateInput.style.position = 'absolute';
+            pickupDateInput.style.opacity = '0';
+            pickupDateInput.style.height = '0';
+            pickupDateInput.style.width = '0';
+            pickupDateInput.style.overflow = 'hidden';
+            
+            // Add the text input to the wrapper
+            pickupWrapper.appendChild(pickupTextInput);
+            pickupWrapper.appendChild(pickupDateInput);
+            
+            // Initialize datepicker
+            pickupDatepicker = new Pikaday({
+                field: pickupTextInput,
+                format: 'DD/MM/YYYY',
+                minDate: today,
+                onSelect: function(date) {
+                    // Update the hidden date input with YYYY-MM-DD format
+                    pickupDateInput.value = date.toISOString().split('T')[0];
+                    pickupDateInput.dispatchEvent(new Event('change'));
+                    
+                    // Update return date if needed
+                    if (returnDatepicker) {
+                        // Force return date to be at least the pickup date
+                        const returnCurrentDate = returnDatepicker.getDate();
+                        if (!returnCurrentDate || returnCurrentDate < date) {
+                            returnDatepicker.setDate(date);
+                            returnDateInput.value = pickupDateInput.value;
+                            
+                            // Validate times when dates are the same
+                            validateTimes();
+                        }
+                        // Set the minimum selectable date for return
+                        returnDatepicker.setMinDate(date);
+                    }
+                }
+            });
+        }
+        
+        if (returnDateInput) {
+            // Set min date
+            returnDateInput.min = formattedToday;
+            
+            // Create a wrapper around the date input
+            const returnWrapper = document.createElement('div');
+            returnWrapper.className = 'date-input-wrapper';
+            returnDateInput.parentNode.insertBefore(returnWrapper, returnDateInput);
+            
+            // Create a text input for DD/MM/YYYY display
+            returnTextInput = document.createElement('input');
+            returnTextInput.type = 'text';
+            returnTextInput.className = 'form-control';
+            returnTextInput.placeholder = 'DD/MM/YYYY';
+            returnTextInput.required = true;
+            
+            // Move the date input out of view but keep it in the DOM for form submission
+            returnDateInput.style.position = 'absolute';
+            returnDateInput.style.opacity = '0';
+            returnDateInput.style.height = '0';
+            returnDateInput.style.width = '0';
+            returnDateInput.style.overflow = 'hidden';
+            
+            // Add the text input to the wrapper
+            returnWrapper.appendChild(returnTextInput);
+            returnWrapper.appendChild(returnDateInput);
+            
+            // Initialize datepicker
+            returnDatepicker = new Pikaday({
+                field: returnTextInput,
+                format: 'DD/MM/YYYY',
+                minDate: pickupDateInput.value ? new Date(pickupDateInput.value) : today,
+                onSelect: function(date) {
+                    // Update the hidden date input with YYYY-MM-DD format
+                    returnDateInput.value = date.toISOString().split('T')[0];
+                    returnDateInput.dispatchEvent(new Event('change'));
+                    
+                    // Ensure return date is not before pickup date
+                    if (pickupDateInput.value) {
+                        const pickupDate = new Date(pickupDateInput.value);
+                        if (date < pickupDate) {
+                            // Reset to pickup date if user somehow selects earlier date
+                            returnDatepicker.setDate(pickupDate);
+                            returnDateInput.value = pickupDateInput.value;
+                        }
+                    }
+                    
+                    // Check if dates are the same to validate times
+                    validateTimes();
+                }
+            });
+        }
     });
 </script>
 @endsection
