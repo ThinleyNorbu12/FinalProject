@@ -69,7 +69,7 @@
                 
                 <div class="sidebar-heading">My Account</div>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.profile')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>

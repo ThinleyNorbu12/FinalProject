@@ -69,7 +69,7 @@
                 
                 <div class="sidebar-heading">My Account</div>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.profile') }}" class="sidebar-menu-item">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>

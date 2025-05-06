@@ -42,8 +42,14 @@ Route::get('/booking/summary/{bookingId}', [BookingController::class, 'summary']
 
 
 // Route to show the payment form (payment page)
-Route::get('/payment/{bookingId}', [PaymentController::class, 'show'])->name('payment.page');
+// Route::get('/payment/{bookingId}', [PaymentController::class, 'show'])->name('payment.page');
 // Route to process the payment (POST request)
+// routes/web.php
+
+Route::get('/payment/{bookingId}', [PaymentController::class, 'show'])
+    ->name('payment.page')
+    ->middleware(['auth:customer', \App\Http\Middleware\CheckDrivingLicense::class]);
+
 Route::post('/payment/{bookingId}', [PaymentController::class, 'process'])->name('payment.process');
 
 
@@ -230,6 +236,7 @@ use App\Http\Controllers\Customer\Auth\LoginController;
 use App\Http\Controllers\Customer\Auth\RegisterController;
 use App\Http\Controllers\Customer\Auth\ForgotPasswordController as CustomerForgotPasswordController;
 use App\Http\Controllers\Customer\Auth\ResetPasswordController as CustomerResetPasswordController;
+use App\Http\Controllers\CustomerProfileController;
 
 // Customer dashboard (protected route)
 Route::middleware('auth:customer')->get('/customer', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
@@ -256,6 +263,17 @@ Route::prefix('customer')->name('customer.')->group(function () {
     // To set the password (for new users)
     Route::get('password/set/{token}', [CustomerController::class, 'showSetPasswordForm'])->name('password.set');
     Route::post('password/set', [CustomerController::class, 'setPassword'])->name('password.save');
+
+    // Profile route
+    Route::middleware('auth:customer')->get('/profile', [CustomerProfileController::class, 'profile'])->name('profile');
+   
+    // Update profile route (PUT method)
+    Route::middleware('auth:customer')->put('/profile/update', [CustomerProfileController::class, 'update'])->name('profile.update');
+    // to save the Driving License Information 
+    Route::post('/profile/save-license', [CustomerProfileController::class, 'saveLicense'])->name('profile.save-license');
+
+
+
 
 
 });

@@ -23,9 +23,12 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:customers',
-            'phone' => 'required|string|max:20|unique:customers', // Phone validation
-            'cid_no' => 'required|string|max:20|unique:customers', // CID validation
+            'phone' => 'required|string|max:20|unique:customers',
+            'cid_no' => 'required|string|max:20|unique:customers',
+            'date_of_birth' => 'nullable|date',
+            'address' => 'nullable|string|max:500',
         ]);
+        
 
         // Create the customer record without a password
         $customer = Customer::create([
@@ -33,7 +36,10 @@ class RegisterController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'cid_no' => $request->cid_no,
+            'date_of_birth' => $request->date_of_birth,
+            'address' => $request->address,
         ]);
+        
 
         // Generate a random token
         $token = Str::random(64);

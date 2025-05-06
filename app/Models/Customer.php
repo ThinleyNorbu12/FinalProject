@@ -9,14 +9,17 @@ class Customer extends Authenticatable
 {
     use Notifiable;
 
-    protected $guard = 'customer'; // Tells Laravel which guard this model uses
+    protected $guard = 'customer';
 
     protected $fillable = [
         'name',
         'email',
-        'phone',     // ✅ Add this
-        'cid_no',    // ✅ Add this
-        'password',  // Optional if you’re setting it later
+        'phone',
+        'cid_no',
+        'password',
+        'date_of_birth',   // ✅ Newly added
+        'address',         // ✅ Newly added
+        
     ];
 
     protected $hidden = [
@@ -27,4 +30,18 @@ class Customer extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function drivingLicense()
+    {
+        return $this->hasOne(DrivingLicense::class);
+    }
+    // app/Models/Customer.php
+
+    public function hasValidDrivingLicense()
+    {
+        return $this->drivingLicense && 
+            $this->drivingLicense->expiry_date > now() &&
+            $this->drivingLicense->license_front_image &&
+            $this->drivingLicense->license_back_image;
+    }
+
 }

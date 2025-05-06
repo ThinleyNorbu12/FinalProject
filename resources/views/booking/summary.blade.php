@@ -165,9 +165,25 @@
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{ route('payment.page', ['bookingId' => $booking->id]) }}" class="btn btn-success">
-                                        <i class="fas fa-credit-card me-2"></i>Pay Now
-                                    </a>
+                                    @auth('customer')
+                                        @if(auth('customer')->user()->drivingLicense)
+                                            <a href="{{ route('payment.page', ['bookingId' => $booking->id]) }}" class="btn btn-success">
+                                                <i class="fas fa-credit-card me-2"></i>Pay Now
+                                            </a>
+                                        @else
+                                            <!-- Show verification prompt -->
+                                            <div class="alert alert-warning w-100 text-center mb-0 me-3">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <h5>Please upload your documents to get your profile verified!</h5>
+                                                    <p class="mb-3">Your Profile is not verified.</p>
+                                                    <a href="{{ route('customer.profile') }}" class="btn btn-primary">
+                                                        <i class="fas fa-upload me-2"></i>Upload Driving License
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endauth
+                                    
                                     <a href="#" class="btn btn-primary" onclick="window.print()">
                                         <i class="fas fa-print me-2"></i>Print Booking
                                     </a>
