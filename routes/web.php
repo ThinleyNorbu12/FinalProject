@@ -265,13 +265,21 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::post('password/set', [CustomerController::class, 'setPassword'])->name('password.save');
 
     // Profile route
-    Route::middleware('auth:customer')->get('/profile', [CustomerProfileController::class, 'profile'])->name('profile');
+    // Route::middleware('auth:customer')->get('/profile', [CustomerProfileController::class, 'profile'])->name('profile');
    
-    // Update profile route (PUT method)
-    Route::middleware('auth:customer')->put('/profile/update', [CustomerProfileController::class, 'update'])->name('profile.update');
-    // to save the Driving License Information 
-    Route::post('/profile/save-license', [CustomerProfileController::class, 'saveLicense'])->name('profile.save-license');
+    // // Update profile route (PUT method)
+    // Route::middleware('auth:customer')->put('/profile/update', [CustomerProfileController::class, 'update'])->name('profile.update');
+    // // to save the Driving License Information 
+    // Route::post('/profile/save-license', [CustomerProfileController::class, 'saveLicense'])->name('profile.save-license');
+    // Profile routes
+    Route::middleware('auth:customer')->group(function () {
+        Route::get('/profile', [CustomerProfileController::class, 'profile'])->name('profile');
+        Route::put('/profile/update', [CustomerProfileController::class, 'update'])->name('profile.update');
+        Route::post('/profile/save-license', [CustomerProfileController::class, 'saveLicense'])->name('profile.save-license');
 
+        // Driving License route
+        Route::get('/license', [App\Http\Controllers\CustomerProfileController::class, 'showLicenseForm'])->name('license');
+    });
 
 
 

@@ -67,52 +67,6 @@ class CustomerProfileController extends Controller
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
 
-
-    // public function saveLicense(Request $request)
-    // {
-    //     $request->validate([
-    //         'license_number' => 'required|string|max:255',
-    //         'license_dzongkhag' => 'required|string|max:255',
-    //         'license_issue_date' => 'required|date_format:d/m/Y',
-    //         'license_expiry_date' => 'required|date_format:d/m/Y',
-    //         'license_front' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-    //         'license_back' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-    //     ]);
-
-    //     $customer = Auth::guard('customer')->user();
-
-    //     $frontPath = $customer->drivingLicense->license_front_image ?? null;
-    //     $backPath = $customer->drivingLicense->license_back_image ?? null;
-
-    //     // Upload to /public/licenses
-    //     if ($request->hasFile('license_front')) {
-    //         $frontFile = $request->file('license_front');
-    //         $frontName = time() . '_front.' . $frontFile->getClientOriginalExtension();
-    //         $frontFile->move(public_path('licenses'), $frontName);
-    //         $frontPath = 'licenses/' . $frontName;
-    //     }
-
-    //     if ($request->hasFile('license_back')) {
-    //         $backFile = $request->file('license_back');
-    //         $backName = time() . '_back.' . $backFile->getClientOriginalExtension();
-    //         $backFile->move(public_path('licenses'), $backName);
-    //         $backPath = 'licenses/' . $backName;
-    //     }
-
-    //     DrivingLicense::updateOrCreate(
-    //         ['customer_id' => $customer->id],
-    //         [
-    //             'license_no' => $request->license_number,
-    //             'issuing_dzongkhag' => $request->license_dzongkhag,
-    //             'issue_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->license_issue_date),
-    //             'expiry_date' => \Carbon\Carbon::createFromFormat('d/m/Y', $request->license_expiry_date),
-    //             'license_front_image' => $frontPath,
-    //             'license_back_image' => $backPath,
-    //         ]
-    //     );
-
-    //     return back()->with('success', 'License information saved successfully.');
-    // }
     public function saveLicense(Request $request)
     {
         $request->validate([
@@ -146,22 +100,50 @@ class CustomerProfileController extends Controller
         return back()->with('success', 'License information saved successfully!');
     }
 
+    // private function uploadLicenseImage($file)
+    // {
+    //     $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+    //     $file->move(public_path('licenses'), $fileName);
+    //     return 'licenses/' . $fileName;
+    // }
     private function uploadLicenseImage($file)
     {
         $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
         $file->move(public_path('licenses'), $fileName);
-        return 'licenses/' . $fileName;
+        // Return only the filename without the 'licenses/' prefix since we add it in asset() function
+        return $fileName;
     }
-
-
 
     // public function showLicenseForm()
     // {
     //     $customer = Auth::guard('customer')->user();
-    //     $license = $customer->drivingLicense;
-
-    //     return view('customer.license-form', compact('customer', 'license'));
+    //     $license = DrivingLicense::where('customer_id', $customer->id)->first();
+        
+    //     return view('customer.license', compact('license', 'customer'));
     // }
+    
+    public function showLicenseForm()
+    {
+        $customer = Auth::guard('customer')->user();
+        $license = DrivingLicense::where('customer_id', $customer->id)->first();
+        
+        // Add debug information if license exists
+        if ($license) {
+            // Log information about license images
+            \Log::info("License data for customer {$customer->id}:", [
+                'front_path' => public_path('licenses/' . $license->license_front_image),
+                'back_path' => public_path('licenses/' . $license->license_back_image),
+                'front_exists' => !empty($license->license_front_image) && file_exists(public_path('licenses/' . $license->license_front_image)),
+                'back_exists' => !empty($license->license_back_image) && file_exists(public_path('licenses/' . $license->license_back_image)),
+            ]);
+        }
+        
+        return view('customer.license', compact('license', 'customer'));
+    }
+
+
+
+   
 
     
 }

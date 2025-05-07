@@ -1,6 +1,6 @@
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Rental Dashboard</title>
     <!-- Link to the external CSS file -->
-    <link rel="stylesheet" href="{{ asset('assets/css/customer/dashboard.css') }}">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/customer/dashboard.css')); ?>">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -33,15 +33,15 @@
         </div>
         
         <div class="header-user">
-            @if(Auth::guard('customer')->check())
-                <span class="header-user-name">{{ Auth::guard('customer')->user()->name }}</span>
-                <form method="POST" action="{{ route('customer.logout') }}" class="d-inline">
-                    @csrf
+            <?php if(Auth::guard('customer')->check()): ?>
+                <span class="header-user-name"><?php echo e(Auth::guard('customer')->user()->name); ?></span>
+                <form method="POST" action="<?php echo e(route('customer.logout')); ?>" class="d-inline">
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="btn-logout">Logout</button>
                 </form>
-            @else
-                <a href="{{ route('customer.login') }}" class="btn-logout">Login</a>
-            @endif
+            <?php else: ?>
+                <a href="<?php echo e(route('customer.login')); ?>" class="btn-logout">Login</a>
+            <?php endif; ?>
         </div>        
     </header>
 
@@ -69,7 +69,7 @@
                 
                 <div class="sidebar-heading">My Account</div>
                 
-                <a href="{{ route('customer.profile') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.profile')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>
@@ -84,7 +84,7 @@
                     <span>Payment Methods</span>
                 </a>
                 
-                <a href="{{ route('customer.license') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-id-card"></i>
                     <span>Driving License</span>
                 </a>
@@ -133,11 +133,11 @@
         <div class="main-content">
             <div class="welcome-card">
                 <h2>Welcome to Your Car Rental Dashboard</h2>
-                @if(Auth::guard('customer')->check())
-                    <p>Hello, {{ Auth::guard('customer')->user()->name }}! Here's a summary of your rental activities.</p>
-                @else
+                <?php if(Auth::guard('customer')->check()): ?>
+                    <p>Hello, <?php echo e(Auth::guard('customer')->user()->name); ?>! Here's a summary of your rental activities.</p>
+                <?php else: ?>
                     <p>Hello, Guest! Please log in to access your car rental dashboard.</p>
-                @endif
+                <?php endif; ?>
             </div>
             
             <!-- Current Rental -->
@@ -357,4 +357,5 @@
     </script>
 </body>
 </html>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/customer/dashboard.blade.php ENDPATH**/ ?>

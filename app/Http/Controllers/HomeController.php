@@ -103,7 +103,7 @@ class HomeController extends Controller
     public function showAvailableCars(Request $request)
     {
         // Fetch cars from the database (or perform your own logic)
-        $availableCars = Car::all(); // Example, replace with your actual query
+        $availableCars = CarDetail::all(); // Example, replace with your actual query
 
         // Pass the available cars and the dates from the query parameters to the view
         return view('search_results', [

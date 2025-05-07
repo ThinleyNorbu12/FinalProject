@@ -1,6 +1,6 @@
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Profile - Car Rental</title>
     <!-- Link to the external CSS file -->
-    <link rel="stylesheet" href="{{ asset('assets/css/customer/dashboard.css') }}">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/customer/dashboard.css')); ?>">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -366,15 +366,15 @@
         </div>
         
         <div class="header-user">
-            @if(Auth::guard('customer')->check())
-                <span class="header-user-name">{{ Auth::guard('customer')->user()->name }}</span>
-                <form method="POST" action="{{ route('customer.logout') }}" class="d-inline">
-                    @csrf
+            <?php if(Auth::guard('customer')->check()): ?>
+                <span class="header-user-name"><?php echo e(Auth::guard('customer')->user()->name); ?></span>
+                <form method="POST" action="<?php echo e(route('customer.logout')); ?>" class="d-inline">
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="btn-logout">Logout</button>
                 </form>
-            @else
-                <a href="{{ route('customer.login') }}" class="btn-logout">Login</a>
-            @endif
+            <?php else: ?>
+                <a href="<?php echo e(route('customer.login')); ?>" class="btn-logout">Login</a>
+            <?php endif; ?>
         </div>
     </header>
 
@@ -383,7 +383,7 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-menu">
-                <a href="{{ route('customer.dashboard') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.dashboard')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
@@ -402,7 +402,7 @@
                 
                 <div class="sidebar-heading">My Account</div>
                 
-                <a href="{{ route('customer.profile') }}" class="sidebar-menu-item active">
+                <a href="<?php echo e(route('customer.profile')); ?>" class="sidebar-menu-item active">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>
@@ -417,7 +417,7 @@
                     <span>Payment Methods</span>
                 </a>
                 
-                <a href="{{ route('customer.license') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-id-card"></i>
                     <span>Driving License</span>
                 </a>
@@ -470,18 +470,20 @@
                     <img src="/api/placeholder/150/150" alt="Profile Avatar" class="profile-avatar">
                     <div class="profile-name">
                         <h2>
-                            @if(Auth::guard('customer')->check())
-                                {{ Auth::guard('customer')->user()->name }}
-                            @else
+                            <?php if(Auth::guard('customer')->check()): ?>
+                                <?php echo e(Auth::guard('customer')->user()->name); ?>
+
+                            <?php else: ?>
                                 Guest User
-                            @endif
+                            <?php endif; ?>
                         </h2>
                         <div class="profile-status">
-                            Member since @if(Auth::guard('customer')->check())
-                                {{ Auth::guard('customer')->user()->created_at->format('F Y') }}
-                            @else
+                            Member since <?php if(Auth::guard('customer')->check()): ?>
+                                <?php echo e(Auth::guard('customer')->user()->created_at->format('F Y')); ?>
+
+                            <?php else: ?>
                                 N/A
-                            @endif
+                            <?php endif; ?>
                        
                         </div>
                     </div>
@@ -497,33 +499,35 @@
 
                 <div class="container">
                     <!-- Display success message if available -->
-                    @if(session('success'))
+                    <?php if(session('success')): ?>
                         <div class="alert alert-success">
-                            {{ session('success') }}
+                            <?php echo e(session('success')); ?>
+
                         </div>
-                    @endif
+                    <?php endif; ?>
             
                     <!-- Display error message if available -->
-                    @if(session('error'))
+                    <?php if(session('error')): ?>
                         <div class="alert alert-danger">
-                            {{ session('error') }}
+                            <?php echo e(session('error')); ?>
+
                         </div>
-                    @endif
+                    <?php endif; ?>
             
                     <!-- Personal Information Tab -->
                     <div class="tab-content active" id="personal-info">
                         <div class="profile-section">
                             <h3>Personal Information</h3>
-                            <form action="{{ route('customer.profile.update') }}" method="POST">
-                                @csrf
-                                @method('PUT')
+                            <form action="<?php echo e(route('customer.profile.update')); ?>" method="POST">
+                                <?php echo csrf_field(); ?>
+                                <?php echo method_field('PUT'); ?>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="fullName">Full Name</label>
                                             <div class="input-with-icon">
                                                 <i class="fas fa-user"></i>
-                                                <input type="text" class="form-control" id="fullName" name="name" value="{{ Auth::guard('customer')->user()->name ?? '' }}">
+                                                <input type="text" class="form-control" id="fullName" name="name" value="<?php echo e(Auth::guard('customer')->user()->name ?? ''); ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -532,7 +536,7 @@
                                             <label for="cid">CID Number</label>
                                             <div class="input-with-icon">
                                                 <i class="fas fa-id-card"></i>
-                                                <input type="text" class="form-control" id="cid" name="cid" value="{{ Auth::guard('customer')->user()->cid_no ?? '' }}" readonly>
+                                                <input type="text" class="form-control" id="cid" name="cid" value="<?php echo e(Auth::guard('customer')->user()->cid_no ?? ''); ?>" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -544,7 +548,7 @@
                                             <label for="email">Email Address</label>
                                             <div class="input-with-icon">
                                                 <i class="fas fa-envelope"></i>
-                                                <input type="email" class="form-control" id="email" name="email" value="{{ Auth::guard('customer')->user()->email ?? '' }}">
+                                                <input type="email" class="form-control" id="email" name="email" value="<?php echo e(Auth::guard('customer')->user()->email ?? ''); ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -553,7 +557,7 @@
                                             <label for="phone">Phone Number</label>
                                             <div class="input-with-icon">
                                                 <i class="fas fa-phone"></i>
-                                                <input type="tel" class="form-control" id="phone" name="phone" value="{{ Auth::guard('customer')->user()->phone ?? '' }}">
+                                                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo e(Auth::guard('customer')->user()->phone ?? ''); ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -561,16 +565,16 @@
                                 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        @php
+                                        <?php
                                             $dob = Auth::guard('customer')->user()->dob ?? '';
                                             $formattedDob = $dob ? \Carbon\Carbon::parse($dob)->format('d/m/Y') : '';
-                                        @endphp
+                                        ?>
             
                                         <div class="form-group">
                                             <label for="dateOfBirth">Date of Birth(DD/MM/YYYY)</label>
                                             <div class="input-with-icon">
                                                 <i class="fas fa-calendar"></i>
-                                                <input type="text" class="form-control" id="dateOfBirth" name="dob" value="{{ $formattedDob }}" placeholder="DD/MM/YYYY" >
+                                                <input type="text" class="form-control" id="dateOfBirth" name="dob" value="<?php echo e($formattedDob); ?>" placeholder="DD/MM/YYYY" >
                                             </div>
                                         </div>
             
@@ -580,7 +584,7 @@
                                             <label for="address">Address</label>
                                             <div class="input-with-icon">
                                                 <i class="fas fa-home"></i>
-                                                <input type="text" class="form-control" id="address" name="address" value="{{ Auth::guard('customer')->user()->address ?? '' }}">
+                                                <input type="text" class="form-control" id="address" name="address" value="<?php echo e(Auth::guard('customer')->user()->address ?? ''); ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -596,42 +600,21 @@
                     </div>
                 </div>
 
-{{--                     
-                    <div class="profile-section">
-                        <h3>Profile Picture</h3>
-                       <form action="{{ route('customer.profile.update-avatar') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <img src="/api/placeholder/150/150" alt="Current Profile Picture" class="img-fluid rounded">
-                                </div>
-                                <div class="col-md-9">
-                                    <p>Upload a new profile picture. Recommended size: 300x300 pixels.</p>
-                                    <div class="upload-btn-wrapper">
-                                        <button class="upload-btn"><i class="fas fa-upload"></i> Choose File</button>
-                                        <input type="file" name="avatar" id="avatarUpload" />
-                                    </div>
-                                    <div class="file-name" id="fileName">No file chosen</div>
-                                    <button type="submit" class="btn-update mt-3">Upload New Picture</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div> 
-                 --}}
+
                 <!-- Driver's License Tab -->
                 <div class="tab-content" id="license-info">
-                    @if(session('success'))
+                    <?php if(session('success')): ?>
                         <div class="alert alert-success">
-                            {{ session('success') }}
+                            <?php echo e(session('success')); ?>
+
                         </div>
-                    @endif
+                    <?php endif; ?>
 
                     <div class="profile-section">
                         <h3>Driving License Information (Bhutan)</h3>
 
-                        <form action="{{ route('customer.profile.save-license') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
+                        <form action="<?php echo e(route('customer.profile.save-license')); ?>" method="POST" enctype="multipart/form-data">
+                            <?php echo csrf_field(); ?>
 
                             <div class="row">
                                 <!-- License Number -->
@@ -641,7 +624,7 @@
                                         <div class="input-with-icon">
                                             <i class="fas fa-id-card"></i>
                                             <input type="text" class="form-control" id="licenseNumber" name="license_number"
-                                                value="{{ Auth::guard('customer')->user()->license_number ?? '' }}">
+                                                value="<?php echo e(Auth::guard('customer')->user()->license_number ?? ''); ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -654,15 +637,16 @@
                                             <i class="fas fa-map-marker-alt"></i>
                                             <select class="form-control" id="dzongkhag" name="license_dzongkhag">
                                                 <option value="">-- Select Dzongkhag --</option>
-                                                @php
+                                                <?php
                                                     $dzongkhags = ['Bumthang', 'Chukha', 'Dagana', 'Gasa', 'Haa', 'Lhuentse', 'Mongar', 'Paro', 'Pemagatshel', 'Punakha', 'Samdrup Jongkhar', 'Samtse', 'Sarpang', 'Thimphu', 'Trashigang', 'Trashiyangtse', 'Trongsa', 'Tsirang', 'Wangdue Phodrang', 'Zhemgang'];
-                                                @endphp
-                                                @foreach($dzongkhags as $dzongkhag)
-                                                    <option value="{{ $dzongkhag }}"
-                                                        {{ (Auth::guard('customer')->user()->license_dzongkhag ?? '') == $dzongkhag ? 'selected' : '' }}>
-                                                        {{ $dzongkhag }}
+                                                ?>
+                                                <?php $__currentLoopData = $dzongkhags; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dzongkhag): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($dzongkhag); ?>"
+                                                        <?php echo e((Auth::guard('customer')->user()->license_dzongkhag ?? '') == $dzongkhag ? 'selected' : ''); ?>>
+                                                        <?php echo e($dzongkhag); ?>
+
                                                     </option>
-                                                @endforeach
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </select>
                                         </div>
                                     </div>
@@ -678,7 +662,7 @@
                                         <div class="input-with-icon">
                                             <i class="fas fa-calendar-plus"></i>
                                             <input type="date" class="form-control" id="issueDate" name="license_issue_date"
-                                                value="{{ Auth::guard('customer')->user()->license_issue_date ?? '' }}" placeholder="DD/MM/YYYY">
+                                                value="<?php echo e(Auth::guard('customer')->user()->license_issue_date ?? ''); ?>" placeholder="DD/MM/YYYY">
                                         </div>
                                     </div>
                                 </div>
@@ -690,7 +674,7 @@
                                         <div class="input-with-icon">
                                             <i class="fas fa-calendar-times"></i>
                                             <input type="date" class="form-control" id="expiryDate" name="license_expiry_date"
-                                                value="{{ Auth::guard('customer')->user()->license_expiry_date ?? '' }}" placeholder="DD/MM/YYYY">
+                                                value="<?php echo e(Auth::guard('customer')->user()->license_expiry_date ?? ''); ?>" placeholder="DD/MM/YYYY">
                                         </div>
                                     </div>
                                 </div>
@@ -732,12 +716,12 @@
 
                         <!-- License Preview -->
                         <div class="license-info mt-4">
-                            @if(Auth::guard('customer')->user()->license_front)
-                                <img src="{{ asset('storage/licenses/' . Auth::guard('customer')->user()->license_front) }}" alt="Front License" class="license-image">
-                            @endif
-                            @if(Auth::guard('customer')->user()->license_back)
-                                <img src="{{ asset('storage/licenses/' . Auth::guard('customer')->user()->license_back) }}" alt="Back License" class="license-image">
-                            @endif
+                            <?php if(Auth::guard('customer')->user()->license_front): ?>
+                                <img src="<?php echo e(asset('storage/licenses/' . Auth::guard('customer')->user()->license_front)); ?>" alt="Front License" class="license-image">
+                            <?php endif; ?>
+                            <?php if(Auth::guard('customer')->user()->license_back): ?>
+                                <img src="<?php echo e(asset('storage/licenses/' . Auth::guard('customer')->user()->license_back)); ?>" alt="Back License" class="license-image">
+                            <?php endif; ?>
 
                             <div class="license-details mt-3">
                                 <p><strong>Verification Status:</strong> <span class="license-status">Verified</span></p>
@@ -878,8 +862,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('customer.password.update') }}" method="POST">
-                        @csrf
+                    <form action="<?php echo e(route('customer.password.update')); ?>" method="POST">
+                        <?php echo csrf_field(); ?>
                         <div class="form-group mb-3">
                             <label for="currentPassword">Current Password</label>
                             <input type="password" class="form-control" id="currentPassword" name="current_password" required>
@@ -983,4 +967,5 @@
     </script>
 </body>
 </html>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/customer/profile.blade.php ENDPATH**/ ?>
