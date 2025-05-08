@@ -26,6 +26,7 @@ class CustomerProfileController extends Controller
             'phone' => 'nullable|string|max:20',
             'dob' => 'nullable|string',  // Form field name remains 'dob' for simplicity
             'address' => 'nullable|string|max:255',
+            'gender' => 'nullable|in:Male,Female,Other', 
         ]);
 
         $user = Auth::guard('customer')->user();
@@ -61,6 +62,7 @@ class CustomerProfileController extends Controller
         $user->phone = $request->phone;
         $user->date_of_birth = $dateOfBirth;  // Use the correct column name here
         $user->address = $request->address;
+        $user->gender = $request->gender; 
         
         $user->save();
 

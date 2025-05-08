@@ -1,14 +1,14 @@
-@extends('layouts.app')
+
     <!-- Custom dashboard CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/admin/dashboard.css') }}">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/dashboard.css')); ?>">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-@section('content')
+<?php $__env->startSection('content'); ?>
     <!-- Sidebar -->
     <div class="dashboard-sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
+                <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
                 <h2>Admin Portal</h2>
             </div>
             <button id="sidebar-toggle" class="sidebar-toggle">
@@ -17,21 +17,21 @@
         </div>
         
         <div class="admin-profile">
-            @if(Auth::guard('admin')->check())
+            <?php if(Auth::guard('admin')->check()): ?>
                 <div class="profile-avatar">
-                    {{-- <img src="{{ asset('assets/images/avatar-placeholder.jpg') }}" alt="Admin Avatar"> --}}
+                    
                 </div>
                 <div class="profile-info">
-                    <h3>{{ Auth::guard('admin')->user()->name }}</h3>
+                    <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
                     <span>Administrator</span>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
         
         <nav class="sidebar-nav">
             <ul>
                 <li class="active">
-                    <a href="{{ route('admin.dashboard') }}">
+                    <a href="<?php echo e(route('admin.dashboard')); ?>">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
@@ -42,19 +42,19 @@
                 <div class="sidebar-heading">Car Owner</div>
 
                 <li>
-                    <a href="#" class="menu-link" data-url="{{ route('car-admin.new-registration-cars') }}">
+                    <a href="#" class="menu-link" data-url="<?php echo e(route('car-admin.new-registration-cars')); ?>">
                         <i class="fas fa-car"></i>
                         <span>Car Registration</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('car-admin.inspection-requests') }}">
+                    <a href="<?php echo e(route('car-admin.inspection-requests')); ?>">
                         <i class="fas fa-clipboard-check"></i>
                         <span>Inspection Requests</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('car-admin.approve-inspected-cars') }}">
+                    <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>">
                         <i class="fas fa-check-circle"></i>
                         <span>Approve Inspections</span>
                     </a>
@@ -65,38 +65,38 @@
                 <div class="sidebar-heading">Customer</div>
 
                 <li>
-                    <a href="{{ route('admin.verify-users') }}">
+                    <a href="<?php echo e(route('admin.verify-users')); ?>">
                         <i class="fas fa-id-card"></i>
                         <span>Verify Users</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url('admin/view-payments') }}">
+                    <a href="<?php echo e(url('admin/view-payments')); ?>">
                         <i class="fas fa-credit-card"></i>
                         <span>Payments</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url('admin/update-car-registration') }}">
+                    <a href="<?php echo e(url('admin/update-car-registration')); ?>">
                         <i class="fas fa-edit"></i>
                         <span>Update Registration</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url('admin/car-information-update') }}">
+                    <a href="<?php echo e(url('admin/car-information-update')); ?>">
                         <i class="fas fa-info-circle"></i>
                         <span>Car Information</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url('admin/booked-car') }}">
+                    <a href="<?php echo e(url('admin/booked-car')); ?>">
                         <i class="fas fa-calendar-check"></i>
                         <span>Booked Cars</span>
                     </a>
                 </li>
                 <li class="logout-item">
-                    <form method="POST" action="{{ route('admin.logout') }}" id="logout-form">
-                        @csrf
+                    <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form">
+                        <?php echo csrf_field(); ?>
                         <a href="#" onclick="document.getElementById('logout-form').submit();">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Logout</span>
@@ -125,12 +125,12 @@
                     <span class="badge">5</span>
                 </div>
                 <div class="account-menu">
-                    @if(Auth::guard('admin')->check())
-                        <span>{{ Auth::guard('admin')->user()->name }}</span>
-                        {{-- <img src="{{ asset('assets/images/avatar-placeholder.jpg') }}" alt="Admin Avatar"> --}}
-                    @else
-                        <a href="{{ route('admin.login') }}" class="btn btn-primary">Login</a>
-                    @endif
+                    <?php if(Auth::guard('admin')->check()): ?>
+                        <span><?php echo e(Auth::guard('admin')->user()->name); ?></span>
+                        
+                    <?php else: ?>
+                        <a href="<?php echo e(route('admin.login')); ?>" class="btn btn-primary">Login</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -196,19 +196,19 @@
         <div class="quick-actions">
             <h2>Quick Actions</h2>
             <div class="action-buttons">
-                <a href="{{ route('car-admin.new-registration-cars') }}" class="action-btn">
+                <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="action-btn">
                     <i class="fas fa-car"></i>
                     <span>Car Registration Request</span>
                 </a>
-                <a href="{{ route('car-admin.inspection-requests') }}" class="action-btn">
+                <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="action-btn">
                     <i class="fas fa-clipboard-check"></i>
                     <span>Manage Inspection Requests</span>
                 </a>
-                <a href="{{ route('car-admin.approve-inspected-cars') }}" class="action-btn">
+                <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="action-btn">
                     <i class="fas fa-check-circle"></i>
                     <span>Approve/Reject Inspected Cars</span>
                 </a>
-                <a href="{{ url('admin/view-payments') }}" class="action-btn">
+                <a href="<?php echo e(url('admin/view-payments')); ?>" class="action-btn">
                     <i class="fas fa-credit-card"></i>
                     <span>View Payments</span>
                 </a>
@@ -322,7 +322,7 @@
         </div>
     </div>
 </div>
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -345,7 +345,9 @@
         });
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/auth/dashboard.blade.php ENDPATH**/ ?>

@@ -208,6 +208,117 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* Status Section Styles */
+    .license-status-section {
+        margin: 15px 0;
+        padding: 15px;
+        background-color: #f1f5ff;
+        border-radius: 8px;
+        border-left: 4px solid #4e73df;
+    }
+    
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.5em 0.75em;
+        border-radius: 30px;
+    }
+    
+    /* Validity Progress Bar Styles */
+    .validity-section {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+    }
+    
+    .validity-text {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 12px;
+    }
+    
+    .validity-progress {
+        margin-top: 10px;
+    }
+    
+    .progress-bar {
+        height: 12px;
+        background-color: #e9ecef;
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        transition: width 0.5s ease;
+    }
+    
+    .bg-danger {
+        background-color: #dc3545;
+    }
+    
+    .bg-warning {
+        background-color: #ffc107;
+    }
+    
+    .bg-success {
+        background-color: #28a745;
+    }
+    
+    .progress-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    /* Update all info groups */
+    .info-group {
+        margin-bottom: 15px;
+    }
+    
+    .info-label {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .info-label i {
+        color: #4e73df;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .info-value {
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: 500;
+        padding-left: 22px; /* Align with icon */
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .license-info,
+        .license-images {
+            grid-template-columns: 1fr;
+        }
+        
+        .progress-labels {
+            font-size: 0.7rem;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+        }
+    }
     </style>
 
 
@@ -357,74 +468,165 @@
                     $back_exists = $license->license_back_image && file_exists(public_path('licenses/' . $back_image_path));
                 @endphp
                 
-                <div class="license-container">
-                    <div class="license-header">
-                        <div class="license-title">
-                            <h2>Driving License Details</h2>
-                            <p>License #{{ $license->license_no }}</p>
-                        </div>
-                        <span class="license-status {{ $status_class }}">{{ $status_text }}</span>
+                <div class="license-header">
+                    <div class="license-title">
+                        <h2><i class="fas fa-id-card me-2"></i>Driving License Details</h2>
+                        <p><i class="fas fa-hashtag me-1"></i>License #{{ $license->license_no }}</p>
                     </div>
-                    
-                    <div class="license-info">
-                        <div>
-                            <div class="info-group">
-                                <div class="info-label">Full Name</div>
-                                <div class="info-value">{{ $customer->name }}</div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">CID Number</div>
-                                <div class="info-value">{{ $customer->cid_no }}</div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">Date of Birth</div>
-                                <div class="info-value">{{ \Carbon\Carbon::parse($customer->date_of_birth)->format('F d, Y') }}</div>
-                            </div>
+                    <span class="license-status {{ $status_class }}">
+                        @if($days_remaining < 0)
+                            <i class="fas fa-times-circle me-1"></i>
+                        @elseif($days_remaining <= 30)
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                        @else
+                            <i class="fas fa-check-circle me-1"></i>
+                        @endif
+                        {{ $status_text }}
+                    </span>
+                </div>
+
+                <div class="license-info">
+                    <div>
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-user me-2"></i>Full Name</div>
+                            <div class="info-value">{{ $customer->name }}</div>
                         </div>
                         
-                        <div>
-                            <div class="info-group">
-                                <div class="info-label">License Number</div>
-                                <div class="info-value">{{ $license->license_no }}</div>
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-id-badge me-2"></i>CID Number</div>
+                            <div class="info-value">{{ $customer->cid_no }}</div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-birthday-cake me-2"></i>Date of Birth</div>
+                            <div class="info-value">{{ \Carbon\Carbon::parse($customer->date_of_birth)->format('F d, Y') }}</div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-venus-mars me-2"></i>Gender</div>
+                            <div class="info-value">{{ $customer->gender ?? 'Not specified' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-id-card me-2"></i>License Number</div>
+                            <div class="info-value">{{ $license->license_no }}</div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-map-marker-alt me-2"></i>Issuing Dzongkhag</div>
+                            <div class="info-value">{{ $license->issuing_dzongkhag }}</div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-calendar-plus me-2"></i>Issue Date</div>
+                            <div class="info-value">{{ \Carbon\Carbon::parse($license->issue_date)->format('F d, Y') }}</div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-calendar-times me-2"></i>Expiry Date</div>
+                            <div class="info-value">{{ \Carbon\Carbon::parse($license->expiry_date)->format('F d, Y') }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- License Status -->
+                <div class="license-status-section">
+                    <div class="info-group">
+                        <div class="info-label"><i class="fas fa-check-square me-2"></i>License Status</div>
+                        <div class="info-value">
+                            @php
+                                $statusBadgeClass = '';
+                                $statusIcon = '';
+                                
+                                switch($license->status) {
+                                    case 'active':
+                                        $statusBadgeClass = 'badge bg-success';
+                                        $statusIcon = 'fa-check-circle';
+                                        break;
+                                    case 'pending':
+                                        $statusBadgeClass = 'badge bg-warning';
+                                        $statusIcon = 'fa-clock';
+                                        break;
+                                    case 'rejected':
+                                        $statusBadgeClass = 'badge bg-danger';
+                                        $statusIcon = 'fa-times-circle';
+                                        break;
+                                    case 'expired':
+                                        $statusBadgeClass = 'badge bg-danger';
+                                        $statusIcon = 'fa-calendar-times';
+                                        break;
+                                    case 'suspended':
+                                        $statusBadgeClass = 'badge bg-secondary';
+                                        $statusIcon = 'fa-ban';
+                                        break;
+                                    default:
+                                        $statusBadgeClass = 'badge bg-info';
+                                        $statusIcon = 'fa-info-circle';
+                                }
+                            @endphp
+                            
+                            <span class="{{ $statusBadgeClass }}">
+                                <i class="fas {{ $statusIcon }} me-1"></i>
+                                {{ ucfirst($license->status) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Validity Progress Bar -->
+                <div class="validity-section">
+                    <div class="info-group">
+                        <div class="info-label"><i class="fas fa-clock me-2"></i>License Validity</div>
+                        <div class="info-value">
+                            @php
+                                // Calculate total validity period in days
+                                $issue_date = \Carbon\Carbon::parse($license->issue_date);
+                                $expiry_date = \Carbon\Carbon::parse($license->expiry_date);
+                                $total_validity_days = $issue_date->diffInDays($expiry_date);
+                                
+                                // Calculate days used and remaining
+                                $days_used = $issue_date->diffInDays($today);
+                                $percentage_used = $total_validity_days > 0 ? min(100, max(0, ($days_used / $total_validity_days) * 100)) : 100;
+                                $percentage_remaining = 100 - $percentage_used;
+                            @endphp
+                            
+                            <div class="validity-text">
+                                @if($days_remaining < 0)
+                                    <span class="text-danger"><i class="fas fa-exclamation-circle me-1"></i>Expired {{ abs($days_remaining) }} days ago</span>
+                                @elseif($days_remaining <= 30)
+                                    <span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Expires in {{ $days_remaining }} days</span>
+                                @else
+                                    <span class="text-success"><i class="fas fa-check-circle me-1"></i>Valid for {{ $days_remaining }} days</span>
+                                @endif
                             </div>
                             
-                            <div class="info-group">
-                                <div class="info-label">Issuing Dzongkhag</div>
-                                <div class="info-value">{{ $license->issuing_dzongkhag }}</div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">Issue Date</div>
-                                <div class="info-value">{{ \Carbon\Carbon::parse($license->issue_date)->format('F d, Y') }}</div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">Expiry Date</div>
-                                <div class="info-value">{{ \Carbon\Carbon::parse($license->expiry_date)->format('F d, Y') }}</div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">Validity</div>
-                                <div class="info-value">
-                                    @if($days_remaining < 0)
-                                        <span class="text-danger">Expired {{ abs($days_remaining) }} days ago</span>
-                                    @elseif($days_remaining <= 30)
-                                        <span class="text-warning">Expires in {{ $days_remaining }} days</span>
-                                    @else
-                                        <span class="text-success">Valid for {{ $days_remaining }} days</span>
-                                    @endif
+                            <div class="validity-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill 
+                                        @if($days_remaining < 0) bg-danger
+                                        @elseif($days_remaining <= 30) bg-warning
+                                        @else bg-success
+                                        @endif"
+                                        style="width: {{ $percentage_used }}%">
+                                    </div>
+                                </div>
+                                <div class="progress-labels">
+                                    <span><i class="fas fa-calendar-check me-1"></i>Issued: {{ $issue_date->format('M d, Y') }}</span>
+                                    <span><i class="fas fa-calendar-times me-1"></i>Expires: {{ $expiry_date->format('M d, Y') }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="license-images">
+                </div>
+
+                <!-- License Images -->
+                <div class="license-images">
                         <div class="image-container">
-                            <h4>License Front</h4>
+                            <h4><i class="fas fa-id-card"></i> License Front</h4>
                             @if(!empty($license->license_front_image))
-                                <img src="{{ asset('licenses/' . $license->license_front_image) }}" 
+                                <img src="{{ asset($license->license_front_image) }}" 
                                     alt="License Front" 
                                     class="license-image"
                                     onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'no-image\'><i class=\'fas fa-id-card\'></i><p>Front image not available</p></div>';">
@@ -437,9 +639,9 @@
                         </div>
                         
                         <div class="image-container">
-                            <h4>License Back</h4>
+                            <h4><i class="fas fa-id-card-alt"></i>License Back</h4>
                             @if(!empty($license->license_back_image))
-                                <img src="{{ asset('licenses/' . $license->license_back_image) }}" 
+                                <img src="{{ asset($license->license_back_image) }}" 
                                     alt="License Back" 
                                     class="license-image"
                                     onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'no-image\'><i class=\'fas fa-id-card\'></i><p>Back image not available</p></div>';">
@@ -450,18 +652,19 @@
                                 </div>
                             @endif
                         </div>
-                    </div>
-                    
-                    <div class="license-actions">
-                        @if($days_remaining < 30)
-                            <a href="https://eralis.rsta.gov.bt/services/driving/search?serviceType=driving_renewal" class="btn-primary" target="_blank">
-                                <i class="fas fa-sync-alt"></i> Renew License
-                            </a>
-                        @endif
-                        <button class="btn-outline" id="updateLicense">
-                            <i class="fas fa-edit"></i> Update License Information
-                        </button>
-                    </div>
+                </div>
+
+                <!-- License Actions -->
+                <div class="license-actions">
+                    @if($days_remaining < 30)
+                        <a href="https://eralis.rsta.gov.bt/services/driving/search?serviceType=driving_renewal" class="btn-primary" target="_blank">
+                            <i class="fas fa-sync-alt me-1"></i> Renew License
+                        </a>
+                    @endif
+                    <button class="btn-outline" id="updateLicense">
+                        <i class="fas fa-edit me-1"></i> Update License Information
+                    </button>
+                </div>
                     
                     <!-- @if(config('app.debug'))
                         <div class="debug-info mt-4 p-3 bg-light border rounded">

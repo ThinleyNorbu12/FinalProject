@@ -156,6 +156,7 @@ Route::get('carowner/approved-car', [CarOwnerController::class, 'showApprovedCar
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\Auth\AdminRegisterController;
 use App\Http\Controllers\CarAdminController;
+use App\Http\Controllers\UserVerificationController;
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
 
@@ -221,7 +222,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 });
 
-
+Route::middleware(['auth:admin'])->group(function () {
+    // List all licenses for verification
+    Route::get('/admin/verify-users', [\App\Http\Controllers\UserVerificationController::class, 'index'])
+        ->name('admin.verify-users');
+    
+    // Show detailed license information
+    Route::get('/admin/verify-users/{id}', [\App\Http\Controllers\UserVerificationController::class, 'show'])
+        ->name('admin.verify-user-details');
+    
+    // Verify a license
+    Route::post('/admin/verify-license', [\App\Http\Controllers\UserVerificationController::class, 'verifyLicense'])
+        ->name('admin.verify-license');
+    
+    // Reject a license
+    Route::post('/admin/reject-license', [\App\Http\Controllers\UserVerificationController::class, 'rejectLicense'])
+        ->name('admin.reject-license');
+});
 
 
 

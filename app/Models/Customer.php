@@ -19,7 +19,7 @@ class Customer extends Authenticatable
         'password',
         'date_of_birth',   // ✅ Newly added
         'address',         // ✅ Newly added
-        
+        'gender',
     ];
 
     protected $hidden = [

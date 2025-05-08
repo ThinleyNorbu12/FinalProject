@@ -585,6 +585,26 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="gender">Gender</label>
+                                            <div class="input-with-icon">
+                                                <i class="fas fa-venus-mars"></i>
+                                                <select class="form-control" id="gender" name="gender">
+                                                    @php
+                                                        $gender = Auth::guard('customer')->user()->gender ?? '';
+                                                    @endphp
+                                                    <option value="">-- Select Gender --</option>
+                                                    <option value="Male" {{ $gender === 'Male' ? 'selected' : '' }}>Male</option>
+                                                    <option value="Female" {{ $gender === 'Female' ? 'selected' : '' }}>Female</option>
+                                                    <option value="Other" {{ $gender === 'Other' ? 'selected' : '' }}>Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 
                                 <div class="row mt-4">
                                     <div class="col-md-12">
