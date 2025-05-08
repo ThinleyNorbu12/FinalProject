@@ -1947,8 +1947,9 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property mixed $license_back_image
-     * @property mixed $license_front_image
+     * @property mixed $status
+     * @property string|null $license_back_image
+     * @property string|null $license_front_image
      * @property string|null $expiry_date
      * @property string|null $issue_date
      * @property string|null $issuing_dzongkhag
@@ -1964,6 +1965,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereExpiryDate($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereLicenseFrontImage($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereLicenseBackImage($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense newModelQuery()

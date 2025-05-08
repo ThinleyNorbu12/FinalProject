@@ -84,7 +84,7 @@
                     <span>Payment Methods</span>
                 </a>
                 
-                <a href="https://eralis.rsta.gov.bt/services/driving/search?serviceType=driving_renewal" class="sidebar-menu-item" target="_blank">
+                <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-id-card"></i>
                     <span>Driving License</span>
                 </a>

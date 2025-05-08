@@ -17,10 +17,12 @@ class DrivingLicense extends Model
         'expiry_date',
         'license_front_image',
         'license_back_image',
+        'status',
     ];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
+    
 }
