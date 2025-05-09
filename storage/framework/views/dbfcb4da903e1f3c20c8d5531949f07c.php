@@ -24,7 +24,7 @@
             padding: 30px;
             margin-bottom: 30px;
         }
-       
+    
         .license-header {
             display: flex;
             justify-content: space-between;
@@ -33,76 +33,86 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 15px;
         }
-       
+    
         .license-title h2 {
             color: #333;
             margin: 0;
             font-size: 1.8rem;
         }
-       
+    
         .license-title p {
             color: #666;
             margin: 5px 0 0;
         }
-       
+    
         .license-status {
             padding: 6px 12px;
             border-radius: 30px;
             font-weight: 600;
             font-size: 0.9rem;
         }
-       
+    
         .status-valid {
             background-color: #d4edda;
             color: #155724;
         }
-       
+    
         .status-expired {
             background-color: #f8d7da;
             color: #721c24;
         }
-       
+    
         .status-expiring {
             background-color: #fff3cd;
             color: #856404;
         }
-       
+    
         .license-info {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
-       
+    
         .info-group {
             margin-bottom: 15px;
         }
-       
+    
         .info-label {
+            display: flex;
+            align-items: center;
             font-size: 0.9rem;
             color: #666;
             margin-bottom: 5px;
         }
-       
+    
+        .info-label i {
+            color: #4e73df;
+            width: 20px;
+            text-align: center;
+            margin-right: 5px;
+        }
+    
         .info-value {
             font-size: 1.1rem;
             color: #333;
             font-weight: 500;
+            padding-left: 22px;
         }
-       
+    
         .license-images {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            display: flex;
+            flex-wrap: wrap;
             gap: 20px;
+            justify-content: center;
             margin-top: 20px;
         }
-       
+    
         .image-container {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
+            flex: 1 1 45%;
+            text-align: center;
         }
-       
+    
         .image-container h4 {
             background-color: #f8f9fa;
             margin: 0;
@@ -110,15 +120,17 @@
             font-size: 1rem;
             border-bottom: 1px solid #ddd;
         }
-       
+    
         .license-image {
             width: 100%;
-            padding: 15px;
-            object-fit: contain;
-            height: 280px;
-            display: block;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 10px;
         }
-       
+    
         .no-image {
             height: 280px;
             display: flex;
@@ -126,28 +138,30 @@
             justify-content: center;
             align-items: center;
             background-color: #f8f9fa;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
             color: #6c757d;
             padding: 15px;
         }
-       
+    
         .no-image i {
             font-size: 4rem;
             margin-bottom: 15px;
             opacity: 0.5;
         }
-       
+    
         .no-image p {
             font-size: 1rem;
             margin: 0;
         }
-       
+    
         .license-actions {
             display: flex;
             justify-content: flex-start;
             gap: 15px;
             margin-top: 25px;
         }
-       
+    
         .btn-primary {
             background-color: #4e73df;
             color: white;
@@ -158,11 +172,11 @@
             font-weight: 500;
             transition: all 0.3s;
         }
-       
+    
         .btn-primary:hover {
             background-color: #375abd;
         }
-       
+    
         .btn-outline {
             background-color: transparent;
             color: #4e73df;
@@ -173,42 +187,85 @@
             font-weight: 500;
             transition: all 0.3s;
         }
-       
+    
         .btn-outline:hover {
             background-color: #eef1ff;
         }
-       
-        .no-license {
-            text-align: center;
-            padding: 50px 20px;
+    
+        .license-status-section {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f1f5ff;
+            border-radius: 8px;
+            border-left: 4px solid #4e73df;
         }
-       
-        .no-license i {
-            font-size: 3rem;
-            color: #ccc;
-            margin-bottom: 20px;
+    
+        .badge {
+            font-size: 0.9rem;
+            padding: 0.5em 0.75em;
+            border-radius: 30px;
         }
-       
-        .no-license h3 {
-            margin-bottom: 15px;
-            color: #333;
+    
+        .validity-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
         }
-       
-        .no-license p {
-            color: #666;
-            margin-bottom: 25px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+    
+        .validity-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 12px;
         }
-       
-        @media (max-width: 768px) {
-            .license-info,
-            .license-images {
+    
+        .validity-progress {
+            margin-top: 10px;
+        }
+    
+        .progress-bar {
+            height: 12px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+    
+        .progress-fill {
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: width 0.5s ease;
+        }
+    
+        .bg-danger { background-color: #dc3545; }
+        .bg-warning { background-color: #ffc107; }
+        .bg-success { background-color: #28a745; }
+    
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+    
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .image-container {
+                flex: 1 1 100%;
+            }
+            .license-info {
                 grid-template-columns: 1fr;
+            }
+            .info-value {
+                font-size: 1rem;
             }
         }
     </style>
+    
 
 
 </head>
@@ -357,74 +414,167 @@
                     $back_exists = $license->license_back_image && file_exists(public_path('licenses/' . $back_image_path));
                 ?>
                 
-                <div class="license-container">
-                    <div class="license-header">
-                        <div class="license-title">
-                            <h2>Driving License Details</h2>
-                            <p>License #<?php echo e($license->license_no); ?></p>
-                        </div>
-                        <span class="license-status <?php echo e($status_class); ?>"><?php echo e($status_text); ?></span>
+                <div class="license-header">
+                    <div class="license-title">
+                        <h2><i class="fas fa-id-card me-2"></i>Driving License Details</h2>
+                        <p><i class="fas fa-hashtag me-1"></i>License #<?php echo e($license->license_no); ?></p>
                     </div>
-                    
-                    <div class="license-info">
-                        <div>
-                            <div class="info-group">
-                                <div class="info-label">Full Name</div>
-                                <div class="info-value"><?php echo e($customer->name); ?></div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">CID Number</div>
-                                <div class="info-value"><?php echo e($customer->cid_no); ?></div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">Date of Birth</div>
-                                <div class="info-value"><?php echo e(\Carbon\Carbon::parse($customer->date_of_birth)->format('F d, Y')); ?></div>
-                            </div>
+                    <span class="license-status <?php echo e($status_class); ?>">
+                        <?php if($days_remaining < 0): ?>
+                            <i class="fas fa-times-circle me-1"></i>
+                        <?php elseif($days_remaining <= 30): ?>
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                        <?php else: ?>
+                            <i class="fas fa-check-circle me-1"></i>
+                        <?php endif; ?>
+                        <?php echo e($status_text); ?>
+
+                    </span>
+                </div>
+
+                <div class="license-info">
+                    <div>
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-user me-2"></i>Full Name</div>
+                            <div class="info-value"><?php echo e($customer->name); ?></div>
                         </div>
                         
-                        <div>
-                            <div class="info-group">
-                                <div class="info-label">License Number</div>
-                                <div class="info-value"><?php echo e($license->license_no); ?></div>
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-id-badge me-2"></i>CID Number</div>
+                            <div class="info-value"><?php echo e($customer->cid_no); ?></div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-birthday-cake me-2"></i>Date of Birth</div>
+                            <div class="info-value"><?php echo e(\Carbon\Carbon::parse($customer->date_of_birth)->format('F d, Y')); ?></div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-venus-mars me-2"></i>Gender</div>
+                            <div class="info-value"><?php echo e($customer->gender ?? 'Not specified'); ?></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-id-card me-2"></i>License Number</div>
+                            <div class="info-value"><?php echo e($license->license_no); ?></div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-map-marker-alt me-2"></i>Issuing Dzongkhag</div>
+                            <div class="info-value"><?php echo e($license->issuing_dzongkhag); ?></div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-calendar-plus me-2"></i>Issue Date</div>
+                            <div class="info-value"><?php echo e(\Carbon\Carbon::parse($license->issue_date)->format('F d, Y')); ?></div>
+                        </div>
+                        
+                        <div class="info-group">
+                            <div class="info-label"><i class="fas fa-calendar-times me-2"></i>Expiry Date</div>
+                            <div class="info-value"><?php echo e(\Carbon\Carbon::parse($license->expiry_date)->format('F d, Y')); ?></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- License Status -->
+                <div class="license-status-section">
+                    <div class="info-group">
+                        <div class="info-label"><i class="fas fa-check-square me-2"></i>License Status</div>
+                        <div class="info-value">
+                            <?php
+                                $statusBadgeClass = '';
+                                $statusIcon = '';
+                                
+                                switch($license->status) {
+                                    case 'active':
+                                        $statusBadgeClass = 'badge bg-success';
+                                        $statusIcon = 'fa-check-circle';
+                                        break;
+                                    case 'pending':
+                                        $statusBadgeClass = 'badge bg-warning';
+                                        $statusIcon = 'fa-clock';
+                                        break;
+                                    case 'rejected':
+                                        $statusBadgeClass = 'badge bg-danger';
+                                        $statusIcon = 'fa-times-circle';
+                                        break;
+                                    case 'expired':
+                                        $statusBadgeClass = 'badge bg-danger';
+                                        $statusIcon = 'fa-calendar-times';
+                                        break;
+                                    case 'suspended':
+                                        $statusBadgeClass = 'badge bg-secondary';
+                                        $statusIcon = 'fa-ban';
+                                        break;
+                                    default:
+                                        $statusBadgeClass = 'badge bg-info';
+                                        $statusIcon = 'fa-info-circle';
+                                }
+                            ?>
+                            
+                            <span class="<?php echo e($statusBadgeClass); ?>">
+                                <i class="fas <?php echo e($statusIcon); ?> me-1"></i>
+                                <?php echo e(ucfirst($license->status)); ?>
+
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Validity Progress Bar -->
+                <div class="validity-section">
+                    <div class="info-group">
+                        <div class="info-label"><i class="fas fa-clock me-2"></i>License Validity</div>
+                        <div class="info-value">
+                            <?php
+                                // Calculate total validity period in days
+                                $issue_date = \Carbon\Carbon::parse($license->issue_date);
+                                $expiry_date = \Carbon\Carbon::parse($license->expiry_date);
+                                $total_validity_days = $issue_date->diffInDays($expiry_date);
+                                
+                                // Calculate days used and remaining
+                                $days_used = $issue_date->diffInDays($today);
+                                $percentage_used = $total_validity_days > 0 ? min(100, max(0, ($days_used / $total_validity_days) * 100)) : 100;
+                                $percentage_remaining = 100 - $percentage_used;
+                            ?>
+                            
+                            <div class="validity-text">
+                                <?php if($days_remaining < 0): ?>
+                                    <span class="text-danger"><i class="fas fa-exclamation-circle me-1"></i>Expired <?php echo e(abs($days_remaining)); ?> days ago</span>
+                                <?php elseif($days_remaining <= 30): ?>
+                                    <span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Expires in <?php echo e($days_remaining); ?> days</span>
+                                <?php else: ?>
+                                    <span class="text-success"><i class="fas fa-check-circle me-1"></i>Valid for <?php echo e($days_remaining); ?> days</span>
+                                <?php endif; ?>
                             </div>
                             
-                            <div class="info-group">
-                                <div class="info-label">Issuing Dzongkhag</div>
-                                <div class="info-value"><?php echo e($license->issuing_dzongkhag); ?></div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">Issue Date</div>
-                                <div class="info-value"><?php echo e(\Carbon\Carbon::parse($license->issue_date)->format('F d, Y')); ?></div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">Expiry Date</div>
-                                <div class="info-value"><?php echo e(\Carbon\Carbon::parse($license->expiry_date)->format('F d, Y')); ?></div>
-                            </div>
-                            
-                            <div class="info-group">
-                                <div class="info-label">Validity</div>
-                                <div class="info-value">
-                                    <?php if($days_remaining < 0): ?>
-                                        <span class="text-danger">Expired <?php echo e(abs($days_remaining)); ?> days ago</span>
-                                    <?php elseif($days_remaining <= 30): ?>
-                                        <span class="text-warning">Expires in <?php echo e($days_remaining); ?> days</span>
-                                    <?php else: ?>
-                                        <span class="text-success">Valid for <?php echo e($days_remaining); ?> days</span>
-                                    <?php endif; ?>
+                            <div class="validity-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill 
+                                        <?php if($days_remaining < 0): ?> bg-danger
+                                        <?php elseif($days_remaining <= 30): ?> bg-warning
+                                        <?php else: ?> bg-success
+                                        <?php endif; ?>"
+                                        style="width: <?php echo e($percentage_used); ?>%">
+                                    </div>
+                                </div>
+                                <div class="progress-labels">
+                                    <span><i class="fas fa-calendar-check me-1"></i>Issued: <?php echo e($issue_date->format('M d, Y')); ?></span>
+                                    <span><i class="fas fa-calendar-times me-1"></i>Expires: <?php echo e($expiry_date->format('M d, Y')); ?></span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="license-images">
+                </div>
+
+                <!-- License Images -->
+                <div class="license-images">
                         <div class="image-container">
-                            <h4>License Front</h4>
+                            <h4><i class="fas fa-id-card"></i> License Front</h4>
                             <?php if(!empty($license->license_front_image)): ?>
-                                <img src="<?php echo e(asset('licenses/' . $license->license_front_image)); ?>" 
+                                <img src="<?php echo e(asset($license->license_front_image)); ?>" 
                                     alt="License Front" 
                                     class="license-image"
                                     onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'no-image\'><i class=\'fas fa-id-card\'></i><p>Front image not available</p></div>';">
@@ -437,9 +587,9 @@
                         </div>
                         
                         <div class="image-container">
-                            <h4>License Back</h4>
+                            <h4><i class="fas fa-id-card-alt"></i>License Back</h4>
                             <?php if(!empty($license->license_back_image)): ?>
-                                <img src="<?php echo e(asset('licenses/' . $license->license_back_image)); ?>" 
+                                <img src="<?php echo e(asset($license->license_back_image)); ?>" 
                                     alt="License Back" 
                                     class="license-image"
                                     onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'no-image\'><i class=\'fas fa-id-card\'></i><p>Back image not available</p></div>';">
@@ -450,30 +600,14 @@
                                 </div>
                             <?php endif; ?>
                         </div>
-                    </div>
+                </div>
+                
+                
+
+                <!-- License Actions -->
+                
                     
-                    <div class="license-actions">
-                        <?php if($days_remaining < 30): ?>
-                            <a href="https://eralis.rsta.gov.bt/services/driving/search?serviceType=driving_renewal" class="btn-primary" target="_blank">
-                                <i class="fas fa-sync-alt"></i> Renew License
-                            </a>
-                        <?php endif; ?>
-                        <button class="btn-outline" id="updateLicense">
-                            <i class="fas fa-edit"></i> Update License Information
-                        </button>
-                    </div>
                     
-                    <!-- <?php if(config('app.debug')): ?>
-                        <div class="debug-info mt-4 p-3 bg-light border rounded">
-                            <h5>Debug Information</h5>
-                            <p><strong>Front Image:</strong> <?php echo e($license->license_front_image ?? 'Not set'); ?></p>
-                            <p><strong>Front Image Path:</strong> <?php echo e($front_image_path); ?></p>
-                            <p><strong>Front Image Exists:</strong> <?php echo e($front_exists ? 'Yes' : 'No'); ?></p>
-                            <p><strong>Back Image:</strong> <?php echo e($license->license_back_image ?? 'Not set'); ?></p>
-                            <p><strong>Back Image Path:</strong> <?php echo e($back_image_path); ?></p>
-                            <p><strong>Back Image Exists:</strong> <?php echo e($back_exists ? 'Yes' : 'No'); ?></p>
-                        </div>
-                    <?php endif; ?> -->
                 </div>
             <?php else: ?>
                 <div class="license-container no-license">

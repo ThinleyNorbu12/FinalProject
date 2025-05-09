@@ -24,7 +24,7 @@
             padding: 30px;
             margin-bottom: 30px;
         }
-       
+    
         .license-header {
             display: flex;
             justify-content: space-between;
@@ -33,76 +33,86 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 15px;
         }
-       
+    
         .license-title h2 {
             color: #333;
             margin: 0;
             font-size: 1.8rem;
         }
-       
+    
         .license-title p {
             color: #666;
             margin: 5px 0 0;
         }
-       
+    
         .license-status {
             padding: 6px 12px;
             border-radius: 30px;
             font-weight: 600;
             font-size: 0.9rem;
         }
-       
+    
         .status-valid {
             background-color: #d4edda;
             color: #155724;
         }
-       
+    
         .status-expired {
             background-color: #f8d7da;
             color: #721c24;
         }
-       
+    
         .status-expiring {
             background-color: #fff3cd;
             color: #856404;
         }
-       
+    
         .license-info {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
-       
+    
         .info-group {
             margin-bottom: 15px;
         }
-       
+    
         .info-label {
+            display: flex;
+            align-items: center;
             font-size: 0.9rem;
             color: #666;
             margin-bottom: 5px;
         }
-       
+    
+        .info-label i {
+            color: #4e73df;
+            width: 20px;
+            text-align: center;
+            margin-right: 5px;
+        }
+    
         .info-value {
             font-size: 1.1rem;
             color: #333;
             font-weight: 500;
+            padding-left: 22px;
         }
-       
+    
         .license-images {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            display: flex;
+            flex-wrap: wrap;
             gap: 20px;
+            justify-content: center;
             margin-top: 20px;
         }
-       
+    
         .image-container {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
+            flex: 1 1 45%;
+            text-align: center;
         }
-       
+    
         .image-container h4 {
             background-color: #f8f9fa;
             margin: 0;
@@ -110,15 +120,17 @@
             font-size: 1rem;
             border-bottom: 1px solid #ddd;
         }
-       
+    
         .license-image {
             width: 100%;
-            padding: 15px;
-            object-fit: contain;
-            height: 280px;
-            display: block;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 10px;
         }
-       
+    
         .no-image {
             height: 280px;
             display: flex;
@@ -126,28 +138,30 @@
             justify-content: center;
             align-items: center;
             background-color: #f8f9fa;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
             color: #6c757d;
             padding: 15px;
         }
-       
+    
         .no-image i {
             font-size: 4rem;
             margin-bottom: 15px;
             opacity: 0.5;
         }
-       
+    
         .no-image p {
             font-size: 1rem;
             margin: 0;
         }
-       
+    
         .license-actions {
             display: flex;
             justify-content: flex-start;
             gap: 15px;
             margin-top: 25px;
         }
-       
+    
         .btn-primary {
             background-color: #4e73df;
             color: white;
@@ -158,11 +172,11 @@
             font-weight: 500;
             transition: all 0.3s;
         }
-       
+    
         .btn-primary:hover {
             background-color: #375abd;
         }
-       
+    
         .btn-outline {
             background-color: transparent;
             color: #4e73df;
@@ -173,153 +187,85 @@
             font-weight: 500;
             transition: all 0.3s;
         }
-       
+    
         .btn-outline:hover {
             background-color: #eef1ff;
         }
-       
-        .no-license {
-            text-align: center;
-            padding: 50px 20px;
+    
+        .license-status-section {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f1f5ff;
+            border-radius: 8px;
+            border-left: 4px solid #4e73df;
         }
-       
-        .no-license i {
-            font-size: 3rem;
-            color: #ccc;
-            margin-bottom: 20px;
+    
+        .badge {
+            font-size: 0.9rem;
+            padding: 0.5em 0.75em;
+            border-radius: 30px;
         }
-       
-        .no-license h3 {
-            margin-bottom: 15px;
-            color: #333;
+    
+        .validity-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
         }
-       
-        .no-license p {
-            color: #666;
-            margin-bottom: 25px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+    
+        .validity-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 12px;
         }
-       
-        @media (max-width: 768px) {
-            .license-info,
-            .license-images {
+    
+        .validity-progress {
+            margin-top: 10px;
+        }
+    
+        .progress-bar {
+            height: 12px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+    
+        .progress-fill {
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: width 0.5s ease;
+        }
+    
+        .bg-danger { background-color: #dc3545; }
+        .bg-warning { background-color: #ffc107; }
+        .bg-success { background-color: #28a745; }
+    
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+    
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .image-container {
+                flex: 1 1 100%;
+            }
+            .license-info {
                 grid-template-columns: 1fr;
             }
+            .info-value {
+                font-size: 1rem;
+            }
         }
-        /* Status Section Styles */
-    .license-status-section {
-        margin: 15px 0;
-        padding: 15px;
-        background-color: #f1f5ff;
-        border-radius: 8px;
-        border-left: 4px solid #4e73df;
-    }
-    
-    .badge {
-        font-size: 0.9rem;
-        padding: 0.5em 0.75em;
-        border-radius: 30px;
-    }
-    
-    /* Validity Progress Bar Styles */
-    .validity-section {
-        margin: 20px 0;
-        padding: 15px;
-        border-radius: 8px;
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-    }
-    
-    .validity-text {
-        font-size: 1.1rem;
-        font-weight: 500;
-        margin-bottom: 12px;
-    }
-    
-    .validity-progress {
-        margin-top: 10px;
-    }
-    
-    .progress-bar {
-        height: 12px;
-        background-color: #e9ecef;
-        border-radius: 6px;
-        overflow: hidden;
-        position: relative;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-        transition: width 0.5s ease;
-    }
-    
-    .bg-danger {
-        background-color: #dc3545;
-    }
-    
-    .bg-warning {
-        background-color: #ffc107;
-    }
-    
-    .bg-success {
-        background-color: #28a745;
-    }
-    
-    .progress-labels {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.8rem;
-        color: #6c757d;
-        margin-top: 5px;
-    }
-    
-    /* Update all info groups */
-    .info-group {
-        margin-bottom: 15px;
-    }
-    
-    .info-label {
-        display: flex;
-        align-items: center;
-        font-size: 0.9rem;
-        color: #666;
-        margin-bottom: 5px;
-    }
-    
-    .info-label i {
-        color: #4e73df;
-        width: 20px;
-        text-align: center;
-    }
-    
-    .info-value {
-        font-size: 1.1rem;
-        color: #333;
-        font-weight: 500;
-        padding-left: 22px; /* Align with icon */
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .license-info,
-        .license-images {
-            grid-template-columns: 1fr;
-        }
-        
-        .progress-labels {
-            font-size: 0.7rem;
-        }
-        
-        .info-value {
-            font-size: 1rem;
-        }
-    }
     </style>
+    
 
 
 </head>
@@ -653,9 +599,43 @@
                             @endif
                         </div>
                 </div>
+                {{-- <div class="license-images">
+                    <div class="image-container">
+                        <h4><i class="fas fa-id-card"></i> License Front</h4>
+                        @if(!empty($license->license_front_image))
+                            <img src="{{ asset('licenses/' . $license->license_front_image) }}" 
+                                alt="License Front" 
+                                class="license-image"
+                                onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'no-image\'><i class=\'fas fa-id-card\'></i><p>Front image not available</p></div>';"
+                            >
+                        @else
+                            <div class="no-image">
+                                <i class="fas fa-id-card"></i>
+                                <p>Front image not available</p>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <div class="image-container">
+                        <h4><i class="fas fa-id-card-alt"></i> License Back</h4>
+                        @if(!empty($license->license_back_image))
+                            <img src="{{ asset('licenses/' . $license->license_back_image) }}" 
+                                alt="License Back" 
+                                class="license-image"
+                                onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'no-image\'><i class=\'fas fa-id-card\'></i><p>Back image not available</p></div>';"
+                            >
+                        @else
+                            <div class="no-image">
+                                <i class="fas fa-id-card"></i>
+                                <p>Back image not available</p>
+                            </div>
+                        @endif
+                    </div>
+                </div> --}}
+                
 
                 <!-- License Actions -->
-                <div class="license-actions">
+                {{-- <div class="license-actions">
                     @if($days_remaining < 30)
                         <a href="https://eralis.rsta.gov.bt/services/driving/search?serviceType=driving_renewal" class="btn-primary" target="_blank">
                             <i class="fas fa-sync-alt me-1"></i> Renew License
@@ -664,9 +644,9 @@
                     <button class="btn-outline" id="updateLicense">
                         <i class="fas fa-edit me-1"></i> Update License Information
                     </button>
-                </div>
+                </div> --}}
                     
-                    <!-- @if(config('app.debug'))
+                    {{-- @if(config('app.debug'))
                         <div class="debug-info mt-4 p-3 bg-light border rounded">
                             <h5>Debug Information</h5>
                             <p><strong>Front Image:</strong> {{ $license->license_front_image ?? 'Not set' }}</p>
@@ -676,7 +656,7 @@
                             <p><strong>Back Image Path:</strong> {{ $back_image_path }}</p>
                             <p><strong>Back Image Exists:</strong> {{ $back_exists ? 'Yes' : 'No' }}</p>
                         </div>
-                    @endif -->
+                    @endif  --}}
                 </div>
             @else
                 <div class="license-container no-license">

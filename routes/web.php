@@ -222,22 +222,32 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 });
 
-Route::middleware(['auth:admin'])->group(function () {
-    // List all licenses for verification
-    Route::get('/admin/verify-users', [\App\Http\Controllers\UserVerificationController::class, 'index'])
-        ->name('admin.verify-users');
+// Customer profile routes
+Route::middleware(['auth:customer'])->group(function () {
+    Route::put('/profile/update', [CustomerProfileController::class, 'update'])
+        ->name('customer.profile.update');
     
-    // Show detailed license information
-    Route::get('/admin/verify-users/{id}', [\App\Http\Controllers\UserVerificationController::class, 'show'])
-        ->name('admin.verify-user-details');
+    Route::post('/profile/save-license', [CustomerProfileController::class, 'saveLicense'])
+        ->name('customer.profile.save-license');
+});
+
+// Admin verification routes
+Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Verify users route
+    Route::get('/verify-users', [App\Http\Controllers\UserVerificationController::class, 'index'])
+        ->name('verify-users');
     
-    // Verify a license
-    Route::post('/admin/verify-license', [\App\Http\Controllers\UserVerificationController::class, 'verifyLicense'])
-        ->name('admin.verify-license');
+    // Show user verification details
+    Route::get('/user-verification/{id}', [App\Http\Controllers\UserVerificationController::class, 'show'])
+        ->name('user-verification.show');
     
-    // Reject a license
-    Route::post('/admin/reject-license', [\App\Http\Controllers\UserVerificationController::class, 'rejectLicense'])
-        ->name('admin.reject-license');
+    // Update user verification status
+    Route::put('/user-verification/{id}/update-status', [App\Http\Controllers\UserVerificationController::class, 'updateStatus'])
+        ->name('user-verification.update-status');
+    
+    // API endpoint to get pending verification count for notifications
+    Route::get('/api/pending-verification-count', [App\Http\Controllers\UserVerificationController::class, 'getPendingVerificationCount'])
+        ->name('api.pending-verification-count');
 });
 
 

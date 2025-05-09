@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Models\DrivingLicense;
+use Carbon\Carbon;
+use App\Notifications\LicenseVerificationNotification;
+use App\Models\AdminNotification; 
+use App\Mail\LicenseVerificationNotification as LicenseVerificationMail;
+use Illuminate\Support\Facades\Mail;
+
 
 
 class CustomerProfileController extends Controller
@@ -68,6 +74,40 @@ class CustomerProfileController extends Controller
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
+    // public function update(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|email|max:255',
+    //         'phone' => 'required|string|max:20',
+    //         'dob' => 'nullable|string',
+    //         'address' => 'nullable|string|max:255',
+    //         'gender' => 'nullable|string|in:Male,Female,Other',
+    //     ]);
+
+    //     $user = Auth::guard('customer')->user();
+        
+    //     // Format date if provided
+    //     $dob = null;
+    //     if ($request->dob) {
+    //         try {
+    //             $dob = Carbon::createFromFormat('d/m/Y', $request->dob)->format('Y-m-d');
+    //         } catch (\Exception $e) {
+    //             $dob = $request->dob;
+    //         }
+    //     }
+        
+    //     $user->update([
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'phone' => $request->phone,
+    //         'dob' => $dob,
+    //         'address' => $request->address,
+    //         'gender' => $request->gender,
+    //     ]);
+
+    //     return redirect()->back()->with('success', 'Profile updated successfully.');
+    // }
 
     public function saveLicense(Request $request)
     {
@@ -189,12 +229,7 @@ class CustomerProfileController extends Controller
         }
     }
 
-    // private function uploadLicenseImage($file)
-    // {
-    //     $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-    //     $file->move(public_path('licenses'), $fileName);
-    //     return 'licenses/' . $fileName;
-    // }
+    
     private function uploadLicenseImage($file)
     {
         $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();

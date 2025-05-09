@@ -6,136 +6,83 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\DrivingLicense;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UserVerificationController extends Controller
 {
     /**
-     * Display a listing of all user licenses for verification.
+     * Display a listing of users pending verification
      */
-    public function index(Request $request)
+    public function index()
     {
-        $query = DrivingLicense::with('customer');
-        
-        // Apply filters if provided
-        if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
-        }
-        
-        if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $query->whereHas('customer', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('cid_no', 'like', "%{$search}%");
-            })
-            ->orWhere('license_no', 'like', "%{$search}%");
-        }
-        
-        // Order by most recent first
-        $query->orderByRaw("FIELD(status, 'Pending', 'Rejected', 'Verified')")
-              ->orderBy('created_at', 'desc');
-        
-        $licenses = $query->paginate(10);
-        
-        return view('admin.verify-users.index', compact('licenses'));
+        // Get customers with their license information
+        $users = Customer::leftJoin('driving_licenses', 'customers.id', '=', 'driving_licenses.customer_id')
+            ->select(
+                'customers.id',
+                'customers.name',
+                'customers.email',
+                'customers.phone',
+                'customers.created_at as registered_on',
+                DB::raw('CASE 
+                    WHEN driving_licenses.status = "Verified" THEN "Verified"
+                    WHEN driving_licenses.status = "Rejected" THEN "Rejected"
+                    WHEN driving_licenses.status = "Pending" THEN "Pending"
+                    ELSE "Incomplete"
+                END as verification_status')
+            )
+            ->orderBy('driving_licenses.created_at', 'desc')
+            ->paginate(10);
+
+        return view('admin.verify-users', compact('users'));
     }
 
     /**
-     * Display detailed information about a specific license.
+     * Show user details for verification
      */
     public function show($id)
     {
-        $license = DrivingLicense::findOrFail($id);
-        $customer = $license->customer;
-        
-        return view('admin.verify-users.show', compact('license', 'customer'));
+        $user = Customer::findOrFail($id);
+        $license = DrivingLicense::where('customer_id', $id)->first();
+
+        return view('admin.user-verification-details', compact('user', 'license'));
     }
 
     /**
-     * Verify a user's license.
+     * Update verification status
      */
-    public function verifyLicense(Request $request)
-    {
-        try {
-            DB::beginTransaction();
-            
-            $license = DrivingLicense::findOrFail($request->license_id);
-            $license->status = 'Verified';
-            $license->verified_by = Auth::guard('admin')->id();
-            $license->verified_at = now();
-            $license->save();
-            
-            // You could also log this action in an admin_activity_logs table
-            // AdminActivityLog::create([
-            //     'admin_id' => Auth::guard('admin')->id(),
-            //     'action' => 'Verified license',
-            //     'description' => 'Verified license #' . $license->license_no . ' for customer ' . $license->customer->name,
-            //     'model_type' => 'DrivingLicense',
-            //     'model_id' => $license->id
-            // ]);
-            
-            DB::commit();
-            
-            // Optionally, send notification to customer
-            // Notification::send($license->customer, new LicenseVerified($license));
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'License successfully verified!'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Error verifying license: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Reject a user's license.
-     */
-    public function rejectLicense(Request $request)
+    public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'license_id' => 'required|exists:driving_licenses,id',
-            'rejection_reason' => 'required|string|max:500'
+            'status' => 'required|in:Verified,Rejected',
+            'rejection_reason' => 'required_if:status,Rejected',
         ]);
+
+        $license = DrivingLicense::where('customer_id', $id)->first();
         
-        try {
-            DB::beginTransaction();
-            
-            $license = DrivingLicense::findOrFail($request->license_id);
-            $license->status = 'Rejected';
-            $license->rejection_reason = $request->rejection_reason;
-            $license->rejected_by = Auth::guard('admin')->id();
-            $license->rejected_at = now();
-            $license->save();
-            
-            // You could also log this action
-            // AdminActivityLog::create([
-            //     'admin_id' => Auth::guard('admin')->id(),
-            //     'action' => 'Rejected license',
-            //     'description' => 'Rejected license #' . $license->license_no . ' for customer ' . $license->customer->name,
-            //     'model_type' => 'DrivingLicense',
-            //     'model_id' => $license->id
-            // ]);
-            
-            DB::commit();
-            
-            // Optionally, send notification to customer
-            // Notification::send($license->customer, new LicenseRejected($license));
-            
-            return redirect()->route('admin.verify-users')
-                             ->with('success', 'License has been rejected.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            
-            return redirect()->back()
-                             ->with('error', 'Error rejecting license: ' . $e->getMessage());
+        if (!$license) {
+            return redirect()->back()->with('error', 'No license information found for this user.');
         }
+
+        $license->status = $request->status;
+        
+        if ($request->status == 'Rejected') {
+            $license->rejection_reason = $request->rejection_reason;
+        }
+        
+        $license->save();
+
+        // Notification logic can be added here
+        // You might want to notify the customer via email
+
+        return redirect()->route('admin.verify-users')->with('success', 'User verification status updated successfully');
+    }
+
+    /**
+     * Get verification count for admin dashboard
+     */
+    public function getPendingVerificationCount()
+    {
+        $count = DrivingLicense::where('status', 'Pending')->count();
+        return response()->json(['count' => $count]);
     }
 }
