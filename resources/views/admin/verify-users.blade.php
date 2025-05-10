@@ -910,8 +910,20 @@ select:focus {
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">User Verification Requests</h6>
             <div>
+                <select id="status-filter" class="form-control form-control-sm mr-2 d-inline-block" style="width: 150px;">
+                    <option value="all">All Statuses</option>
+                    <option value="pending" selected>Pending</option>
+                    <option value="verified">Verified</option>
+                    <option value="rejected">Rejected</option>
+                </select>
                 <span class="badge badge-warning mr-2" id="pending-count">
-                    {{ $users->where('verification_status', 'Pending')->count() }} Pending
+                    {{ $pendingCount }} Pending
+                </span>
+                <span class="badge badge-success mr-2" id="verified-count">
+                    {{ $verifiedCount }} Verified
+                </span>
+                <span class="badge badge-danger mr-2" id="rejected-count">
+                    {{ $rejectedCount }} Rejected
                 </span>
             </div>
         </div>
@@ -924,53 +936,59 @@ select:focus {
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
-                            <th>Registered On</th>
+                            <th>CID No.</th>
+                            <th>License No.</th>
                             <th>Status</th>
+                            <th>Registered On</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($users as $user)
-                        <tr>
-                            <td>{{ $user->id }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->phone }}</td>
-                            <td>{{ \Carbon\Carbon::parse($user->registered_on)->format('d M Y') }}</td>
+                        @foreach($customers as $customer)
+                        <tr class="status-row {{ $customer->drivingLicense ? strtolower($customer->drivingLicense->status) : 'incomplete' }}">
+                            <td>{{ $customer->id }}</td>
+                            <td>{{ $customer->name }}</td>
+                            <td>{{ $customer->email }}</td>
+                            <td>{{ $customer->phone }}</td>
+                            <td>{{ $customer->cid_no }}</td>
+                            <td>{{ $customer->drivingLicense ? $customer->drivingLicense->license_no : 'Not submitted' }}</td>
                             <td>
-                                @if($user->verification_status == 'Pending')
-                                <span class="badge badge-warning">Pending</span>
-                                @elseif($user->verification_status == 'Verified')
-                                <span class="badge badge-success">Verified</span>
-                                @elseif($user->verification_status == 'Rejected')
-                                <span class="badge badge-danger">Rejected</span>
+                                @if(!$customer->drivingLicense)
+                                    <span class="badge badge-secondary">Not Submitted</span>
                                 @else
-                                <span class="badge badge-secondary">Incomplete</span>
+                                    @php
+                                        $status = $customer->drivingLicense->status;
+                                        $badgeClass = [
+                                            'Pending' => 'badge-warning',
+                                            'Verified' => 'badge-success',
+                                            'Rejected' => 'badge-danger'
+                                        ][$status] ?? 'badge-secondary';
+                                    @endphp
+                                    <span class="badge {{ $badgeClass }}">{{ $status }}</span>
                                 @endif
                             </td>
+                            <td>{{ \Carbon\Carbon::parse($customer->created_at)->format('d M Y') }}</td>
                             <td>
-                                <a href="{{ route('admin.user-verification.show', $user->id) }}" class="btn btn-primary btn-sm">
+                                @if($customer->drivingLicense)
+                                <a href="{{ route('admin.user-verification.show', $customer->id) }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-eye"></i> View
                                 </a>
+                                @else
+                                <button class="btn btn-secondary btn-sm" disabled>
+                                    <i class="fas fa-eye-slash"></i> No License
+                                </button>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
-                
+
                 <div class="mt-4">
-                    {{ $users->links() }}
+                    {{ $customers->links() }}
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    $(document).ready(function() {
-        // You can add additional JavaScript for filtering or searching here
-    });
-</script>
 @endsection

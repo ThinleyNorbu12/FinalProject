@@ -911,8 +911,20 @@ select:focus {
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">User Verification Requests</h6>
             <div>
+                <select id="status-filter" class="form-control form-control-sm mr-2 d-inline-block" style="width: 150px;">
+                    <option value="all">All Statuses</option>
+                    <option value="pending" selected>Pending</option>
+                    <option value="verified">Verified</option>
+                    <option value="rejected">Rejected</option>
+                </select>
                 <span class="badge badge-warning mr-2" id="pending-count">
-                    <?php echo e($users->where('verification_status', 'Pending')->count()); ?> Pending
+                    <?php echo e($pendingCount); ?> Pending
+                </span>
+                <span class="badge badge-success mr-2" id="verified-count">
+                    <?php echo e($verifiedCount); ?> Verified
+                </span>
+                <span class="badge badge-danger mr-2" id="rejected-count">
+                    <?php echo e($rejectedCount); ?> Rejected
                 </span>
             </div>
         </div>
@@ -925,42 +937,56 @@ select:focus {
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
-                            <th>Registered On</th>
+                            <th>CID No.</th>
+                            <th>License No.</th>
                             <th>Status</th>
+                            <th>Registered On</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <tr>
-                            <td><?php echo e($user->id); ?></td>
-                            <td><?php echo e($user->name); ?></td>
-                            <td><?php echo e($user->email); ?></td>
-                            <td><?php echo e($user->phone); ?></td>
-                            <td><?php echo e(\Carbon\Carbon::parse($user->registered_on)->format('d M Y')); ?></td>
+                        <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <tr class="status-row <?php echo e($customer->drivingLicense ? strtolower($customer->drivingLicense->status) : 'incomplete'); ?>">
+                            <td><?php echo e($customer->id); ?></td>
+                            <td><?php echo e($customer->name); ?></td>
+                            <td><?php echo e($customer->email); ?></td>
+                            <td><?php echo e($customer->phone); ?></td>
+                            <td><?php echo e($customer->cid_no); ?></td>
+                            <td><?php echo e($customer->drivingLicense ? $customer->drivingLicense->license_no : 'Not submitted'); ?></td>
                             <td>
-                                <?php if($user->verification_status == 'Pending'): ?>
-                                <span class="badge badge-warning">Pending</span>
-                                <?php elseif($user->verification_status == 'Verified'): ?>
-                                <span class="badge badge-success">Verified</span>
-                                <?php elseif($user->verification_status == 'Rejected'): ?>
-                                <span class="badge badge-danger">Rejected</span>
+                                <?php if(!$customer->drivingLicense): ?>
+                                    <span class="badge badge-secondary">Not Submitted</span>
                                 <?php else: ?>
-                                <span class="badge badge-secondary">Incomplete</span>
+                                    <?php
+                                        $status = $customer->drivingLicense->status;
+                                        $badgeClass = [
+                                            'Pending' => 'badge-warning',
+                                            'Verified' => 'badge-success',
+                                            'Rejected' => 'badge-danger'
+                                        ][$status] ?? 'badge-secondary';
+                                    ?>
+                                    <span class="badge <?php echo e($badgeClass); ?>"><?php echo e($status); ?></span>
                                 <?php endif; ?>
                             </td>
+                            <td><?php echo e(\Carbon\Carbon::parse($customer->created_at)->format('d M Y')); ?></td>
                             <td>
-                                <a href="<?php echo e(route('admin.user-verification.show', $user->id)); ?>" class="btn btn-primary btn-sm">
+                                <?php if($customer->drivingLicense): ?>
+                                <a href="<?php echo e(route('admin.user-verification.show', $customer->id)); ?>" class="btn btn-primary btn-sm">
                                     <i class="fas fa-eye"></i> View
                                 </a>
+                                <?php else: ?>
+                                <button class="btn btn-secondary btn-sm" disabled>
+                                    <i class="fas fa-eye-slash"></i> No License
+                                </button>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                 </table>
-                
+
                 <div class="mt-4">
-                    <?php echo e($users->links()); ?>
+                    <?php echo e($customers->links()); ?>
 
                 </div>
             </div>
@@ -969,11 +995,4 @@ select:focus {
 </div>
 <?php $__env->stopSection(); ?>
 
-<?php $__env->startSection('scripts'); ?>
-<script>
-    $(document).ready(function() {
-        // You can add additional JavaScript for filtering or searching here
-    });
-</script>
-<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/verify-users.blade.php ENDPATH**/ ?>

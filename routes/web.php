@@ -232,24 +232,37 @@ Route::middleware(['auth:customer'])->group(function () {
 });
 
 // Admin verification routes
+// Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+//     // Verify users route
+//     Route::get('/verify-users', [App\Http\Controllers\UserVerificationController::class, 'index'])
+//         ->name('verify-users');
+    
+//     // Show user verification details
+//     Route::get('/user-verification/{id}', [App\Http\Controllers\UserVerificationController::class, 'show'])
+//         ->name('user-verification.show');
+    
+//     // Update user verification status
+//     Route::put('/user-verification/{id}/update-status', [App\Http\Controllers\UserVerificationController::class, 'updateStatus'])
+//         ->name('user-verification.update-status');
+    
+//     // API endpoint to get pending verification count for notifications
+//     Route::get('/api/pending-verification-count', [App\Http\Controllers\UserVerificationController::class, 'getPendingVerificationCount'])
+//         ->name('api.pending-verification-count');
+// });
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Verify users route
+    // ... other admin routes ...
+    
+    // User verification routes
     Route::get('/verify-users', [App\Http\Controllers\UserVerificationController::class, 'index'])
         ->name('verify-users');
     
-    // Show user verification details
+    // User verification detail routes
     Route::get('/user-verification/{id}', [App\Http\Controllers\UserVerificationController::class, 'show'])
         ->name('user-verification.show');
     
-    // Update user verification status
-    Route::put('/user-verification/{id}/update-status', [App\Http\Controllers\UserVerificationController::class, 'updateStatus'])
-        ->name('user-verification.update-status');
-    
-    // API endpoint to get pending verification count for notifications
-    Route::get('/api/pending-verification-count', [App\Http\Controllers\UserVerificationController::class, 'getPendingVerificationCount'])
-        ->name('api.pending-verification-count');
+    Route::put('/user-verification/{id}', [App\Http\Controllers\UserVerificationController::class, 'updateStatus'])
+        ->name('user-verification.update');
 });
-
 
 
 

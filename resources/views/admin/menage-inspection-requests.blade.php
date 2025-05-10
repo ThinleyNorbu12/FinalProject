@@ -2,7 +2,6 @@
 @extends('layouts.app')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('assets/css/admin/menage-inspection-requests.css') }}">
 
 <div class="container">
     <h2 class="mb-4 text-center">Rescheduled Inspection Requests</h2>

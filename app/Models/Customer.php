@@ -46,6 +46,8 @@
 
 // }
 
+
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -55,7 +57,9 @@ use Illuminate\Notifications\Notifiable;
 class Customer extends Authenticatable
 {
     use HasFactory, Notifiable;
-
+    
+    protected $guard = 'customer';
+    
     protected $fillable = [
         'name',
         'email',
@@ -65,14 +69,18 @@ class Customer extends Authenticatable
         'date_of_birth',
         'address',
         'gender',
-        
     ];
-
+    
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
+    
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'date_of_birth' => 'date',
+    ];
+    
     /**
      * Get the driving license associated with the customer
      */
@@ -82,11 +90,21 @@ class Customer extends Authenticatable
     }
     
     /**
+     * Check if customer has valid driving license
+     */
+    public function hasValidDrivingLicense()
+    {
+        return $this->drivingLicense &&
+            $this->drivingLicense->expiry_date > now() && 
+            $this->drivingLicense->license_front_image && 
+            $this->drivingLicense->license_back_image;
+    }
+    
+    /**
      * Check if customer has complete verification information
      */
     public function hasCompleteVerificationInfo()
     {
-        // Check if customer has submitted license information
         return $this->drivingLicense()->exists();
     }
     
@@ -101,9 +119,69 @@ class Customer extends Authenticatable
         
         return $this->drivingLicense->status;
     }
-
+    
+    /**
+     * Get admin notifications associated with this customer
+     */
     public function adminNotifications()
     {
         return $this->hasMany(AdminNotification::class);
+    }
+    
+    /**
+     * Get all cars owned by the customer.
+     */
+    public function cars()
+    {
+        return $this->hasMany(Car::class);
+    }
+
+    /**
+     * Get all bookings made by the customer.
+     */
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * Get all payments made by the customer.
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+    
+    /**
+     * Check if license is about to expire (within 30 days)
+     */
+    public function isLicenseAboutToExpire()
+    {
+        if (!$this->hasValidDrivingLicense()) {
+            return false;
+        }
+        
+        $daysUntilExpiry = now()->diffInDays($this->drivingLicense->expiry_date, false);
+        return $daysUntilExpiry > 0 && $daysUntilExpiry <= 30;
+    }
+
+    /**
+     * Get the verification status badge HTML
+     */
+    public function getVerificationStatusBadge()
+    {
+        $status = strtolower($this->getVerificationStatus());
+        
+        $badgeClasses = [
+            'incomplete' => 'badge-secondary',
+            'pending' => 'badge-warning',
+            'verified' => 'badge-success',
+            'rejected' => 'badge-danger',
+            'expired' => 'badge-dark',
+        ];
+
+        $class = $badgeClasses[$status] ?? 'badge-secondary';
+        
+        return '<span class="badge '.$class.'">'.ucfirst($status).'</span>';
     }
 }

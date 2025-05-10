@@ -2,7 +2,6 @@
 
 
 <?php $__env->startSection('content'); ?>
-<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/menage-inspection-requests.css')); ?>">
 
 <div class="container">
     <h2 class="mb-4 text-center">Rescheduled Inspection Requests</h2>
