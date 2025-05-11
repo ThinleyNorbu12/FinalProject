@@ -30,81 +30,62 @@
         
         <nav class="sidebar-nav">
             <ul>
-                <li class="active">
-                    <a href="<?php echo e(route('admin.dashboard')); ?>">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+        
                 <div class="sidebar-divider"></div>
-                
+        
                 <div class="sidebar-heading">Car Owner</div>
-
-                <li>
-                    <a href="#" class="menu-link" data-url="<?php echo e(route('car-admin.new-registration-cars')); ?>">
-                        <i class="fas fa-car"></i>
-                        <span>Car Registration</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?php echo e(route('car-admin.inspection-requests')); ?>">
-                        <i class="fas fa-clipboard-check"></i>
-                        <span>Inspection Requests</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Approve Inspections</span>
-                    </a>
-                </li>
-
+        
+                <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.new-registration-cars') ? 'active' : ''); ?>">
+                    <i class="fas fa-car"></i>
+                    <span>Car Registration</span>
+                </a>
+                <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.inspection-requests') ? 'active' : ''); ?>">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Inspection Requests</span>
+                </a>
+                <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.approve-inspected-cars') ? 'active' : ''); ?>">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Approve Inspections</span>
+                </a>
+        
                 <div class="sidebar-divider"></div>
-                
+        
                 <div class="sidebar-heading">Customer</div>
-
-                <li>
-                    <a href="<?php echo e(route('admin.verify-users')); ?>">
-                        <i class="fas fa-id-card"></i>
-                        <span>Verify Users</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?php echo e(url('admin/view-payments')); ?>">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Payments</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?php echo e(url('admin/update-car-registration')); ?>">
-                        <i class="fas fa-edit"></i>
-                        <span>Update Registration</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?php echo e(url('admin/car-information-update')); ?>">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Car Information</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="<?php echo e(url('admin/booked-car')); ?>">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Booked Cars</span>
-                    </a>
-                </li>
-                <li class="logout-item">
-                    <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form">
-                        <?php echo csrf_field(); ?>
-                        <a href="#" onclick="document.getElementById('logout-form').submit();">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </a>
-                    </form>
-                </li>
+        
+                <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.verify-users') || request()->routeIs('admin.user-verification.*') ? 'active' : ''); ?>">
+                    <i class="fas fa-id-card"></i>
+                    <span>Verify Users</span>
+                </a>
+                <a href="<?php echo e(url('admin/view-payments')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.view-payments') ? 'active' : ''); ?>">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Payments</span>
+                </a>
+                <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.update-car-registration') ? 'active' : ''); ?>">
+                    <i class="fas fa-edit"></i>
+                    <span>Update Registration</span>
+                </a>
+                <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.car-information-update') ? 'active' : ''); ?>">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Car Information</span>
+                </a>
+                <a href="<?php echo e(url('admin/booked-car')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.booked-car') ? 'active' : ''); ?>">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Booked Cars</span>
+                </a>
+        
+                <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+                <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form">
+                    <?php echo csrf_field(); ?>
+                </form>
             </ul>
-        </nav>
+        </nav>        
     </div>
 
     <!-- Main Content -->
