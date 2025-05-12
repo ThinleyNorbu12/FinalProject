@@ -114,47 +114,64 @@ use Carbon\Carbon;
 
 class BookingController extends Controller
 {
-    public function submit(Request $request, $carId)
-    {
-        if (!Auth::guard('customer')->check()) {
-            Session::put('booking_data', [
-                'car_id' => $carId,
-                'pickup_date' => $request->pickup_date,
-                'return_date' => $request->return_date,
-                'pickup_location' => $request->pickup_location,
-                'drop_location' => $request->drop_location
-            ]);
+   public function submit(Request $request, $carId)
+{
+    $validated = $request->validate([
+        'pickup_date' => 'required|date|after_or_equal:today',
+        'pickup_time' => 'required|date_format:H:i',
+        'return_date' => 'required|date|after_or_equal:pickup_date',
+        'return_time' => [
+            'required',
+            'date_format:H:i',
+            function ($attribute, $value, $fail) use ($request) {
+                $pickup = Carbon::parse($request->pickup_date.' '.$request->pickup_time);
+                $dropoff = Carbon::parse($request->return_date.' '.$value);
+                
+                if ($dropoff->lte($pickup)) {
+                    $fail('Return datetime must be after pickup datetime.');
+                }
+            }
+        ],
+        'pickup_location' => 'required|string|max:255',
+        'drop_location' => 'required|string|max:255',
+    ]);
 
-            return redirect()->route('customer.login')
-                ->with('message', 'Please log in to complete your booking.');
-        }
+    // Combine date and time into datetime objects
+    $pickupDatetime = Carbon::parse($validated['pickup_date'].' '.$validated['pickup_time']);
+    $dropoffDatetime = Carbon::parse($validated['return_date'].' '.$validated['return_time']);
 
-        $request->validate([
-            'pickup_date' => 'required|date',
-            'return_date' => 'required|date|after_or_equal:pickup_date',
-            'pickup_location' => 'required|string|max:255',
-            'drop_location' => 'required|string|max:255',
+    // Check for booking conflicts
+    $existingBooking = CarBooking::where('car_id', $carId)
+        ->where(function($query) use ($pickupDatetime, $dropoffDatetime) {
+            $query->whereBetween('pickup_datetime', [$pickupDatetime, $dropoffDatetime])
+                  ->orWhereBetween('dropoff_datetime', [$pickupDatetime, $dropoffDatetime])
+                  ->orWhere(function($q) use ($pickupDatetime, $dropoffDatetime) {
+                      $q->where('pickup_datetime', '<=', $pickupDatetime)
+                        ->where('dropoff_datetime', '>=', $dropoffDatetime);
+                  });
+        })
+        ->whereIn('status', ['confirmed', 'pending'])
+        ->exists();
+
+    if ($existingBooking) {
+        return back()->withErrors([
+            'conflict' => 'This car is already booked for the selected dates.'
         ]);
-
-        $customerId = Auth::guard('customer')->id();
-
-        $bookingData = [
-            'car_id' => $carId,
-            'pickup_location' => $request->pickup_location,
-            'pickup_date' => $request->pickup_date,
-            'dropoff_location' => $request->drop_location,
-            'dropoff_date' => $request->return_date,
-            'status' => 'pending',
-            'customer_id' => $customerId,
-        ];
-
-        $booking = CarBooking::create($bookingData);
-
-        // ✅ Redirect to Booking Summary page instead of Payment page
-        return redirect()->route('booking.summary', ['bookingId' => $booking->id])
-        ->with('success', 'Car booked successfully! Your booking status is currently *Pending*. It will be confirmed only after payment has been completed.');
-
     }
+
+    $booking = CarBooking::create([
+        'car_id' => $carId,
+        'customer_id' => Auth::guard('customer')->id(),
+        'pickup_location' => $validated['pickup_location'],
+        'pickup_datetime' => $pickupDatetime,
+        'dropoff_location' => $validated['drop_location'],
+        'dropoff_datetime' => $dropoffDatetime,
+        'status' => 'pending',
+    ]);
+
+    return redirect()->route('booking.summary', ['bookingId' => $booking->id])
+           ->with('success', 'Car booked successfully!');
+}
 
     // ✅ Summary page now expects bookingId
     public function summary($bookingId)

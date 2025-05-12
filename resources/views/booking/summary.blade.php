@@ -38,11 +38,7 @@
                                         <p><strong>Pick-up:</strong></p>
                                         <p>{{ $booking->pickup_location }}</p>
                                         <p>
-                                            {{
-                                                \Carbon\Carbon::parse($booking->pickup_date . ' ' . $booking->pickup_time)
-                                                    ->setTimezone('Asia/Thimphu')
-                                                    ->format('d M, Y h:i A')
-                                            }}
+                                            {{ $booking->pickup_datetime->setTimezone('Asia/Thimphu')->format('d M, Y h:i A') }}
                                         </p>
                                     </div>
                                     
@@ -50,19 +46,24 @@
                                         <p><strong>Drop-off:</strong></p>
                                         <p>{{ $booking->dropoff_location }}</p>
                                         <p>
-                                            {{
-                                                \Carbon\Carbon::parse($booking->dropoff_date . ' ' . $booking->dropoff_time)
-                                                    ->setTimezone('Asia/Thimphu')
-                                                    ->format('d M, Y h:i A')
-                                            }}
+                                            {{ $booking->dropoff_datetime->setTimezone('Asia/Thimphu')->format('d M, Y h:i A') }}
                                         </p>
                                     </div>                                    
-                                    
                                 </div>
                                 
                                 <div class="mt-4">
+                                    @php
+                                        $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
+                                        $days = floor($hours / 24);
+                                        $remainingHours = $hours % 24;
+                                    @endphp
                                     <p><strong>Duration:</strong> 
-                                        {{ \Carbon\Carbon::parse($booking->pickup_date)->diffInDays(\Carbon\Carbon::parse($booking->dropoff_date)) + 1 }} days
+                                        @if($days > 0)
+                                            {{ $days }} day{{ $days > 1 ? 's' : '' }}
+                                        @endif
+                                        @if($remainingHours > 0)
+                                            {{ $remainingHours }} hour{{ $remainingHours > 1 ? 's' : '' }}
+                                        @endif
                                     </p>
                                 </div>
                             </div>
@@ -122,7 +123,8 @@
                         <!-- Price Summary -->
                         @if($booking->car)
                         @php
-                            $days = \Carbon\Carbon::parse($booking->pickup_date)->diffInDays(\Carbon\Carbon::parse($booking->dropoff_date)) + 1;
+                            $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
+                            $days = ceil($hours / 24); // Round up to full days for pricing
                             $dailyRate = $booking->car->price;
                             $insuranceFee = 200;
                             $serviceFee = 100;
@@ -136,7 +138,7 @@
                                         <h5>Price Summary</h5>
                                         <div class="row">
                                             <div class="col-md-8">
-                                                <p>{{ $days }} days x Nu. {{ number_format($dailyRate, 2) }}</p>
+                                                <p>{{ $days }} day{{ $days > 1 ? 's' : '' }} x Nu. {{ number_format($dailyRate, 2) }}</p>
                                                 <p>Insurance</p>
                                                 <p>Service Fee</p>
                                             </div>

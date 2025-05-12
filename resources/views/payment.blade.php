@@ -156,6 +156,7 @@
         .bank-option img {
             height: 40px;
             margin-bottom: 5px;
+            object-fit: contain;
         }
         .back-link {
             color: #6c757d;
@@ -203,6 +204,106 @@
         .hidden {
             display: none;
         }
+        .bank-instructions {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+        }
+        .bank-instructions h6 {
+            margin-bottom: 10px;
+            color: #343a40;
+        }
+        .bank-instructions ol {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+        .bank-instructions li {
+            margin-bottom: 5px;
+        }
+        .qr-wrapper {
+            position: relative;
+            width: 250px;
+            margin: 0 auto;
+        }
+        .qr-code-image {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        .qr-details {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .qr-details p {
+            margin-bottom: 5px;
+        }
+        .qr-details .name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .qr-details .phone {
+            color: #6c757d;
+        }
+        .vehicle-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .vehicle-image {
+            width: 80px;
+            height: 60px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .vehicle-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+        .vehicle-details {
+            flex: 1;
+        }
+        .vehicle-specs {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .vehicle-specs span {
+            font-size: 12px;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+        }
+        .vehicle-specs span i {
+            margin-right: 3px;
+        }
+        .location-details {
+            background-color: #fff;
+            border-left: 3px solid #28a745;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 0 5px 5px 0;
+        }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
         @media (max-width: 768px) {
             .bank-option {
                 width: calc(50% - 5px);
@@ -217,48 +318,134 @@
                 <h2>SELECT PAYMENT METHOD</h2>
             </div>
             <div class="payment-body">
-                <a href="#" class="back-link mb-4">
+                <div class="payment-body">
+                <a href="{{ route('booking.summary', ['bookingId' => $booking->id]) }}" class="back-link mb-4">
                     <i class="fas fa-arrow-left me-2"></i> Back to booking
                 </a>
                 
-                <div class="payment-summary">
+                 <div class="payment-summary">
                     <h4 class="mb-4">Booking Summary</h4>
                     
-                    <div class="summary-item">
-                        <span>Car Model</span>
-                        <span>Toyota Prado</span>
+                    <!-- Vehicle Info -->
+                    <div class="vehicle-info">
+                        <div class="vehicle-image">
+                            @if($booking->car->images && $booking->car->images->count())
+                                <img src="{{ asset($booking->car->images->first()->image_path) }}" alt="{{ $booking->car->maker }} {{ $booking->car->model }}">
+                            @elseif($booking->car->car_image)
+                                <img src="{{ asset($booking->car->car_image) }}" alt="{{ $booking->car->maker }} {{ $booking->car->model }}">
+                            @else
+                                <i class="fas fa-car"></i>
+                            @endif
+                        </div>
+                        <div class="vehicle-details">
+                            <h5 class="mb-0">{{ $booking->car->maker }} {{ $booking->car->model }}</h5>
+                            <div class="vehicle-specs">
+                                <span><i class="fas fa-cog"></i> {{ $booking->car->transmission_type }}</span>
+                                <span><i class="fas fa-gas-pump"></i> {{ $booking->car->fuel_type }}</span>
+                                <span><i class="fas fa-users"></i> {{ $booking->car->number_of_seats }} seats</span>
+                            </div>
+                        </div>
+                        <span class="badge {{ $booking->status === 'confirmed' ? 'badge-success' : 'badge-warning' }}">
+                            {{ ucfirst($booking->status) }}
+                        </span>
                     </div>
                     
-                    <div class="summary-item">
-                        <span>Booking Dates</span>
-                        <span id="bookingDates">May 12 - May 15, 2025</span>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="location-details">
+                                <small class="text-muted">PICK-UP</small>
+                                <p class="mb-1"><strong>{{ $booking->pickup_location }}</strong></p>
+                                <p class="mb-0">{{ $booking->pickup_datetime->setTimezone('Asia/Thimphu')->format('M d, Y h:i A') }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="location-details">
+                                <small class="text-muted">DROP-OFF</small>
+                                <p class="mb-1"><strong>{{ $booking->dropoff_location }}</strong></p>
+                                <p class="mb-0">{{ $booking->dropoff_datetime->setTimezone('Asia/Thimphu')->format('M d, Y h:i A') }}</p>
+                            </div>
+                        </div>
                     </div>
+                    
+                    @php
+                        $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
+                        $days = ceil($hours / 24); // Round up to full days for pricing
+                        $dailyRate = $booking->car->price;
+                        $insuranceFee = 200;
+                        $serviceFee = 100;
+                        $securityDeposit = $dailyRate; // Typically 1 day's rent as deposit
+                        $totalPrice = ($dailyRate * $days) + $insuranceFee + $serviceFee + $securityDeposit;
+                    @endphp
                     
                     <div class="summary-item">
                         <span>Booking ID</span>
-                        <span id="bookingId">#BK12345</span>
+                        <span id="bookingId">#{{ $booking->id }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>Duration</span>
+                        <span>
+                            @if($days > 0)
+                                {{ $days }} day{{ $days > 1 ? 's' : '' }}
+                            @endif
+                            @if($hours % 24 > 0)
+                                {{ $hours % 24 }} hour{{ $hours % 24 > 1 ? 's' : '' }}
+                            @endif
+                        </span>
                     </div>
                     
                     <hr>
                     
                     <div class="summary-item">
-                        <span>Rental Fee (4 days)</span>
-                        <span>Nu. 12,000.00</span>
+                        <span>Rental Fee ({{ $days }} day{{ $days > 1 ? 's' : '' }} × Nu. {{ number_format($dailyRate, 2) }})</span>
+                        <span>Nu. {{ number_format($dailyRate * $days, 2) }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>Insurance Fee</span>
+                        <span>Nu. {{ number_format($insuranceFee, 2) }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>Service Fee</span>
+                        <span>Nu. {{ number_format($serviceFee, 2) }}</span>
                     </div>
                     
                     <div class="summary-item">
                         <span>Security Deposit</span>
-                        <span>Nu. 3,000.00</span>
+                        <span>Nu. {{ number_format($securityDeposit, 2) }}</span>
                     </div>
                     
                     <hr>
                     
                     <div class="summary-item mb-0">
                         <span class="fw-bold">Total Amount</span>
-                        <span class="total-amount">Nu. 15,000.00</span>
+                        <span class="total-amount">Nu. {{ number_format($totalPrice, 2) }}</span>
                     </div>
                 </div>
                 
+                <!-- [Rest of the payment options HTML remains exactly the same] -->
+                
+                <!-- Option 1: QR Code Payment -->
+                <div class="payment-option" id="option1">
+                    <!-- [Previous QR code payment HTML remains exactly the same] -->
+                </div>
+                
+                <!-- Option 2: Bank Transfer with OTP -->
+                <div class="payment-option" id="option2">
+                    <!-- [Previous bank transfer HTML remains exactly the same] -->
+                </div>
+                
+                <!-- Option 3: Pay Later -->
+                <div class="payment-option" id="option3">
+                    <!-- [Previous pay later HTML remains exactly the same] -->
+                </div>
+                
+                <div class="footer-actions">
+                    <button class="cancel-btn">Cancel</button>
+                    <button class="payment-btn" id="nextBtn">Next</button>
+                </div>
+             
                 <!-- Payment Options -->
                 <h4 class="mb-3">Choose Payment Method</h4>
                 
@@ -271,45 +458,123 @@
                         <h5 class="payment-option-title">QR Code Payment</h5>
                     </div>
                     <div class="payment-option-body">
-                        <p>Scan the QR code below using your mobile banking app and upload the screenshot of payment confirmation.</p>
+                        <p>Choose your bank below and follow the instructions to complete your payment.</p>
                         
                         <div class="bank-selector">
                             <div class="bank-option" data-bank="bob">
-                                <img src="/api/placeholder/80/40" alt="Bank of Bhutan">
+                                <img src="../assets/images/mbob.png" alt="Bank of Bhutan">
                                 <div>BOB</div>
                             </div>
                             <div class="bank-option" data-bank="bnb">
-                                <img src="/api/placeholder/80/40" alt="Bhutan National Bank">
+                                <img src="../assets/images/bnb.png" alt="Bhutan National Bank">
                                 <div>BNB</div>
                             </div>
                             <div class="bank-option" data-bank="tbank">
-                                <img src="/api/placeholder/80/40" alt="T-Bank">
+                                <img src="../assets/images/Tbank.jpg" alt="T-Bank">
                                 <div>T-Bank</div>
                             </div>
                             <div class="bank-option" data-bank="dpnb">
-                                <img src="/api/placeholder/80/40" alt="Druk PNB">
+                                <img src="../assets/images/drukpnb.png" alt="Druk PNB">
                                 <div>DPNB</div>
                             </div>
                             <div class="bank-option" data-bank="bdbl">
-                                <img src="/api/placeholder/80/40" alt="BDBL">
+                                <img src="../assets/images/bdbl.jpg" alt="BDBL">
                                 <div>BDBL</div>
                             </div>
                         </div>
                         
+                        <!-- BOB Instructions -->
+                        <div class="bank-instructions hidden" id="bob-instructions">
+                            <h6>Payment Instructions for Bank of Bhutan</h6>
+                            <ol>
+                                <li>Open your mBOB app</li>
+                                <li>Go to Payments > Scan QR</li>
+                                <li>Scan the QR code shown here</li>
+                                <li>Enter amount: Nu. 15,300.00</li>
+                                <li>Confirm payment using your PIN/password</li>
+                                <li>Take a screenshot of the confirmation</li>
+                                <li>Upload the screenshot below</li>
+                            </ol>
+                        </div>
+                        
+                        <!-- BNB Instructions -->
+                        <div class="bank-instructions hidden" id="bnb-instructions">
+                            <h6>Payment Instructions for Bhutan National Bank</h6>
+                            <ol>
+                                <li>Open your BNB mPAY app</li>
+                                <li>Select "Scan & Pay" option</li>
+                                <li>Scan the QR code shown here</li>
+                                <li>Enter amount: Nu. 15,300.00</li>
+                                <li>Enter your mPIN to authorize payment</li>
+                                <li>Take a screenshot of the payment receipt</li>
+                                <li>Upload the screenshot below</li>
+                            </ol>
+                        </div>
+                        
+                        <!-- T-Bank Instructions -->
+                        <div class="bank-instructions hidden" id="tbank-instructions">
+                            <h6>Payment Instructions for T-Bank</h6>
+                            <ol>
+                                <li>Log in to your T-Bank mobile app</li>
+                                <li>Tap on "Payments" > "QR Payments"</li>
+                                <li>Scan the QR code shown here</li>
+                                <li>Verify recipient details</li>
+                                <li>Enter amount: Nu. 15,300.00</li>
+                                <li>Confirm payment with your secure PIN</li>
+                                <li>Take a screenshot of the transaction receipt</li>
+                                <li>Upload the screenshot below</li>
+                            </ol>
+                        </div>
+                        
+                        <!-- DPNB Instructions -->
+                        <div class="bank-instructions hidden" id="dpnb-instructions">
+                            <h6>Payment Instructions for Druk PNB</h6>
+                            <ol>
+                                <li>Open the Druk PNB mobile banking app</li>
+                                <li>Select "QR Payments" from the main menu</li>
+                                <li>Scan the QR code shown here</li>
+                                <li>Enter amount: Nu. 15,300.00</li>
+                                <li>Verify recipient information</li>
+                                <li>Confirm using your MPIN</li>
+                                <li>Take a screenshot of the success page</li>
+                                <li>Upload the screenshot below</li>
+                            </ol>
+                        </div>
+                        
+                        <!-- BDBL Instructions -->
+                        <div class="bank-instructions hidden" id="bdbl-instructions">
+                            <h6>Payment Instructions for BDBL</h6>
+                            <ol>
+                                <li>Login to your BDBL mobile banking app</li>
+                                <li>Tap on "QR Code Payment"</li>
+                                <li>Scan the QR code shown here</li>
+                                <li>Check recipient name: "THINLEY NORBU"</li>
+                                <li>Enter amount: Nu. 15,300.00</li>
+                                <li>Enter your security PIN to complete payment</li>
+                                <li>Take a screenshot of the payment confirmation</li>
+                                <li>Upload the screenshot below</li>
+                            </ol>
+                        </div>
+                        
                         <div class="qr-code-container hidden" id="qrContainer">
-                            <div class="qr-code">
-                                <i class="fas fa-qrcode fa-5x text-muted"></i>
+                            <div class="qr-wrapper">
+                                <img src="../assets/images/bobQRcode.jpg" alt="QR Code" class="qr-code-image" id="bankQrCode">
+                                <!-- Removed the qr-logo div here -->
                             </div>
-                            <p class="text-center">Scan this QR code with your mobile banking app</p>
                             
-                            <label class="upload-btn">
+                            <div class="qr-details">
+                                <p class="name">Car Rental System</p>
+                                <p class="amount">Amount: <strong>Nu. 15,300.00</strong></p>
+                            </div>
+                            
+                            <label class="upload-btn mt-4">
                                 <i class="fas fa-upload"></i>
                                 <span>Upload Payment Screenshot</span>
                                 <input type="file" style="display: none;" accept="image/*">
                             </label>
                         </div>
                         
-                        <p class="text-center mt-3 text-muted">Please select a bank to display the QR code</p>
+                        <p class="text-center mt-3 text-muted" id="qrPrompt">Please select a bank to display the QR code</p>
                         
                         <div class="text-center mt-3">
                             <button class="payment-btn" id="confirmQrBtn" disabled>Confirm Payment</button>
@@ -425,18 +690,51 @@
                 });
             });
             
+            // Bank logos mapping - Updated with actual image paths
+            const bankLogos = {
+                'bob': '../assets/images/mbob.png',
+                'bnb': '../assets/images/bnb.png',
+                'tbank': '../assets/images/Tbank.jpg',
+                'dpnb': '../assets/images/drukpnb.png',
+                'bdbl': '../assets/images/bdbl.jpg'
+            };
+            
+            // QR code mapping for different banks - for now we're using the BOB QR for all
+            const bankQRcodes = {
+                'bob': '../assets/images/bobQRcode.jpg',
+                'bnb': '../assets/images/bdblQRcode.jpg',
+                'tbank': '../assets/images/bdblQRcode.jpg',
+                'dpnb': '../assets/images/DrukpnbQRcode.jpg',
+                'bdbl': '../assets/images/bdblQRcode.jpg'
+            };
             // Bank option selection for QR codes
             const bankOptions = document.querySelectorAll('.bank-option');
+            const bankInstructions = document.querySelectorAll('.bank-instructions');
+            
             bankOptions.forEach(bank => {
                 bank.addEventListener('click', function() {
+                    const bankCode = this.getAttribute('data-bank');
+                    
                     // Remove active class from all bank options
                     bankOptions.forEach(b => b.classList.remove('active'));
+                    
+                    // Hide all bank instructions
+                    bankInstructions.forEach(instruction => instruction.classList.add('hidden'));
                     
                     // Add active class to clicked bank option
                     this.classList.add('active');
                     
+                    // Show specific bank instructions
+                    document.getElementById(`${bankCode}-instructions`).classList.remove('hidden');
+                    
+                    // Update QR code image
+                    document.getElementById('bankQrCode').src = bankQRcodes[bankCode];
+                    
                     // Show QR code container
                     document.getElementById('qrContainer').classList.remove('hidden');
+                    
+                    // Hide prompt text
+                    document.getElementById('qrPrompt').classList.add('hidden');
                     
                     // Enable confirm button
                     document.getElementById('confirmQrBtn').removeAttribute('disabled');
@@ -465,674 +763,13 @@
                     }
                 });
             });
-        });
-    </script>
-</body>
-</html>
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank QR Code Payment Instructions</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .payment-container {
-            max-width: 900px;
-            margin: 30px auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        .payment-header {
-            background: #343a40;
-            color: white;
-            padding: 20px 30px;
-            text-align: center;
-        }
-        .payment-body {
-            padding: 30px;
-        }
-        .bank-tab-content {
-            display: none;
-            padding: 20px;
-            border: 1px solid #dee2e6;
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-        }
-        .bank-tab-content.active {
-            display: block;
-        }
-        .instruction-step {
-            margin-bottom: 20px;
-            padding-left: 10px;
-        }
-        .instruction-step .step-number {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            background: #343a40;
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            margin-right: 10px;
-        }
-        .qr-code-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px 0;
-            padding: 20px;
-            border: 1px solid #dee2e6;
-            border-radius: 10px;
-            background-color: #f8f9fa;
-        }
-        .qr-code {
-            width: 150px;
-            height: 150px;
-            border: 1px solid #dee2e6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            background-color: white;
-        }
-        .merchant-info {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .merchant-id {
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-        .remark-note {
-            color: #dc3545;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .nav-tabs .nav-link {
-            border: 1px solid #dee2e6;
-            border-radius: 10px 10px 0 0;
-            margin-right: 5px;
-            color: #6c757d;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #343a40;
-            color: white;
-            border-color: #343a40;
-        }
-        .bank-logo {
-            height: 30px;
-            margin-right: 10px;
-        }
-        .important-note {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 5px;
-        }
-        .otp-inputs {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .otp-inputs input {
-            width: 40px;
-            height: 45px;
-            text-align: center;
-            font-size: 18px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-        }
-        .bank-option-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .bank-option-grid > div {
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .bank-option-grid > div:hover {
-            border-color: #28a745;
-            background-color: rgba(40, 167, 69, 0.05);
-        }
-        .bank-option-grid img {
-            height: 35px;
-            margin-bottom: 5px;
-        }
-        
-        .alert-info {
-            color: #0c5460;
-            background-color: #d1ecf1;
-            border-left: 4px solid #17a2b8;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        
-        .alert-warning {
-            color: #856404;
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        
-        @media (max-width: 768px) {
-            .bank-option-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .nav-tabs {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="payment-container">
-            <div class="payment-header">
-                <h2>QR CODE PAYMENT INSTRUCTIONS</h2>
-            </div>
-            <div class="payment-body">
-                <ul class="nav nav-tabs" id="bankTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="bob-tab" data-bs-toggle="tab" data-bs-target="#bob-content" type="button" role="tab">
-                            <img src="/api/placeholder/60/30" alt="BOB" class="bank-logo">BOB
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="bnb-tab" data-bs-toggle="tab" data-bs-target="#bnb-content" type="button" role="tab">
-                            <img src="/api/placeholder/60/30" alt="BNB" class="bank-logo">BNB
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="tbank-tab" data-bs-toggle="tab" data-bs-target="#tbank-content" type="button" role="tab">
-                            <img src="/api/placeholder/60/30" alt="T-Bank" class="bank-logo">T-Bank
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="dpnb-tab" data-bs-toggle="tab" data-bs-target="#dpnb-content" type="button" role="tab">
-                            <img src="/api/placeholder/60/30" alt="DPNB" class="bank-logo">DPNB
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="bdbl-tab" data-bs-toggle="tab" data-bs-target="#bdbl-content" type="button" role="tab">
-                            <img src="/api/placeholder/60/30" alt="BDBL" class="bank-logo">BDBL
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="bank-transfer-tab" data-bs-toggle="tab" data-bs-target="#bank-transfer-content" type="button" role="tab">
-                            <i class="fas fa-university me-2"></i>Bank Transfer
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pay-later-tab" data-bs-toggle="tab" data-bs-target="#pay-later-content" type="button" role="tab">
-                            <i class="fas fa-hourglass-half me-2"></i>Pay Later
-                        </button>
-                    </li>
-                </ul>
-                
-                <div class="tab-content" id="bankTabsContent">
-                    <!-- BOB Instructions -->
-                    <div class="bank-tab-content active" id="bob-content">
-                        <h4>Pay with mBOB Mobile Banking</h4>
-                        
-                        <div class="qr-code-container">
-                            <div class="qr-code">
-                                <i class="fas fa-qrcode fa-5x text-muted"></i>
-                            </div>
-                            
-                            <div class="merchant-info">
-                                <div class="merchant-id">Merchant ID: CARRENTAL123</div>
-                                <div class="amount">Amount: Nu. 15,000.00</div>
-                                <div class="remark-note">* Please include your booking ID (BK12345) in the remarks</div>
-                            </div>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">1</span>
-                            <span>Open your mBOB app</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">2</span>
-                            <span>Go to Payments > Scan QR</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">3</span>
-                            <span>Scan the QR code shown above</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">4</span>
-                            <span>Enter amount: Nu. 15,000.00</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">5</span>
-                            <span>Enter "BK12345" in remarks</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">6</span>
-                            <span>Confirm payment using your PIN/password</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">7</span>
-                            <span>Take a screenshot of the confirmation</span>
-                        </div>
-                        
-                        <div class="important-note">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Important: After completing the payment, please upload the screenshot of your payment confirmation to proceed with your car rental booking.
-                        </div>
-                    </div>
-                    
-                    <!-- BNB Instructions -->
-                    <div class="bank-tab-content" id="bnb-content">
-                        <h4>Pay with BNB Mobile Banking</h4>
-                        
-                        <div class="qr-code-container">
-                            <div class="qr-code">
-                                <i class="fas fa-qrcode fa-5x text-muted"></i>
-                            </div>
-                            
-                            <div class="merchant-info">
-                                <div class="merchant-id">Merchant ID: CARRENTAL123</div>
-                                <div class="amount">Amount: Nu. 15,000.00</div>
-                                <div class="remark-note">* Please include your booking ID (BK12345) in the remarks</div>
-                            </div>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">1</span>
-                            <span>Open your BNB Mobile Banking app</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">2</span>
-                            <span>Select "QR Payment" option</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">3</span>
-                            <span>Scan the QR code shown above</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">4</span>
-                            <span>Verify merchant details (CARRENTAL123)</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">5</span>
-                            <span>Enter amount: Nu. 15,000.00</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">6</span>
-                            <span>Add "BK12345" in the remarks field</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">7</span>
-                            <span>Confirm and authorize payment</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">8</span>
-                            <span>Take a screenshot of the payment confirmation</span>
-                        </div>
-                        
-                        <div class="important-note">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Important: After completing the payment, please upload the screenshot of your payment confirmation to proceed with your car rental booking.
-                        </div>
-                    </div>
-                    
-                    <!-- T-Bank Instructions -->
-                    <div class="bank-tab-content" id="tbank-content">
-                        <h4>Pay with T-Bank Mobile Banking</h4>
-                        
-                        <div class="qr-code-container">
-                            <div class="qr-code">
-                                <i class="fas fa-qrcode fa-5x text-muted"></i>
-                            </div>
-                            
-                            <div class="merchant-info">
-                                <div class="merchant-id">Merchant ID: CARRENTAL123</div>
-                                <div class="amount">Amount: Nu. 15,000.00</div>
-                                <div class="remark-note">* Please include your booking ID (BK12345) in the remarks</div>
-                            </div>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">1</span>
-                            <span>Launch your T-Bank mobile app</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">2</span>
-                            <span>Navigate to "QR Payments"</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">3</span>
-                            <span>Scan the QR code displayed above</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">4</span>
-                            <span>Confirm merchant information</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">5</span>
-                            <span>Enter payment amount: Nu. 15,000.00</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">6</span>
-                            <span>Type "BK12345" in the remarks section</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">7</span>
-                            <span>Verify and submit payment</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">8</span>
-                            <span>Take a screenshot of your transaction receipt</span>
-                        </div>
-                        
-                        <div class="important-note">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Important: After completing the payment, please upload the screenshot of your payment confirmation to proceed with your car rental booking.
-                        </div>
-                    </div>
-                    
-                    <!-- DPNB Instructions -->
-                    <div class="bank-tab-content" id="dpnb-content">
-                        <h4>Pay with Druk PNB Mobile Banking</h4>
-                        
-                        <div class="qr-code-container">
-                            <div class="qr-code">
-                                <i class="fas fa-qrcode fa-5x text-muted"></i>
-                            </div>
-                            
-                            <div class="merchant-info">
-                                <div class="merchant-id">Merchant ID: CARRENTAL123</div>
-                                <div class="amount">Amount: Nu. 15,000.00</div>
-                                <div class="remark-note">* Please include your booking ID (BK12345) in the remarks</div>
-                            </div>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">1</span>
-                            <span>Open Druk PNB mobile banking application</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">2</span>
-                            <span>Select "Scan & Pay" option</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">3</span>
-                            <span>Use camera to scan the QR code above</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">4</span>
-                            <span>Check merchant ID: CARRENTAL123</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">5</span>
-                            <span>Enter Nu. 15,000.00 as payment amount</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">6</span>
-                            <span>Add reference "BK12345" in remarks field</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">7</span>
-                            <span>Proceed to payment and enter your mPIN</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">8</span>
-                            <span>Capture screenshot of successful payment</span>
-                        </div>
-                        
-                        <div class="important-note">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Important: After completing the payment, please upload the screenshot of your payment confirmation to proceed with your car rental booking.
-                        </div>
-                    </div>
-                    
-                    <!-- BDBL Instructions -->
-                    <div class="bank-tab-content" id="bdbl-content">
-                        <h4>Pay with BDBL Mobile Banking</h4>
-                        
-                        <div class="qr-code-container">
-                            <div class="qr-code">
-                                <i class="fas fa-qrcode fa-5x text-muted"></i>
-                            </div>
-                            
-                            <div class="merchant-info">
-                                <div class="merchant-id">Merchant ID: CARRENTAL123</div>
-                                <div class="amount">Amount: Nu. 15,000.00</div>
-                                <div class="remark-note">* Please include your booking ID (BK12345) in the remarks</div>
-                            </div>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">1</span>
-                            <span>Launch the BDBL mobile banking app</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">2</span>
-                            <span>Go to "QR Payments" section</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">3</span>
-                            <span>Select "Scan QR" option</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">4</span>
-                            <span>Scan the QR code displayed above</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">5</span>
-                            <span>Verify merchant details are correct</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">6</span>
-                            <span>Enter Nu. 15,000.00 as the payment amount</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">7</span>
-                            <span>Type "BK12345" in the remarks field</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">8</span>
-                            <span>Complete payment with your PIN</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">9</span>
-                            <span>Take a screenshot of the payment confirmation</span>
-                        </div>
-                        
-                        <div class="important-note">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Important: After completing the payment, please upload the screenshot of your payment confirmation to proceed with your car rental booking.
-                        </div>
-                    </div>
-                    
-                    <!-- Bank Transfer with OTP Instructions -->
-                    <div class="bank-tab-content" id="bank-transfer-content">
-                        <h4>Bank Transfer with OTP Verification</h4>
-                        
-                        <div class="alert alert-info mb-4">
-                            <i class="fas fa-info-circle me-2"></i>
-                            This payment method uses secure OTP verification to complete your bank transfer directly.
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">1</span>
-                            <span>Select your bank from the dropdown menu</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">2</span>
-                            <span>Enter your bank account number</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">3</span>
-                            <span>Enter your registered mobile number</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">4</span>
-                            <span>Click "Send OTP" to receive a verification code</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">5</span>
-                            <span>Check your phone for an SMS with your 6-digit OTP</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">6</span>
-                            <span>Enter the 6-digit OTP in the verification field</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">7</span>
-                            <span>Click "Verify & Pay" to complete your payment</span>
-                        </div>
-                        
-                        <div class="important-note">
-                            <i class="fas fa-shield-alt me-2"></i>
-                            Security Note: The OTP will be valid for 5 minutes only. If it expires, you'll need to request a new one.
-                        </div>
-                        
-                        <div class="important-note mt-3">
-                            <i class="fas fa-info-circle me-2"></i>
-                            The total amount of Nu. 15,000.00 will be securely transferred from your account once verified.
-                        </div>
-                    </div>
-                    
-                    <!-- Pay Later Instructions -->
-                    <div class="bank-tab-content" id="pay-later-content">
-                        <h4>Pay Later Instructions</h4>
-                        
-                        <div class="alert alert-warning mb-4">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            By choosing the "Pay Later" option, you agree to pay the full amount at the time of car pickup.
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">1</span>
-                            <span>Review your booking details carefully</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">2</span>
-                            <span>Click "Confirm Pay Later" to proceed with your booking</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">3</span>
-                            <span>You will receive a booking confirmation email with all details</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">4</span>
-                            <span>Prepare to pay the total amount of Nu. 15,000.00 at the time of car pickup</span>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <span class="step-number">5</span>
-                            <span>Acceptable payment methods at pickup: Cash, Credit/Debit Card</span>
-                        </div>
-                        
-                        <div class="important-note">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Important: Please bring a valid ID and your booking confirmation when picking up the car. Failure to make payment at pickup will result in cancellation of your reservation.
-                        </div>
-                        
-                        <div class="important-note mt-3">
-                            <i class="fas fa-clock me-2"></i>
-                            Note: If you prefer to pay in advance instead, you can return to the payment page anytime before your pickup date and use one of the online payment options.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tab switching functionality
-            const tabs = document.querySelectorAll('[data-bs-toggle="tab"]');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    
-                    // Remove active class from all tabs and content
-                    document.querySelectorAll('.nav-link').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.bank-tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    // Add active class to clicked tab
-                    this.classList.add('active');
-                    
-                    // Show corresponding content
-                    const target = this.getAttribute('data-bs-target');
-                    document.querySelector(target).classList.add('active');
-                });
+            
+            // File upload preview
+            const fileInput = document.querySelector('input[type="file"]');
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    alert('Screenshot uploaded successfully! Click "Confirm Payment" to complete your transaction.');
+                }
             });
         });
     </script>

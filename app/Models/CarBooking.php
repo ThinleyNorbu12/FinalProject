@@ -58,42 +58,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class CarBooking extends Model
 {
-    use HasFactory;
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'car_bookings';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-        'car_id',
+        'car_id', 
         'customer_id',
-        'pickup_location',
-        'pickup_date',
-        'dropoff_location',
-        'dropoff_date',
-        'status',
-        'payment_method',
-        'payment_date',
+        'pickup_location', 
+        'pickup_datetime',
+        'dropoff_location', 
+        'dropoff_datetime',
+        'status'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
-        'pickup_date' => 'datetime',
-        'dropoff_date' => 'datetime',
-        'payment_date' => 'datetime',
+        'pickup_datetime' => 'datetime',
+        'dropoff_datetime' => 'datetime',
     ];
+
 
     /**
      * Get the car that was booked.
