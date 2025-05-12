@@ -17,14 +17,14 @@ class CustomerController extends Controller
     //     return view('customer.dashboard');
     // }
 
-    public function dashboard()
+   public function dashboard()
     {
         $userId = Auth::id();
 
         // Get the most recent active booking for the logged-in user
         $booking = CarBooking::where('customer_id', $userId)
                     ->where('status', 'active') // Assuming 'active' status indicates a current rental
-                    ->latest('pickup_date')
+                    ->latest('pickup_datetime') // ✅ use correct column
                     ->first();
 
         // Get the car details if a booking exists
@@ -32,6 +32,7 @@ class CustomerController extends Controller
 
         return view('customer.dashboard', compact('booking', 'car'));
     }
+
 
 
     // Show Set Password Form

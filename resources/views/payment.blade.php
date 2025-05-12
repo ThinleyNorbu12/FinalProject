@@ -318,12 +318,11 @@
                 <h2>SELECT PAYMENT METHOD</h2>
             </div>
             <div class="payment-body">
-                <div class="payment-body">
                 <a href="{{ route('booking.summary', ['bookingId' => $booking->id]) }}" class="back-link mb-4">
                     <i class="fas fa-arrow-left me-2"></i> Back to booking
                 </a>
                 
-                 <div class="payment-summary">
+                <div class="payment-summary">
                     <h4 class="mb-4">Booking Summary</h4>
                     
                     <!-- Vehicle Info -->
@@ -424,28 +423,6 @@
                     </div>
                 </div>
                 
-                <!-- [Rest of the payment options HTML remains exactly the same] -->
-                
-                <!-- Option 1: QR Code Payment -->
-                <div class="payment-option" id="option1">
-                    <!-- [Previous QR code payment HTML remains exactly the same] -->
-                </div>
-                
-                <!-- Option 2: Bank Transfer with OTP -->
-                <div class="payment-option" id="option2">
-                    <!-- [Previous bank transfer HTML remains exactly the same] -->
-                </div>
-                
-                <!-- Option 3: Pay Later -->
-                <div class="payment-option" id="option3">
-                    <!-- [Previous pay later HTML remains exactly the same] -->
-                </div>
-                
-                <div class="footer-actions">
-                    <button class="cancel-btn">Cancel</button>
-                    <button class="payment-btn" id="nextBtn">Next</button>
-                </div>
-             
                 <!-- Payment Options -->
                 <h4 class="mb-3">Choose Payment Method</h4>
                 
@@ -559,7 +536,6 @@
                         <div class="qr-code-container hidden" id="qrContainer">
                             <div class="qr-wrapper">
                                 <img src="../assets/images/bobQRcode.jpg" alt="QR Code" class="qr-code-image" id="bankQrCode">
-                                <!-- Removed the qr-logo div here -->
                             </div>
                             
                             <div class="qr-details">
