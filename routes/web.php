@@ -36,10 +36,13 @@ Route::post('/car/{id}/book', [BookingController::class, 'submit'])
 
 // Route for booking summary page (protected by middleware)
 // Route for booking summary page (protected by middleware)
+// Route::get('/booking/summary/{bookingId}', [BookingController::class, 'summary'])
+//     ->name('booking.summary')
+//     ->middleware('auth:customer');
+// After (corrected)
 Route::get('/booking/summary/{bookingId}', [BookingController::class, 'summary'])
     ->name('booking.summary')
     ->middleware('auth:customer');
-
 
 // Route to show the payment form (payment page)
 // Route::get('/payment/{bookingId}', [PaymentController::class, 'show'])->name('payment.page');
@@ -51,6 +54,14 @@ Route::get('/payment/{bookingId}', [PaymentController::class, 'show'])
     ->middleware(['auth:customer', \App\Http\Middleware\CheckDrivingLicense::class]);
 
 Route::post('/payment/{bookingId}', [PaymentController::class, 'process'])->name('payment.process');
+
+// Payment routes
+// Route::get('/booking/{bookingId}/payment', [PaymentController::class, 'show'])->name('booking.payment');
+// Route::post('/booking/{bookingId}/payment/process', [PaymentController::class, 'process'])->name('booking.payment.process');
+Route::get('/booking/{bookingId}/payment', [PaymentController::class, 'showPaymentPage'])->name('booking.payment.page');
+Route::post('/booking/{bookingId}/payment/qr', [PaymentController::class, 'processQrPayment'])->name('booking.payment.qr');
+Route::post('/booking/{bookingId}/payment/pay-later', [PaymentController::class, 'processPayLater'])->name('booking.payment.payLater');
+
 
 
     // car owner page

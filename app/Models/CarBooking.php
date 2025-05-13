@@ -89,4 +89,12 @@ class CarBooking extends Model
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
+
+    // CarBooking.php
+    public function getTotalPriceAttribute()
+    {
+        $hours = $this->pickup_datetime->diffInHours($this->dropoff_datetime);
+        $days = ceil($hours / 24);
+        return ($this->car->price * $days) + 200 + 100; // Insurance + service fee
+    }
 }
