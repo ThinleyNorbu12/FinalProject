@@ -448,8 +448,7 @@
                     <button class="cancel-btn">Cancel</button>
                     <button class="payment-btn" id="nextBtn">Next</button>
                 </div>
-            
-                
+             
                 <!-- Payment Options -->
                 <h4 class="mb-3">Choose Payment Method</h4>
                 
