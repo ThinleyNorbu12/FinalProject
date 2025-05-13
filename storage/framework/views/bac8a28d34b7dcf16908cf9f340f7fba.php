@@ -1,11 +1,16 @@
+
+
+<!-- Updated payment.blade.php with CSRF token and form -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Rental Payment</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title>Payment - Car Rental System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Your existing CSS here -->
     <style>
         body {
             background-color: #f8f9fa;
@@ -314,6 +319,13 @@
 <body>
     <div class="container">
         <div class="payment-container">
+              
+            <?php if(session('error')): ?>
+                <div class="alert alert-danger">
+                    <?php echo e(session('error')); ?>
+
+                </div>
+            <?php endif; ?>
             <div class="payment-header">
                 <h2>SELECT PAYMENT METHOD</h2>
             </div>
@@ -322,6 +334,7 @@
                     <i class="fas fa-arrow-left me-2"></i> Back to booking
                 </a>
                 
+                <!-- Payment summary section remains the same -->
                 <div class="payment-summary">
                     <h4 class="mb-4">Booking Summary</h4>
                     
@@ -367,66 +380,60 @@
                         </div>
                     </div>
                     
-                    <?php
-                        $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
-                        $days = ceil($hours / 24); // Round up to full days for pricing
-                        $dailyRate = $booking->car->price;
-                        $insuranceFee = 200;
-                        $serviceFee = 100;
-                        $securityDeposit = $dailyRate; // Typically 1 day's rent as deposit
-                        $totalPrice = ($dailyRate * $days) + $insuranceFee + $serviceFee + $securityDeposit;
-                    ?>
-                    
-                    <div class="summary-item">
-                        <span>Booking ID</span>
-                        <span id="bookingId">#<?php echo e($booking->id); ?></span>
-                    </div>
-                    
-                    <div class="summary-item">
-                        <span>Duration</span>
-                        <span>
-                            <?php if($days > 0): ?>
-                                <?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?>
+                   <?php
+                    $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
+                    $days = ceil($hours / 24); // Round up to full days for pricing
+                    $dailyRate = $booking->car->price;
+                    $insuranceFee = 200;
+                    $serviceFee = 100;
+                    // Removed: $securityDeposit
+                    $totalPrice = ($dailyRate * $days) + $insuranceFee + $serviceFee;
+                ?>
 
-                            <?php endif; ?>
-                            <?php if($hours % 24 > 0): ?>
-                                <?php echo e($hours % 24); ?> hour<?php echo e($hours % 24 > 1 ? 's' : ''); ?>
+                <div class="summary-item">
+                    <span>Booking ID</span>
+                    <span id="bookingId">#<?php echo e($booking->id); ?></span>
+                </div>
 
-                            <?php endif; ?>
-                        </span>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="summary-item">
-                        <span>Rental Fee (<?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?> × Nu. <?php echo e(number_format($dailyRate, 2)); ?>)</span>
-                        <span>Nu. <?php echo e(number_format($dailyRate * $days, 2)); ?></span>
-                    </div>
-                    
-                    <div class="summary-item">
-                        <span>Insurance Fee</span>
-                        <span>Nu. <?php echo e(number_format($insuranceFee, 2)); ?></span>
-                    </div>
-                    
-                    <div class="summary-item">
-                        <span>Service Fee</span>
-                        <span>Nu. <?php echo e(number_format($serviceFee, 2)); ?></span>
-                    </div>
-                    
-                    <div class="summary-item">
-                        <span>Security Deposit</span>
-                        <span>Nu. <?php echo e(number_format($securityDeposit, 2)); ?></span>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="summary-item mb-0">
-                        <span class="fw-bold">Total Amount</span>
-                        <span class="total-amount">Nu. <?php echo e(number_format($totalPrice, 2)); ?></span>
-                    </div>
+                <div class="summary-item">
+                    <span>Duration</span>
+                    <span>
+                        <?php if($days > 0): ?>
+                            <?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?>
+
+                        <?php endif; ?>
+                        <?php if($hours % 24 > 0): ?>
+                            <?php echo e($hours % 24); ?> hour<?php echo e($hours % 24 > 1 ? 's' : ''); ?>
+
+                        <?php endif; ?>
+                    </span>
+                </div>
+
+                <hr>
+
+                <div class="summary-item">
+                    <span>Rental Fee (<?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?> × Nu. <?php echo e(number_format($dailyRate, 2)); ?>)</span>
+                    <span>Nu. <?php echo e(number_format($dailyRate * $days, 2)); ?></span>
+                </div>
+
+                <div class="summary-item">
+                    <span>Insurance Fee</span>
+                    <span>Nu. <?php echo e(number_format($insuranceFee, 2)); ?></span>
+                </div>
+
+                <div class="summary-item">
+                    <span>Service Fee</span>
+                    <span>Nu. <?php echo e(number_format($serviceFee, 2)); ?></span>
+                </div>
+
+                <hr>
+
+                <div class="summary-item mb-0">
+                    <span class="fw-bold">Total Amount</span>
+                    <span class="total-amount">Nu. <?php echo e(number_format($totalPrice, 2)); ?></span>
                 </div>
                 
-                <!-- Payment Options -->
+                <!-- PAYMENT OPTIONS -->
                 <h4 class="mb-3">Choose Payment Method</h4>
                 
                 <!-- Option 1: QR Code Payment -->
@@ -439,6 +446,13 @@
                     </div>
                     <div class="payment-option-body">
                         <p>Choose your bank below and follow the instructions to complete your payment.</p>
+                        
+                        <!-- Hidden form for QR payment submission -->
+                        <form id="qrPaymentForm" action="<?php echo e(route('booking.payment.qr', ['bookingId' => $booking->id])); ?>" method="POST" enctype="multipart/form-data" style="display: none;">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" name="bank_code" id="selected_bank_code">
+                            <input type="file" name="screenshot" id="screenshot_file">
+                        </form>
                         
                         <div class="bank-selector">
                             <div class="bank-option" data-bank="bob">
@@ -463,6 +477,7 @@
                             </div>
                         </div>
                         
+                        <!-- Bank instructions remain the same -->
                         <!-- BOB Instructions -->
                         <div class="bank-instructions hidden" id="bob-instructions">
                             <h6>Payment Instructions for Bank of Bhutan</h6>
@@ -543,25 +558,25 @@
                             
                             <div class="qr-details">
                                 <p class="name">Car Rental System</p>
-                                <p class="amount">Amount: <strong>Nu. 15,300.00</strong></p>
+                                <p class="amount">Amount: <strong>Nu. <?php echo e(number_format($totalPrice, 2)); ?></strong></p>
                             </div>
                             
                             <label class="upload-btn mt-4">
                                 <i class="fas fa-upload"></i>
                                 <span>Upload Payment Screenshot</span>
-                                <input type="file" style="display: none;" accept="image/*">
+                                <input type="file" id="payment_screenshot" style="display: none;" accept="image/*">
                             </label>
                         </div>
                         
                         <p class="text-center mt-3 text-muted" id="qrPrompt">Please select a bank to display the QR code</p>
                         
                         <div class="text-center mt-3">
-                            <button class="payment-btn" id="confirmQrBtn" disabled>Confirm Payment</button>
+                            <button type="button" class="payment-btn" id="confirmQrBtn" disabled>Confirm Payment</button>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Option 2: Bank Transfer with OTP -->
+                <!-- Option 2 and 3 remain the same -->
                 <div class="payment-option" id="option2">
                     <div class="payment-option-header">
                         <div class="payment-option-icon">
@@ -634,7 +649,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="footer-actions">
                     <button class="cancel-btn">Cancel</button>
                     <button class="payment-btn" id="nextBtn">Next</button>
@@ -644,113 +658,212 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Your updated JavaScript will go here -->
     <script>
+        // Fixed JavaScript for QR payment submission
         document.addEventListener('DOMContentLoaded', function() {
-            // Get booking ID from the URL if available
-            const urlParams = new URLSearchParams(window.location.search);
-            const bookingId = urlParams.get('bookingId');
+    // Get booking ID from the URL if available
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get('bookingId');
+    
+    if (bookingId) {
+        document.getElementById('bookingId').textContent = '#' + bookingId;
+    }
+    
+    // Payment option selection
+    const paymentOptions = document.querySelectorAll('.payment-option');
+    paymentOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove active class from all options
+            paymentOptions.forEach(opt => opt.classList.remove('active'));
             
-            if (bookingId) {
-                document.getElementById('bookingId').textContent = '#' + bookingId;
-            }
+            // Add active class to clicked option
+            this.classList.add('active');
             
-            // Payment option selection
-            const paymentOptions = document.querySelectorAll('.payment-option');
-            paymentOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remove active class from all options
-                    paymentOptions.forEach(opt => opt.classList.remove('active'));
-                    
-                    // Add active class to clicked option
-                    this.classList.add('active');
-                    
-                    // Enable next button
-                    document.getElementById('nextBtn').removeAttribute('disabled');
-                });
-            });
-            
-            // Bank logos mapping - Updated with actual image paths
-            const bankLogos = {
-                'bob': '../assets/images/mbob.png',
-                'bnb': '../assets/images/bnb.png',
-                'tbank': '../assets/images/Tbank.jpg',
-                'dpnb': '../assets/images/drukpnb.png',
-                'bdbl': '../assets/images/bdbl.jpg'
-            };
-            
-            // QR code mapping for different banks - for now we're using the BOB QR for all
-            const bankQRcodes = {
-                'bob': '../assets/images/bobQRcode.jpg',
-                'bnb': '../assets/images/bdblQRcode.jpg',
-                'tbank': '../assets/images/bdblQRcode.jpg',
-                'dpnb': '../assets/images/DrukpnbQRcode.jpg',
-                'bdbl': '../assets/images/bdblQRcode.jpg'
-            };
-            // Bank option selection for QR codes
-            const bankOptions = document.querySelectorAll('.bank-option');
-            const bankInstructions = document.querySelectorAll('.bank-instructions');
-            
-            bankOptions.forEach(bank => {
-                bank.addEventListener('click', function() {
-                    const bankCode = this.getAttribute('data-bank');
-                    
-                    // Remove active class from all bank options
-                    bankOptions.forEach(b => b.classList.remove('active'));
-                    
-                    // Hide all bank instructions
-                    bankInstructions.forEach(instruction => instruction.classList.add('hidden'));
-                    
-                    // Add active class to clicked bank option
-                    this.classList.add('active');
-                    
-                    // Show specific bank instructions
-                    document.getElementById(`${bankCode}-instructions`).classList.remove('hidden');
-                    
-                    // Update QR code image
-                    document.getElementById('bankQrCode').src = bankQRcodes[bankCode];
-                    
-                    // Show QR code container
-                    document.getElementById('qrContainer').classList.remove('hidden');
-                    
-                    // Hide prompt text
-                    document.getElementById('qrPrompt').classList.add('hidden');
-                    
-                    // Enable confirm button
-                    document.getElementById('confirmQrBtn').removeAttribute('disabled');
-                });
-            });
-            
-            // OTP button click
-            const otpBtn = document.querySelector('.otp-btn');
-            otpBtn.addEventListener('click', function() {
-                // Show OTP input section
-                document.getElementById('otpSection').classList.remove('hidden');
-            });
-            
-            // Auto focus next OTP input
-            const otpInputs = document.querySelectorAll('#otpSection input');
-            otpInputs.forEach((input, index) => {
-                input.addEventListener('input', function() {
-                    if (this.value && index < otpInputs.length - 1) {
-                        otpInputs[index + 1].focus();
-                    }
-                });
-                
-                input.addEventListener('keydown', function(e) {
-                    if (e.key === 'Backspace' && !this.value && index > 0) {
-                        otpInputs[index - 1].focus();
-                    }
-                });
-            });
-            
-            // File upload preview
-            const fileInput = document.querySelector('input[type="file"]');
-            fileInput.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    alert('Screenshot uploaded successfully! Click "Confirm Payment" to complete your transaction.');
-                }
-            });
+            // Enable next button
+            document.getElementById('nextBtn').removeAttribute('disabled');
         });
+    });
+    
+    // QR code mapping for different banks
+    const bankQRcodes = {
+        'bob': '../assets/images/bobQRcode.jpg',
+        'bnb': '../assets/images/bdblQRcode.jpg',
+        'tbank': '../assets/images/bdblQRcode.jpg',
+        'dpnb': '../assets/images/DrukpnbQRcode.jpg',
+        'bdbl': '../assets/images/bdblQRcode.jpg'
+    };
+    
+    // Track selected bank
+    let selectedBank = null;
+    
+    // Bank option selection for QR codes
+    const bankOptions = document.querySelectorAll('.bank-option');
+    const bankInstructions = document.querySelectorAll('.bank-instructions');
+    
+    bankOptions.forEach(bank => {
+        bank.addEventListener('click', function() {
+            const bankCode = this.getAttribute('data-bank');
+            selectedBank = bankCode; // Store selected bank code
+            
+            // Update the hidden input in the form
+            document.getElementById('selected_bank_code').value = bankCode;
+            
+            // Remove active class from all bank options
+            bankOptions.forEach(b => b.classList.remove('active'));
+            
+            // Hide all bank instructions
+            bankInstructions.forEach(instruction => {
+                if (instruction) instruction.classList.add('hidden');
+            });
+            
+            // Add active class to clicked bank option
+            this.classList.add('active');
+            
+            // Show specific bank instructions if they exist
+            const instructionElement = document.getElementById(`${bankCode}-instructions`);
+            if (instructionElement) instructionElement.classList.remove('hidden');
+            
+            // Update QR code image
+            document.getElementById('bankQrCode').src = bankQRcodes[bankCode];
+            
+            // Show QR code container
+            document.getElementById('qrContainer').classList.remove('hidden');
+            
+            // Hide prompt text
+            document.getElementById('qrPrompt').classList.add('hidden');
+            
+            // Keep confirm button disabled until screenshot is uploaded
+            checkEnableConfirmButton();
+        });
+    });
+    
+    // File upload handling for the visible file input
+    const paymentScreenshot = document.getElementById('payment_screenshot');
+    paymentScreenshot.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            // Copy the file to the hidden form input
+            const hiddenFileInput = document.getElementById('screenshot_file');
+            
+            // Create a new DataTransfer object
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(this.files[0]);
+            
+            // Set the files property of the hidden file input
+            hiddenFileInput.files = dataTransfer.files;
+            
+            alert('Screenshot uploaded successfully! Click "Confirm Payment" to complete your transaction.');
+            
+            // Enable confirm button if both bank and file are selected
+            checkEnableConfirmButton();
+        }
+    });
+    
+    // Function to check if confirm button should be enabled
+    function checkEnableConfirmButton() {
+        const screenshotFile = document.getElementById('screenshot_file').files[0];
+        const confirmBtn = document.getElementById('confirmQrBtn');
+        
+        if (selectedBank && screenshotFile) {
+            confirmBtn.removeAttribute('disabled');
+        } else {
+            confirmBtn.setAttribute('disabled', 'disabled');
+        }
+    }
+    
+    // Add confirm button click handler for QR Payment
+    const confirmQrBtn = document.getElementById('confirmQrBtn');
+    confirmQrBtn.addEventListener('click', function() {
+        if (!selectedBank) {
+            alert('Please select a bank');
+            return;
+        }
+        
+        const screenshotFile = document.getElementById('screenshot_file').files[0];
+        if (!screenshotFile) {
+            alert('Please upload a payment screenshot');
+            return;
+        }
+        
+        // Validate file before submission
+        if (screenshotFile.size > 2 * 1024 * 1024) {
+            alert('File size must be less than 2MB');
+            return;
+        }
+        
+        if (!['image/jpeg', 'image/png', 'image/jpg'].includes(screenshotFile.type)) {
+            alert('Only JPEG and PNG files are allowed');
+            return;
+        }
+        
+        // Show loading state
+        confirmQrBtn.setAttribute('disabled', 'disabled');
+        confirmQrBtn.textContent = 'Processing...';
+        
+        // Create form data for AJAX submission
+        const formData = new FormData();
+        formData.append('bank_code', selectedBank);
+        formData.append('screenshot', screenshotFile);
+        formData.append('_token', document.querySelector('input[name="_token"]').value);
+        
+        // Get the booking ID from the form action URL
+        const formAction = document.getElementById('qrPaymentForm').getAttribute('action');
+        
+        // Send AJAX request
+        fetch(formAction, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // This makes Laravel detect it as an AJAX request
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                alert(data.message);
+                // Redirect to the summary page
+                window.location.href = data.redirect;
+            } else {
+                // Show error message
+                alert(data.message || 'An error occurred while processing your payment. Please try again.');
+                confirmQrBtn.removeAttribute('disabled');
+                confirmQrBtn.textContent = 'Confirm Payment';
+            }
+        })
+        .catch(error => {
+            console.error('Error details:', error);
+            alert('An error occurred while processing your payment. Please try again.');
+            confirmQrBtn.removeAttribute('disabled');
+            confirmQrBtn.textContent = 'Confirm Payment';
+        });
+    });
+    
+    // OTP section handling (kept from original)
+    const otpBtn = document.querySelector('.otp-btn');
+    if (otpBtn) {
+        otpBtn.addEventListener('click', function() {
+            const otpSection = document.getElementById('otpSection');
+            if (otpSection) otpSection.classList.remove('hidden');
+        });
+    }
+    
+    // Auto focus next OTP input
+    const otpInputs = document.querySelectorAll('#otpSection input');
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', function() {
+            if (this.value && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+        
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && !this.value && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+    });
+});
     </script>
 </body>
 </html><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/payment.blade.php ENDPATH**/ ?>
