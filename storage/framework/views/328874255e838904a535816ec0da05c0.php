@@ -55,7 +55,7 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item active">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>
@@ -82,6 +82,11 @@
                 <a href="#" class="sidebar-menu-item">
                     <i class="fas fa-credit-card"></i>
                     <span>Payment Methods</span>
+                </a>
+
+                <a href="<?php echo e(route('customer.paylater')); ?>" class="sidebar-menu-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Pay Later</span>
                 </a>
                 
                 <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item">

@@ -1,6 +1,6 @@
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1000,15 +1000,15 @@
         </div>
         
         <div class="header-user">
-            @if(Auth::guard('customer')->check())
-                <span class="header-user-name">{{ Auth::guard('customer')->user()->name }}</span>
-                <form method="POST" action="{{ route('customer.logout') }}" class="d-inline">
-                    @csrf
+            <?php if(Auth::guard('customer')->check()): ?>
+                <span class="header-user-name"><?php echo e(Auth::guard('customer')->user()->name); ?></span>
+                <form method="POST" action="<?php echo e(route('customer.logout')); ?>" class="d-inline">
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="btn-logout">Logout</button>
                 </form>
-            @else
-                <a href="{{ route('customer.login') }}" class="btn-logout">Login</a>
-            @endif
+            <?php else: ?>
+                <a href="<?php echo e(route('customer.login')); ?>" class="btn-logout">Login</a>
+            <?php endif; ?>
         </div>        
     </header>
     <!-- Dashboard Container -->
@@ -1021,7 +1021,7 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="{{ route('customer.browse-cars') }}" class="sidebar-menu-item active">
+                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item active">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>
@@ -1035,7 +1035,7 @@
                 
                 <div class="sidebar-heading">My Account</div>
                 
-                <a href="{{ route('customer.profile') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.profile')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>
@@ -1050,12 +1050,12 @@
                     <span>Payment Methods</span>
                 </a>
 
-                <a href="{{ route('customer.paylater') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.paylater')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Pay Later</span>
                 </a>
                 
-                <a href="{{ route('customer.license') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-id-card"></i>
                     <span>Driving License</span>
                 </a>
@@ -1111,9 +1111,9 @@
             <div class="pay-later-container">
                 <h3>Pending Payments</h3>
                 
-                @if(count($pendingPayments) > 0 && $pendingPayments->isNotEmpty())
+                <?php if(count($pendingPayments) > 0 && $pendingPayments->isNotEmpty()): ?>
                 <!-- Initialize totals at the beginning -->
-                @php
+                <?php
                 $totalPending = 0;
                 
                 // Pre-calculate all pending payments
@@ -1122,7 +1122,7 @@
                         $totalPending += $payment->amount;
                     }
                 }
-                @endphp
+                ?>
                 
                 <!-- Pending Payments Table -->
                 <table class="pending-payments-table">
@@ -1137,8 +1137,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($pendingPayments as $payment)
-                            @php
+                        <?php $__currentLoopData = $pendingPayments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
                             // Get booking details
                             $booking = DB::table('car_bookings')
                                 ->where('id', $payment->booking_id)
@@ -1165,55 +1165,56 @@
                             } else {
                                 $status = 'upcoming';
                             }
-                            @endphp
+                            ?>
                             
                             <tr>
                                 <td>
                                     <div class="car-info">
                                         <div class="car-thumbnail">
-                                        @if($car->car_image)
-                                                <img src="{{ asset($car->car_image) }}" alt="Car Image" style="width: 100px; height: auto;">
-                                            @else
+                                        <?php if($car->car_image): ?>
+                                                <img src="<?php echo e(asset($car->car_image)); ?>" alt="Car Image" style="width: 100px; height: auto;">
+                                            <?php else: ?>
                                                 <p>No image</p>
-                                            @endif
+                                            <?php endif; ?>
                                         </div>
                                         <div>
-                                            <div class="car-model">{{ $car->maker ?? 'Unknown' }} {{ $car->model ?? 'Car' }}</div>
-                                            <div class="car-details">{{ $car->vehicle_type ?? 'Vehicle' }} • {{ $car->registration_no ?? 'N/A' }} • {{ $booking->id }}</div>
+                                            <div class="car-model"><?php echo e($car->maker ?? 'Unknown'); ?> <?php echo e($car->model ?? 'Car'); ?></div>
+                                            <div class="car-details"><?php echo e($car->vehicle_type ?? 'Vehicle'); ?> • <?php echo e($car->registration_no ?? 'N/A'); ?> • <?php echo e($booking->id); ?></div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    {{ \Carbon\Carbon::parse($booking->pickup_datetime)->format('M d') }} - 
-                                    {{ \Carbon\Carbon::parse($booking->dropoff_datetime)->format('M d, Y') }}
+                                    <?php echo e(\Carbon\Carbon::parse($booking->pickup_datetime)->format('M d')); ?> - 
+                                    <?php echo e(\Carbon\Carbon::parse($booking->dropoff_datetime)->format('M d, Y')); ?>
+
                                 </td>
-                                <td>{{ $paymentDueDate->format('M d, Y') }}</td>
-                                <td>{{ $payment->currency }} {{ number_format($payment->amount, 2) }}</td>
+                                <td><?php echo e($paymentDueDate->format('M d, Y')); ?></td>
+                                <td><?php echo e($payment->currency); ?> <?php echo e(number_format($payment->amount, 2)); ?></td>
                                 <td>
-                                    @if($status == 'overdue')
+                                    <?php if($status == 'overdue'): ?>
                                         <span class="badge badge-overdue">Overdue</span>
-                                    @elseif($status == 'pending')
+                                    <?php elseif($status == 'pending'): ?>
                                         <span class="badge badge-pending">Pending</span>
-                                    @elseif($status == 'upcoming')
+                                    <?php elseif($status == 'upcoming'): ?>
                                         <span class="badge badge-upcoming">Upcoming</span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="badge badge-paid">Paid</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                                 <td>
-                                    @if($status != 'paid')
-                                        <button class="btn-pay" onclick="openPaymentModal('{{ $car->maker ?? 'Unknown' }} {{ $car->model ?? 'Car' }}', '{{ $booking->id }}', '{{ $payment->amount }}', '{{ $payment->id }}')">Pay Now</button>
-                                        <form action="{{ route('customer.cancel-payment', $payment->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this payment?');">
-                                            @csrf
+                                    <?php if($status != 'paid'): ?>
+                                        <button class="btn-pay" onclick="openPaymentModal('<?php echo e($car->maker ?? 'Unknown'); ?> <?php echo e($car->model ?? 'Car'); ?>', '<?php echo e($booking->id); ?>', '<?php echo e($payment->amount); ?>', '<?php echo e($payment->id); ?>')">Pay Now</button>
+                                        <form action="<?php echo e(route('customer.cancel-payment', $payment->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to cancel this payment?');">
+                                            <?php echo csrf_field(); ?>
                                             <button type="submit" class="btn btn-danger">Cancel Payment</button>
                                         </form>
                                     
-                                        @else
+                                        <?php else: ?>
                                         <button class="btn-pay" disabled>Completed</button>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                 </table>
                 
@@ -1222,19 +1223,19 @@
                     <h4>Payment Summary</h4>
                     <div class="summary-item">
                         <div>Pending Payments:</div>
-                        <div>{{ $pendingPayments->first()->currency ?? '$' }} {{ number_format($totalPending, 2) }}</div>
+                        <div><?php echo e($pendingPayments->first()->currency ?? '$'); ?> <?php echo e(number_format($totalPending, 2)); ?></div>
                     </div>
                     <div class="summary-total">
                         <div>Total Amount:</div>
-                        <div>{{ $pendingPayments->first()->currency ?? '$' }} {{ number_format($totalPending, 2) }}</div>
+                        <div><?php echo e($pendingPayments->first()->currency ?? '$'); ?> <?php echo e(number_format($totalPending, 2)); ?></div>
                     </div>
                 </div>
-                @else
+                <?php else: ?>
                 <div class="no-payments">
                     <i class="fas fa-check-circle"></i>
                     <p>You don't have any pending payments at the moment.</p>
                 </div>
-                @endif
+                <?php endif; ?>
             </div>
 
             <!-- Payment Modal -->
@@ -1245,8 +1246,8 @@
             <span class="modal-close" onclick="closePaymentModal()">&times;</span>
         </div>
         
-        <form action="{{ route('customer.paylater.process') }}" method="POST" id="paymentForm" enctype="multipart/form-data">
-            @csrf
+        <form action="<?php echo e(route('customer.paylater.process')); ?>" method="POST" id="paymentForm" enctype="multipart/form-data">
+            <?php echo csrf_field(); ?>
             <input type="hidden" name="payment_id" id="paymentId">
             <input type="hidden" name="bank_code" id="selected_bank_code">
             <input type="hidden" name="payment_method" id="selectedPaymentMethod" value="qr_code">
@@ -1604,4 +1605,6 @@ function resetPaymentForm() {
     selectPaymentMethod(document.querySelector('.payment-method'), 'qr_code');
 }
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/customer/pay-later.blade.php ENDPATH**/ ?>

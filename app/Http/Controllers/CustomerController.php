@@ -237,6 +237,93 @@ public function cancelPayment($paymentId)
     }
 }
 
+
+    public function browseCars(Request $request)
+{
+    // Query builder for cars
+    $carsQuery = DB::table('car_details_tbl')
+        ->where('status', 'available');
+    
+    // Apply filters if provided
+    if ($request->has('vehicle_type') && $request->vehicle_type != '') {
+        $carsQuery->where('vehicle_type', $request->vehicle_type);
+    }
+    
+    if ($request->has('transmission_type') && $request->transmission_type != '') {
+        $carsQuery->where('transmission_type', $request->transmission_type);
+    }
+    
+    if ($request->has('min_price') && $request->min_price != '') {
+        $carsQuery->where('price', '>=', $request->min_price);
+    }
+    
+    if ($request->has('max_price') && $request->max_price != '') {
+        $carsQuery->where('price', '<=', $request->max_price);
+    }
+    
+    // Get all distinct vehicle types for filter dropdown
+    $vehicleTypes = DB::table('car_details_tbl')
+                      ->select('vehicle_type')
+                      ->distinct()
+                      ->pluck('vehicle_type');
+    
+    // Get all distinct transmission types for filter dropdown
+    $transmissionTypes = DB::table('car_details_tbl')
+                          ->select('transmission_type')
+                          ->distinct()
+                          ->pluck('transmission_type');
+    
+    // Get filtered cars
+    $cars = $carsQuery->get();
+    
+    return view('customer.browse-cars', compact('cars', 'vehicleTypes', 'transmissionTypes'));
+}
+
+public function carDetails($id)
+{
+    // Get car details
+    $car = DB::table('car_details_tbl')->where('id', $id)->first();
+    
+    if (!$car) {
+        return redirect()->route('customer.browse-cars')
+                         ->with('error', 'Car not found.');
+    }
+    
+    // Get similar cars (same vehicle type, excluding the current car)
+    $similarCars = DB::table('car_details_tbl')
+                     ->where('vehicle_type', $car->vehicle_type)
+                     ->where('id', '!=', $id)
+                     ->where('status', 'available')
+                     ->limit(4)
+                     ->get();
+    
+    return view('customer.car_details', compact('car', 'similarCars'));
+}
+
+public function bookCar($id)
+{
+    // Check if user is logged in
+    if (!Auth::guard('customer')->check()) {
+        return redirect()->route('customer.login')
+                         ->with('error', 'Please login to book a car.');
+    }
+    
+    // Get car details
+    $car = DB::table('car_details_tbl')->where('id', $id)->first();
+    
+    if (!$car) {
+        return redirect()->route('customer.browse-cars')
+                         ->with('error', 'Car not found.');
+    }
+    
+    if ($car->status != 'available') {
+        return redirect()->route('customer.browse-cars')
+                         ->with('error', 'This car is not available for booking.');
+    }
+    
+    return view('customer.book_car', compact('car'));
+}
+
     
     
 

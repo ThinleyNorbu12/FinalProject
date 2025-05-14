@@ -341,5 +341,11 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::post('/cancel-payment/{paymentId}', [CustomerController::class, 'cancelPayment'])->name('cancel-payment');
 
 
+   
+        // Add this new route for browsing cars
+    Route::get('/browse-cars', [CustomerController::class, 'browseCars'])->name('browse-cars');
+    Route::get('/car-details/{id}', [CustomerController::class, 'carDetails'])->name('car-details');
+    Route::get('/book-car/{id}', [CustomerController::class, 'bookCar'])->name('book-car');
+
 });
 
