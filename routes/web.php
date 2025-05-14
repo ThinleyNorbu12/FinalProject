@@ -62,7 +62,8 @@ Route::get('/booking/{bookingId}/payment', [PaymentController::class, 'showPayme
 Route::post('/booking/{bookingId}/payment/qr', [PaymentController::class, 'processQrPayment'])->name('booking.payment.qr');
 Route::post('/booking/{bookingId}/payment/pay-later', [PaymentController::class, 'processPayLater'])->name('booking.payment.payLater');
 
-
+Route::post('/admin/payments/pay-later/{paymentId}/collect', [PaymentController::class, 'markPayLaterAsCollected'])
+    ->name('admin.payments.pay-later.collect');
 
     // car owner page
 // to display all the register car of carowner
@@ -332,7 +333,12 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/license', [App\Http\Controllers\CustomerProfileController::class, 'showLicenseForm'])->name('license');
     });
 
-
+    // redirect to pay later page
+    Route::get('/pay-later', [CustomerController::class, 'payLater'])->name('paylater');
+    // process to payment
+    Route::post('/paylater/process', [CustomerController::class, 'processPayment'])->name('paylater.process');
+    //    cancel the payment 
+    Route::post('/cancel-payment/{paymentId}', [CustomerController::class, 'cancelPayment'])->name('cancel-payment');
 
 
 });

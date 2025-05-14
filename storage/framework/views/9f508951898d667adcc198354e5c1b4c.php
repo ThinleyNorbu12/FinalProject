@@ -83,6 +83,11 @@
                     <i class="fas fa-credit-card"></i>
                     <span>Payment Methods</span>
                 </a>
+
+                <a href="<?php echo e(route('customer.paylater')); ?>" class="sidebar-menu-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Pay Later</span>
+                </a>
                 
                 <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-id-card"></i>

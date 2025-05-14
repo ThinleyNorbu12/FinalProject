@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CarBooking;
+use App\Models\Payment;
+use Carbon\Carbon;
+
+use App\Models\PayLaterPayment;
+
 
 class CustomerController extends Controller
 {
@@ -45,33 +50,196 @@ class CustomerController extends Controller
 
     // Save password
     public function setPassword(Request $request)
+    {
+        // Validate incoming data
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:6',
+            'token' => 'required',
+        ]);
+
+        // Skip querying the password_resets table since you're not using it.
+        // Validate token directly (assuming token is the email or a unique identifier in this case).
+        $customer = Customer::where('email', $request->email)->first();
+
+        if (!$customer) {
+            return back()->withErrors(['email' => 'Customer not found.']);
+        }
+
+        // Assuming you're using the token as a unique identifier for verification
+        if ($customer->email !== $request->email) {
+            return back()->withErrors(['email' => 'Invalid token or email.']);
+        }
+
+        // Update the customer's password
+        $customer->password = Hash::make($request->password);
+        $customer->save();
+
+        // Return a successful response
+        return redirect()->route('customer.login')->with('status', 'Password set successfully!');
+    }
+
+    public function payLater()
+    {
+        try {
+            // Get the authenticated customer
+            $customer = Auth::guard('customer')->user();
+            
+            // Fetch pending payments from database with more comprehensive info
+            $pendingPayments = DB::table('payments')
+                ->join('pay_later_payments', 'payments.id', '=', 'pay_later_payments.payment_id')
+                ->join('car_bookings', 'payments.booking_id', '=', 'car_bookings.id')
+                ->where('payments.customer_id', $customer->id)
+                ->where(function($query) {
+                    $query->where('pay_later_payments.status', '!=', 'paid')
+                          ->orWhereNull('pay_later_payments.status');
+                })
+                ->select(
+                    'payments.id',
+                    'payments.booking_id',
+                    'payments.amount',
+                    'payments.currency',
+                    'payments.status as payment_status',
+                    'pay_later_payments.id as pay_later_id',
+                    'pay_later_payments.status as pay_later_status',
+                    'pay_later_payments.collection_date',
+                    'pay_later_payments.collection_method',
+                    'car_bookings.car_id',
+                    'car_bookings.pickup_datetime',
+                    'car_bookings.dropoff_datetime'
+                )
+                ->orderBy('pay_later_payments.collection_date', 'asc')
+                ->get();
+                
+            return view('customer.pay-later', ['pendingPayments' => $pendingPayments]);
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Error in PayLater controller: ' . $e->getMessage());
+            
+            // Return view with error message
+            return view('customer.pay-later', [
+                'pendingPayments' => collect([]), // Empty collection
+                'error' => 'An error occurred while loading your payment data. Please try again later.'
+            ]);
+        }
+    }
+    
+    /**
+     * Process a pay later payment
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function processPayment(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'payment_id' => 'required|exists:payments,id',
+            'payment_method' => 'required|string'
+        ]);
+        
+        // Get the payment details
+        $payment = DB::table('payments')
+            ->join('pay_later_payments', 'payments.id', '=', 'pay_later_payments.payment_id')
+            ->where('payments.id', $validated['payment_id'])
+            ->select('payments.*', 'pay_later_payments.id as pay_later_id')
+            ->first();
+            
+        // Check if payment belongs to authenticated customer
+        if ($payment->customer_id != Auth::guard('customer')->id()) {
+            return redirect()->back()->withErrors(['error' => 'Unauthorized payment access']);
+        }
+        
+        // Update payment status
+        DB::beginTransaction();
+        
+        try {
+            // Update the payment record
+            DB::table('payments')
+                ->where('id', $payment->id)
+                ->update([
+                    'status' => 'paid',
+                    'payment_method' => $validated['payment_method'],
+                    'updated_at' => Carbon::now()
+                ]);
+                
+            // Update the pay later payment record
+            DB::table('pay_later_payments')
+                ->where('payment_id', $payment->id)
+                ->update([
+                    'status' => 'paid',
+                    'collection_method' => $validated['payment_method'],
+                    'updated_at' => Carbon::now()
+                ]);
+                
+            DB::commit();
+            
+            return redirect()->route('customer.paylater')->with('success', 'Payment processed successfully!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->withErrors(['error' => 'An error occurred while processing your payment: ' . $e->getMessage()]);
+        }
+    }
+
+// this will cancel the payment this is in pay later page
+    //  public function cancelPayLaterPayment(Request $request)
+    // {
+    //     // Validate the request
+    //     $validated = $request->validate([
+    //         'payment_id' => 'required|exists:pay_later_payments,id',
+    //     ]);
+
+    //     // Get the pay later payment
+    //     $payLaterPayment = PayLaterPayment::findOrFail($validated['payment_id']);
+        
+    //     // Check if the payment belongs to the current user
+    //     $payment = Payment::where('id', $payLaterPayment->payment_id)->first();
+        
+    //     if (!$payment || $payment->customer_id != Auth::id()) {
+    //         return redirect()->back()->with('error', 'You are not authorized to cancel this payment.');
+    //     }
+        
+    //     // Update the status in both tables
+    //     $payLaterPayment->status = 'cancelled';
+    //     $payLaterPayment->save();
+        
+    //     $payment->status = 'cancelled';
+    //     $payment->save();
+        
+    //     // Redirect with success message
+    //     return redirect()->route('customer.paylater')->with('success', 'Payment has been cancelled successfully.');
+    // }
+
+    // In CustomerController.php
+public function cancelPayment($paymentId)
 {
-    // Validate incoming data
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|confirmed|min:6',
-        'token' => 'required',
-    ]);
-
-    // Skip querying the password_resets table since you're not using it.
-    // Validate token directly (assuming token is the email or a unique identifier in this case).
-    $customer = Customer::where('email', $request->email)->first();
-
-    if (!$customer) {
-        return back()->withErrors(['email' => 'Customer not found.']);
+    try {
+        // Find the payment
+        $payment = Payment::findOrFail($paymentId);
+        
+        // Update the payment status to cancelled
+        $payment->status = 'cancelled';
+        $payment->save();
+        
+        // Find and update related pay_later_payments if they exist
+        $payLaterPayments = PayLaterPayment::where('payment_id', $paymentId)
+            ->whereIn('status', ['upcoming', 'pending', 'overdue'])
+            ->get();
+            
+        foreach ($payLaterPayments as $payLaterPayment) {
+            $payLaterPayment->status = 'cancelled';
+            $payLaterPayment->save();
+        }
+        
+        return redirect()->back()->with('success', 'Payment has been cancelled successfully.');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Failed to cancel payment: ' . $e->getMessage());
     }
-
-    // Assuming you're using the token as a unique identifier for verification
-    if ($customer->email !== $request->email) {
-        return back()->withErrors(['email' => 'Invalid token or email.']);
-    }
-
-    // Update the customer's password
-    $customer->password = Hash::make($request->password);
-    $customer->save();
-
-    // Return a successful response
-    return redirect()->route('customer.login')->with('status', 'Password set successfully!');
 }
 
+    
+    
+
 }
+
+

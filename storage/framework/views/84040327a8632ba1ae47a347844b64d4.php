@@ -601,11 +601,7 @@
                             <label class="form-label">Bank Account Number</label>
                             <input type="text" class="account-input" placeholder="Enter Account Number">
                         </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Mobile Number</label>
-                            <input type="text" class="phone-input" placeholder="Enter Mobile Number">
-                        </div>
+                    
                         
                         <div class="text-center mt-4">
                             <button class="otp-btn">Send OTP</button>
@@ -629,39 +625,177 @@
                     </div>
                 </div>
                 
-                <!-- Option 3: Pay Later -->
-                <div class="payment-option" id="option3">
-                    <div class="payment-option-header">
-                        <div class="payment-option-icon">
-                            <i class="fas fa-hourglass-half"></i>
+                <!-- Option 3: Pay Later (updated) -->
+                <!-- Pay Later Option -->
+                        <div class="payment-option" id="option3">
+                            <div class="payment-option-header">
+                                <div class="payment-option-icon">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                                <h5 class="payment-option-title">Pay Later</h5>
+                            </div>
+                            <div class="payment-option-body">
+                                <p>Select this option if you prefer to pay in cash at the time of pickup.</p>
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Please note that choosing "Pay Later" option means you will need to pay the full amount when you meet for the car handover.
+                                </div>
+                                
+                                <!-- Hidden form for Pay Later submission -->
+                                <form id="payLaterForm" method="POST" action="<?php echo e(route('booking.payment.payLater', ['bookingId' => $booking->id])); ?>" style="display: none;">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="notes" value="Customer opted to pay at pickup.">
+                                </form>
+                                
+                                <div class="text-center mt-4">
+                                    <button type="button" class="btn btn-primary payment-btn">Confirm Pay Later</button>
+                                </div>
+                            </div>
                         </div>
-                        <h5 class="payment-option-title">Pay Later</h5>
                     </div>
-                    <div class="payment-option-body">
-                        <p>Select this option if you prefer to pay in cash at the time of pickup.</p>
-                        <div class="alert alert-warning">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Please note that choosing "Pay Later" option means you will need to pay the full amount when you meet for the car handover.
-                        </div>
-                        
-                        <div class="text-center mt-4">
-                            <button class="payment-btn">Confirm Pay Later</button>
-                        </div>
+
+                    <div class="footer-actions mt-4 d-flex justify-content-between">
+                        <a href="<?php echo e(route('booking.summary', ['bookingId' => $booking->id])); ?>" class="btn btn-secondary cancel-btn">Cancel</a>
+                        <button class="btn btn-primary payment-btn" id="nextBtn" disabled>Next</button>
                     </div>
-                </div>
-                <div class="footer-actions">
-                    <button class="cancel-btn">Cancel</button>
-                    <button class="payment-btn" id="nextBtn">Next</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- Your updated JavaScript will go here -->
-    <script>
-        // Fixed JavaScript for QR payment submission
-        document.addEventListener('DOMContentLoaded', function() {
+<!-- Add CSRF token meta tag for Ajax requests -->
+<meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+
+
+
+<?php $__env->startSection('styles'); ?>
+<style>
+    .payment-options {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .payment-option {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .payment-option:hover {
+        border-color: #007bff;
+        box-shadow: 0 0 10px rgba(0,123,255,0.1);
+    }
+    
+    .payment-option.active {
+        border-color: #007bff;
+        box-shadow: 0 0 15px rgba(0,123,255,0.2);
+    }
+    
+    .payment-option-header {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .payment-option-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        background-color: #e9ecef;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+    
+    .payment-option-title {
+        margin: 0;
+        font-size: 18px;
+    }
+    
+    .payment-option-body {
+        padding: 15px;
+    }
+    
+    .bank-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .bank-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: calc(20% - 10px);
+    }
+    
+    .bank-option:hover {
+        border-color: #007bff;
+    }
+    
+    .bank-option.active {
+        border-color: #007bff;
+        background-color: #f0f7ff;
+    }
+    
+    .bank-option span {
+        margin-top: 5px;
+        font-size: 12px;
+        text-align: center;
+    }
+    
+    .qr-code-wrapper {
+        max-width: 250px;
+        margin: 0 auto;
+        padding: 15px;
+        border: 1px dashed #ddd;
+        border-radius: 8px;
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    .otp-inputs {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .otp-inputs input {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+    
+    .footer-actions {
+        margin-top: 30px;
+    }
+</style>
+
+
+<?php $__env->startSection('scripts'); ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
     // Get booking ID from the URL if available
     const urlParams = new URLSearchParams(window.location.search);
     const bookingId = urlParams.get('bookingId');
@@ -740,130 +874,196 @@
     
     // File upload handling for the visible file input
     const paymentScreenshot = document.getElementById('payment_screenshot');
-    paymentScreenshot.addEventListener('change', function() {
-        if (this.files && this.files[0]) {
-            // Copy the file to the hidden form input
-            const hiddenFileInput = document.getElementById('screenshot_file');
-            
-            // Create a new DataTransfer object
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(this.files[0]);
-            
-            // Set the files property of the hidden file input
-            hiddenFileInput.files = dataTransfer.files;
-            
-            alert('Screenshot uploaded successfully! Click "Confirm Payment" to complete your transaction.');
-            
-            // Enable confirm button if both bank and file are selected
-            checkEnableConfirmButton();
-        }
-    });
+    if (paymentScreenshot) {
+        paymentScreenshot.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                // Copy the file to the hidden form input
+                const hiddenFileInput = document.getElementById('screenshot_file');
+                
+                // Create a new DataTransfer object
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(this.files[0]);
+                
+                // Set the files property of the hidden file input
+                hiddenFileInput.files = dataTransfer.files;
+                
+                alert('Screenshot uploaded successfully! Click "Confirm Payment" to complete your transaction.');
+                
+                // Enable confirm button if both bank and file are selected
+                checkEnableConfirmButton();
+            }
+        });
+    }
     
     // Function to check if confirm button should be enabled
     function checkEnableConfirmButton() {
-        const screenshotFile = document.getElementById('screenshot_file').files[0];
+        const screenshotFile = document.getElementById('screenshot_file');
         const confirmBtn = document.getElementById('confirmQrBtn');
         
-        if (selectedBank && screenshotFile) {
-            confirmBtn.removeAttribute('disabled');
-        } else {
-            confirmBtn.setAttribute('disabled', 'disabled');
+        if (screenshotFile && confirmBtn) {
+            if (selectedBank && screenshotFile.files[0]) {
+                confirmBtn.removeAttribute('disabled');
+            } else {
+                confirmBtn.setAttribute('disabled', 'disabled');
+            }
         }
     }
     
     // Add confirm button click handler for QR Payment
     const confirmQrBtn = document.getElementById('confirmQrBtn');
-    confirmQrBtn.addEventListener('click', function() {
-        if (!selectedBank) {
-            alert('Please select a bank');
-            return;
-        }
-        
-        const screenshotFile = document.getElementById('screenshot_file').files[0];
-        if (!screenshotFile) {
-            alert('Please upload a payment screenshot');
-            return;
-        }
-        
-        // Validate file before submission
-        if (screenshotFile.size > 2 * 1024 * 1024) {
-            alert('File size must be less than 2MB');
-            return;
-        }
-        
-        if (!['image/jpeg', 'image/png', 'image/jpg'].includes(screenshotFile.type)) {
-            alert('Only JPEG and PNG files are allowed');
-            return;
-        }
-        
-        // Show loading state
-        confirmQrBtn.setAttribute('disabled', 'disabled');
-        confirmQrBtn.textContent = 'Processing...';
-        
-        // Create form data for AJAX submission
-        const formData = new FormData();
-        formData.append('bank_code', selectedBank);
-        formData.append('screenshot', screenshotFile);
-        formData.append('_token', document.querySelector('input[name="_token"]').value);
-        
-        // Get the booking ID from the form action URL
-        const formAction = document.getElementById('qrPaymentForm').getAttribute('action');
-        
-        // Send AJAX request
-        fetch(formAction, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest' // This makes Laravel detect it as an AJAX request
+    if (confirmQrBtn) {
+        confirmQrBtn.addEventListener('click', function() {
+            if (!selectedBank) {
+                alert('Please select a bank');
+                return;
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Show success message
-                alert(data.message);
-                // Redirect to the summary page
-                window.location.href = data.redirect;
-            } else {
-                // Show error message
-                alert(data.message || 'An error occurred while processing your payment. Please try again.');
+            
+            const screenshotFile = document.getElementById('screenshot_file').files[0];
+            if (!screenshotFile) {
+                alert('Please upload a payment screenshot');
+                return;
+            }
+            
+            // Validate file before submission
+            if (screenshotFile.size > 2 * 1024 * 1024) {
+                alert('File size must be less than 2MB');
+                return;
+            }
+            
+            if (!['image/jpeg', 'image/png', 'image/jpg'].includes(screenshotFile.type)) {
+                alert('Only JPEG and PNG files are allowed');
+                return;
+            }
+            
+            // Show loading state
+            confirmQrBtn.setAttribute('disabled', 'disabled');
+            confirmQrBtn.textContent = 'Processing...';
+            
+            // Create form data for AJAX submission
+            const formData = new FormData();
+            formData.append('bank_code', selectedBank);
+            formData.append('screenshot', screenshotFile);
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+            
+            // Get the form action URL
+            const formAction = document.getElementById('qrPaymentForm').getAttribute('action');
+            
+            // Send AJAX request
+            fetch(formAction, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // This makes Laravel detect it as an AJAX request
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    alert(data.message);
+                    // Redirect to the summary page
+                    window.location.href = data.redirect;
+                } else {
+                    // Show error message
+                    alert(data.message || 'An error occurred while processing your payment. Please try again.');
+                    confirmQrBtn.removeAttribute('disabled');
+                    confirmQrBtn.textContent = 'Confirm Payment';
+                }
+            })
+            .catch(error => {
+                console.error('Error details:', error);
+                alert('An error occurred while processing your payment. Please try again.');
                 confirmQrBtn.removeAttribute('disabled');
                 confirmQrBtn.textContent = 'Confirm Payment';
-            }
-        })
-        .catch(error => {
-            console.error('Error details:', error);
-            alert('An error occurred while processing your payment. Please try again.');
-            confirmQrBtn.removeAttribute('disabled');
-            confirmQrBtn.textContent = 'Confirm Payment';
-        });
-    });
-    
-    // OTP section handling (kept from original)
-    const otpBtn = document.querySelector('.otp-btn');
-    if (otpBtn) {
-        otpBtn.addEventListener('click', function() {
-            const otpSection = document.getElementById('otpSection');
-            if (otpSection) otpSection.classList.remove('hidden');
+            });
         });
     }
     
-    // Auto focus next OTP input
-    const otpInputs = document.querySelectorAll('#otpSection input');
-    otpInputs.forEach((input, index) => {
-        input.addEventListener('input', function() {
-            if (this.value && index < otpInputs.length - 1) {
-                otpInputs[index + 1].focus();
+    // Pay Later functionality
+    const payLaterConfirmBtn = document.querySelector('#option3 .payment-btn');
+    if (payLaterConfirmBtn) {
+        payLaterConfirmBtn.addEventListener('click', function() {
+            // Show loading state
+            payLaterConfirmBtn.setAttribute('disabled', 'disabled');
+            payLaterConfirmBtn.textContent = 'Processing...';
+            
+            // Get the form
+            const payLaterForm = document.getElementById('payLaterForm');
+            
+            // Get the URL from the window location if needed
+            const bookingId = urlParams.get('bookingId') || window.location.pathname.split('/').filter(Boolean).pop();
+            
+            // Use fetch to submit the form via AJAX
+            fetch(payLaterForm.action, {
+                method: 'POST',
+                body: new FormData(payLaterForm),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    alert(data.message || 'Pay Later option confirmed!');
+                    // Redirect to the summary page
+                    window.location.href = data.redirect;
+                } else {
+                    // Show error message
+                    alert(data.message || 'An error occurred while processing your request. Please try again.');
+                    payLaterConfirmBtn.removeAttribute('disabled');
+                    payLaterConfirmBtn.textContent = 'Confirm Pay Later';
+                }
+            })
+            .catch(error => {
+                console.error('Error details:', error);
+                alert('An error occurred while processing your request. Please try again.');
+                payLaterConfirmBtn.removeAttribute('disabled');
+                payLaterConfirmBtn.textContent = 'Confirm Pay Later';
+            });
+        });
+    }
+    
+    // Handle Next button for multi-step payment process
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            // Get the selected payment option
+            const selectedOption = document.querySelector('.payment-option.active');
+            
+            if (!selectedOption) {
+                alert('Please select a payment option');
+                return;
+            }
+            
+            // Get the option ID
+            const optionId = selectedOption.id;
+            
+            // Perform action based on selected option
+            if (optionId === 'option3') {
+                // Trigger the Pay Later confirmation
+                const payLaterBtn = document.querySelector('#option3 .payment-btn');
+                if (payLaterBtn) {
+                    payLaterBtn.click();
+                }
+            } else if (optionId === 'option1') {
+                // For QR payment, scroll to QR section
+                const qrContainer = document.getElementById('qrContainer');
+                if (qrContainer && !qrContainer.classList.contains('hidden')) {
+                    // QR code is already displayed, check if screenshot is uploaded
+                    const confirmQrBtn = document.getElementById('confirmQrBtn');
+                    if (confirmQrBtn && !confirmQrBtn.hasAttribute('disabled')) {
+                        confirmQrBtn.click();
+                    } else {
+                        alert('Please complete the QR payment process');
+                    }
+                } else {
+                    alert('Please select a bank for QR payment');
+                }
             }
         });
-        
-        input.addEventListener('keydown', function(e) {
-            if (e.key === 'Backspace' && !this.value && index > 0) {
-                otpInputs[index - 1].focus();
-            }
-        });
-    });
+    }
 });
-    </script>
-</body>
-</html><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/payment.blade.php ENDPATH**/ ?>
+</script>
+<?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/payment.blade.php ENDPATH**/ ?>

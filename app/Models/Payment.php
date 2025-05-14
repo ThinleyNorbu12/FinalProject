@@ -28,9 +28,19 @@ class Payment extends Model
     /**
      * Relationship to Booking
      */
-    public function booking()
+    // public function booking()
+    // {
+    //     return $this->belongsTo(CarBooking::class, 'booking_id');
+    // }
+
+    public function carBooking()
     {
         return $this->belongsTo(CarBooking::class, 'booking_id');
+    }
+
+    public function payLaterPayment()
+    {
+        return $this->hasOne(PayLaterPayment::class);
     }
 
     /**
@@ -56,7 +66,7 @@ class Payment extends Model
     {
         return [
             'pending' => 'Pending',
-            'completed' => 'Completed',
+            'completed' => 'Paid',
             'failed' => 'Failed',
             'pending_verification' => 'Pending Verification',
             'refunded' => 'Refunded',
