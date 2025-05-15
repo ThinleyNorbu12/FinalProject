@@ -55,7 +55,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\PayLaterPayment;
 class CarBooking extends Model
 {
     protected $fillable = [
@@ -88,6 +88,16 @@ class CarBooking extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'booking_id');
+    }
+
+    public function payLaterPayments()
+    {
+        return $this->hasMany(PayLaterPayment::class, 'booking_id');
     }
 
     // CarBooking.php

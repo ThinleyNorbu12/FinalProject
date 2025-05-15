@@ -401,22 +401,22 @@ public function bookCar($id)
     return view('cars.book', compact('car'));
 }
 //  when i click on retal history in customer dashboard
-public function rentalHistory()
-{
+public function rentalHistory() {
     $customer = Auth::guard('customer')->user();
     
     // Get all bookings for this customer with car information joined
     $bookings = DB::table('car_bookings')
-    ->leftJoin('car_details_tbl', 'car_bookings.car_id', '=', 'cars.id')
-    ->where('car_bookings.customer_id', $customer->id)
-    ->select(
-        'car_bookings.*', 
-        DB::raw("CONCAT(cars.make, ' ', cars.model, ' (', cars.year, ')') as car_name")
-    )
-    ->orderBy('car_bookings.created_at', 'desc')
-    ->get();
+        ->leftJoin('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
+        ->where('car_bookings.customer_id', $customer->id)
+        ->select(
+            'car_bookings.*',
+            DB::raw("CONCAT(car_details_tbl.maker, ' ', car_details_tbl.model) as car_name"),
+            'car_details_tbl.car_image' // Add this line to fetch the car image
+        )
+        ->orderBy('car_bookings.created_at', 'desc')
+        ->get();
     
-    // Get all payment information for these bookings
+    // Rest of your code remains the same...
     $bookingIds = $bookings->pluck('id')->toArray();
     
     $payments = DB::table('payments')
@@ -424,7 +424,6 @@ public function rentalHistory()
         ->get()
         ->keyBy('booking_id');
     
-    // Check if any bookings have pay later payments
     $payLaterPayments = DB::table('pay_later_payments')
         ->whereIn('booking_id', $bookingIds)
         ->get()
@@ -432,8 +431,145 @@ public function rentalHistory()
     
     return view('customer.rental-history', compact('bookings', 'payments', 'payLaterPayments'));
 }
-
     
+
+public function paymentHistory()
+{
+    $customerId = Auth::guard('customer')->id();
+    
+    // Get all payments for this customer
+    $payments = DB::table('payments')
+        ->where('customer_id', $customerId)
+        ->orderBy('payment_date', 'desc')
+        ->get();
+    
+    // Fetch related booking IDs to join with other tables
+    $bookingIds = $payments->pluck('booking_id')->toArray();
+    
+    // Get all pay later payments related to this customer's bookings
+    $payLaterPayments = DB::table('pay_later_payments')
+        ->whereIn('booking_id', $bookingIds)
+        ->get()
+        ->keyBy('payment_id');
+    
+    // Get all QR payments related to this customer's payments
+    $qrPayments = DB::table('qr_payments')
+        ->whereIn('payment_id', $payments->pluck('id')->toArray())
+        ->get()
+        ->keyBy('payment_id');
+    
+    // Combine the data for the view
+    $paymentData = $payments->map(function($payment) use ($payLaterPayments, $qrPayments) {
+        $data = (array) $payment;
+        
+        // Add pay later payment details if exists
+        if (isset($payLaterPayments[$payment->id])) {
+            $data['pay_later'] = $payLaterPayments[$payment->id];
+        }
+        
+        // Add QR payment details if exists
+        if (isset($qrPayments[$payment->id])) {
+            $data['qr_payment'] = $qrPayments[$payment->id];
+        }
+        
+        return $data;
+    });
+    
+    return view('customer.payment-history', compact('paymentData'));
+}
+
+
+public function myReservations()
+{
+    $customer = Auth::guard('customer')->user();
+    
+    if (!$customer) {
+        return redirect()->route('customer.login')->with('error', 'Please login to view your reservations');
+    }
+
+    // Get all bookings for this customer with related car information
+    $bookings = \App\Models\CarBooking::with(['car', 'payments', 'payLaterPayments'])
+        ->where('customer_id', $customer->id)
+        ->orderBy('pickup_datetime', 'desc')
+        ->get();
+    
+    // Categorize bookings
+    $activeBookings = $bookings->filter(function($booking) {
+        return in_array($booking->status, ['active', 'confirmed', 'pending']);
+    });
+    
+    $completedBookings = $bookings->filter(function($booking) {
+        return $booking->status === 'completed';
+    });
+    
+    $cancelledBookings = $bookings->filter(function($booking) {
+        return $booking->status === 'cancelled';
+    });
+    
+    return view('customer.my-reservations', compact('activeBookings', 'completedBookings', 'cancelledBookings'));
+}
+
+/**
+ * Show reservation details.
+ *
+ * @param int $id
+ * @return \Illuminate\View\View
+ */
+public function reservationDetails($id)
+{
+    $customer = Auth::guard('customer')->user();
+    
+    if (!$customer) {
+        return redirect()->route('customer.login')->with('error', 'Please login to view reservation details');
+    }
+    
+    $booking = \App\Models\CarBooking::with(['car', 'payments', 'payLaterPayments', 'qrPayments'])
+        ->where('id', $id)
+        ->where('customer_id', $customer->id)
+        ->firstOrFail();
+    
+    return view('customer.reservation-details', compact('booking'));
+}
+
+/**
+ * Cancel a reservation.
+ *
+ * @param int $id
+ * @return \Illuminate\Http\RedirectResponse
+ */
+public function cancelReservation($id)
+{
+    $customer = Auth::guard('customer')->user();
+    
+    if (!$customer) {
+        return redirect()->route('customer.login')->with('error', 'Please login to cancel your reservation');
+    }
+    
+    $booking = \App\Models\CarBooking::where('id', $id)
+        ->where('customer_id', $customer->id)
+        ->where('status', '!=', 'completed')
+        ->where('status', '!=', 'cancelled')
+        ->firstOrFail();
+    
+    // Check if cancellation is allowed (e.g., not too close to pickup time)
+    $pickupTime = new \DateTime($booking->pickup_datetime);
+    $now = new \DateTime();
+    $hoursUntilPickup = ($pickupTime->getTimestamp() - $now->getTimestamp()) / 3600;
+    
+    if ($hoursUntilPickup < 24) {
+        return redirect()->back()->with('error', 'Reservations cannot be cancelled less than 24 hours before pickup');
+    }
+    
+    // Update booking status
+    $booking->status = 'cancelled';
+    $booking->save();
+    
+    // Add cancellation logic here - refunds, notifications, etc.
+    
+    return redirect()->route('customer.my-reservations')->with('success', 'Your reservation has been cancelled');
+}
+
+
     
 
 }

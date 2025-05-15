@@ -344,8 +344,19 @@ Route::prefix('customer')->name('customer.')->group(function () {
    
         // Add this new route for browsing cars
     Route::get('/browse-cars', [CustomerController::class, 'browseCars'])->name('browse-cars');
+    // need to change this two route
     Route::get('/car-details/{id}', [CustomerController::class, 'carDetails'])->name('car-details');
     Route::get('/book-car/{id}', [CustomerController::class, 'bookCar'])->name('book-car');
+
+    // rental history
     Route::get('/customer/rental-history', [CustomerController::class, 'rentalHistory'])->name('rental-history');
+     // Payment History Route
+    Route::get('/customer/payment-history', [CustomerController::class, 'paymentHistory'])->name('payment-history');
+
+    Route::get('/customer/my-reservations', [CustomerController::class, 'myReservations'])->name('my-reservations');
+    // For viewing reservation details
+    Route::get('/customer/reservation-details/{id}', [CustomerController::class, 'reservationDetails'])->name('reservation-details');
+    // For cancelling a reservation (POST method since it modifies data)
+    Route::post('/customer/cancel-reservation/{id}', [CustomerController::class, 'cancelReservation'])->name('cancel-reservation');
 });
 

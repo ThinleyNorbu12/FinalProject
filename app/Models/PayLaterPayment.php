@@ -2,7 +2,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\CarBooking;
 class PayLaterPayment extends Model
 {
     use HasFactory;
@@ -46,10 +46,16 @@ class PayLaterPayment extends Model
         return $this->belongsTo(Payment::class);
     }
 
+    // In PayLaterPayment.php
     public function carBooking()
     {
         return $this->belongsTo(CarBooking::class, 'booking_id');
     }
+
+
+    // In PayLaterPayment.php
+  
+
 
     /**
      * Status options for Pay Later payments

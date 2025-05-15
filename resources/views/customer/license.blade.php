@@ -593,7 +593,7 @@
                     <span>Browse Cars</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.my-reservations') }}" class="sidebar-menu-item ">
                     <i class="fas fa-calendar-alt"></i>
                     <span>My Reservations</span>
                 </a>
@@ -612,9 +612,9 @@
                     <span>Rental History</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.payment-history') }}" class="sidebar-menu-item">
                     <i class="fas fa-credit-card"></i>
-                    <span>Payment Methods</span>
+                    <span>Payment History</span>
                 </a>
 
                 <a href="{{ route('customer.paylater') }}" class="sidebar-menu-item">

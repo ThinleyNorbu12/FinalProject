@@ -59,6 +59,18 @@ class Payment extends Model
         return $this->hasOne(QrPayment::class, 'payment_id');
     }
 
+    public function booking()
+    {
+        return $this->belongsTo(CarBooking::class, 'booking_id');
+    }
+
+    // In CarBooking.php
+    public function payLaterPayments()
+    {
+        return $this->hasMany(PayLaterPayment::class, 'car_booking_id');
+    }
+
+
     /**
      * Status options
      */

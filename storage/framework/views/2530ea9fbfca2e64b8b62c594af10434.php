@@ -1,6 +1,6 @@
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rental History - Car Rental</title>
     <!-- Link to the external CSS file -->
-    <!-- <link rel="stylesheet" href="{{ asset('assets/css/customer/dashboard.css') }}"> -->
+    <!-- <link rel="stylesheet" href="<?php echo e(asset('assets/css/customer/dashboard.css')); ?>"> -->
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -597,15 +597,15 @@
         </div>
         
         <div class="header-user">
-            @if(Auth::guard('customer')->check())
-                <span class="header-user-name">{{ Auth::guard('customer')->user()->name }}</span>
-                <form method="POST" action="{{ route('customer.logout') }}" class="d-inline">
-                    @csrf
+            <?php if(Auth::guard('customer')->check()): ?>
+                <span class="header-user-name"><?php echo e(Auth::guard('customer')->user()->name); ?></span>
+                <form method="POST" action="<?php echo e(route('customer.logout')); ?>" class="d-inline">
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="btn-logout">Logout</button>
                 </form>
-            @else
-                <a href="{{ route('customer.login') }}" class="btn-logout">Login</a>
-            @endif
+            <?php else: ?>
+                <a href="<?php echo e(route('customer.login')); ?>" class="btn-logout">Login</a>
+            <?php endif; ?>
         </div>        
     </header>
 
@@ -614,12 +614,12 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-menu">
-                <a href="{{ route('customer.dashboard') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.dashboard')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="{{ route('customer.browse-cars') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>
@@ -633,27 +633,27 @@
                 
                 <div class="sidebar-heading">My Account</div>
                 
-                <a href="{{ route('customer.profile') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.profile')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>
                 
-                <a href="{{ route('customer.rental-history') }}" class="sidebar-menu-item active">
+                <a href="<?php echo e(route('customer.rental-history')); ?>" class="sidebar-menu-item active">
                     <i class="fas fa-history"></i>
                     <span>Rental History</span>
                 </a>
                 
-                <a href="{{ route('customer.payment-history') }}" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('customer.payment-history')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-credit-card"></i>
                     <span>Payment History</span>
                 </a>
 
-                <a href="{{ route('customer.paylater') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.paylater')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Pay Later</span>
                 </a>
                 
-                <a href="{{ route('customer.license') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-id-card"></i>
                     <span>Driving License</span>
                 </a>
@@ -714,9 +714,9 @@
                     </div>
                 </div>
                 
-                @if(count($bookings) > 0)
-                    @foreach($bookings as $booking)
-                        @php
+                <?php if(count($bookings) > 0): ?>
+                    <?php $__currentLoopData = $bookings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $booking): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php
                             $paymentInfo = $payments[$booking->id] ?? null;
                             $payLaterInfo = $payLaterPayments[$booking->id] ?? null;
                             
@@ -735,118 +735,126 @@
                                 default:
                                     $statusClass = 'status-pending';
                             }
-                        @endphp
+                        ?>
                         
-                        <div class="rental-card rental-item" data-status="{{ $booking->status }}">
+                        <div class="rental-card rental-item" data-status="<?php echo e($booking->status); ?>">
                             <div class="rental-header">
-                                <div class="rental-id">Booking #{{ $booking->id }}</div>
-                                <div class="rental-status {{ $statusClass }}">{{ ucfirst($booking->status) }}</div>
+                                <div class="rental-id">Booking #<?php echo e($booking->id); ?></div>
+                                <div class="rental-status <?php echo e($statusClass); ?>"><?php echo e(ucfirst($booking->status)); ?></div>
                             </div>
                             
                             <div class="rental-body">
                                 <div class="rental-image">
-                                    @if(isset($booking->car_image) && !empty($booking->car_image))
-                                        <img src="{{ asset($booking->car_image) }}" alt="Car Image">
-                                    @else
+                                    <?php if(isset($booking->car_image) && !empty($booking->car_image)): ?>
+                                        <img src="<?php echo e(asset($booking->car_image)); ?>" alt="Car Image">
+                                    <?php else: ?>
                                         <img src="/api/placeholder/150/100" alt="Car Image">
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                                 
                                 <div class="rental-details">
-                                    @if(isset($booking->car_name))
-                                        <div class="car-name">{{ $booking->car_name }}</div>
-                                    @else
+                                    <?php if(isset($booking->car_name)): ?>
+                                        <div class="car-name"><?php echo e($booking->car_name); ?></div>
+                                    <?php else: ?>
                                         <div class="car-name">Vehicle Details Not Available</div>
-                                    @endif
+                                    <?php endif; ?>
                                     
                                     <div class="rental-info-grid">
                                         <div class="rental-info-item">
                                             <div class="rental-info-label">Pickup Date</div>
-                                            <div class="rental-info-value">{{ date('M d, Y H:i', strtotime($booking->pickup_datetime)) }}</div>
+                                            <div class="rental-info-value"><?php echo e(date('M d, Y H:i', strtotime($booking->pickup_datetime))); ?></div>
                                         </div>
                                         
                                         <div class="rental-info-item">
                                             <div class="rental-info-label">Return Date</div>
-                                            <div class="rental-info-value">{{ date('M d, Y H:i', strtotime($booking->dropoff_datetime)) }}</div>
+                                            <div class="rental-info-value"><?php echo e(date('M d, Y H:i', strtotime($booking->dropoff_datetime))); ?></div>
                                         </div>
                                         
                                         <div class="rental-info-item">
                                             <div class="rental-info-label">Pickup Location</div>
-                                            <div class="rental-info-value">{{ $booking->pickup_location }}</div>
+                                            <div class="rental-info-value"><?php echo e($booking->pickup_location); ?></div>
                                         </div>
                                         
                                         <div class="rental-info-item">
                                             <div class="rental-info-label">Return Location</div>
-                                            <div class="rental-info-value">{{ $booking->dropoff_location }}</div>
+                                            <div class="rental-info-value"><?php echo e($booking->dropoff_location); ?></div>
                                         </div>
                                     </div>
                                     
-                                    @if($paymentInfo)
+                                    <?php if($paymentInfo): ?>
                                         <div class="payment-info">
                                             <div class="payment-info-title">Payment Information</div>
                                             <div>
-                                                <strong>Method:</strong> {{ $paymentInfo->payment_method }}
+                                                <strong>Method:</strong> <?php echo e($paymentInfo->payment_method); ?>
+
                                                 <br>
-                                                <strong>Amount:</strong> {{ $paymentInfo->currency }} {{ number_format($paymentInfo->amount, 2) }}
+                                                <strong>Amount:</strong> <?php echo e($paymentInfo->currency); ?> <?php echo e(number_format($paymentInfo->amount, 2)); ?>
+
                                                 <br>
-                                                <strong>Date:</strong> {{ date('M d, Y', strtotime($paymentInfo->payment_date)) }}
+                                                <strong>Date:</strong> <?php echo e(date('M d, Y', strtotime($paymentInfo->payment_date))); ?>
+
                                                 <br>
-                                                <div class="payment-status {{ $paymentInfo->status == 'paid' ? 'status-completed' : 'status-pending' }}">
-                                                    {{ ucfirst($paymentInfo->status) }}
+                                                <div class="payment-status <?php echo e($paymentInfo->status == 'paid' ? 'status-completed' : 'status-pending'); ?>">
+                                                    <?php echo e(ucfirst($paymentInfo->status)); ?>
+
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
                                     
-                                    @if($payLaterInfo && count($payLaterInfo) > 0)
+                                    <?php if($payLaterInfo && count($payLaterInfo) > 0): ?>
                                         <div class="pay-later-section">
                                             <div class="payment-info-title">Pay Later Information</div>
-                                            @foreach($payLaterInfo as $payLater)
+                                            <?php $__currentLoopData = $payLaterInfo; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payLater): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <div>
-                                                    <strong>Collection Date:</strong> {{ date('M d, Y', strtotime($payLater->collection_date)) }}
+                                                    <strong>Collection Date:</strong> <?php echo e(date('M d, Y', strtotime($payLater->collection_date))); ?>
+
                                                     <br>
-                                                    <strong>Status:</strong> {{ ucfirst($payLater->status) }}
-                                                    @if($payLater->status == 'collected')
+                                                    <strong>Status:</strong> <?php echo e(ucfirst($payLater->status)); ?>
+
+                                                    <?php if($payLater->status == 'collected'): ?>
                                                         <br>
-                                                        <strong>Collection Method:</strong> {{ $payLater->collection_method }}
-                                                    @endif
+                                                        <strong>Collection Method:</strong> <?php echo e($payLater->collection_method); ?>
+
+                                                    <?php endif; ?>
                                                 </div>
-                                            @endforeach
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             
                             <div class="rental-footer">
                                 <div class="rental-price">
-                                    @if($paymentInfo)
-                                        {{ $paymentInfo->currency }} {{ number_format($paymentInfo->amount, 2) }}
-                                    @else
+                                    <?php if($paymentInfo): ?>
+                                        <?php echo e($paymentInfo->currency); ?> <?php echo e(number_format($paymentInfo->amount, 2)); ?>
+
+                                    <?php else: ?>
                                         Price information not available
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                                 <div class="rental-actions">
-                                    @if($booking->status == 'active')
+                                    <?php if($booking->status == 'active'): ?>
                                         <button class="btn-primary">Extend Rental</button>
                                         <button class="btn-secondary">Return Car</button>
-                                    @elseif($booking->status == 'completed')
+                                    <?php elseif($booking->status == 'completed'): ?>
                                         <button class="btn-primary">Book Again</button>
                                         <button class="btn-secondary">View Invoice</button>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                @else
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php else: ?>
                     <div class="no-rentals">
                         <div class="no-rentals-icon">
                             <i class="fas fa-car"></i>
                         </div>
                         <h3>No rental history found</h3>
                         <p>You haven't rented any cars yet. Start your journey by browsing our collection.</p>
-                        <a href="{{ route('customer.browse-cars') }}" class="btn-primary" style="display: inline-block; margin-top: 15px; padding: 10px 20px; text-decoration: none;">Browse Cars</a>
+                        <a href="<?php echo e(route('customer.browse-cars')); ?>" class="btn-primary" style="display: inline-block; margin-top: 15px; padding: 10px 20px; text-decoration: none;">Browse Cars</a>
                     </div>
-                @endif
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -909,4 +917,5 @@
     </script>
 </body>
 </html>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/customer/rental-history.blade.php ENDPATH**/ ?>

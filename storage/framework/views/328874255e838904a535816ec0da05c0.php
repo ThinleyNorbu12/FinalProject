@@ -55,12 +55,12 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item active">
+                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.my-reservations')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-calendar-alt"></i>
                     <span>My Reservations</span>
                 </a>
@@ -74,14 +74,14 @@
                     <span>Profile</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.rental-history')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-history"></i>
                     <span>Rental History</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.payment-history')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-credit-card"></i>
-                    <span>Payment Methods</span>
+                    <span>Payment History</span>
                 </a>
 
                 <a href="<?php echo e(route('customer.paylater')); ?>" class="sidebar-menu-item">
