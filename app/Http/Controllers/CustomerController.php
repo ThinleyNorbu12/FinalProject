@@ -211,28 +211,105 @@ class CustomerController extends Controller
     // }
 
     // In CustomerController.php
-public function cancelPayment($paymentId)
+// public function cancelPayment($paymentId)
+// {
+//     try {
+//         // Find the payment
+//         $payment = Payment::findOrFail($paymentId);
+        
+//         // Update the payment status to cancelled
+//         $payment->status = 'cancelled';
+//         $payment->save();
+        
+//         // Find and update related pay_later_payments if they exist
+//         $payLaterPayments = PayLaterPayment::where('payment_id', $paymentId)
+//             ->whereIn('status', ['upcoming', 'pending', 'overdue'])
+//             ->get();
+            
+//         foreach ($payLaterPayments as $payLaterPayment) {
+//             $payLaterPayment->status = 'cancelled';
+//             $payLaterPayment->save();
+//         }
+        
+//         return redirect()->back()->with('success', 'Payment has been cancelled successfully.');
+//     } catch (\Exception $e) {
+//         return redirect()->back()->with('error', 'Failed to cancel payment: ' . $e->getMessage());
+//     }
+// }
+public function cancelPayment($paymentId) 
 {
     try {
-        // Find the payment
-        $payment = Payment::findOrFail($paymentId);
-        
-        // Update the payment status to cancelled
-        $payment->status = 'cancelled';
-        $payment->save();
-        
-        // Find and update related pay_later_payments if they exist
-        $payLaterPayments = PayLaterPayment::where('payment_id', $paymentId)
-            ->whereIn('status', ['upcoming', 'pending', 'overdue'])
-            ->get();
+        // Check if we're using Eloquent models or DB facade
+        if (class_exists('App\Models\Payment') || class_exists('App\Payment')) {
+            // Using Eloquent
+            $payment = Payment::findOrFail($paymentId);
             
-        foreach ($payLaterPayments as $payLaterPayment) {
-            $payLaterPayment->status = 'cancelled';
-            $payLaterPayment->save();
+            // Check if payment is already cancelled or completed
+            if (in_array($payment->status, ['cancelled', 'completed', 'refunded'])) {
+                return redirect()->back()->with('error', 'This payment cannot be cancelled because it is already ' . $payment->status . '.');
+            }
+            
+            // Update the payment status to cancelled
+            $payment->status = 'cancelled';
+            $payment->updated_at = now();
+            $payment->save();
+            
+            // Find and update related pay_later_payments if they exist
+            if (class_exists('App\Models\PayLaterPayment') || class_exists('App\PayLaterPayment')) {
+                $payLaterPayments = PayLaterPayment::where('payment_id', $paymentId)
+                    ->whereIn('status', ['upcoming', 'pending', 'overdue'])
+                    ->get();
+                
+                foreach ($payLaterPayments as $payLaterPayment) {
+                    $payLaterPayment->status = 'cancelled';
+                    $payLaterPayment->updated_at = now();
+                    $payLaterPayment->save();
+                }
+            } else {
+                // Using DB facade for pay_later_payments
+                DB::table('pay_later_payments')
+                    ->where('payment_id', $paymentId)
+                    ->whereIn('status', ['upcoming', 'pending', 'overdue'])
+                    ->update([
+                        'status' => 'cancelled',
+                        'updated_at' => now()
+                    ]);
+            }
+        } else {
+            // Using DB facade for both tables
+            // Check the payment status first
+            $payment = DB::table('payments')->where('id', $paymentId)->first();
+            
+            if (!$payment) {
+                return redirect()->back()->with('error', 'Payment not found.');
+            }
+            
+            // Check if payment is already in a final state
+            if (in_array($payment->status, ['cancelled', 'completed', 'refunded'])) {
+                return redirect()->back()->with('error', 'This payment cannot be cancelled because it is already ' . $payment->status . '.');
+            }
+            
+            // Update payment status
+            DB::table('payments')
+                ->where('id', $paymentId)
+                ->update([
+                    'status' => 'cancelled',
+                    'updated_at' => now()
+                ]);
+            
+            // Update pay_later_payments if they exist
+            DB::table('pay_later_payments')
+                ->where('payment_id', $paymentId)
+                ->whereIn('status', ['upcoming', 'pending', 'overdue'])
+                ->update([
+                    'status' => 'cancelled',
+                    'updated_at' => now()
+                ]);
         }
         
         return redirect()->back()->with('success', 'Payment has been cancelled successfully.');
     } catch (\Exception $e) {
+        \Log::error('Payment cancellation error: ' . $e->getMessage());
         return redirect()->back()->with('error', 'Failed to cancel payment: ' . $e->getMessage());
     }
 }
@@ -297,7 +374,7 @@ public function carDetails($id)
                      ->limit(4)
                      ->get();
     
-    return view('customer.car_details', compact('car', 'similarCars'));
+    return view('search_results', compact('car', 'similarCars'));
 }
 
 public function bookCar($id)
@@ -321,7 +398,39 @@ public function bookCar($id)
                          ->with('error', 'This car is not available for booking.');
     }
     
-    return view('customer.book_car', compact('car'));
+    return view('cars.book', compact('car'));
+}
+//  when i click on retal history in customer dashboard
+public function rentalHistory()
+{
+    $customer = Auth::guard('customer')->user();
+    
+    // Get all bookings for this customer with car information joined
+    $bookings = DB::table('car_bookings')
+    ->leftJoin('car_details_tbl', 'car_bookings.car_id', '=', 'cars.id')
+    ->where('car_bookings.customer_id', $customer->id)
+    ->select(
+        'car_bookings.*', 
+        DB::raw("CONCAT(cars.make, ' ', cars.model, ' (', cars.year, ')') as car_name")
+    )
+    ->orderBy('car_bookings.created_at', 'desc')
+    ->get();
+    
+    // Get all payment information for these bookings
+    $bookingIds = $bookings->pluck('id')->toArray();
+    
+    $payments = DB::table('payments')
+        ->whereIn('booking_id', $bookingIds)
+        ->get()
+        ->keyBy('booking_id');
+    
+    // Check if any bookings have pay later payments
+    $payLaterPayments = DB::table('pay_later_payments')
+        ->whereIn('booking_id', $bookingIds)
+        ->get()
+        ->groupBy('booking_id');
+    
+    return view('customer.rental-history', compact('bookings', 'payments', 'payLaterPayments'));
 }
 
     

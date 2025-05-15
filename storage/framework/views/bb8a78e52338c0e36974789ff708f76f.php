@@ -388,7 +388,7 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>

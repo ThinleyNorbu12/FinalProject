@@ -388,7 +388,7 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="{{ route('customer.browse-cars') }}" class="sidebar-menu-item active">
+                <a href="{{ route('customer.browse-cars') }}" class="sidebar-menu-item ">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>

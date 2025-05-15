@@ -146,4 +146,7 @@
     <!-- Page Specific Scripts -->
     <?php echo $__env->yieldContent('scripts'); ?>
 </body>
-</html><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/layouts/app.blade.php ENDPATH**/ ?>
+</html>
+
+
+<?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/layouts/app.blade.php ENDPATH**/ ?>

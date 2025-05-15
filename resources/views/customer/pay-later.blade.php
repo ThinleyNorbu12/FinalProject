@@ -1016,12 +1016,12 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-menu">
-                <a href="#" class="sidebar-menu-item active">
+                <a href="{{ route('customer.dashboard') }}" class="sidebar-menu-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="{{ route('customer.browse-cars') }}" class="sidebar-menu-item active">
+                <a href="{{ route('customer.browse-cars') }}" class="sidebar-menu-item ">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>
@@ -1040,17 +1040,17 @@
                     <span>Profile</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.rental-history') }}" class="sidebar-menu-item">
                     <i class="fas fa-history"></i>
                     <span>Rental History</span>
                 </a>
-                
+                                
                 <a href="#" class="sidebar-menu-item">
                     <i class="fas fa-credit-card"></i>
                     <span>Payment Methods</span>
                 </a>
 
-                <a href="{{ route('customer.paylater') }}" class="sidebar-menu-item">
+                <a href="{{ route('customer.paylater') }}" class="sidebar-menu-item active">
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Pay Later</span>
                 </a>
@@ -1149,21 +1149,28 @@
                                 ->where('id', $booking->car_id)
                                 ->first();
                             
-                            // Calculate status based on rental end date
+                            // Calculate status based on rental end date and payment status
                             $today = \Carbon\Carbon::now();
                             $rentalEndDate = \Carbon\Carbon::parse($booking->dropoff_datetime);
                             
                             // Set payment due date to be today's date until rental end date
                             $paymentDueDate = $today->lte($rentalEndDate) ? $today : $rentalEndDate;
                             
-                            if($payment->pay_later_status == 'paid') {
-                                $status = 'paid';
+                            // Check for status in the payments table
+                            $paymentStatus = $payment->status ?? '';  // Use null coalescing in case status field doesn't exist
+                            $payLaterStatus = $payment->pay_later_status ?? ''; // Use null coalescing in case pay_later_status field doesn't exist
+                            
+                            // Determine display status
+                            if($paymentStatus == 'cancelled' || $payLaterStatus == 'cancelled') {
+                                $displayStatus = 'cancelled';
+                            } elseif($paymentStatus == 'completed' || $payLaterStatus == 'paid') {
+                                $displayStatus = 'paid';
                             } elseif($today->gt($rentalEndDate)) {
-                                $status = 'overdue';
+                                $displayStatus = 'overdue';
                             } elseif($today->diffInDays($rentalEndDate) <= 7) {
-                                $status = 'pending';
+                                $displayStatus = 'pending';
                             } else {
-                                $status = 'upcoming';
+                                $displayStatus = 'upcoming';
                             }
                             @endphp
                             
@@ -1171,7 +1178,7 @@
                                 <td>
                                     <div class="car-info">
                                         <div class="car-thumbnail">
-                                        @if($car->car_image)
+                                        @if(isset($car->car_image) && $car->car_image)
                                                 <img src="{{ asset($car->car_image) }}" alt="Car Image" style="width: 100px; height: auto;">
                                             @else
                                                 <p>No image</p>
@@ -1188,28 +1195,31 @@
                                     {{ \Carbon\Carbon::parse($booking->dropoff_datetime)->format('M d, Y') }}
                                 </td>
                                 <td>{{ $paymentDueDate->format('M d, Y') }}</td>
-                                <td>{{ $payment->currency }} {{ number_format($payment->amount, 2) }}</td>
+                                <td>{{ $payment->currency ?? '$' }} {{ number_format($payment->amount, 2) }}</td>
                                 <td>
-                                    @if($status == 'overdue')
+                                    @if($displayStatus == 'overdue')
                                         <span class="badge badge-overdue">Overdue</span>
-                                    @elseif($status == 'pending')
+                                    @elseif($displayStatus == 'pending')
                                         <span class="badge badge-pending">Pending</span>
-                                    @elseif($status == 'upcoming')
+                                    @elseif($displayStatus == 'upcoming')
                                         <span class="badge badge-upcoming">Upcoming</span>
+                                    @elseif($displayStatus == 'cancelled')
+                                        <span class="badge badge-cancelled">Cancelled</span>
                                     @else
                                         <span class="badge badge-paid">Paid</span>
                                     @endif
                                 </td>
                                 <td>
-                                    @if($status != 'paid')
+                                    @if($displayStatus != 'paid' && $displayStatus != 'cancelled')
                                         <button class="btn-pay" onclick="openPaymentModal('{{ $car->maker ?? 'Unknown' }} {{ $car->model ?? 'Car' }}', '{{ $booking->id }}', '{{ $payment->amount }}', '{{ $payment->id }}')">Pay Now</button>
                                         <form action="{{ route('customer.cancel-payment', $payment->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this payment?');">
                                             @csrf
                                             <button type="submit" class="btn btn-danger">Cancel Payment</button>
                                         </form>
-                                    
-                                        @else
-                                        <button class="btn-pay" disabled>Completed</button>
+                                    @elseif($displayStatus == 'cancelled')
+                                        <button class="btn-pay disabled" disabled>Cancelled</button>
+                                    @else
+                                        <button class="btn-pay disabled" disabled>Completed</button>
                                     @endif
                                 </td>
                             </tr>
@@ -1238,231 +1248,231 @@
             </div>
 
             <!-- Payment Modal -->
-<div id="paymentModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Make Payment</h3>
-            <span class="modal-close" onclick="closePaymentModal()">&times;</span>
-        </div>
-        
-        <form action="{{ route('customer.paylater.process') }}" method="POST" id="paymentForm" enctype="multipart/form-data">
-            @csrf
-            <input type="hidden" name="payment_id" id="paymentId">
-            <input type="hidden" name="bank_code" id="selected_bank_code">
-            <input type="hidden" name="payment_method" id="selectedPaymentMethod" value="qr_code">
-            
-            <div class="payment-details">
-                <div class="payment-detail-item">
-                    <div>Car:</div>
-                    <div id="modalCarName"></div>
-                </div>
-                <div class="payment-detail-item">
-                    <div>Rental ID:</div>
-                    <div id="modalRentalId"></div>
-                </div>
-                <div class="payment-detail-item">
-                    <div>Amount Due:</div>
-                    <div id="modalAmount"></div>
+            <div id="paymentModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Make Payment</h3>
+                        <span class="modal-close" onclick="closePaymentModal()">&times;</span>
+                    </div>
+                    
+                    <form action="{{ route('customer.paylater.process') }}" method="POST" id="paymentForm" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="payment_id" id="paymentId">
+                        <input type="hidden" name="bank_code" id="selected_bank_code">
+                        <input type="hidden" name="payment_method" id="selectedPaymentMethod" value="qr_code">
+                        
+                        <div class="payment-details">
+                            <div class="payment-detail-item">
+                                <div>Car:</div>
+                                <div id="modalCarName"></div>
+                            </div>
+                            <div class="payment-detail-item">
+                                <div>Rental ID:</div>
+                                <div id="modalRentalId"></div>
+                            </div>
+                            <div class="payment-detail-item">
+                                <div>Amount Due:</div>
+                                <div id="modalAmount"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-methods">
+                            <h4>Select Payment Method</h4>
+                            
+                            <!-- Payment Method Options -->
+                            <div class="payment-method selected" onclick="selectPaymentMethod(this, 'qr_code')">
+                                <input type="radio" name="payment_method_radio" value="qr_code" checked style="display: none;">
+                                <div class="payment-method-icon">
+                                    <i class="fas fa-qrcode"></i>
+                                </div>
+                                <div class="payment-method-details">
+                                    <div class="payment-method-name">QR Code Payment</div>
+                                    <div class="payment-method-info">Scan QR with your banking app</div>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-method" onclick="selectPaymentMethod(this, 'bank_otp')">
+                                <input type="radio" name="payment_method_radio" value="bank_otp" style="display: none;">
+                                <div class="payment-method-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div class="payment-method-details">
+                                    <div class="payment-method-name">Bank Transfer with OTP</div>
+                                    <div class="payment-method-info">Direct bank payment with verification</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- QR Code Payment Section -->
+                        <div id="qrCodeSection" class="payment-method-section">
+                            <div class="payment-option-body">
+                                <p>Choose your bank below and follow the instructions to complete your payment.</p>
+                                
+                                <div class="bank-selector">
+                                    <div class="bank-option" data-bank="bob" onclick="selectBank('bob')">
+                                        <img src="../assets/images/mbob.png" alt="Bank of Bhutan">
+                                        <div>BOB</div>
+                                    </div>
+                                    <div class="bank-option" data-bank="bnb" onclick="selectBank('bnb')">
+                                        <img src="../assets/images/bnb.png" alt="Bhutan National Bank">
+                                        <div>BNB</div>
+                                    </div>
+                                    <div class="bank-option" data-bank="tbank" onclick="selectBank('tbank')">
+                                        <img src="../assets/images/Tbank.jpg" alt="T-Bank">
+                                        <div>T-Bank</div>
+                                    </div>
+                                    <div class="bank-option" data-bank="dpnb" onclick="selectBank('dpnb')">
+                                        <img src="../assets/images/drukpnb.png" alt="Druk PNB">
+                                        <div>DPNB</div>
+                                    </div>
+                                    <div class="bank-option" data-bank="bdbl" onclick="selectBank('bdbl')">
+                                        <img src="../assets/images/bdbl.jpg" alt="BDBL">
+                                        <div>BDBL</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bank Instructions Container -->
+                                <div id="bankInstructionsContainer">
+                                    <!-- Bank instructions will be displayed here -->
+                                    <!-- BOB Instructions -->
+                                    <div class="bank-instructions hidden" id="bob-instructions">
+                                        <h6>Payment Instructions for Bank of Bhutan</h6>
+                                        <ol>
+                                            <li>Open your mBOB app</li>
+                                            <li>Go to Payments > Scan QR</li>
+                                            <li>Scan the QR code shown here</li>
+                                            <li>Enter amount as shown above</li>
+                                            <li>Confirm payment using your PIN/password</li>
+                                            <li>Take a screenshot of the confirmation</li>
+                                            <li>Upload the screenshot below</li>
+                                        </ol>
+                                    </div>
+                                    
+                                    <!-- BNB Instructions -->
+                                    <div class="bank-instructions hidden" id="bnb-instructions">
+                                        <h6>Payment Instructions for Bhutan National Bank</h6>
+                                        <ol>
+                                            <li>Open your BNB mPAY app</li>
+                                            <li>Select "Scan & Pay" option</li>
+                                            <li>Scan the QR code shown here</li>
+                                            <li>Enter amount as shown above</li>
+                                            <li>Enter your mPIN to authorize payment</li>
+                                            <li>Take a screenshot of the payment receipt</li>
+                                            <li>Upload the screenshot below</li>
+                                        </ol>
+                                    </div>
+                                    
+                                    <!-- T-Bank Instructions -->
+                                    <div class="bank-instructions hidden" id="tbank-instructions">
+                                        <h6>Payment Instructions for T-Bank</h6>
+                                        <ol>
+                                            <li>Log in to your T-Bank mobile app</li>
+                                            <li>Tap on "Payments" > "QR Payments"</li>
+                                            <li>Scan the QR code shown here</li>
+                                            <li>Verify recipient details</li>
+                                            <li>Enter amount as shown above</li>
+                                            <li>Confirm payment with your secure PIN</li>
+                                            <li>Take a screenshot of the transaction receipt</li>
+                                            <li>Upload the screenshot below</li>
+                                        </ol>
+                                    </div>
+                                    
+                                    <!-- DPNB Instructions -->
+                                    <div class="bank-instructions hidden" id="dpnb-instructions">
+                                        <h6>Payment Instructions for Druk PNB</h6>
+                                        <ol>
+                                            <li>Open the Druk PNB mobile banking app</li>
+                                            <li>Select "QR Payments" from the main menu</li>
+                                            <li>Scan the QR code shown here</li>
+                                            <li>Enter amount as shown above</li>
+                                            <li>Verify recipient information</li>
+                                            <li>Confirm using your MPIN</li>
+                                            <li>Take a screenshot of the success page</li>
+                                            <li>Upload the screenshot below</li>
+                                        </ol>
+                                    </div>
+                                    
+                                    <!-- BDBL Instructions -->
+                                    <div class="bank-instructions hidden" id="bdbl-instructions">
+                                        <h6>Payment Instructions for BDBL</h6>
+                                        <ol>
+                                            <li>Login to your BDBL mobile banking app</li>
+                                            <li>Tap on "QR Code Payment"</li>
+                                            <li>Scan the QR code shown here</li>
+                                            <li>Check recipient name: "THINLEY NORBU"</li>
+                                            <li>Enter amount as shown above</li>
+                                            <li>Enter your security PIN to complete payment</li>
+                                            <li>Take a screenshot of the payment confirmation</li>
+                                            <li>Upload the screenshot below</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                                
+                                <div class="qr-code-container hidden" id="qrContainer">
+                                    <div class="qr-wrapper">
+                                        <img src="../assets/images/bobQRcode.jpg" alt="QR Code" class="qr-code-image" id="bankQrCode">
+                                    </div>
+                                    
+                                    <div class="qr-details">
+                                        <p class="name">Car Rental System</p>
+                                        <p class="amount">Amount: <strong id="qrAmountDisplay"></strong></p>
+                                    </div>
+                                    
+                                    <label class="upload-btn mt-4">
+                                        <i class="fas fa-upload"></i>
+                                        <span>Upload Payment Screenshot</span>
+                                        <input type="file" name="screenshot" id="payment_screenshot" style="display: none;" accept="image/*">
+                                    </label>
+                                </div>
+                                
+                                <p class="text-center mt-3 text-muted" id="qrPrompt">Please select a bank to display the QR code</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Bank Transfer with OTP Section -->
+                        <div id="bankOtpSection" class="payment-method-section hidden">
+                            <div class="payment-option-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Bank Code</label>
+                                    <select class="bank-dropdown" name="bank_code_otp">
+                                        <option value="">Select Bank</option>
+                                        <option value="bob">BANK OF BHUTAN LIMITED</option>
+                                        <option value="bnb">BHUTAN NATIONAL BANK LIMITED</option>
+                                        <option value="tbank">T-BANK LIMITED</option>
+                                        <option value="dpnb">DRUK PNB BANK LIMITED</option>
+                                        <option value="bdbl">BHUTAN DEVELOPMENT BANK LIMITED</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Bank Account Number</label>
+                                    <input type="text" name="account_number" class="account-input" placeholder="Enter Account Number">
+                                </div>
+                                                
+                                <div class="text-center mt-4">
+                                    <button type="button" class="otp-btn" onclick="sendOtp()">Send OTP</button>
+                                </div>
+                                
+                                <div class="mt-4 hidden" id="otpSection">
+                                    <label class="form-label">Enter OTP</label>
+                                    <div class="d-flex gap-2 otp-inputs">
+                                        <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
+                                        <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
+                                        <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
+                                        <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
+                                        <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
+                                        <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-action">
+                            <button type="submit" class="btn-confirm-payment">Confirm Payment</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            
-            <div class="payment-methods">
-                <h4>Select Payment Method</h4>
-                
-                <!-- Payment Method Options -->
-                <div class="payment-method selected" onclick="selectPaymentMethod(this, 'qr_code')">
-                    <input type="radio" name="payment_method_radio" value="qr_code" checked style="display: none;">
-                    <div class="payment-method-icon">
-                        <i class="fas fa-qrcode"></i>
-                    </div>
-                    <div class="payment-method-details">
-                        <div class="payment-method-name">QR Code Payment</div>
-                        <div class="payment-method-info">Scan QR with your banking app</div>
-                    </div>
-                </div>
-                
-                <div class="payment-method" onclick="selectPaymentMethod(this, 'bank_otp')">
-                    <input type="radio" name="payment_method_radio" value="bank_otp" style="display: none;">
-                    <div class="payment-method-icon">
-                        <i class="fas fa-university"></i>
-                    </div>
-                    <div class="payment-method-details">
-                        <div class="payment-method-name">Bank Transfer with OTP</div>
-                        <div class="payment-method-info">Direct bank payment with verification</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- QR Code Payment Section -->
-            <div id="qrCodeSection" class="payment-method-section">
-                <div class="payment-option-body">
-                    <p>Choose your bank below and follow the instructions to complete your payment.</p>
-                    
-                    <div class="bank-selector">
-                        <div class="bank-option" data-bank="bob" onclick="selectBank('bob')">
-                            <img src="../assets/images/mbob.png" alt="Bank of Bhutan">
-                            <div>BOB</div>
-                        </div>
-                        <div class="bank-option" data-bank="bnb" onclick="selectBank('bnb')">
-                            <img src="../assets/images/bnb.png" alt="Bhutan National Bank">
-                            <div>BNB</div>
-                        </div>
-                        <div class="bank-option" data-bank="tbank" onclick="selectBank('tbank')">
-                            <img src="../assets/images/Tbank.jpg" alt="T-Bank">
-                            <div>T-Bank</div>
-                        </div>
-                        <div class="bank-option" data-bank="dpnb" onclick="selectBank('dpnb')">
-                            <img src="../assets/images/drukpnb.png" alt="Druk PNB">
-                            <div>DPNB</div>
-                        </div>
-                        <div class="bank-option" data-bank="bdbl" onclick="selectBank('bdbl')">
-                            <img src="../assets/images/bdbl.jpg" alt="BDBL">
-                            <div>BDBL</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Bank Instructions Container -->
-                    <div id="bankInstructionsContainer">
-                        <!-- Bank instructions will be displayed here -->
-                        <!-- BOB Instructions -->
-                        <div class="bank-instructions hidden" id="bob-instructions">
-                            <h6>Payment Instructions for Bank of Bhutan</h6>
-                            <ol>
-                                <li>Open your mBOB app</li>
-                                <li>Go to Payments > Scan QR</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Enter amount as shown above</li>
-                                <li>Confirm payment using your PIN/password</li>
-                                <li>Take a screenshot of the confirmation</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                        
-                        <!-- BNB Instructions -->
-                        <div class="bank-instructions hidden" id="bnb-instructions">
-                            <h6>Payment Instructions for Bhutan National Bank</h6>
-                            <ol>
-                                <li>Open your BNB mPAY app</li>
-                                <li>Select "Scan & Pay" option</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Enter amount as shown above</li>
-                                <li>Enter your mPIN to authorize payment</li>
-                                <li>Take a screenshot of the payment receipt</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                        
-                        <!-- T-Bank Instructions -->
-                        <div class="bank-instructions hidden" id="tbank-instructions">
-                            <h6>Payment Instructions for T-Bank</h6>
-                            <ol>
-                                <li>Log in to your T-Bank mobile app</li>
-                                <li>Tap on "Payments" > "QR Payments"</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Verify recipient details</li>
-                                <li>Enter amount as shown above</li>
-                                <li>Confirm payment with your secure PIN</li>
-                                <li>Take a screenshot of the transaction receipt</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                        
-                        <!-- DPNB Instructions -->
-                        <div class="bank-instructions hidden" id="dpnb-instructions">
-                            <h6>Payment Instructions for Druk PNB</h6>
-                            <ol>
-                                <li>Open the Druk PNB mobile banking app</li>
-                                <li>Select "QR Payments" from the main menu</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Enter amount as shown above</li>
-                                <li>Verify recipient information</li>
-                                <li>Confirm using your MPIN</li>
-                                <li>Take a screenshot of the success page</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                        
-                        <!-- BDBL Instructions -->
-                        <div class="bank-instructions hidden" id="bdbl-instructions">
-                            <h6>Payment Instructions for BDBL</h6>
-                            <ol>
-                                <li>Login to your BDBL mobile banking app</li>
-                                <li>Tap on "QR Code Payment"</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Check recipient name: "THINLEY NORBU"</li>
-                                <li>Enter amount as shown above</li>
-                                <li>Enter your security PIN to complete payment</li>
-                                <li>Take a screenshot of the payment confirmation</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                    </div>
-                    
-                    <div class="qr-code-container hidden" id="qrContainer">
-                        <div class="qr-wrapper">
-                            <img src="../assets/images/bobQRcode.jpg" alt="QR Code" class="qr-code-image" id="bankQrCode">
-                        </div>
-                        
-                        <div class="qr-details">
-                            <p class="name">Car Rental System</p>
-                            <p class="amount">Amount: <strong id="qrAmountDisplay"></strong></p>
-                        </div>
-                        
-                        <label class="upload-btn mt-4">
-                            <i class="fas fa-upload"></i>
-                            <span>Upload Payment Screenshot</span>
-                            <input type="file" name="screenshot" id="payment_screenshot" style="display: none;" accept="image/*">
-                        </label>
-                    </div>
-                    
-                    <p class="text-center mt-3 text-muted" id="qrPrompt">Please select a bank to display the QR code</p>
-                </div>
-            </div>
-            
-            <!-- Bank Transfer with OTP Section -->
-            <div id="bankOtpSection" class="payment-method-section hidden">
-                <div class="payment-option-body">
-                    <div class="mb-3">
-                        <label class="form-label">Bank Code</label>
-                        <select class="bank-dropdown" name="bank_code_otp">
-                            <option value="">Select Bank</option>
-                            <option value="bob">BANK OF BHUTAN LIMITED</option>
-                            <option value="bnb">BHUTAN NATIONAL BANK LIMITED</option>
-                            <option value="tbank">T-BANK LIMITED</option>
-                            <option value="dpnb">DRUK PNB BANK LIMITED</option>
-                            <option value="bdbl">BHUTAN DEVELOPMENT BANK LIMITED</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Bank Account Number</label>
-                        <input type="text" name="account_number" class="account-input" placeholder="Enter Account Number">
-                    </div>
-                                     
-                    <div class="text-center mt-4">
-                        <button type="button" class="otp-btn" onclick="sendOtp()">Send OTP</button>
-                    </div>
-                    
-                    <div class="mt-4 hidden" id="otpSection">
-                        <label class="form-label">Enter OTP</label>
-                        <div class="d-flex gap-2 otp-inputs">
-                            <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
-                            <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
-                            <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
-                            <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
-                            <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
-                            <input type="text" name="otp[]" maxlength="1" class="form-control text-center">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="payment-action">
-                <button type="submit" class="btn-confirm-payment">Confirm Payment</button>
-            </div>
-        </form>
-    </div>
-</div>
 </body>
 </html>
 <script>

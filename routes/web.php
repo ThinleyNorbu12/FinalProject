@@ -346,6 +346,6 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::get('/browse-cars', [CustomerController::class, 'browseCars'])->name('browse-cars');
     Route::get('/car-details/{id}', [CustomerController::class, 'carDetails'])->name('car-details');
     Route::get('/book-car/{id}', [CustomerController::class, 'bookCar'])->name('book-car');
-
+    Route::get('/customer/rental-history', [CustomerController::class, 'rentalHistory'])->name('rental-history');
 });
 

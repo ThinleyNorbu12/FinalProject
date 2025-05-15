@@ -7,266 +7,545 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driving License - Car Rental</title>
-    <!-- Link to the external CSS file -->
-    <link rel="stylesheet" href="<?php echo e(asset('assets/css/customer/dashboard.css')); ?>">
-    <!-- Custom CSS for license page -->
-
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .license-container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            margin-bottom: 30px;
+        /* Main Layout */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
-    
+
+        .dashboard-container {
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            background-color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            padding-top: 56px; /* Height of header */
+            transition: transform 0.3s ease, width 0.3s ease;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: #3366ff;
+        }
+
+        .sidebar-brand img {
+            width: 30px;
+            margin-right: 10px;
+        }
+
+        .sidebar-brand span {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            padding: 10px 0;
+        }
+
+        .sidebar-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            color: #0f0f0f;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu-item:hover {
+            background-color: #f2f2f2;
+        }
+
+        .sidebar-menu-item.active {
+            background-color: #e5e5e5;
+            font-weight: 500;
+        }
+
+        .sidebar-menu-item i {
+            font-size: 18px;
+            width: 24px;
+            margin-right: 24px;
+            color: #606060;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background-color: #e5e5e5;
+            margin: 10px 0;
+        }
+
+        .sidebar-heading {
+            color: #606060;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            text-transform: uppercase;
+        }
+
+        /* Header */
+        .main-header {
+            height: 56px;
+            background-color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+        }
+
+        .header-menu-toggle {
+            margin-right: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            margin-right: 40px;
+        }
+
+        .header-logo i {
+            color: #3366ff;
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
+        .header-logo span {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .header-search {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .header-search input {
+            width: 100%;
+            height: 36px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 0 40px 0 16px;
+            font-size: 14px;
+        }
+
+        .header-search button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 36px;
+            width: 36px;
+            border: none;
+            background: #f8f8f8;
+            border-radius: 0 20px 20px 0;
+            cursor: pointer;
+        }
+
+        .header-user {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-user-name {
+            margin-right: 12px;
+            font-weight: 500;
+        }
+
+        .btn-logout {
+            background-color: #3366ff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            margin-left: 240px; /* Width of sidebar */
+            margin-top: 56px; /* Height of header */
+            width: calc(100% - 240px);
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-card h2 {
+            margin-top: 0;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .welcome-card p {
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        /* License Container */
+        .license-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .license-container.no-license {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .license-container.no-license i {
+            font-size: 64px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .license-container.no-license h3 {
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .license-container.no-license p {
+            max-width: 500px;
+            margin-bottom: 24px;
+            color: #666;
+        }
+
+        /* License Header */
         .license-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #e5e5e5;
             padding-bottom: 15px;
         }
-    
+
         .license-title h2 {
+            margin: 0 0 5px 0;
+            font-size: 22px;
             color: #333;
-            margin: 0;
-            font-size: 1.8rem;
         }
-    
+
         .license-title p {
+            margin: 0;
             color: #666;
-            margin: 5px 0 0;
+            font-size: 14px;
         }
-    
+
         .license-status {
+            display: inline-flex;
+            align-items: center;
             padding: 6px 12px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.9rem;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
         }
-    
+
         .status-valid {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: #e6f7eb;
+            color: #28a745;
         }
-    
-        .status-expired {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-    
+
         .status-expiring {
             background-color: #fff3cd;
-            color: #856404;
+            color: #ffc107;
         }
-    
+
+        .status-expired {
+            background-color: #ffebee;
+            color: #dc3545;
+        }
+
+        /* License Info */
         .license-info {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            display: flex;
+            flex-wrap: wrap;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
-    
+
+        .license-info > div {
+            flex: 1;
+            min-width: 250px;
+        }
+
         .info-group {
             margin-bottom: 15px;
         }
-    
+
         .info-label {
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
+            font-size: 14px;
             color: #666;
             margin-bottom: 5px;
         }
-    
-        .info-label i {
-            color: #4e73df;
-            width: 20px;
-            text-align: center;
-            margin-right: 5px;
-        }
-    
+
         .info-value {
-            font-size: 1.1rem;
+            font-size: 16px;
             color: #333;
             font-weight: 500;
-            padding-left: 22px;
         }
-    
+
+        /* License Status Section */
+        .license-status-section {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* License Validity */
+        .validity-section {
+            margin-bottom: 20px;
+        }
+
+        .validity-text {
+            margin-bottom: 10px;
+        }
+
+        .validity-progress {
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* License Images */
         .license-images {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
-    
+
         .image-container {
-            flex: 1 1 45%;
-            text-align: center;
+            flex: 1;
+            min-width: 250px;
         }
-    
+
         .image-container h4 {
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 10px 15px;
-            font-size: 1rem;
-            border-bottom: 1px solid #ddd;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 16px;
         }
-    
+
         .license-image {
             width: 100%;
-            max-width: 100%;
-            height: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-top: 10px;
+            border-radius: 6px;
+            border: 1px solid #e5e5e5;
+            object-fit: cover;
+            max-height: 200px;
         }
-    
+
         .no-image {
-            height: 280px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            background-color: #f8f9fa;
+            justify-content: center;
+            height: 200px;
+            background-color: #f5f5f5;
+            border-radius: 6px;
             border: 1px dashed #ccc;
-            border-radius: 8px;
-            color: #6c757d;
-            padding: 15px;
+            color: #999;
+            text-align: center;
         }
-    
+
         .no-image i {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
+            font-size: 40px;
+            margin-bottom: 10px;
         }
-    
-        .no-image p {
-            font-size: 1rem;
-            margin: 0;
-        }
-    
+
+        /* License Actions */
         .license-actions {
             display: flex;
-            justify-content: flex-start;
             gap: 15px;
-            margin-top: 25px;
+            margin-top: 30px;
         }
-    
+
         .btn-primary {
-            background-color: #4e73df;
+            background-color: #3366ff;
             color: white;
             border: none;
+            border-radius: 4px;
             padding: 10px 20px;
-            border-radius: 5px;
+            font-size: 14px;
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
-    
-        .btn-primary:hover {
-            background-color: #375abd;
-        }
-    
+
         .btn-outline {
             background-color: transparent;
-            color: #4e73df;
-            border: 1px solid #4e73df;
+            color: #3366ff;
+            border: 1px solid #3366ff;
+            border-radius: 4px;
             padding: 10px 20px;
-            border-radius: 5px;
+            font-size: 14px;
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
-    
-        .btn-outline:hover {
-            background-color: #eef1ff;
-        }
-    
-        .license-status-section {
-            margin: 15px 0;
-            padding: 15px;
-            background-color: #f1f5ff;
-            border-radius: 8px;
-            border-left: 4px solid #4e73df;
-        }
-    
-        .badge {
-            font-size: 0.9rem;
-            padding: 0.5em 0.75em;
-            border-radius: 30px;
-        }
-    
-        .validity-section {
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-        }
-    
-        .validity-text {
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 12px;
-        }
-    
-        .validity-progress {
-            margin-top: 10px;
-        }
-    
-        .progress-bar {
-            height: 12px;
-            background-color: #e9ecef;
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-    
-        .progress-fill {
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            transition: width 0.5s ease;
-        }
-    
-        .bg-danger { background-color: #dc3545; }
-        .bg-warning { background-color: #ffc107; }
-        .bg-success { background-color: #28a745; }
-    
-        .progress-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-top: 5px;
-        }
-    
+
         /* Responsive Adjustments */
         @media (max-width: 992px) {
-            .image-container {
-                flex: 1 1 100%;
+            .sidebar {
+                width: 70px;
             }
-            .license-info {
-                grid-template-columns: 1fr;
+            
+            .sidebar-menu-item span,
+            .sidebar-heading {
+                display: none;
             }
-            .info-value {
-                font-size: 1rem;
+            
+            .sidebar-menu-item i {
+                margin-right: 0;
+            }
+            
+            .sidebar-menu-item {
+                justify-content: center;
+                padding: 14px 0;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+            
+            .sidebar.expanded {
+                width: 240px;
+            }
+            
+            .sidebar.expanded .sidebar-menu-item span,
+            .sidebar.expanded .sidebar-heading {
+                display: block;
+            }
+            
+            .sidebar.expanded .sidebar-menu-item {
+                justify-content: flex-start;
+                padding: 10px 20px;
+            }
+            
+            .sidebar.expanded .sidebar-menu-item i {
+                margin-right: 24px;
             }
         }
-    </style>
-    
 
+        @media (max-width: 768px) {
+            .license-info,
+            .license-images {
+                flex-direction: column;
+            }
+            
+            .header-search {
+                max-width: 300px;
+            }
+            
+            .header-user-name {
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 240px;
+            }
+            
+            .sidebar.expanded {
+                transform: translateX(0);
+            }
+            
+            .sidebar.expanded .sidebar-menu-item span,
+            .sidebar.expanded .sidebar-heading {
+                display: block;
+            }
+            
+            .sidebar.expanded .sidebar-menu-item {
+                justify-content: flex-start;
+                padding: 10px 20px;
+            }
+            
+            .sidebar.expanded .sidebar-menu-item i {
+                margin-right: 24px;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .license-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .license-status {
+                margin-top: 10px;
+            }
+        }
+    </style> 
 
 </head>
 <body>
@@ -309,7 +588,7 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>

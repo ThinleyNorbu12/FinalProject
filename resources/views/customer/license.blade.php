@@ -588,7 +588,7 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="{{ route('customer.browse-cars') }}" class="sidebar-menu-item active">
+                <a href="{{ route('customer.browse-cars') }}" class="sidebar-menu-item ">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>
@@ -607,7 +607,7 @@
                     <span>Profile</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.rental-history') }}" class="sidebar-menu-item">
                     <i class="fas fa-history"></i>
                     <span>Rental History</span>
                 </a>
