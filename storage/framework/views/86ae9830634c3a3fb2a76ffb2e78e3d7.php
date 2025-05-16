@@ -93,15 +93,18 @@
         }
         
         .car-image-container {
-            width: 180px;
-            flex-shrink: 0;
-            margin-right: 25px;
+        width: 300px;
+        flex-shrink: 0;
+        margin-right: 30px;
+        margin-bottom: 20px;
+        
         }
         
         .car-image-container img {
             width: 100%;
             height: auto;
-            border-radius: 5px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
         
         .reservation-details {
@@ -400,7 +403,11 @@
                                 </div>
                                 <div class="reservation-body">
                                     <div class="car-image-container">
-                                        <img src="<?php echo e($booking->car->image_path ?? '/api/placeholder/180/120'); ?>" alt="<?php echo e($booking->car->make); ?> <?php echo e($booking->car->model); ?>">
+                                        <?php if($booking->car->car_image): ?>
+                                            <img src="<?php echo e(asset($booking->car->car_image)); ?>" alt="<?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?>" onerror="this.src='/api/placeholder/300/200';">
+                                        <?php else: ?>
+                                            <img src="/api/placeholder/300/200" alt="<?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?>">
+                                        <?php endif; ?>
                                     </div>
                                     <div class="reservation-details">
                                         <div class="car-name"><?php echo e($booking->car->make); ?> <?php echo e($booking->car->model); ?> (<?php echo e($booking->car->year); ?>)</div>

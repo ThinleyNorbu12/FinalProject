@@ -593,7 +593,7 @@
                     <span>Browse Cars</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.my-reservations')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-calendar-alt"></i>
                     <span>My Reservations</span>
                 </a>

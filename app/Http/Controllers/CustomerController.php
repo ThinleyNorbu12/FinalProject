@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\CarBooking;
 use App\Models\Payment;
 use Carbon\Carbon;
+use App\Models\CarDetail;
 
 use App\Models\PayLaterPayment;
 
@@ -22,21 +23,43 @@ class CustomerController extends Controller
     //     return view('customer.dashboard');
     // }
 
-   public function dashboard()
-    {
-        $userId = Auth::id();
+//    public function dashboard()
+//     {
+//         $userId = Auth::id();
 
-        // Get the most recent active booking for the logged-in user
-        $booking = CarBooking::where('customer_id', $userId)
-                    ->where('status', 'active') // Assuming 'active' status indicates a current rental
-                    ->latest('pickup_datetime') // ✅ use correct column
-                    ->first();
+//         // Get the most recent active booking for the logged-in user
+//         $booking = CarBooking::where('customer_id', $userId)
+//                     ->where('status', 'active') // Assuming 'active' status indicates a current rental
+//                     ->latest('pickup_datetime') // ✅ use correct column
+//                     ->first();
 
-        // Get the car details if a booking exists
-        $car = $booking ? Car::find($booking->car_id) : null;
+//         // Get the car details if a booking exists
+//         $car = $booking ? Car::find($booking->car_id) : null;
 
-        return view('customer.dashboard', compact('booking', 'car'));
-    }
+//         return view('customer.dashboard', compact('booking', 'car'));
+//     }
+
+public function dashboard()
+{
+    $userId = Auth::id();
+
+    // Get the most recent active booking for the logged-in user
+    $booking = CarBooking::where('customer_id', $userId)
+                ->where('status', 'active')
+                ->latest('pickup_datetime')
+                ->first();
+
+    // Get the car details if a booking exists
+    $car = $booking ? Car::find($booking->car_id) : null;
+
+    // Get recommended available cars (from car_details_tbl)
+    $recommendedCars = CarDetail::where('status', 'available')
+                        ->orderBy('created_at', 'desc')
+                        ->take(6) // Get 6 recommended cars
+                        ->get();
+
+    return view('customer.dashboard', compact('booking', 'car', 'recommendedCars'));
+}
 
 
 

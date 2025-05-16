@@ -124,4 +124,15 @@ class CarDetail extends Model
         return $this->car_image ? asset('storage/' . $this->car_image) : null;
     }
 
+    public function getRecommendedCars()
+    {
+        // Get cars that are available (status = 'available')
+        $recommendedCars = CarDetails::where('status', 'available')
+            ->orderBy('created_at', 'desc')
+            ->take(6) // Get 6 recommended cars
+            ->get();
+
+        return view('your-view-name', compact('recommendedCars'));
+    }
+
 }
