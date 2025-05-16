@@ -332,6 +332,12 @@ namespace App\Models {
      * @property-read mixed $total_price
      * @property-read \App\Models\CarDetail $car
      * @property-read \App\Models\Customer $customer
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
+     * @property-read int|null $payments_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PayLaterPayment> $payLaterPayments
+     * @property-read int|null $payLaterPayments_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\QrPayment> $qrPayments
+     * @property-read int|null $qrPayments_count
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereCarId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereCustomerId($value)
@@ -665,6 +671,7 @@ namespace App\Models {
      * @property string $model
      * @property string $maker
      * @property int $id
+     * @property-read mixed $image_path
      * @property-read \App\Models\CarOwner $owner
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InspectionRequest> $inspectionRequests
      * @property-read int|null $inspectionRequests_count
@@ -2929,6 +2936,9 @@ namespace App\Models {
      * @property-read \App\Models\PayLaterPayment $payLaterPayment
      * @property-read \App\Models\Customer $customer
      * @property-read \App\Models\QrPayment $qrPayment
+     * @property-read \App\Models\CarBooking $booking
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PayLaterPayment> $payLaterPayments
+     * @property-read int|null $payLaterPayments_count
      * @method static \Illuminate\Database\Eloquent\Builder<Payment>|Payment whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Payment>|Payment whereBookingId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Payment>|Payment whereCustomerId($value)
@@ -3249,6 +3259,7 @@ namespace App\Models {
      * @property int $id
      * @property-read \App\Models\CarBooking $booking
      * @property-read \App\Models\User $verifier
+     * @property-read \App\Models\Payment $payment
      * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment wherePaymentId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereBankCode($value)

@@ -17,16 +17,16 @@
         </div>
         
         <div class="admin-profile">
-            <?php if(Auth::guard('admin')->check()): ?>
-                <div class="profile-avatar">
-                    <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
-                </div>
-                <div class="profile-info">
-                    <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                    <span>Administrator</span>
-                </div>
-            <?php endif; ?>
-        </div>
+        <?php if(Auth::guard('admin')->check()): ?>
+            <div class="profile-avatar">
+                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
+            </div>
+            <div class="profile-info">
+                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
+                <span>Administrator</span>
+            </div>
+        <?php endif; ?>
+    </div>
         
         <nav class="sidebar-nav">
             <ul>
@@ -325,117 +325,6 @@
             });
         });
     });
-
-    // Admin Dashboard Sidebar JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    // Elements
-    const sidebar = document.querySelector('.dashboard-sidebar');
-    const content = document.querySelector('.dashboard-content');
-    const sidebarToggle = document.getElementById('sidebar-toggle');
-    let mobileToggle = document.querySelector('.mobile-nav-toggle');
-    let overlay = document.querySelector('.overlay');
-    
-    // Create mobile elements if they don't exist
-    if (!mobileToggle) {
-        mobileToggle = document.createElement('button');
-        mobileToggle.className = 'mobile-nav-toggle';
-        mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-        document.body.appendChild(mobileToggle);
-    }
-    
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.className = 'overlay';
-        document.body.appendChild(overlay);
-    }
-    
-    // Add tooltips to sidebar menu items
-    const menuItems = document.querySelectorAll('.sidebar-nav a');
-    menuItems.forEach(item => {
-        const tooltip = document.createElement('span');
-        tooltip.className = 'tooltip';
-        tooltip.textContent = item.querySelector('span').textContent;
-        item.appendChild(tooltip);
-    });
-    
-    // Desktop sidebar toggle
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-            content.classList.toggle('expanded');
-            
-            // Update toggle icon
-            const icon = sidebarToggle.querySelector('i');
-            if (sidebar.classList.contains('collapsed')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-chevron-right');
-            } else {
-                icon.classList.remove('fa-chevron-right');
-                icon.classList.add('fa-bars');
-            }
-            
-            // Save state in localStorage
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-        });
-    }
-    
-    // Mobile sidebar toggle
-    mobileToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('mobile-active');
-        overlay.classList.toggle('active');
-        
-        // Update mobile toggle icon
-        const icon = mobileToggle.querySelector('i');
-        if (sidebar.classList.contains('mobile-active')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-times');
-        } else {
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        }
-    });
-    
-    // Close sidebar when clicking outside (on overlay)
-    overlay.addEventListener('click', function() {
-        sidebar.classList.remove('mobile-active');
-        overlay.classList.remove('active');
-        
-        const icon = mobileToggle.querySelector('i');
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
-    });
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 992) {
-            sidebar.classList.remove('mobile-active');
-            overlay.classList.remove('active');
-            
-            // Reset mobile toggle icon
-            const mobileIcon = mobileToggle.querySelector('i');
-            mobileIcon.classList.remove('fa-times');
-            mobileIcon.classList.add('fa-bars');
-        }
-    });
-    
-    // Restore sidebar state from localStorage
-    if (localStorage.getItem('sidebarCollapsed') === 'true') {
-        sidebar.classList.add('collapsed');
-        content.classList.add('expanded');
-        
-        if (sidebarToggle) {
-            const icon = sidebarToggle.querySelector('i');
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-chevron-right');
-        }
-    }
-    
-    // Update sidebar on page load based on screen size
-    if (window.innerWidth <= 992) {
-        sidebar.classList.remove('collapsed');
-        content.classList.remove('expanded');
-    }
-});
 </script>
 <?php $__env->stopSection(); ?>
 

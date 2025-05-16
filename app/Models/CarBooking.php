@@ -100,6 +100,21 @@ class CarBooking extends Model
         return $this->hasMany(PayLaterPayment::class, 'booking_id');
     }
 
+    // In App\Models\CarBooking.php
+    public function qrPayments()
+    {
+        // Assuming payments table has a 'booking_id' column
+        // And qr_payments links to payments via payment_id
+        return $this->hasManyThrough(
+            \App\Models\QrPayment::class,
+            \App\Models\Payment::class,
+            'booking_id', // Foreign key on payments table
+            'payment_id', // Foreign key on qr_payments table
+            'id', // Local key on bookings table
+            'id'  // Local key on payments table
+        );
+    }
+
     // CarBooking.php
     public function getTotalPriceAttribute()
     {

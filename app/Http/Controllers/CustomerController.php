@@ -515,22 +515,37 @@ public function myReservations()
  * @param int $id
  * @return \Illuminate\View\View
  */
-public function reservationDetails($id)
-{
+public function reservationDetails($id) {
     $customer = Auth::guard('customer')->user();
     
     if (!$customer) {
         return redirect()->route('customer.login')->with('error', 'Please login to view reservation details');
     }
     
-    $booking = \App\Models\CarBooking::with(['car', 'payments', 'payLaterPayments', 'qrPayments'])
+    $booking = \App\Models\CarBooking::with(['car', 'payments', 'payLaterPayments', 'payments.qrPayment'])
         ->where('id', $id)
         ->where('customer_id', $customer->id)
         ->firstOrFail();
     
-    return view('customer.reservation-details', compact('booking'));
+    // Fetch the license information for this customer
+    $license = \App\Models\DrivingLicense::where('customer_id', $customer->id)->first();
+    
+    // If no license found, create an empty object to avoid undefined variable errors
+    if (!$license) {
+        $license = new \stdClass();
+    }
+    
+    // Get similar cars - use vehicle_type instead of category
+    $similarCars = [];
+    if ($booking->car) {
+        $similarCars = \App\Models\CarDetail::where('vehicle_type', $booking->car->vehicle_type)
+            ->where('id', '!=', $booking->car->id)
+            ->take(3)
+            ->get();
+    }
+    
+    return view('customer.reservation-details', compact('booking', 'license', 'similarCars'));
 }
-
 /**
  * Cancel a reservation.
  *

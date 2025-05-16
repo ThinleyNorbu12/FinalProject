@@ -84,10 +84,10 @@ class Customer extends Authenticatable
     /**
      * Get the driving license associated with the customer
      */
-    public function drivingLicense()
-    {
-        return $this->hasOne(DrivingLicense::class);
-    }
+    // public function drivingLicense()
+    // {
+    //     return $this->hasOne(DrivingLicense::class);
+    // }
     
     /**
      * Check if customer has valid driving license
@@ -184,4 +184,10 @@ class Customer extends Authenticatable
         
         return '<span class="badge '.$class.'">'.ucfirst($status).'</span>';
     }
+    // In Customer.php model
+    public function drivingLicense()
+    {
+        return $this->hasOne(DrivingLicense::class, 'customer_id');
+    }
+
 }

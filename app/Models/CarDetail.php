@@ -118,4 +118,10 @@ class CarDetail extends Model
         return $this->hasMany(CarImage::class, 'car_id');
     }
 
+    // In your Car model
+    public function getImagePathAttribute()
+    {
+        return $this->car_image ? asset('storage/' . $this->car_image) : null;
+    }
+
 }

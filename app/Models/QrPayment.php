@@ -54,4 +54,12 @@ class QrPayment extends Model
     {
         return $this->belongsTo(User::class, 'verified_by');
     }
+
+    // In App\Models\QrPayment.php
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class, 'payment_id');
+    }
+
 }
