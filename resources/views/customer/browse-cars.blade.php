@@ -305,17 +305,17 @@
                 
                 <div class="sidebar-heading">Services</div>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.locations') }}" class="sidebar-menu-item ">
                     <i class="fas fa-map-marked-alt"></i>
                     <span>Locations</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.insurance-options') }}" class="sidebar-menu-item ">
                     <i class="fas fa-shield-alt"></i>
                     <span>Insurance Options</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.fuel-policy') }}" class="sidebar-menu-item ">
                     <i class="fas fa-gas-pump"></i>
                     <span>Fuel Policy</span>
                 </a>

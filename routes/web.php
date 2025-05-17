@@ -379,5 +379,15 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::get('/customer/reservation-details/{id}', [CustomerController::class, 'reservationDetails'])->name('reservation-details');
     // For cancelling a reservation (POST method since it modifies data)
     Route::post('/customer/cancel-reservation/{id}', [CustomerController::class, 'cancelReservation'])->name('cancel-reservation');
+
+    Route::get('/locations', [CustomerController::class, 'locations'])->name('locations');
+
+    // Contact form submission route
+    Route::post('/contact-submit', [CustomerController::class, 'contactSubmit'])->name('contact-submit');
+    Route::get('/customer/fuel-policy', [CustomerController::class, 'fuelPolicy'])->name('fuel-policy');
+    Route::get('/customer/insurance-options', [CustomerController::class, 'insuranceOptions'])->name('insurance-options');
+
+
+
 });
 

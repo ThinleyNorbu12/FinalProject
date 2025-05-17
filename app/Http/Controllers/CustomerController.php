@@ -608,6 +608,49 @@ public function cancelReservation($id)
 }
 
 
+    public function locations()
+    {
+        // You could load locations from database
+        // For now we'll just return the view with the hardcoded RIM location
+        
+        return view('customer.locations');
+    }
+    
+    /**
+     * Submit a location contact form.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function contactSubmit(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+        ]);
+        
+        // Here you would process the contact form
+        // You could send an email, store in database, etc.
+        
+        // For now we'll just redirect with a success message
+        return redirect()->route('customer.locations')
+            ->with('success', 'Your message has been sent successfully. We will contact you soon.');
+    }
+
+    public function fuelPolicy()
+    {
+        return view('customer.fuel-policy');
+    }
+
+    public function insuranceOptions()
+    {
+        return view('customer.insurance-options');
+    }
+
+
     
 
 }

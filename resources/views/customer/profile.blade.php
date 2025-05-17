@@ -32,14 +32,14 @@
             margin-bottom: 30px;
         }
         
-        .profile-avatar {
+        /* .profile-avatar {
             width: 100px;
             height: 100px;
             border-radius: 50%;
             object-fit: cover;
             margin-right: 20px;
             border: 3px solid #007bff;
-        }
+        } */
         
         .profile-name h2 {
             margin-bottom: 5px;
@@ -331,21 +331,77 @@
         }
         
         @media (max-width: 768px) {
-            .profile-header {
+            /* .profile-header {
                 flex-direction: column;
                 text-align: center;
             }
-            
-            .profile-avatar {
-                margin-right: 0;
-                margin-bottom: 15px;
-            }
-            
+             */
+
             .input-with-icon i {
                 top: 13px;
             }
         }
-    </style>
+
+        /* Profile Header Styles */
+    .profile-header {
+        display: flex;
+        align-items: center;
+        padding: 1.5rem;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .profile-header:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-header img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #f3f4f6;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-right: 1.5rem;
+    }
+
+    .profile-name {
+        flex: 1;
+    }
+
+    .profile-name h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .profile-status {
+        font-size: 0.9rem;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.2rem;
+        }
+        
+        .profile-header img {
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+    }
+
+        
+</style>
 
 </head>
 <body>
@@ -431,17 +487,17 @@
                 
                 <div class="sidebar-heading">Services</div>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.locations') }}" class="sidebar-menu-item ">
                     <i class="fas fa-map-marked-alt"></i>
                     <span>Locations</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.insurance-options') }}" class="sidebar-menu-item ">
                     <i class="fas fa-shield-alt"></i>
                     <span>Insurance Options</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('customer.fuel-policy') }}" class="sidebar-menu-item ">
                     <i class="fas fa-gas-pump"></i>
                     <span>Fuel Policy</span>
                 </a>
@@ -472,7 +528,7 @@
             <div class="profile-container">
                 <!-- Profile Header -->
                 <div class="profile-header">
-                    <img src="/api/placeholder/150/150" alt="Profile Avatar" class="profile-avatar">
+                    <img src="{{ asset('assets/images/thinley.jpg') }}" alt="Admin Avatar">
                     <div class="profile-name">
                         <h2>
                             @if(Auth::guard('customer')->check())

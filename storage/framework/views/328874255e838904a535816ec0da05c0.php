@@ -98,7 +98,7 @@
                 
                 <div class="sidebar-heading">Services</div>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.locations')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-map-marked-alt"></i>
                     <span>Locations</span>
                 </a>
