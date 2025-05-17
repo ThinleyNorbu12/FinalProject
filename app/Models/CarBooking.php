@@ -94,6 +94,11 @@ class CarBooking extends Model
     {
         return $this->hasMany(Payment::class, 'booking_id');
     }
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'booking_id');
+    }
+
 
     public function payLaterPayments()
     {

@@ -334,6 +334,7 @@ namespace App\Models {
      * @property-read \App\Models\Customer $customer
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
      * @property-read int|null $payments_count
+     * @property-read \App\Models\Payment $payment
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PayLaterPayment> $payLaterPayments
      * @property-read int|null $payLaterPayments_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\QrPayment> $qrPayments
@@ -3248,27 +3249,9 @@ namespace App\Models {
     /**
      * App\Models\QrPayment
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property \Illuminate\Support\Carbon|null $verified_at
-     * @property mixed $verified_by
-     * @property mixed $verification_status
-     * @property mixed $screenshot_path
-     * @property mixed $bank_code
-     * @property mixed $payment_id
-     * @property int $id
      * @property-read \App\Models\CarBooking $booking
-     * @property-read \App\Models\User $verifier
      * @property-read \App\Models\Payment $payment
-     * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment wherePaymentId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereBankCode($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereScreenshotPath($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereVerificationStatus($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereVerifiedBy($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereVerifiedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereUpdatedAt($value)
+     * @property-read \App\Models\User $verifier
      * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment query()

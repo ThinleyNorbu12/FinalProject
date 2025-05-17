@@ -276,6 +276,27 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
         ->name('user-verification.update');
 });
 
+// Admin Routes
+Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/booked-car', [BookingController::class, 'index'])->name('booked-car');
+    Route::get('/booked-car/filter', [BookingController::class, 'filter'])->name('booked-car.filter');
+    Route::get('/booked-car/{id}', [BookingController::class, 'showBookingDetails'])->name('booked-car.show');
+    Route::put('/booked-car/{id}/update-status', [BookingController::class, 'updateStatus'])->name('booked-car.update-status');
+
+
+    Route::get('/view-payments', [PaymentController::class, 'index'])->name('payments.index');
+    // Show payment details
+    Route::get('/payments/{id}', [PaymentController::class, 'showPayment'])->name('payments.show');
+    // Update payment status
+    Route::post('/payments/{id}/update-status', [PaymentController::class, 'updateStatus'])->name('payments.update-status');
+    // Verify QR Payment
+    Route::post('payments/{payment}/verify-qr', [PaymentController::class, 'verifyQrPayment'])->name('payments.verify-qr');
+    // Collect Pay Later Payment
+    Route::post('/payments/{id}/collect-pay-later', [PaymentController::class, 'collectPayLater'])->name('payments.collect-pay-later');
+    // Verify Bank Transfer
+    Route::post('payments/{payment}/verify-bank-transfer', [PaymentController::class, 'verifyBankTransfer'])->name('payments.verify-bank-transfer');
+
+});
 
 
 

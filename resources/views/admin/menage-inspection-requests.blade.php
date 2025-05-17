@@ -492,10 +492,11 @@
                     <i class="fas fa-id-card"></i>
                     <span>Verify Users</span>
                 </a>
-                <a href="{{ url('admin/view-payments') }}" class="sidebar-menu-item">
+                <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item">
                     <i class="fas fa-credit-card"></i>
                     <span>Payments</span>
                 </a>
+
                 <a href="{{ url('admin/update-car-registration') }}" class="sidebar-menu-item">
                     <i class="fas fa-edit"></i>
                     <span>Update Registration</span>

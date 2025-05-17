@@ -54,10 +54,30 @@ class Payment extends Model
     /**
      * Relationship to QR Payment details
      */
-    public function qrPayment()
-    {
-        return $this->hasOne(QrPayment::class, 'payment_id');
-    }
+    // public function qrPayment()
+    // {
+    //     // If your payments table has a car_booking_id column:
+    //     return $this->hasOneThrough(
+    //         QrPayment::class,
+    //         CarBooking::class,
+    //         'id', // Local key on car_bookings table
+    //         'payment_id', // Foreign key on qr_payments table
+    //         'car_booking_id', // Foreign key on payments table
+    //         'id' // Local key on car_bookings table
+    //     );
+        
+    //     // OR if they're directly related some other way
+    //     // You'll need to adjust this based on your actual database structure
+    // }
+
+//     public function qrPayment()
+// {
+//     return $this->hasOne(QrPayment::class, 'payment_id');
+// }
+public function qrPayment()
+{
+    return $this->hasOne(QrPayment::class);
+}
 
     public function booking()
     {

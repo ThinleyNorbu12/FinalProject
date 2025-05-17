@@ -28,7 +28,9 @@ class QrPayment extends Model
         'verification_status',
         'verified_by',
         'verified_at',
+        'admin_notes'
     ];
+
 
     /**
      * The attributes that should be cast.
@@ -50,16 +52,17 @@ class QrPayment extends Model
     /**
      * Get the user who verified this payment.
      */
+     public function payment()
+    {
+        return $this->belongsTo(Payment::class, 'payment_id');
+    }
+
+    /**
+     * Get the user who verified this payment.
+     */
     public function verifier()
     {
         return $this->belongsTo(User::class, 'verified_by');
-    }
-
-    // In App\Models\QrPayment.php
-
-    public function payment()
-    {
-        return $this->belongsTo(Payment::class, 'payment_id');
     }
 
 }

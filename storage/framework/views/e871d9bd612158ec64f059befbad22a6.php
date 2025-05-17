@@ -69,7 +69,7 @@
                 </a>
             </li>
             <li>
-                <a href="<?php echo e(url('admin/view-payments')); ?>" class="sidebar-menu-item">
+                <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-credit-card"></i>
                     <span>Payments</span>
                 </a>

@@ -300,4 +300,260 @@ public function markPayLaterAsCollected(Request $request, $paymentId)
         ], 500);
     }
 }
+
+
+// admin page payment 
+     public function index()
+    {
+        // Get all payments with related booking and customer data
+        $payments = Payment::with([
+            'booking', 
+            'customer', 
+            'qrPayment',
+            'payLaterPayment'
+        ])->orderBy('created_at', 'desc')->paginate(15);
+
+        return view('admin.payment', compact('payments'));
+    }
+
+    /**
+     * Show details for a specific payment
+     */
+    // public function showPayment($id)
+    // {
+    //     $payment = Payment::with([
+    //         'booking', 
+    //         'customer', 
+    //         'qrPayment',
+    //         'payLaterPayment'
+    //     ])->findOrFail($id);
+
+    //     return view('admin.paymentshow', compact('payment'));
+    // }
+//    public function showPayment($paymentId)
+// {
+//     $payment = Payment::find($paymentId);
+    
+//     if (!$payment) {
+//         // Payment doesn't exist in the database
+//         return redirect()->route('admin.payments.index')
+//             ->with('error', 'Payment not found');
+//     }
+    
+//     // Only include relationships that actually exist on the Payment model
+//     $payment = Payment::with([
+//         'booking', 
+//         'customer', 
+//         'qrPayment',
+//         'payLaterPayment',
+//         // Remove 'order' and its nested relationships if they don't exist
+//         // 'order',
+//         // 'order.items',
+//         // 'order.items.product',
+//         // 'bankTransfer',
+//         // 'cardPayment'
+//     ])->findOrFail($paymentId);
+    
+//     return view('admin.paymentshow', compact('payment'));
+// }
+
+public function showPayment($paymentId)
+{
+    // Find the payment or show a 404 error
+    $payment = Payment::findOrFail($paymentId);
+    
+    // Load all related data
+    $payment->load([
+        'booking', 
+        'customer', 
+        'qrPayment',  // Direct relationship
+        'payLaterPayment'
+    ]);
+    
+    return view('admin.paymentshow', compact('payment'));
+}
+
+
+    /**
+     * Update payment status
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $payment = Payment::findOrFail($id);
+        
+        $validatedData = $request->validate([
+            'status' => 'required|in:pending,pending_verification,processing,completed,failed,refunded,cancelled',
+        ]);
+
+        $payment->status = $validatedData['status'];
+        $payment->save();
+
+        return redirect()->route('admin.payments.index')
+            ->with('success', 'Payment status updated successfully');
+    }
+
+    /**
+     * Verify QR payment 
+     */
+    public function verifyQrPayment(Request $request, $paymentId)
+{
+    // Log request at start with more details
+    \Log::debug('QR Payment verification started', [
+        'payment_id' => $paymentId,
+        'request_data' => $request->all()
+    ]);
+    
+    try {
+        // Find the payment record
+        $payment = Payment::findOrFail($paymentId);
+        \Log::debug('Payment found', [
+            'payment_id' => $payment->id,
+            'payment_method' => $payment->payment_method,
+            'payment_status' => $payment->status
+        ]);
+        
+        // Validate request
+        $request->validate([
+            'verification_status' => 'required|in:confirmed,rejected',
+            'admin_notes' => 'nullable|string',
+        ]);
+        
+        // Get the admin user
+        $admin = Auth::guard('admin')->user();
+        
+        if (!$admin) {
+            \Log::error('Admin authentication failed for payment verification');
+            return back()->with('error', 'Admin authentication failed. Please login again.');
+        }
+        
+        // Log admin details
+        \Log::debug('Admin authenticated', [
+            'admin_id' => $admin->id, 
+            'admin_email' => $admin->email
+        ]);
+        
+        // Check if this admin has a corresponding user record
+        $userId = DB::table('users')->where('email', $admin->email)->value('id');
+        
+        if (!$userId) {
+            \Log::warning('Admin verification failed: Admin (ID: ' . $admin->id .
+                          ') tried to verify payment but has no corresponding user record');
+                     
+            return back()->with('error',
+                 'Verification failed: Your admin account is not linked to a user record. Please contact the system administrator.');
+        }
+        
+        // Debugging: Check if the QR payment exists
+        $qrPayment = QrPayment::where('payment_id', $payment->id)->first();
+        \Log::debug('QR Payment lookup result', [
+            'payment_id' => $payment->id,
+            'qr_payment_exists' => $qrPayment ? true : false,
+            'qr_payment_id' => $qrPayment ? $qrPayment->id : null
+        ]);
+        
+        // If there's no QR payment record, create one
+        if (!$qrPayment) {
+            \Log::info('QR Payment record not found, creating new record');
+            $qrPayment = new QrPayment();
+            $qrPayment->payment_id = $payment->id;
+            $qrPayment->bank_code = 'bob'; // Set a default or pull from your form
+            $qrPayment->verification_status = 'pending';
+            $qrPayment->save();
+            
+            \Log::debug('Created new QR payment record', [
+                'qr_payment_id' => $qrPayment->id,
+                'payment_id' => $payment->id
+            ]);
+        }
+        
+        // Update the QR payment
+        $qrPayment->verification_status = $request->verification_status;
+        $qrPayment->verified_by = $userId;
+        $qrPayment->verified_at = now();
+        $qrPayment->admin_notes = $request->admin_notes;
+        $qrPayment->save();
+        
+        \Log::debug('QR Payment updated', [
+            'qr_payment_id' => $qrPayment->id,
+            'new_status' => $request->verification_status
+        ]);
+        
+        // Update the payment status
+        $payment->status = $request->verification_status === 'confirmed' ? 'completed' : 'failed';
+        $payment->save();
+        
+        \Log::debug('Main payment record updated', [
+            'payment_id' => $payment->id,
+            'new_status' => $payment->status
+        ]);
+        
+        // Log this action
+        \Log::info('Payment verification: Payment #' . $payment->id . ' marked as ' . 
+                   $request->verification_status . ' by admin #' . $admin->id . ' (user ID: ' . $userId . ')');
+        
+        return redirect()->route('admin.payments.show', $payment->id)
+            ->with('success', 'Payment has been ' . ($request->verification_status === 'confirmed' ? 'confirmed' : 'rejected'));
+    
+    } catch (\Exception $e) {
+        \Log::error('Exception in verifyQrPayment: ' . $e->getMessage(), [
+            'payment_id' => $paymentId,
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return back()->with('error', 'An error occurred during verification: ' . $e->getMessage());
+    }
+}
+
+public function verifyBankTransfer(Request $request, $paymentId)
+{
+    $payment = Payment::findOrFail($paymentId);
+    
+    // Validate request
+    $request->validate([
+        'verification_status' => 'required|in:confirmed,rejected',
+        'admin_notes' => 'nullable|string',
+    ]);
+    
+    // Update the payment status directly since we don't have a bankTransfer table/model
+    // Use the verification status to determine the payment status
+    $payment->status = $request->verification_status === 'confirmed' ? 'completed' : 'failed';
+    
+    // Store admin notes in a way that fits with your current schema
+    // You might want to consider adding a notes column to payments table if you need this
+    // Or store it in a more generic verification_notes table
+    
+    $payment->save();
+    
+    return redirect()->route('admin.payments.show', $payment->id)
+        ->with('success', 'Bank transfer payment has been ' . 
+               ($request->verification_status === 'confirmed' ? 'confirmed' : 'rejected'));
+}
+
+    /**
+     * Process Pay Later payment collection
+     */
+    public function collectPayLater(Request $request, $id)
+    {
+        $payLaterPayment = PayLaterPayment::where('payment_id', $id)->firstOrFail();
+        
+        $validatedData = $request->validate([
+            'collection_method' => 'required|in:cash,card,bank_transfer,qr_code',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $payLaterPayment->status = 'paid';
+        $payLaterPayment->collection_date = now();
+        $payLaterPayment->collected_by_admin = auth()->guard('admin')->user()->name;
+        $payLaterPayment->collection_method = $validatedData['collection_method'];
+        $payLaterPayment->notes = $validatedData['notes'];
+        $payLaterPayment->save();
+
+        // Update the main payment status
+        $payment = Payment::findOrFail($id);
+        $payment->status = 'completed';
+        $payment->save();
+
+        return redirect()->route('admin.payments.show', $id)
+            ->with('success', 'Pay Later payment collected successfully');
+    }
 }

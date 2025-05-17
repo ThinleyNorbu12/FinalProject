@@ -68,7 +68,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ url('admin/view-payments') }}" class="sidebar-menu-item">
+                <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item">
                     <i class="fas fa-credit-card"></i>
                     <span>Payments</span>
                 </a>

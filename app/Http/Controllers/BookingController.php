@@ -111,6 +111,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 
 class BookingController extends Controller
 {
@@ -184,5 +186,81 @@ class BookingController extends Controller
     {
         $booking = CarBooking::with('car.images')->findOrFail($id);
         return view('booking.summary', compact('booking'));
+    }
+
+
+// admin page . booked cars 
+     public function index()
+    {
+        // Get all confirmed bookings with relationships
+        $bookings = CarBooking::with(['car', 'customer', 'payment'])
+            ->where('status', 'confirmed')
+            ->orWhere('status', 'completed')
+            ->orderBy('pickup_datetime', 'asc')
+            ->get();
+
+        // Count of bookings by status
+        $statusCounts = CarBooking::select('status', DB::raw('count(*) as count'))
+            ->whereIn('status', ['pending', 'confirmed', 'pending_verification', 'cancelled', 'completed'])
+            ->groupBy('status')
+            ->get()
+            ->pluck('count', 'status')
+            ->toArray();
+
+        return view('admin.booked-car', compact('bookings', 'statusCounts'));
+    }
+
+    /**
+     * Show specific booking details
+     */
+    public function showBookingDetails($id)
+    {
+        $booking = CarBooking::with(['car', 'customer', 'payment'])
+            ->findOrFail($id);
+
+        return view('admin.booking-details', compact('booking'));
+    }
+
+    /**
+     * Update booking status
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,pending_verification,cancelled,completed'
+        ]);
+
+        $booking = CarBooking::findOrFail($id);
+        $booking->status = $request->status;
+        $booking->save();
+
+        return redirect()->route('admin.booked-car')
+            ->with('success', 'Booking status updated successfully');
+    }
+
+    /**
+     * Filter bookings by status
+     */
+    public function filter(Request $request)
+    {
+        $status = $request->status;
+        
+        $bookings = CarBooking::with(['car', 'customer', 'payment']);
+        
+        if ($status) {
+            $bookings = $bookings->where('status', $status);
+        }
+        
+        $bookings = $bookings->orderBy('pickup_datetime', 'asc')->get();
+
+        // Count of bookings by status
+        $statusCounts = CarBooking::select('status', DB::raw('count(*) as count'))
+            ->whereIn('status', ['pending', 'confirmed', 'pending_verification', 'cancelled', 'completed'])
+            ->groupBy('status')
+            ->get()
+            ->pluck('count', 'status')
+            ->toArray();
+
+        return view('admin.booked-car', compact('bookings', 'statusCounts'));
     }
 }
