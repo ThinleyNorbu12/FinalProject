@@ -1,13 +1,8 @@
-{{-- @extends('layouts.app')
 
-@section('title', 'Payment Details')
 
-@section('content')
-<!-- Main Content --> --}}
-@extends('layouts.app')
 
-@section('content')
-<link rel="stylesheet" href="{{ asset('assets/css/admin/adminsidebar.css') }}">
+<?php $__env->startSection('content'); ?>
+<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
 <style>
     .dashboard-content {
     padding: 20px;
@@ -324,7 +319,7 @@
 <div class="dashboard-sidebar">
     <div class="sidebar-header">
         <div class="logo">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
+            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
             <h2>Admin Portal</h2>
         </div>
         <button id="sidebar-toggle" class="sidebar-toggle">
@@ -333,21 +328,21 @@
     </div>
     
     <div class="admin-profile">
-        @if(Auth::guard('admin')->check())
+        <?php if(Auth::guard('admin')->check()): ?>
             <div class="profile-avatar">
-                <img src="{{ asset('assets/images/thinley.jpg') }}" alt="Admin Avatar">
+                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
             </div>
             <div class="profile-info">
-                <h3>{{ Auth::guard('admin')->user()->name }}</h3>
+                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
                 <span>Administrator</span>
             </div>
-        @endif
+        <?php endif; ?>
     </div>
     
     <nav class="sidebar-nav">
         <ul>
             <li>
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -358,19 +353,19 @@
             <div class="sidebar-heading">Car Owner</div>
     
             <li>
-                <a href="{{ route('car-admin.new-registration-cars') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-car"></i>
                     <span>Car Registration</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('car-admin.inspection-requests') }}" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-clipboard-check"></i>
                     <span>Inspection Requests</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('car-admin.approve-inspected-cars') }}" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-check-circle"></i>
                     <span>Approve Inspections</span>
                 </a>
@@ -381,31 +376,31 @@
             <div class="sidebar-heading">Customer</div>
     
             <li>
-                <a href="{{ route('admin.verify-users') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-id-card"></i>
                     <span>Verify Users</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item active">
+                <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item active">
                     <i class="fas fa-credit-card"></i>
                     <span>Payments</span>
                 </a>
             </li>
             <li>
-                <a href="{{ url('admin/update-car-registration') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-edit"></i>
                     <span>Update Registration</span>
                 </a>
             </li>
             <li>
-                <a href="{{ url('admin/car-information-update') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-info-circle"></i>
                     <span>Car Information</span>
                 </a>
             </li>
             <li>
-                <a href="{{ url('admin/booked-car') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(url('admin/booked-car')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-calendar-check"></i>
                     <span>Booked Cars</span>
                 </a>
@@ -416,8 +411,8 @@
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
-                <form method="POST" action="{{ route('admin.logout') }}" id="logout-form">
-                    @csrf
+                <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form">
+                    <?php echo csrf_field(); ?>
                 </form>
             </li>
         </ul>
@@ -430,9 +425,9 @@
         <h1>Payment Details</h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin.payments.index') }}">Payments</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ $payment->reference_number }}</li>
+                <li class="breadcrumb-item"><a href="<?php echo e(route('admin.dashboard')); ?>">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo e(route('admin.payments.index')); ?>">Payments</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><?php echo e($payment->reference_number); ?></li>
             </ol>
         </nav>
     </div>
@@ -440,33 +435,33 @@
     <!-- Payment Details Card -->
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h3>Payment #{{ $payment->reference_number }}</h3>
+            <h3>Payment #<?php echo e($payment->reference_number); ?></h3>
             <div>
-                @switch($payment->status)
-                    @case('pending')
+                <?php switch($payment->status):
+                    case ('pending'): ?>
                         <span class="badge bg-warning">Pending</span>
-                        @break
-                    @case('pending_verification')
+                        <?php break; ?>
+                    <?php case ('pending_verification'): ?>
                         <span class="badge bg-info">Pending Verification</span>
-                        @break
-                    @case('processing')
+                        <?php break; ?>
+                    <?php case ('processing'): ?>
                         <span class="badge bg-primary">Processing</span>
-                        @break
-                    @case('completed')
+                        <?php break; ?>
+                    <?php case ('completed'): ?>
                         <span class="badge bg-success">Completed</span>
-                        @break
-                    @case('failed')
+                        <?php break; ?>
+                    <?php case ('failed'): ?>
                         <span class="badge bg-danger">Failed</span>
-                        @break
-                    @case('refunded')
+                        <?php break; ?>
+                    <?php case ('refunded'): ?>
                         <span class="badge bg-secondary">Refunded</span>
-                        @break
-                    @case('cancelled')
+                        <?php break; ?>
+                    <?php case ('cancelled'): ?>
                         <span class="badge bg-danger">Cancelled</span>
-                        @break
-                    @default
-                        <span class="badge bg-secondary">{{ $payment->status }}</span>
-                @endswitch
+                        <?php break; ?>
+                    <?php default: ?>
+                        <span class="badge bg-secondary"><?php echo e($payment->status); ?></span>
+                <?php endswitch; ?>
             </div>
         </div>
         <div class="card-body">
@@ -476,124 +471,124 @@
                     <table class="table">
                         <tr>
                             <th>ID:</th>
-                            <td>{{ $payment->id }}</td>
+                            <td><?php echo e($payment->id); ?></td>
                         </tr>
                         <tr>
                             <th>Reference Number:</th>
-                            <td>{{ $payment->reference_number }}</td>
+                            <td><?php echo e($payment->reference_number); ?></td>
                         </tr>
                         <tr>
                             <th>Amount:</th>
-                            <td>{{ number_format($payment->amount, 2) }} {{ $payment->currency }}</td>
+                            <td><?php echo e(number_format($payment->amount, 2)); ?> <?php echo e($payment->currency); ?></td>
                         </tr>
                         <tr>
                             <th>Payment Method:</th>
                             <td>
-                                @switch($payment->payment_method)
-                                    @case('qr_code')
+                                <?php switch($payment->payment_method):
+                                    case ('qr_code'): ?>
                                         <span class="badge bg-info">QR Code</span>
-                                        @break
-                                    @case('bank_transfer')
+                                        <?php break; ?>
+                                    <?php case ('bank_transfer'): ?>
                                         <span class="badge bg-primary">Bank Transfer</span>
-                                        @break
-                                    @case('pay_later')
+                                        <?php break; ?>
+                                    <?php case ('pay_later'): ?>
                                         <span class="badge bg-warning">Pay Later</span>
-                                        @break
-                                    @case('card')
+                                        <?php break; ?>
+                                    <?php case ('card'): ?>
                                         <span class="badge bg-success">Card</span>
-                                        @break
-                                    @default
-                                        <span class="badge bg-secondary">{{ $payment->payment_method }}</span>
-                                @endswitch
+                                        <?php break; ?>
+                                    <?php default: ?>
+                                        <span class="badge bg-secondary"><?php echo e($payment->payment_method); ?></span>
+                                <?php endswitch; ?>
                             </td>
                         </tr>
                         <tr>
                             <th>Status:</th>
                             <td>
-                                @switch($payment->status)
-                                    @case('pending')
+                                <?php switch($payment->status):
+                                    case ('pending'): ?>
                                         <span class="badge bg-warning">Pending</span>
-                                        @break
-                                    @case('pending_verification')
+                                        <?php break; ?>
+                                    <?php case ('pending_verification'): ?>
                                         <span class="badge bg-info">Pending Verification</span>
-                                        @break
-                                    @case('processing')
+                                        <?php break; ?>
+                                    <?php case ('processing'): ?>
                                         <span class="badge bg-primary">Processing</span>
-                                        @break
-                                    @case('completed')
+                                        <?php break; ?>
+                                    <?php case ('completed'): ?>
                                         <span class="badge bg-success">Completed</span>
-                                        @break
-                                    @case('failed')
+                                        <?php break; ?>
+                                    <?php case ('failed'): ?>
                                         <span class="badge bg-danger">Failed</span>
-                                        @break
-                                    @case('refunded')
+                                        <?php break; ?>
+                                    <?php case ('refunded'): ?>
                                         <span class="badge bg-secondary">Refunded</span>
-                                        @break
-                                    @case('cancelled')
+                                        <?php break; ?>
+                                    <?php case ('cancelled'): ?>
                                         <span class="badge bg-danger">Cancelled</span>
-                                        @break
-                                    @default
-                                        <span class="badge bg-secondary">{{ $payment->status }}</span>
-                                @endswitch
+                                        <?php break; ?>
+                                    <?php default: ?>
+                                        <span class="badge bg-secondary"><?php echo e($payment->status); ?></span>
+                                <?php endswitch; ?>
                             </td>
                         </tr>
                         <tr>
                             <th>Payment Date:</th>
-                            <td>{{ $payment->payment_date->format('F d, Y H:i:s') }}</td>
+                            <td><?php echo e($payment->payment_date->format('F d, Y H:i:s')); ?></td>
                         </tr>
-                        @if($payment->description)
+                        <?php if($payment->description): ?>
                         <tr>
                             <th>Description:</th>
-                            <td>{{ $payment->description }}</td>
+                            <td><?php echo e($payment->description); ?></td>
                         </tr>
-                        @endif
+                        <?php endif; ?>
                     </table>
                 </div>
                 <div class="col-md-6">
                     <h4>Customer Information</h4>
                     <table class="table">
-                        @if($payment->customer)
+                        <?php if($payment->customer): ?>
                         <tr>
                             <th>Name:</th>
-                            <td>{{ $payment->customer->name }}</td>
+                            <td><?php echo e($payment->customer->name); ?></td>
                         </tr>
                         <tr>
                             <th>Email:</th>
-                            <td>{{ $payment->customer->email }}</td>
+                            <td><?php echo e($payment->customer->email); ?></td>
                         </tr>
                         <tr>
                             <th>Phone:</th>
-                            <td>{{ $payment->customer->phone ?? 'N/A' }}</td>
+                            <td><?php echo e($payment->customer->phone ?? 'N/A'); ?></td>
                         </tr>
-                        @else
+                        <?php else: ?>
                         <tr>
                             <td colspan="2" class="text-center">No customer information available</td>
                         </tr>
-                        @endif
+                        <?php endif; ?>
                     </table>
                 </div>
             </div>
             
-            @if($payment->order)
+            <?php if($payment->order): ?>
             <div class="row mt-4">
                 <div class="col-12">
                     <h4>Order Details</h4>
                     <table class="table">
                         <tr>
                             <th>Order ID:</th>
-                            <td>{{ $payment->order->id }}</td>
+                            <td><?php echo e($payment->order->id); ?></td>
                         </tr>
                         <tr>
                             <th>Order Number:</th>
-                            <td>{{ $payment->order->order_number }}</td>
+                            <td><?php echo e($payment->order->order_number); ?></td>
                         </tr>
                         <tr>
                             <th>Order Date:</th>
-                            <td>{{ $payment->order->created_at->format('F d, Y H:i:s') }}</td>
+                            <td><?php echo e($payment->order->created_at->format('F d, Y H:i:s')); ?></td>
                         </tr>
                         <tr>
                             <th>Status:</th>
-                            <td>{{ $payment->order->status }}</td>
+                            <td><?php echo e($payment->order->status); ?></td>
                         </tr>
                     </table>
                     
@@ -609,51 +604,51 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($payment->order->items as $item)
+                                <?php $__currentLoopData = $payment->order->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
-                                    <td>{{ $item->product->name }}</td>
-                                    <td>{{ $item->quantity }}</td>
-                                    <td>{{ number_format($item->unit_price, 2) }} {{ $payment->currency }}</td>
-                                    <td>{{ number_format($item->quantity * $item->unit_price, 2) }} {{ $payment->currency }}</td>
+                                    <td><?php echo e($item->product->name); ?></td>
+                                    <td><?php echo e($item->quantity); ?></td>
+                                    <td><?php echo e(number_format($item->unit_price, 2)); ?> <?php echo e($payment->currency); ?></td>
+                                    <td><?php echo e(number_format($item->quantity * $item->unit_price, 2)); ?> <?php echo e($payment->currency); ?></td>
                                 </tr>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th colspan="3" class="text-end">Subtotal:</th>
-                                    <td>{{ number_format($payment->order->subtotal, 2) }} {{ $payment->currency }}</td>
+                                    <td><?php echo e(number_format($payment->order->subtotal, 2)); ?> <?php echo e($payment->currency); ?></td>
                                 </tr>
-                                @if($payment->order->discount_amount > 0)
+                                <?php if($payment->order->discount_amount > 0): ?>
                                 <tr>
                                     <th colspan="3" class="text-end">Discount:</th>
-                                    <td>-{{ number_format($payment->order->discount_amount, 2) }} {{ $payment->currency }}</td>
+                                    <td>-<?php echo e(number_format($payment->order->discount_amount, 2)); ?> <?php echo e($payment->currency); ?></td>
                                 </tr>
-                                @endif
-                                @if($payment->order->tax_amount > 0)
+                                <?php endif; ?>
+                                <?php if($payment->order->tax_amount > 0): ?>
                                 <tr>
                                     <th colspan="3" class="text-end">Tax:</th>
-                                    <td>{{ number_format($payment->order->tax_amount, 2) }} {{ $payment->currency }}</td>
+                                    <td><?php echo e(number_format($payment->order->tax_amount, 2)); ?> <?php echo e($payment->currency); ?></td>
                                 </tr>
-                                @endif
-                                @if($payment->order->shipping_amount > 0)
+                                <?php endif; ?>
+                                <?php if($payment->order->shipping_amount > 0): ?>
                                 <tr>
                                     <th colspan="3" class="text-end">Shipping:</th>
-                                    <td>{{ number_format($payment->order->shipping_amount, 2) }} {{ $payment->currency }}</td>
+                                    <td><?php echo e(number_format($payment->order->shipping_amount, 2)); ?> <?php echo e($payment->currency); ?></td>
                                 </tr>
-                                @endif
+                                <?php endif; ?>
                                 <tr>
                                     <th colspan="3" class="text-end">Total:</th>
-                                    <td><strong>{{ number_format($payment->order->total, 2) }} {{ $payment->currency }}</strong></td>
+                                    <td><strong><?php echo e(number_format($payment->order->total, 2)); ?> <?php echo e($payment->currency); ?></strong></td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
 
             <!-- Payment Method Specific Details -->
-            @if($payment->payment_method == 'qr_code')
+            <?php if($payment->payment_method == 'qr_code'): ?>
             <div class="row mt-4">
                 <div class="col-12">
                     <h4>QR Code Payment Details</h4>
@@ -663,57 +658,57 @@
                         <tr>
                             <th>Status:</th>
                             <td>
-                                @if($payment->qrPayment)
-                                    @switch($payment->qrPayment->verification_status)
-                                        @case('pending')
+                                <?php if($payment->qrPayment): ?>
+                                    <?php switch($payment->qrPayment->verification_status):
+                                        case ('pending'): ?>
                                             <span class="badge bg-warning">Pending</span>
-                                            @break
-                                        @case('confirmed')
+                                            <?php break; ?>
+                                        <?php case ('confirmed'): ?>
                                             <span class="badge bg-success">Confirmed</span>
-                                            @break
-                                        @case('rejected')
+                                            <?php break; ?>
+                                        <?php case ('rejected'): ?>
                                             <span class="badge bg-danger">Rejected</span>
-                                            @break
-                                        @default
-                                            <span class="badge bg-secondary">{{ $payment->qrPayment->verification_status }}</span>
-                                    @endswitch
-                                @else
+                                            <?php break; ?>
+                                        <?php default: ?>
+                                            <span class="badge bg-secondary"><?php echo e($payment->qrPayment->verification_status); ?></span>
+                                    <?php endswitch; ?>
+                                <?php else: ?>
                                     <span class="badge bg-secondary">N/A</span>
-                                @endif
+                                <?php endif; ?>
                             </td>
                         </tr>
-                        @if($payment->qrPayment && $payment->qrPayment->verified_by)
+                        <?php if($payment->qrPayment && $payment->qrPayment->verified_by): ?>
                             <tr>
                                 <th>Verified By:</th>
-                                <td>{{ $payment->qrPayment->verified_by }}</td>
+                                <td><?php echo e($payment->qrPayment->verified_by); ?></td>
                             </tr>
                             <tr>
                                 <th>Verification Date:</th>
-                                <td>{{ $payment->qrPayment->verified_at ? $payment->qrPayment->verified_at->format('F d, Y H:i:s') : 'N/A' }}</td>
+                                <td><?php echo e($payment->qrPayment->verified_at ? $payment->qrPayment->verified_at->format('F d, Y H:i:s') : 'N/A'); ?></td>
                             </tr>
-                        @endif
+                        <?php endif; ?>
                     </table>
                 </div>
                 <div class="col-md-6">
-                    @if($payment->qrPayment && $payment->qrPayment->screenshot_path)
+                    <?php if($payment->qrPayment && $payment->qrPayment->screenshot_path): ?>
                     <div class="card">
                         <div class="card-header">
                             <h5>Payment Screenshot</h5>
                         </div>
                         <div class="card-body text-center">
-                            <img src="{{ asset('qr_payments/' . basename($payment->qrPayment->screenshot_path)) }}" alt="QR Payment Screenshot" class="img-fluid">
+                            <img src="<?php echo e(asset('qr_payments/' . basename($payment->qrPayment->screenshot_path))); ?>" alt="QR Payment Screenshot" class="img-fluid">
                         </div>
                     </div>
-                    @else
+                    <?php else: ?>
                         <div class="alert alert-info">No screenshot uploaded for this payment.</div>
-                    @endif
+                    <?php endif; ?>
                 </div>
-                @if($payment->status == 'pending_verification')
+                <?php if($payment->status == 'pending_verification'): ?>
                 <div class="col-12 mt-4">
                     <div class="verification-actions">
                         <h4>Verify Payment</h4>
-                        <form action="{{ route('admin.payments.verify-qr', $payment->id) }}" method="POST">
-                            @csrf
+                        <form action="<?php echo e(route('admin.payments.verify-qr', $payment->id)); ?>" method="POST">
+                            <?php echo csrf_field(); ?>
                             <div class="mb-3">
                                 <label for="verification_status" class="form-label">Verification Decision:</label>
                                 <select name="verification_status" id="verification_status" class="form-control" required>
@@ -730,11 +725,11 @@
                         </form>
                     </div>
                 </div>
-                @endif
+                <?php endif; ?>
             </div>
-            @endif
+            <?php endif; ?>
 
-            @if($payment->payment_method == 'bank_transfer')
+            <?php if($payment->payment_method == 'bank_transfer'): ?>
             <div class="row mt-4">
                 <div class="col-12">
                     <h4>Bank Transfer Details</h4>
@@ -743,54 +738,54 @@
                     <table class="table">
                         <tr>
                             <th>Bank Name:</th>
-                            <td>{{ $payment->bankTransfer->bank_name ?? 'N/A' }}</td>
+                            <td><?php echo e($payment->bankTransfer->bank_name ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <th>Reference Number:</th>
-                            <td>{{ $payment->bankTransfer->reference_number ?? 'N/A' }}</td>
+                            <td><?php echo e($payment->bankTransfer->reference_number ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <th>Transfer Date:</th>
-                            <td>{{ $payment->bankTransfer->transfer_date ? $payment->bankTransfer->transfer_date->format('F d, Y') : 'N/A' }}</td>
+                            <td><?php echo e($payment->bankTransfer->transfer_date ? $payment->bankTransfer->transfer_date->format('F d, Y') : 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <th>Status:</th>
                             <td>
-                                @switch($payment->bankTransfer->status)
-                                    @case('pending')
+                                <?php switch($payment->bankTransfer->status):
+                                    case ('pending'): ?>
                                         <span class="badge bg-warning">Pending</span>
-                                        @break
-                                    @case('verified')
+                                        <?php break; ?>
+                                    <?php case ('verified'): ?>
                                         <span class="badge bg-success">Verified</span>
-                                        @break
-                                    @case('rejected')
+                                        <?php break; ?>
+                                    <?php case ('rejected'): ?>
                                         <span class="badge bg-danger">Rejected</span>
-                                        @break
-                                    @default
-                                        <span class="badge bg-secondary">{{ $payment->bankTransfer->status }}</span>
-                                @endswitch
+                                        <?php break; ?>
+                                    <?php default: ?>
+                                        <span class="badge bg-secondary"><?php echo e($payment->bankTransfer->status); ?></span>
+                                <?php endswitch; ?>
                             </td>
                         </tr>
                     </table>
                 </div>
                 <div class="col-md-6">
-                    @if($payment->bankTransfer->receipt_path)
+                    <?php if($payment->bankTransfer->receipt_path): ?>
                     <div class="card">
                         <div class="card-header">
                             <h5>Payment Receipt</h5>
                         </div>
                         <div class="card-body text-center">
-                            <img src="{{ asset('storage/' . $payment->bankTransfer->receipt_path) }}" alt="Bank Transfer Receipt" class="img-fluid">
+                            <img src="<?php echo e(asset('storage/' . $payment->bankTransfer->receipt_path)); ?>" alt="Bank Transfer Receipt" class="img-fluid">
                         </div>
                     </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
-                @if($payment->status == 'pending_verification')
+                <?php if($payment->status == 'pending_verification'): ?>
                 <div class="col-12 mt-4">
                     <div class="verification-actions">
                         <h4>Verify Bank Transfer</h4>
-                        <form action="{{ route('admin.payments.verify-bank-transfer', $payment->id) }}" method="POST">
-                            @csrf
+                        <form action="<?php echo e(route('admin.payments.verify-bank-transfer', $payment->id)); ?>" method="POST">
+                            <?php echo csrf_field(); ?>
                             <div class="mb-3">
                                 <label for="verification_status" class="form-label">Verification Decision:</label>
                                 <select name="verification_status" id="verification_status" class="form-control" required>
@@ -807,37 +802,37 @@
                         </form>
                     </div>
                 </div>
-                @endif
+                <?php endif; ?>
             </div>
-            @endif
+            <?php endif; ?>
 
-            @if($payment->payment_method == 'card')
+            <?php if($payment->payment_method == 'card'): ?>
             <div class="row mt-4">
                 <div class="col-12">
                     <h4>Card Payment Details</h4>
                     <table class="table">
                         <tr>
                             <th>Card Type:</th>
-                            <td>{{ $payment->cardPayment->card_type ?? 'N/A' }}</td>
+                            <td><?php echo e($payment->cardPayment->card_type ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <th>Last 4 Digits:</th>
-                            <td>{{ $payment->cardPayment->last_four ?? 'N/A' }}</td>
+                            <td><?php echo e($payment->cardPayment->last_four ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <th>Transaction ID:</th>
-                            <td>{{ $payment->cardPayment->transaction_id ?? 'N/A' }}</td>
+                            <td><?php echo e($payment->cardPayment->transaction_id ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <th>Gateway:</th>
-                            <td>{{ $payment->cardPayment->gateway ?? 'N/A' }}</td>
+                            <td><?php echo e($payment->cardPayment->gateway ?? 'N/A'); ?></td>
                         </tr>
                     </table>
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
 
-            @if($payment->payment_method == 'pay_later')
+            <?php if($payment->payment_method == 'pay_later'): ?>
             <div class="row mt-4">
                 <div class="col-12">
                     <h4>Pay Later Details</h4>
@@ -846,97 +841,98 @@
                     <table class="table">
                         <tr>
                             <th>Due Date:</th>
-                            <td>{{ $payment->payLaterPayment->due_date ? $payment->payLaterPayment->due_date->format('F d, Y') : 'N/A' }}</td>
+                            <td><?php echo e($payment->payLaterPayment->due_date ? $payment->payLaterPayment->due_date->format('F d, Y') : 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <th>Status:</th>
                             <td>
-                                @switch($payment->payLaterPayment->status)
-                                    @case('pending')
+                                <?php switch($payment->payLaterPayment->status):
+                                    case ('pending'): ?>
                                         <span class="badge bg-warning">Pending</span>
-                                        @break
-                                    @case('paid')
+                                        <?php break; ?>
+                                    <?php case ('paid'): ?>
                                         <span class="badge bg-success">Paid</span>
-                                        @break
-                                    @case('overdue')
+                                        <?php break; ?>
+                                    <?php case ('overdue'): ?>
                                         <span class="badge bg-danger">Overdue</span>
-                                        @break
-                                    @case('cancelled')
+                                        <?php break; ?>
+                                    <?php case ('cancelled'): ?>
                                         <span class="badge bg-secondary">Cancelled</span>
-                                        @break
-                                    @default
-                                        <span class="badge bg-secondary">{{ $payment->payLaterPayment->status }}</span>
-                                @endswitch
+                                        <?php break; ?>
+                                    <?php default: ?>
+                                        <span class="badge bg-secondary"><?php echo e($payment->payLaterPayment->status); ?></span>
+                                <?php endswitch; ?>
                             </td>
                         </tr>
-                        @if($payment->payLaterPayment->status == 'paid')
+                        <?php if($payment->payLaterPayment->status == 'paid'): ?>
                         <tr>
                             <th>Collection Date:</th>
-                            <td>{{ $payment->payLaterPayment->collection_date ? $payment->payLaterPayment->collection_date->format('F d, Y H:i:s') : 'N/A' }}</td>
+                            <td><?php echo e($payment->payLaterPayment->collection_date ? $payment->payLaterPayment->collection_date->format('F d, Y H:i:s') : 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <th>Collected By:</th>
-                            <td>{{ $payment->payLaterPayment->collected_by_admin ?? 'N/A' }}</td>
+                            <td><?php echo e($payment->payLaterPayment->collected_by_admin ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <th>Collection Method:</th>
                             <td>
-                                @switch($payment->payLaterPayment->collection_method)
-                                    @case('cash')
+                                <?php switch($payment->payLaterPayment->collection_method):
+                                    case ('cash'): ?>
                                         <span class="badge bg-success">Cash</span>
-                                        @break
-                                    @case('card')
+                                        <?php break; ?>
+                                    <?php case ('card'): ?>
                                         <span class="badge bg-primary">Card</span>
-                                        @break
-                                    @case('bank_transfer')
+                                        <?php break; ?>
+                                    <?php case ('bank_transfer'): ?>
                                         <span class="badge bg-info">Bank Transfer</span>
-                                        @break
-                                    @case('qr_code')
+                                        <?php break; ?>
+                                    <?php case ('qr_code'): ?>
                                         <span class="badge bg-warning">QR Code</span>
-                                        @break
-                                    @default
-                                        <span class="badge bg-secondary">{{ $payment->payLaterPayment->collection_method ?? 'N/A' }}</span>
-                                @endswitch
+                                        <?php break; ?>
+                                    <?php default: ?>
+                                        <span class="badge bg-secondary"><?php echo e($payment->payLaterPayment->collection_method ?? 'N/A'); ?></span>
+                                <?php endswitch; ?>
                             </td>
                         </tr>
-                        @endif
-                        @if($payment->payLaterPayment->notes)
+                        <?php endif; ?>
+                        <?php if($payment->payLaterPayment->notes): ?>
                         <tr>
                             <th>Notes:</th>
-                            <td>{{ $payment->payLaterPayment->notes }}</td>
+                            <td><?php echo e($payment->payLaterPayment->notes); ?></td>
                         </tr>
-                        @endif
+                        <?php endif; ?>
                         <!-- Add bank code information if available -->
-                        @if(!empty($payment->payLaterPayment->bank_code))
+                        <?php if(!empty($payment->payLaterPayment->bank_code)): ?>
                         <tr>
                             <th>Bank Used:</th>
                             <td>
-                                @switch($payment->payLaterPayment->bank_code)
-                                    @case('bob')
+                                <?php switch($payment->payLaterPayment->bank_code):
+                                    case ('bob'): ?>
                                         Bank of Bhutan
-                                        @break
-                                    @case('bnb')
+                                        <?php break; ?>
+                                    <?php case ('bnb'): ?>
                                         Bhutan National Bank
-                                        @break
-                                    @case('tbank')
+                                        <?php break; ?>
+                                    <?php case ('tbank'): ?>
                                         T-Bank
-                                        @break
-                                    @case('dpnb')
+                                        <?php break; ?>
+                                    <?php case ('dpnb'): ?>
                                         Druk PNB
-                                        @break
-                                    @case('bdbl')
+                                        <?php break; ?>
+                                    <?php case ('bdbl'): ?>
                                         BDBL
-                                        @break
-                                    @default
-                                        {{ strtoupper($payment->payLaterPayment->bank_code) }}
-                                @endswitch
+                                        <?php break; ?>
+                                    <?php default: ?>
+                                        <?php echo e(strtoupper($payment->payLaterPayment->bank_code)); ?>
+
+                                <?php endswitch; ?>
                             </td>
                         </tr>
-                        @endif
+                        <?php endif; ?>
                     </table>
                 </div>
                 <div class="col-md-6">
-                    @php
+                    <?php
                         // Check for screenshot in multiple ways
                         $screenshotExists = false;
                         $screenshotPath = '';
@@ -959,29 +955,30 @@
                                 }
                             }
                         }
-                    @endphp
+                    ?>
                     
-                    @if($screenshotExists)
+                    <?php if($screenshotExists): ?>
                         <div class="card">
                             <div class="card-header">
                                 <h5>QR Payment Screenshot</h5>
                             </div>
                             <div class="card-body text-center">
-                                <img src="{{ asset($screenshotPath) }}"
+                                <img src="<?php echo e(asset($screenshotPath)); ?>"
                                     alt="Pay Later QR Payment Screenshot" 
                                     class="img-fluid" 
                                     style="max-height: 400px; cursor: pointer;" 
                                     onclick="openImageModal(this.src)">
                                 <p class="text-muted small mt-2">
-                                    Customer paid via QR Code using {{ ucfirst($payment->payLaterPayment->bank_code ?? 'bank app') }}
+                                    Customer paid via QR Code using <?php echo e(ucfirst($payment->payLaterPayment->bank_code ?? 'bank app')); ?>
+
                                 </p>
                             </div>
                         </div>
-                    @elseif($payment->payLaterPayment->status != 'paid')
+                    <?php elseif($payment->payLaterPayment->status != 'paid'): ?>
                         <div class="collection-actions">
                             <h4>Collect Payment</h4>
-                            <form action="{{ route('admin.payments.collect-pay-later', $payment->id) }}" method="POST" enctype="multipart/form-data">
-                                @csrf
+                            <form action="<?php echo e(route('admin.payments.collect-pay-later', $payment->id)); ?>" method="POST" enctype="multipart/form-data">
+                                <?php echo csrf_field(); ?>
                                 <div class="mb-3">
                                     <label for="collection_method" class="form-label">Collection Method:</label>
                                     <select name="collection_method" id="collection_method" class="form-control" required>
@@ -1004,24 +1001,24 @@
                                 <button type="submit" class="btn btn-primary">Record Payment</button>
                             </form>
                         </div>
-                    @else
+                    <?php else: ?>
                         <div class="alert alert-info">
                             <h4>Payment Completed</h4>
                             <p>This pay later payment has been collected successfully, but no screenshot is available.</p>
-                            @if($payment->payLaterPayment->collection_method)
-                                <p><strong>Collection Method:</strong> {{ ucfirst(str_replace('_', ' ', $payment->payLaterPayment->collection_method)) }}</p>
-                            @endif
+                            <?php if($payment->payLaterPayment->collection_method): ?>
+                                <p><strong>Collection Method:</strong> <?php echo e(ucfirst(str_replace('_', ' ', $payment->payLaterPayment->collection_method))); ?></p>
+                            <?php endif; ?>
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
     <!-- Back Button -->
     <div class="d-flex justify-content-between mt-4">
-        <a href="{{ route('admin.payments.index') }}" class="btn btn-secondary">
+        <a href="<?php echo e(route('admin.payments.index')); ?>" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to Payments
         </a>
     </div>
@@ -1042,9 +1039,9 @@
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -1173,4 +1170,5 @@ document.addEventListener('DOMContentLoaded', function() {
     window.openImageModal = openImageModal;
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/paymentshow.blade.php ENDPATH**/ ?>

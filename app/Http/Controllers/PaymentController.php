@@ -125,10 +125,9 @@ class PaymentController extends Controller
 
         // Update booking status
         $booking->update([
-            'status' => 'pending_verification',
+            'status' => 'confirmed',
             'payment_method' => 'qr_code'
         ]);
-
         DB::commit();
 
         return response()->json([
@@ -314,6 +313,9 @@ public function markPayLaterAsCollected(Request $request, $paymentId)
         ])->orderBy('created_at', 'desc')->paginate(15);
 
         return view('admin.payment', compact('payments'));
+        
+
+
     }
 
     /**
@@ -533,27 +535,59 @@ public function verifyBankTransfer(Request $request, $paymentId)
      * Process Pay Later payment collection
      */
     public function collectPayLater(Request $request, $id)
-    {
-        $payLaterPayment = PayLaterPayment::where('payment_id', $id)->firstOrFail();
-        
-        $validatedData = $request->validate([
-            'collection_method' => 'required|in:cash,card,bank_transfer,qr_code',
-            'notes' => 'nullable|string|max:500',
-        ]);
-
+{
+    $payLaterPayment = PayLaterPayment::where('payment_id', $id)->firstOrFail();
+    
+    $validatedData = $request->validate([
+        'collection_method' => 'required|in:cash,card,bank_transfer,qr_code',
+        'notes' => 'nullable|string|max:500',
+        'screenshot' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Added screenshot validation
+    ]);
+    
+    // Start transaction for data integrity
+    DB::beginTransaction();
+    
+    try {
         $payLaterPayment->status = 'paid';
         $payLaterPayment->collection_date = now();
         $payLaterPayment->collected_by_admin = auth()->guard('admin')->user()->name;
         $payLaterPayment->collection_method = $validatedData['collection_method'];
         $payLaterPayment->notes = $validatedData['notes'];
-        $payLaterPayment->save();
-
-        // Update the main payment status
+        
+        // Get the payment to access its reference number
         $payment = Payment::findOrFail($id);
+        
+        // Handle screenshot upload for QR payments
+        if ($request->hasFile('screenshot') && $validatedData['collection_method'] === 'qr_code') {
+            $screenshot = $request->file('screenshot');
+            $filename = $payment->reference_number . '.' . $screenshot->getClientOriginalExtension();
+            
+            // Make sure the directory exists
+            $directory = public_path('pay_later_payments');
+            if (!file_exists($directory)) {
+                mkdir($directory, 0755, true);
+            }
+            
+            // Move the uploaded file
+            $screenshot->move($directory, $filename);
+            
+            // Update the screenshot path in the database
+            $payLaterPayment->screenshot_image_path = 'pay_later_payments/' . $filename;
+        }
+        
+        $payLaterPayment->save();
+        
+        // Update the main payment status
         $payment->status = 'completed';
         $payment->save();
-
+        
+        DB::commit();
+        
         return redirect()->route('admin.payments.show', $id)
             ->with('success', 'Pay Later payment collected successfully');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', 'Error collecting payment: ' . $e->getMessage());
     }
+}
 }

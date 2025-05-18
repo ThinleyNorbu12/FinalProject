@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use App\Models\CarDetail;
 
 use App\Models\PayLaterPayment;
+use Illuminate\Support\Facades\Storage;
 
 
 class CustomerController extends Controller
@@ -102,12 +103,57 @@ public function dashboard()
         return redirect()->route('customer.login')->with('status', 'Password set successfully!');
     }
 
+    // public function payLater()
+    // {
+    //     try {
+    //         // Get the authenticated customer
+    //         $customer = Auth::guard('customer')->user();
+            
+    //         // Fetch pending payments from database with more comprehensive info
+    //         $pendingPayments = DB::table('payments')
+    //             ->join('pay_later_payments', 'payments.id', '=', 'pay_later_payments.payment_id')
+    //             ->join('car_bookings', 'payments.booking_id', '=', 'car_bookings.id')
+    //             ->where('payments.customer_id', $customer->id)
+    //             ->where(function($query) {
+    //                 $query->where('pay_later_payments.status', '!=', 'paid')
+    //                       ->orWhereNull('pay_later_payments.status');
+    //             })
+    //             ->select(
+    //                 'payments.id',
+    //                 'payments.booking_id',
+    //                 'payments.amount',
+    //                 'payments.currency',
+    //                 'payments.status as payment_status',
+    //                 'pay_later_payments.id as pay_later_id',
+    //                 'pay_later_payments.status as pay_later_status',
+    //                 'pay_later_payments.collection_date',
+    //                 'pay_later_payments.collection_method',
+    //                 'car_bookings.car_id',
+    //                 'car_bookings.pickup_datetime',
+    //                 'car_bookings.dropoff_datetime'
+    //             )
+    //             ->orderBy('pay_later_payments.collection_date', 'asc')
+    //             ->get();
+                
+    //         return view('customer.pay-later', ['pendingPayments' => $pendingPayments]);
+    //     } catch (\Exception $e) {
+    //         // Log the error
+    //         \Log::error('Error in PayLater controller: ' . $e->getMessage());
+            
+    //         // Return view with error message
+    //         return view('customer.pay-later', [
+    //             'pendingPayments' => collect([]), // Empty collection
+    //             'error' => 'An error occurred while loading your payment data. Please try again later.'
+    //         ]);
+    //     }
+    // }
+
     public function payLater()
     {
         try {
             // Get the authenticated customer
             $customer = Auth::guard('customer')->user();
-            
+
             // Fetch pending payments from database with more comprehensive info
             $pendingPayments = DB::table('payments')
                 ->join('pay_later_payments', 'payments.id', '=', 'pay_later_payments.payment_id')
@@ -133,12 +179,12 @@ public function dashboard()
                 )
                 ->orderBy('pay_later_payments.collection_date', 'asc')
                 ->get();
-                
+
             return view('customer.pay-later', ['pendingPayments' => $pendingPayments]);
         } catch (\Exception $e) {
             // Log the error
             \Log::error('Error in PayLater controller: ' . $e->getMessage());
-            
+
             // Return view with error message
             return view('customer.pay-later', [
                 'pendingPayments' => collect([]), // Empty collection
@@ -147,62 +193,210 @@ public function dashboard()
         }
     }
     
-    /**
-     * Process a pay later payment
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function processPayment(Request $request)
     {
         // Validate the request
         $validated = $request->validate([
             'payment_id' => 'required|exists:payments,id',
-            'payment_method' => 'required|string'
+            'payment_method' => 'required|string',
+            'bank_code' => 'nullable|string',
+            'screenshot' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Make screenshot required for QR code payments
         ]);
-        
+
         // Get the payment details
         $payment = DB::table('payments')
-            ->join('pay_later_payments', 'payments.id', '=', 'pay_later_payments.payment_id')
             ->where('payments.id', $validated['payment_id'])
-            ->select('payments.*', 'pay_later_payments.id as pay_later_id')
             ->first();
-            
+
+        // Get the pay later payment record
+        $payLaterPayment = DB::table('pay_later_payments')
+            ->where('payment_id', $validated['payment_id'])
+            ->first();
+
+        // Check if payment exists
+        if (!$payment || !$payLaterPayment) {
+            return redirect()->back()->withErrors(['error' => 'Payment not found']);
+        }
+
         // Check if payment belongs to authenticated customer
         if ($payment->customer_id != Auth::guard('customer')->id()) {
             return redirect()->back()->withErrors(['error' => 'Unauthorized payment access']);
         }
-        
+
+        // Handle screenshot upload
+        $screenshotPath = null;
+        if ($request->hasFile('screenshot')) {
+            $screenshot = $request->file('screenshot');
+            $screenshotName = 'payment_' . $payment->id . '_' . time() . '.' . $screenshot->getClientOriginalExtension();
+            
+            // Create the qr_payments directory if it doesn't exist
+            $uploadPath = public_path('uploads/qr_payments');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            
+            // Move the file to the specified directory
+            $screenshot->move($uploadPath, $screenshotName);
+            $screenshotPath = 'uploads/qr_payments/' . $screenshotName;
+        }
+
         // Update payment status
         DB::beginTransaction();
-        
+
         try {
-            // Update the payment record
+            // Update the payment record in payments table
             DB::table('payments')
                 ->where('id', $payment->id)
                 ->update([
-                    'status' => 'paid',
+                    'status' => 'completed', // Set status to completed
                     'payment_method' => $validated['payment_method'],
+                    'payment_date' => Carbon::now(),
+                    'reference_number' => 'QR' . time() . rand(1000, 9999), // Generate a reference number
                     'updated_at' => Carbon::now()
                 ]);
-                
-            // Update the pay later payment record
+
+            // Update the pay_later_payments record
+            $updateData = [
+                'status' => 'paid',
+                'collection_date' => Carbon::now(),
+                'collection_method' => $validated['payment_method'],
+                'notes' => 'Paid via ' . $validated['payment_method'] . ' on ' . Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()
+            ];
+
+            // Store bank code if provided
+            if (!empty($validated['bank_code'])) {
+                // Check if bank_code column exists in the table
+                if (DB::getSchemaBuilder()->hasColumn('pay_later_payments', 'bank_code')) {
+                    $updateData['bank_code'] = $validated['bank_code'];
+                }
+            }
+
+            // Store screenshot path if screenshot was uploaded
+            if ($screenshotPath) {
+                // Check if screenshot_path column exists in the table
+                if (DB::getSchemaBuilder()->hasColumn('pay_later_payments', 'screenshot_path')) {
+                    $updateData['screenshot_path'] = $screenshotPath;
+                } else {
+                    // Add screenshot info to notes if column doesn't exist
+                    $updateData['notes'] = $updateData['notes'] . ' (Screenshot uploaded)';
+                }
+            }
+
             DB::table('pay_later_payments')
                 ->where('payment_id', $payment->id)
-                ->update([
-                    'status' => 'paid',
-                    'collection_method' => $validated['payment_method'],
-                    'updated_at' => Carbon::now()
-                ]);
-                
+                ->update($updateData);
+
             DB::commit();
-            
-            return redirect()->route('customer.paylater')->with('success', 'Payment processed successfully!');
+
+            return redirect()->route('customer.paylater')->with('success', 'Payment completed successfully! Your payment has been recorded.');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->withErrors(['error' => 'An error occurred while processing your payment: ' . $e->getMessage()]);
+            
+            // Delete uploaded file if transaction fails
+            if ($screenshotPath && file_exists(public_path($screenshotPath))) {
+                unlink(public_path($screenshotPath));
+            }
+            
+            // Log the error for debugging
+            \Log::error('Payment processing error: ' . $e->getMessage());
+            
+            return redirect()->back()->withErrors(['error' => 'An error occurred while processing your payment. Please try again.']);
         }
     }
+
+//     public function processPayment(Request $request)
+// {
+//     // Validate the request
+//     $validated = $request->validate([
+//         'payment_id' => 'required|exists:payments,id',
+//         'payment_method' => 'required|string',
+//         'bank_code' => 'nullable|string',
+//         'screenshot' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+//     ]);
+
+//     // Get the payment details
+//     $payment = DB::table('payments')->where('id', $validated['payment_id'])->first();
+//     $payLaterPayment = DB::table('pay_later_payments')->where('payment_id', $validated['payment_id'])->first();
+
+//     // Check if payment and record exist
+//     if (!$payment || !$payLaterPayment) {
+//         return redirect()->back()->withErrors(['error' => 'Payment not found']);
+//     }
+
+//     // Check if payment belongs to the authenticated customer
+//     if ($payment->customer_id != Auth::guard('customer')->id()) {
+//         return redirect()->back()->withErrors(['error' => 'Unauthorized payment access']);
+//     }
+
+//     // Handle screenshot upload
+//     $screenshotPath = null;
+//     if ($request->hasFile('screenshot')) {
+//         $screenshot = $request->file('screenshot');
+//         $screenshotName = 'payment_' . $payment->id . '_' . time() . '.' . $screenshot->getClientOriginalExtension();
+
+//         $uploadPath = public_path('pay_later_payments');
+//         if (!file_exists($uploadPath)) {
+//             mkdir($uploadPath, 0755, true);
+//         }
+
+//         $screenshot->move($uploadPath, $screenshotName);
+//         $screenshotPath = 'pay_later_payments/' . $screenshotName;
+//     }
+
+//     // Begin transaction
+//     DB::beginTransaction();
+
+//     try {
+//         // Update payments table
+//         DB::table('payments')->where('id', $payment->id)->update([
+//             'status' => 'completed',
+//             'payment_method' => $validated['payment_method'],
+//             'payment_date' => Carbon::now(),
+//             'reference_number' => 'QR' . time() . rand(1000, 9999),
+//             'updated_at' => Carbon::now()
+//         ]);
+
+//         // Prepare update data
+//         $updateData = [
+//             'status' => 'paid',
+//             'collection_date' => Carbon::now(),
+//             'collection_method' => $validated['payment_method'],
+//             'notes' => 'Paid via ' . $validated['payment_method'] . ' on ' . Carbon::now()->format('Y-m-d H:i:s'),
+//             'updated_at' => Carbon::now()
+//         ];
+
+//         if (!empty($validated['bank_code']) && DB::getSchemaBuilder()->hasColumn('pay_later_payments', 'bank_code')) {
+//             $updateData['bank_code'] = $validated['bank_code'];
+//         }
+
+//         if ($screenshotPath && DB::getSchemaBuilder()->hasColumn('pay_later_payments', 'screenshot_image_path')) {
+//             $updateData['screenshot_image_path'] = $screenshotPath;
+//         } elseif ($screenshotPath) {
+//             $updateData['notes'] .= ' (Screenshot uploaded)';
+//         }
+
+//         // Update pay_later_payments table
+//         DB::table('pay_later_payments')->where('payment_id', $payment->id)->update($updateData);
+
+//         DB::commit();
+
+//         return redirect()->route('customer.paylater')->with('success', 'Payment completed successfully! Your payment has been recorded.');
+
+//     } catch (\Exception $e) {
+//         DB::rollBack();
+
+//         if ($screenshotPath && file_exists(public_path($screenshotPath))) {
+//             unlink(public_path($screenshotPath));
+//         }
+
+//         \Log::error('Payment processing error: ' . $e->getMessage());
+
+//         return redirect()->back()->withErrors(['error' => 'An error occurred while processing your payment. Please try again.']);
+//     }
+// }
+
+
 
 // this will cancel the payment this is in pay later page
     //  public function cancelPayLaterPayment(Request $request)

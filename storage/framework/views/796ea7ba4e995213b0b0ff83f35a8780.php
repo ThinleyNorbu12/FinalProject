@@ -1,6 +1,6 @@
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
@@ -10,108 +10,114 @@
                 </div>
                 
                 <div class="card-body">
-                    @if(session('success'))
+                    <?php if(session('success')): ?>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
+                            <?php echo e(session('success')); ?>
+
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    @endif
+                    <?php endif; ?>
                     
-                    @if($booking)
+                    <?php if($booking): ?>
                         <div class="row">
                             <!-- Booking Details -->
                             <div class="col-md-6">
                                 <h5 class="border-bottom pb-2 mb-3">Booking Details</h5>
-                                <p><strong>Booking ID:</strong> #{{ $booking->id }}</p>
-                                <p><strong>Booking Date:</strong> {{ $booking->created_at->format('d M, Y h:i A') }}</p>
+                                <p><strong>Booking ID:</strong> #<?php echo e($booking->id); ?></p>
+                                <p><strong>Booking Date:</strong> <?php echo e($booking->created_at->format('d M, Y h:i A')); ?></p>
                                 <p><strong>Status:</strong> 
-                                    @if($booking->status === 'confirmed')
+                                    <?php if($booking->status === 'confirmed'): ?>
                                         <span class="badge bg-success">Confirmed</span>
-                                    @elseif($booking->status === 'pending_verification')
+                                    <?php elseif($booking->status === 'pending_verification'): ?>
                                         <span class="badge bg-info">Payment Under Verification</span>
-                                    @elseif($booking->status === 'cancelled')
+                                    <?php elseif($booking->status === 'cancelled'): ?>
                                         <span class="badge bg-danger">Cancelled</span>
-                                    @elseif($booking->status === 'completed')
+                                    <?php elseif($booking->status === 'completed'): ?>
                                         <span class="badge bg-primary">Completed</span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="badge bg-warning text-dark">Pending</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </p>
 
-                                {{-- Show payment status if payment method is set --}}
-                                @if($booking->payment_method)
+                                
+                                <?php if($booking->payment_method): ?>
                                     <p><strong>Payment Method:</strong> 
-                                        @if($booking->payment_method === 'qr_code')
+                                        <?php if($booking->payment_method === 'qr_code'): ?>
                                             QR Code Payment
-                                        @elseif($booking->payment_method === 'bank_transfer')
+                                        <?php elseif($booking->payment_method === 'bank_transfer'): ?>
                                             Bank Transfer
-                                        @elseif($booking->payment_method === 'pay_later')
+                                        <?php elseif($booking->payment_method === 'pay_later'): ?>
                                             Pay at Pickup
-                                        @else
-                                            {{ ucfirst(str_replace('_', ' ', $booking->payment_method)) }}
-                                        @endif
-                                    </p>
-                                @endif
+                                        <?php else: ?>
+                                            <?php echo e(ucfirst(str_replace('_', ' ', $booking->payment_method))); ?>
 
-                                {{-- Show verification message for QR payments --}}
-                                @if($booking->status === 'pending_verification' && $booking->payment_method === 'qr_code')
+                                        <?php endif; ?>
+                                    </p>
+                                <?php endif; ?>
+
+                                
+                                <?php if($booking->status === 'pending_verification' && $booking->payment_method === 'qr_code'): ?>
                                     <div class="alert alert-info">
                                         <i class="fas fa-clock me-2"></i>
                                         Your payment screenshot has been submitted and is being verified. We'll confirm your booking shortly.
                                     </div>
-                                @endif
+                                <?php endif; ?>
                                 
                                 <h5 class="border-bottom pb-2 mb-3 mt-4">Trip Details</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p><strong>Pick-up:</strong></p>
-                                        <p>{{ $booking->pickup_location }}</p>
+                                        <p><?php echo e($booking->pickup_location); ?></p>
                                         <p>
-                                            {{ $booking->pickup_datetime->setTimezone('Asia/Thimphu')->format('d M, Y h:i A') }}
+                                            <?php echo e($booking->pickup_datetime->setTimezone('Asia/Thimphu')->format('d M, Y h:i A')); ?>
+
                                         </p>
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <p><strong>Drop-off:</strong></p>
-                                        <p>{{ $booking->dropoff_location }}</p>
+                                        <p><?php echo e($booking->dropoff_location); ?></p>
                                         <p>
-                                            {{ $booking->dropoff_datetime->setTimezone('Asia/Thimphu')->format('d M, Y h:i A') }}
+                                            <?php echo e($booking->dropoff_datetime->setTimezone('Asia/Thimphu')->format('d M, Y h:i A')); ?>
+
                                         </p>
                                     </div>                                    
                                 </div>
                                 
                                 <div class="mt-4">
-                                    @php
+                                    <?php
                                         $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
                                         $days = floor($hours / 24);
                                         $remainingHours = $hours % 24;
-                                    @endphp
+                                    ?>
                                     <p><strong>Duration:</strong> 
-                                        @if($days > 0)
-                                            {{ $days }} day{{ $days > 1 ? 's' : '' }}
-                                        @endif
-                                        @if($remainingHours > 0)
-                                            {{ $remainingHours }} hour{{ $remainingHours > 1 ? 's' : '' }}
-                                        @endif
+                                        <?php if($days > 0): ?>
+                                            <?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?>
+
+                                        <?php endif; ?>
+                                        <?php if($remainingHours > 0): ?>
+                                            <?php echo e($remainingHours); ?> hour<?php echo e($remainingHours > 1 ? 's' : ''); ?>
+
+                                        <?php endif; ?>
                                     </p>
                                 </div>
                             </div>
                             
                             <!-- Vehicle Details -->
                             <div class="col-md-6">
-                                @if($booking->car)
+                                <?php if($booking->car): ?>
                                     <h5 class="border-bottom pb-2 mb-3">Vehicle Details</h5>
                                     <div class="car-details p-3 bg-light rounded">
                                         <div class="text-center mb-3">
-                                            @if($booking->car->images && $booking->car->images->count())
+                                            <?php if($booking->car->images && $booking->car->images->count()): ?>
                                                 <!-- Carousel for Images -->
                                                 <div id="carImageCarouselSummary" class="carousel slide" data-bs-ride="carousel">
                                                     <div class="carousel-inner">
-                                                        @foreach($booking->car->images as $key => $image)
-                                                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                                                <img src="{{ asset($image->image_path) }}" alt="{{ $booking->car->maker }} {{ $booking->car->model }}" class="d-block mx-auto" style="max-height: 150px;">
+                                                        <?php $__currentLoopData = $booking->car->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <div class="carousel-item <?php echo e($key == 0 ? 'active' : ''); ?>">
+                                                                <img src="<?php echo e(asset($image->image_path)); ?>" alt="<?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?>" class="d-block mx-auto" style="max-height: 150px;">
                                                             </div>
-                                                        @endforeach
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </div>
                                                     <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarouselSummary" data-bs-slide="prev">
                                                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -122,43 +128,43 @@
                                                         <span class="visually-hidden">Next</span>
                                                     </button>
                                                 </div>
-                                            @elseif($booking->car->car_image)
-                                                <img src="{{ asset($booking->car->car_image) }}" alt="{{ $booking->car->maker }} {{ $booking->car->model }}" class="img-fluid" style="max-height: 150px;">
-                                            @else
+                                            <?php elseif($booking->car->car_image): ?>
+                                                <img src="<?php echo e(asset($booking->car->car_image)); ?>" alt="<?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?>" class="img-fluid" style="max-height: 150px;">
+                                            <?php else: ?>
                                                 <div class="bg-secondary text-white p-4 rounded">
                                                     <i class="fas fa-car fa-3x"></i>
                                                 </div>
-                                            @endif
+                                            <?php endif; ?>
                                         </div>
                                         
-                                        <h5 class="mb-2">{{ $booking->car->maker }} {{ $booking->car->model }}</h5>
-                                        <p class="mb-1"><i class="fas fa-cog me-2"></i> {{ $booking->car->transmission_type }}</p>
-                                        <p class="mb-1"><i class="fas fa-gas-pump me-2"></i> {{ $booking->car->fuel_type }}</p>
-                                        <p class="mb-1"><i class="fas fa-users me-2"></i> {{ $booking->car->number_of_seats }} seats</p>
+                                        <h5 class="mb-2"><?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?></h5>
+                                        <p class="mb-1"><i class="fas fa-cog me-2"></i> <?php echo e($booking->car->transmission_type); ?></p>
+                                        <p class="mb-1"><i class="fas fa-gas-pump me-2"></i> <?php echo e($booking->car->fuel_type); ?></p>
+                                        <p class="mb-1"><i class="fas fa-users me-2"></i> <?php echo e($booking->car->number_of_seats); ?> seats</p>
                                         
                                         <div class="mt-3 pt-3 border-top">
                                             <h6>Daily Rate:</h6>
-                                            <h4>Nu. {{ number_format($booking->car->price, 2) }}/day</h4>
+                                            <h4>Nu. <?php echo e(number_format($booking->car->price, 2)); ?>/day</h4>
                                         </div>
                                     </div>
-                                @else
+                                <?php else: ?>
                                     <div class="alert alert-warning">
                                         Vehicle details not available
                                     </div>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </div>
                         
                         <!-- Price Summary -->
-                        @if($booking->car)
-                        @php
+                        <?php if($booking->car): ?>
+                        <?php
                             $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
                             $days = ceil($hours / 24); // Round up to full days for pricing
                             $dailyRate = $booking->car->price;
                             $insuranceFee = 200;
                             $serviceFee = 100;
                             $totalPrice = ($dailyRate * $days) + $insuranceFee + $serviceFee;
-                        @endphp
+                        ?>
 
                         <div class="row mt-4">
                             <div class="col-12">
@@ -167,14 +173,14 @@
                                         <h5>Price Summary</h5>
                                         <div class="row">
                                             <div class="col-md-8">
-                                                <p>{{ $days }} day{{ $days > 1 ? 's' : '' }} x Nu. {{ number_format($dailyRate, 2) }}</p>
+                                                <p><?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?> x Nu. <?php echo e(number_format($dailyRate, 2)); ?></p>
                                                 <p>Insurance</p>
                                                 <p>Service Fee</p>
                                             </div>
                                             <div class="col-md-4 text-end">
-                                                <p>Nu. {{ number_format($dailyRate * $days, 2) }}</p>
-                                                <p>Nu. {{ number_format($insuranceFee, 2) }}</p>
-                                                <p>Nu. {{ number_format($serviceFee, 2) }}</p>
+                                                <p>Nu. <?php echo e(number_format($dailyRate * $days, 2)); ?></p>
+                                                <p>Nu. <?php echo e(number_format($insuranceFee, 2)); ?></p>
+                                                <p>Nu. <?php echo e(number_format($serviceFee, 2)); ?></p>
                                             </div>
                                         </div>
                                         <hr>
@@ -183,50 +189,50 @@
                                                 <h5>Total</h5>
                                             </div>
                                             <div class="col-md-4 text-end">
-                                                <h5>Nu. {{ number_format($totalPrice, 2) }}</h5>
+                                                <h5>Nu. <?php echo e(number_format($totalPrice, 2)); ?></h5>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        @endif
+                        <?php endif; ?>
 
                         <!-- Back to Home and Print Booking Buttons -->
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
-                                    @auth('customer')
-                                        {{-- Only show Pay Now button if booking is still pending and no payment method set --}}
-                                        @if($booking->status === 'pending' && !$booking->payment_method)
-                                            @if(auth('customer')->user()->drivingLicense)
-                                                <a href="{{ route('payment.page', ['bookingId' => $booking->id]) }}" class="btn btn-success">
+                                    <?php if(auth()->guard('customer')->check()): ?>
+                                        
+                                        <?php if($booking->status === 'pending' && !$booking->payment_method): ?>
+                                            <?php if(auth('customer')->user()->drivingLicense): ?>
+                                                <a href="<?php echo e(route('payment.page', ['bookingId' => $booking->id])); ?>" class="btn btn-success">
                                                     <i class="fas fa-credit-card me-2"></i>Pay Now
                                                 </a>
-                                            @else
+                                            <?php else: ?>
                                                 <!-- Show verification prompt -->
                                                 <div class="alert alert-warning w-100 text-center mb-0 me-3">
                                                     <div class="d-flex flex-column align-items-center">
                                                         <h5>Please upload your documents to get your profile verified!</h5>
                                                         <p class="mb-3">Your Profile is not verified.</p>
-                                                        <a href="{{ route('customer.profile') }}" class="btn btn-primary">
+                                                        <a href="<?php echo e(route('customer.profile')); ?>" class="btn btn-primary">
                                                             <i class="fas fa-upload me-2"></i>Upload Driving License
                                                         </a>
                                                     </div>
                                                 </div>
-                                            @endif
-                                        @elseif($booking->status === 'pending_verification')
+                                            <?php endif; ?>
+                                        <?php elseif($booking->status === 'pending_verification'): ?>
                                             <div class="alert alert-success w-100 text-center mb-0 me-3">
                                                 <i class="fas fa-check-circle me-2"></i>
                                                 Payment submitted successfully! Your booking will be confirmed once payment is verified.
                                             </div>
-                                        @elseif($booking->status === 'confirmed')
+                                        <?php elseif($booking->status === 'confirmed'): ?>
                                             <div class="alert alert-success w-100 text-center mb-0 me-3">
                                                 <i class="fas fa-check-circle me-2"></i>
                                                 Your booking is confirmed! We'll contact you before the pickup time.
                                             </div>
-                                        @endif
-                                    @endauth
+                                        <?php endif; ?>
+                                    <?php endif; ?>
                                     
                                     <a href="#" class="btn btn-primary" onclick="window.print()">
                                         <i class="fas fa-print me-2"></i>Print Booking
@@ -235,21 +241,21 @@
                             </div>
                         </div>
 
-                    @else
+                    <?php else: ?>
                         <div class="alert alert-warning">
                             <h5>No booking information found!</h5>
                             <p>It seems like there's no booking information available. Please try booking a car first.</p>
-                            <a href="{{ route('home') }}" class="btn btn-primary mt-3">Browse Cars</a>
+                            <a href="<?php echo e(route('home')); ?>" class="btn btn-primary mt-3">Browse Cars</a>
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var carCarouselSummary = new bootstrap.Carousel(document.getElementById('carImageCarouselSummary'), {
@@ -258,4 +264,5 @@
         });
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/booking/summary.blade.php ENDPATH**/ ?>
