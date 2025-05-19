@@ -13,6 +13,10 @@ use App\Notifications\LicenseVerificationNotification;
 use App\Models\AdminNotification; 
 use App\Mail\LicenseVerificationNotification as LicenseVerificationMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
+
 
 
 
@@ -262,6 +266,128 @@ class CustomerProfileController extends Controller
         }
         
         return view('customer.license', compact('license', 'customer'));
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        try {
+            Log::info('Avatar upload started', ['user_id' => Auth::guard('customer')->id()]);
+
+            // Check if user is authenticated
+            $customer = Auth::guard('customer')->user();
+            if (!$customer) {
+                Log::warning('Unauthenticated avatar upload attempt');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You must be logged in to upload a profile picture.'
+                ], 401);
+            }
+
+            // Check if request has file
+            if (!$request->hasFile('avatar')) {
+                Log::warning('No file in avatar upload request');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No image file was uploaded.'
+                ], 422);
+            }
+
+            // Validate the uploaded file
+            $validator = Validator::make($request->all(), [
+                'avatar' => [
+                    'required',
+                    'image',
+                    'mimes:jpeg,png,jpg,gif',
+                    'max:5120', // 5MB max file size
+                    'dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000'
+                ],
+            ]);
+
+            if ($validator->fails()) {
+                Log::warning('Avatar validation failed', $validator->errors()->toArray());
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first('avatar')
+                ], 422);
+            }
+
+            $image = $request->file('avatar');
+            
+            // Check if file is valid
+            if (!$image->isValid()) {
+                Log::error('Invalid file uploaded');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The uploaded file is corrupted or invalid.'
+                ], 422);
+            }
+
+            // Define the upload directory
+            $uploadDirectory = public_path('customerprofile');
+            
+            // Create directory if it doesn't exist
+            if (!File::exists($uploadDirectory)) {
+                File::makeDirectory($uploadDirectory, 0755, true);
+                Log::info('Created customerprofile directory');
+            }
+
+            // Delete old profile image if it exists
+            if ($customer->profile_image) {
+                $oldImagePath = $uploadDirectory . '/' . $customer->profile_image;
+                if (File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                    Log::info('Deleted old profile image', ['path' => $oldImagePath]);
+                }
+            }
+
+            // Generate unique filename
+            $imageName = 'profile_' . $customer->id . '_' . time() . '.' . $image->getClientOriginalExtension();
+            
+            // Move the uploaded file to the public directory
+            $moved = $image->move($uploadDirectory, $imageName);
+            
+            if (!$moved) {
+                Log::error('Failed to move uploaded image to public directory');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save the uploaded image.'
+                ], 500);
+            }
+
+            // Update customer's profile_image field
+            $updated = $customer->update(['profile_image' => $imageName]);
+            
+            if (!$updated) {
+                Log::error('Failed to update customer profile_image in database');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update profile in database.'
+                ], 500);
+            }
+
+            Log::info('Avatar uploaded successfully', [
+                'user_id' => $customer->id,
+                'filename' => $imageName
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile picture updated successfully!',
+                'image_url' => asset('customerprofile/' . $imageName)
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Avatar upload exception', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::guard('customer')->id()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred. Please try again later.'
+            ], 500);
+        }
     }
 
 

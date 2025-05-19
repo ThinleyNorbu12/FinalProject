@@ -2,6 +2,90 @@
 
 @section('content')
 <!-- Main Content -->
+<div class="dashboard-sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
+            <h2>Admin Portal</h2>
+        </div>
+        <button id="sidebar-toggle" class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div> 
+    <div class="admin-profile">
+        @if(Auth::guard('admin')->check())
+            <div class="profile-avatar">
+                <img src="{{ asset('assets/images/thinley.jpg') }}" alt="Admin Avatar">
+            </div>
+            <div class="profile-info">
+                <h3>{{ Auth::guard('admin')->user()->name }}</h3>
+                <span>Administrator</span>
+            </div>
+        @endif
+    </div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-heading">Car Owner</div>
+
+            <a href="{{ route('car-admin.new-registration-cars') }}" class="sidebar-menu-item ">
+                <i class="fas fa-car"></i>
+                <span>Car Registration</span>
+            </a>
+
+            <a href="{{ route('car-admin.inspection-requests') }}" class="sidebar-menu-item">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Inspection Requests</span>
+            </a>
+
+            <a href="{{ route('car-admin.approve-inspected-cars') }}" class="sidebar-menu-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Approve Inspections</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-heading">Customer</div>
+
+            <a href="{{ route('admin.verify-users') }}" class="sidebar-menu-item">
+                <i class="fas fa-id-card"></i>
+                <span>Verify Users</span>
+            </a>
+
+            <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a>
+
+            <a href="{{ url('admin/update-car-registration') }}" class="sidebar-menu-item">
+                <i class="fas fa-edit"></i>
+                <span>Update Registration</span>
+            </a>
+
+            <a href="{{ url('admin/car-information-update') }}" class="sidebar-menu-item">
+                <i class="fas fa-info-circle"></i>
+                <span>Car Information</span>
+            </a>
+
+            <a href="{{ route ('admin.booked-car') }}" class="sidebar-menu-item active">
+                <i class="fas fa-calendar-check"></i>
+                <span>Booked Cars</span>
+            </a>
+
+            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+
+            <form method="POST" action="{{ route('admin.logout') }}" id="logout-form" style="display: none;">
+                @csrf
+            </form>
+        </div>
+    </div>       
+</div>
 <div class="dashboard-content">
     <!-- Page Header -->
     <div class="page-header">
@@ -143,12 +227,16 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">Customer Information</h5>
-                </div>
+                </div>             
                 <div class="card-body">
                     @if($booking->customer)
                         <div class="d-flex align-items-center mb-3">
                             <div class="flex-shrink-0">
-                                <img src="{{ asset('assets/images/avatar-placeholder.jpg') }}" class="rounded-circle" width="50" height="50" alt="Customer Avatar">
+                                @if($booking->customer->profile_image && file_exists(public_path('customerprofile/' . $booking->customer->profile_image)))
+                                    <img src="{{ asset('customerprofile/' . $booking->customer->profile_image) }}" class="rounded-circle" width="50" height="50" alt="Customer Avatar" style="object-fit: cover;">
+                                @else
+                                    <img src="{{ asset('customerprofile/profile.png') }}" class="rounded-circle" width="50" height="50" alt="Customer Avatar">
+                                @endif
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">{{ $booking->customer->name }}</h6>
@@ -172,25 +260,89 @@
             </div>
 
             <!-- Car Info -->
-            <div class="card">
+            {{-- <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">Car Information</h5>
                 </div>
                 <div class="card-body">
                     @if($booking->car)
                         <div class="text-center mb-3">
-                            <img src="{{ asset('assets/images/car-placeholder.jpg') }}" class="img-fluid rounded" alt="Car Image">
+                            @if(isset($booking->car) && isset($booking->car->car_image) && !empty($booking->car->car_image))
+                                <img src="{{ asset($booking->car->car_image) }}" class="img-fluid rounded" alt="Car Image" style="max-height: 200px; object-fit: cover;">
+                            @else
+                                <img src="{{ asset('carimage/defaultcar.jpg') }}" class="img-fluid rounded" alt="Car Image">
+                            @endif
                         </div>
-
-                        <h5 class="mb-3">{{ $booking->car->brand }} {{ $booking->car->model }}</h5>
+                        <h5 class="mb-3">{{ $booking->car->maker }} {{ $booking->car->model }}</h5>
 
                         <div class="car-details">
-                            <p><i class="fas fa-car me-2"></i> <strong>Type:</strong> {{ $booking->car->car_type ?? 'N/A' }}</p>
-                            <p><i class="fas fa-tachometer-alt me-2"></i> <strong>Year:</strong> {{ $booking->car->year ?? 'N/A' }}</p>
+                            <p><i class="fas fa-car me-2"></i> <strong>Type:</strong> {{ $booking->car->vehicle_type ?? 'N/A' }}</p>
+                            <p><i class="fas fa-tachometer-alt me-2"></i> <strong>Mileage:</strong> {{ number_format($booking->car->mileage ?? 0) }} km</p>
                             <p><i class="fas fa-gas-pump me-2"></i> <strong>Fuel Type:</strong> {{ $booking->car->fuel_type ?? 'N/A' }}</p>
-                            <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN {{ number_format($booking->car->price_per_day ?? 0, 2) }}</p>
+                            <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN {{ number_format($booking->car->price ?? 0, 2) }}</p>
                         </div>
 
+                        <a href="#" class="btn btn-sm btn-outline-primary mt-2">
+                            <i class="fas fa-info-circle"></i> View Car Details
+                        </a>
+                    @else
+                        <p class="text-muted">Car information not available</p>
+                    @endif
+                </div>
+            </div> --}}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Car Information</h5>
+                </div>
+                <div class="card-body">
+                    @if($booking->car)
+                        <!-- Car Images Carousel -->
+                        @if($booking->car->images && count($booking->car->images))
+                            <div class="carousel-container mb-4">
+                                <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        @foreach($booking->car->images as $key => $image)
+                                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                                <img src="{{ asset($image->image_path) }}" class="d-block mx-auto" alt="Car Image" style="max-height: 200px; object-fit: cover;">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                    <div class="carousel-indicators">
+                                        @foreach($booking->car->images as $key => $image)
+                                            <button type="button" data-bs-target="#carImageCarousel" data-bs-slide-to="{{ $key }}"
+                                                class="{{ $key == 0 ? 'active' : '' }}" aria-current="{{ $key == 0 ? 'true' : 'false' }}"
+                                                aria-label="Slide {{ $key + 1 }}"></button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        @elseif(isset($booking->car->car_image) && !empty($booking->car->car_image))
+                            <div class="text-center mb-3">
+                                <img src="{{ asset($booking->car->car_image) }}" class="img-fluid rounded" alt="Car Image" style="max-height: 200px; object-fit: cover;">
+                            </div>
+                        @else
+                            <div class="text-center mb-3">
+                                <img src="{{ asset('carimage/defaultcar.jpg') }}" class="img-fluid rounded" alt="Car Image">
+                            </div>
+                        @endif
+                        
+                        <h5 class="mb-3">{{ $booking->car->maker }} {{ $booking->car->model }}</h5>
+                        
+                        <div class="car-details">
+                            <p><i class="fas fa-car me-2"></i> <strong>Type:</strong> {{ $booking->car->vehicle_type ?? 'N/A' }}</p>
+                            <p><i class="fas fa-tachometer-alt me-2"></i> <strong>Mileage:</strong> {{ number_format($booking->car->mileage ?? 0) }} km</p>
+                            <p><i class="fas fa-gas-pump me-2"></i> <strong>Fuel Type:</strong> {{ $booking->car->fuel_type ?? 'N/A' }}</p>
+                            <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN {{ number_format($booking->car->price ?? 0, 2) }}</p>
+                        </div>
+                        
                         <a href="#" class="btn btn-sm btn-outline-primary mt-2">
                             <i class="fas fa-info-circle"></i> View Car Details
                         </a>

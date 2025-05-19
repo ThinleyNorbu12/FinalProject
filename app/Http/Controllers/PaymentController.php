@@ -397,7 +397,115 @@ public function showPayment($paymentId)
     /**
      * Verify QR payment 
      */
-    public function verifyQrPayment(Request $request, $paymentId)
+//     public function verifyQrPayment(Request $request, $paymentId)
+// {
+//     // Log request at start with more details
+//     \Log::debug('QR Payment verification started', [
+//         'payment_id' => $paymentId,
+//         'request_data' => $request->all()
+//     ]);
+    
+//     try {
+//         // Find the payment record
+//         $payment = Payment::findOrFail($paymentId);
+//         \Log::debug('Payment found', [
+//             'payment_id' => $payment->id,
+//             'payment_method' => $payment->payment_method,
+//             'payment_status' => $payment->status
+//         ]);
+        
+//         // Validate request
+//         $request->validate([
+//             'verification_status' => 'required|in:confirmed,rejected',
+//             'admin_notes' => 'nullable|string',
+//         ]);
+        
+//         // Get the admin user
+//         $admin = Auth::guard('admin')->user();
+        
+//         if (!$admin) {
+//             \Log::error('Admin authentication failed for payment verification');
+//             return back()->with('error', 'Admin authentication failed. Please login again.');
+//         }
+        
+//         // Log admin details
+//         \Log::debug('Admin authenticated', [
+//             'admin_id' => $admin->id, 
+//             'admin_email' => $admin->email
+//         ]);
+        
+//         // Check if this admin has a corresponding user record
+//         $userId = DB::table('users')->where('email', $admin->email)->value('id');
+        
+//         if (!$userId) {
+//             \Log::warning('Admin verification failed: Admin (ID: ' . $admin->id .
+//                           ') tried to verify payment but has no corresponding user record');
+                     
+//             return back()->with('error',
+//                  'Verification failed: Your admin account is not linked to a user record. Please contact the system administrator.');
+//         }
+        
+//         // Debugging: Check if the QR payment exists
+//         $qrPayment = QrPayment::where('payment_id', $payment->id)->first();
+//         \Log::debug('QR Payment lookup result', [
+//             'payment_id' => $payment->id,
+//             'qr_payment_exists' => $qrPayment ? true : false,
+//             'qr_payment_id' => $qrPayment ? $qrPayment->id : null
+//         ]);
+        
+//         // If there's no QR payment record, create one
+//         if (!$qrPayment) {
+//             \Log::info('QR Payment record not found, creating new record');
+//             $qrPayment = new QrPayment();
+//             $qrPayment->payment_id = $payment->id;
+//             $qrPayment->bank_code = 'bob'; // Set a default or pull from your form
+//             $qrPayment->verification_status = 'pending';
+//             $qrPayment->save();
+            
+//             \Log::debug('Created new QR payment record', [
+//                 'qr_payment_id' => $qrPayment->id,
+//                 'payment_id' => $payment->id
+//             ]);
+//         }
+        
+//         // Update the QR payment
+//         $qrPayment->verification_status = $request->verification_status;
+//         $qrPayment->verified_by = $userId;
+//         $qrPayment->verified_at = now();
+//         $qrPayment->admin_notes = $request->admin_notes;
+//         $qrPayment->save();
+        
+//         \Log::debug('QR Payment updated', [
+//             'qr_payment_id' => $qrPayment->id,
+//             'new_status' => $request->verification_status
+//         ]);
+        
+//         // Update the payment status
+//         $payment->status = $request->verification_status === 'confirmed' ? 'completed' : 'failed';
+//         $payment->save();
+        
+//         \Log::debug('Main payment record updated', [
+//             'payment_id' => $payment->id,
+//             'new_status' => $payment->status
+//         ]);
+        
+//         // Log this action
+//         \Log::info('Payment verification: Payment #' . $payment->id . ' marked as ' . 
+//                    $request->verification_status . ' by admin #' . $admin->id . ' (user ID: ' . $userId . ')');
+        
+//         return redirect()->route('admin.payments.show', $payment->id)
+//             ->with('success', 'Payment has been ' . ($request->verification_status === 'confirmed' ? 'confirmed' : 'rejected'));
+    
+//     } catch (\Exception $e) {
+//         \Log::error('Exception in verifyQrPayment: ' . $e->getMessage(), [
+//             'payment_id' => $paymentId,
+//             'trace' => $e->getTraceAsString()
+//         ]);
+        
+//         return back()->with('error', 'An error occurred during verification: ' . $e->getMessage());
+//     }
+// }
+public function verifyQrPayment(Request $request, $paymentId)
 {
     // Log request at start with more details
     \Log::debug('QR Payment verification started', [
@@ -434,71 +542,81 @@ public function showPayment($paymentId)
             'admin_email' => $admin->email
         ]);
         
-        // Check if this admin has a corresponding user record
-        $userId = DB::table('users')->where('email', $admin->email)->value('id');
+        // Use database transaction to ensure data integrity
+        DB::beginTransaction();
         
-        if (!$userId) {
-            \Log::warning('Admin verification failed: Admin (ID: ' . $admin->id .
-                          ') tried to verify payment but has no corresponding user record');
-                     
-            return back()->with('error',
-                 'Verification failed: Your admin account is not linked to a user record. Please contact the system administrator.');
-        }
-        
-        // Debugging: Check if the QR payment exists
-        $qrPayment = QrPayment::where('payment_id', $payment->id)->first();
-        \Log::debug('QR Payment lookup result', [
-            'payment_id' => $payment->id,
-            'qr_payment_exists' => $qrPayment ? true : false,
-            'qr_payment_id' => $qrPayment ? $qrPayment->id : null
-        ]);
-        
-        // If there's no QR payment record, create one
-        if (!$qrPayment) {
-            \Log::info('QR Payment record not found, creating new record');
-            $qrPayment = new QrPayment();
-            $qrPayment->payment_id = $payment->id;
-            $qrPayment->bank_code = 'bob'; // Set a default or pull from your form
-            $qrPayment->verification_status = 'pending';
-            $qrPayment->save();
+        try {
+            // Find or create QR payment record
+            $qrPayment = QrPayment::where('payment_id', $payment->id)->first();
             
-            \Log::debug('Created new QR payment record', [
-                'qr_payment_id' => $qrPayment->id,
-                'payment_id' => $payment->id
+            if (!$qrPayment) {
+                \Log::info('QR Payment record not found, creating new record');
+                $qrPayment = QrPayment::create([
+                    'payment_id' => $payment->id,
+                    'bank_code' => 'bob', // Set default or get from form
+                    'verification_status' => 'pending'
+                ]);
+                
+                \Log::debug('Created new QR payment record', [
+                    'qr_payment_id' => $qrPayment->id,
+                    'payment_id' => $payment->id
+                ]);
+            }
+            
+            // Update the QR payment record
+            $qrPayment->update([
+                'verification_status' => $request->verification_status,
+                'verified_by' => $admin->id, // Use admin ID directly instead of looking up user
+                'verified_at' => now(),
+                'admin_notes' => $request->admin_notes
             ]);
+            
+            \Log::debug('QR Payment updated', [
+                'qr_payment_id' => $qrPayment->id,
+                'new_verification_status' => $request->verification_status,
+                'verified_by' => $admin->id
+            ]);
+            
+            // Update the main payment status
+            $newPaymentStatus = $request->verification_status === 'confirmed' ? 'completed' : 'failed';
+            $payment->update([
+                'status' => $newPaymentStatus
+            ]);
+            
+            \Log::debug('Main payment record updated', [
+                'payment_id' => $payment->id,
+                'old_status' => $payment->getOriginal('status'),
+                'new_status' => $newPaymentStatus
+            ]);
+            
+            // Commit the transaction
+            DB::commit();
+            
+            // Log successful verification
+            \Log::info('Payment verification completed successfully', [
+                'payment_id' => $payment->id,
+                'verification_status' => $request->verification_status,
+                'payment_status' => $newPaymentStatus,
+                'admin_id' => $admin->id
+            ]);
+            
+            $successMessage = $request->verification_status === 'confirmed' 
+                ? 'Payment has been confirmed successfully!' 
+                : 'Payment has been rejected.';
+                
+            return redirect()->route('admin.payments.show', $payment->id)
+                ->with('success', $successMessage);
+                
+        } catch (\Exception $e) {
+            // Rollback transaction on error
+            DB::rollback();
+            throw $e;
         }
-        
-        // Update the QR payment
-        $qrPayment->verification_status = $request->verification_status;
-        $qrPayment->verified_by = $userId;
-        $qrPayment->verified_at = now();
-        $qrPayment->admin_notes = $request->admin_notes;
-        $qrPayment->save();
-        
-        \Log::debug('QR Payment updated', [
-            'qr_payment_id' => $qrPayment->id,
-            'new_status' => $request->verification_status
-        ]);
-        
-        // Update the payment status
-        $payment->status = $request->verification_status === 'confirmed' ? 'completed' : 'failed';
-        $payment->save();
-        
-        \Log::debug('Main payment record updated', [
-            'payment_id' => $payment->id,
-            'new_status' => $payment->status
-        ]);
-        
-        // Log this action
-        \Log::info('Payment verification: Payment #' . $payment->id . ' marked as ' . 
-                   $request->verification_status . ' by admin #' . $admin->id . ' (user ID: ' . $userId . ')');
-        
-        return redirect()->route('admin.payments.show', $payment->id)
-            ->with('success', 'Payment has been ' . ($request->verification_status === 'confirmed' ? 'confirmed' : 'rejected'));
     
     } catch (\Exception $e) {
-        \Log::error('Exception in verifyQrPayment: ' . $e->getMessage(), [
+        \Log::error('Exception in verifyQrPayment', [
             'payment_id' => $paymentId,
+            'error_message' => $e->getMessage(),
             'trace' => $e->getTraceAsString()
         ]);
         

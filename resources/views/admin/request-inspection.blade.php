@@ -12,11 +12,11 @@
             <i class="fas fa-bars"></i>
         </button>
     </div>
-    
+
     <div class="admin-profile">
         @if(Auth::guard('admin')->check())
             <div class="profile-avatar">
-                {{-- <img src="{{ asset('assets/images/avatar-placeholder.jpg') }}" alt="Admin Avatar"> --}}
+                <img src="{{ asset('assets/images/thinley.jpg') }}" alt="Admin Avatar">
             </div>
             <div class="profile-info">
                 <h3>{{ Auth::guard('admin')->user()->name }}</h3>
@@ -24,65 +24,70 @@
             </div>
         @endif
     </div>
-    
-    <nav class="sidebar-nav">
-        <ul>
-            <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
-    
+
             <div class="sidebar-divider"></div>
-    
             <div class="sidebar-heading">Car Owner</div>
-    
-            <a href="{{ route('car-admin.new-registration-cars') }}" class="sidebar-menu-item {{ request()->routeIs('car-admin.new-registration-cars') ? 'active' : '' }}">
+
+            <a href="{{ route('car-admin.new-registration-cars') }}" class="sidebar-menu-item ">
                 <i class="fas fa-car"></i>
                 <span>Car Registration</span>
             </a>
-            <a href="{{ route('car-admin.inspection-requests') }}" class="sidebar-menu-item {{ request()->routeIs('car-admin.inspection-requests') ? 'active' : '' }}">
+
+            <a href="{{ route('car-admin.inspection-requests') }}" class="sidebar-menu-item active">
                 <i class="fas fa-clipboard-check"></i>
                 <span>Inspection Requests</span>
             </a>
-            <a href="{{ route('car-admin.approve-inspected-cars') }}" class="sidebar-menu-item {{ request()->routeIs('car-admin.approve-inspected-cars') ? 'active' : '' }}">
+
+            <a href="{{ route('car-admin.approve-inspected-cars') }}" class="sidebar-menu-item">
                 <i class="fas fa-check-circle"></i>
                 <span>Approve Inspections</span>
             </a>
-    
+
             <div class="sidebar-divider"></div>
-    
             <div class="sidebar-heading">Customer</div>
-    
-            <a href="{{ route('admin.verify-users') }}" class="sidebar-menu-item {{ request()->routeIs('admin.verify-users') || request()->routeIs('admin.user-verification.*') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.verify-users') }}" class="sidebar-menu-item">
                 <i class="fas fa-id-card"></i>
                 <span>Verify Users</span>
             </a>
-            <a href="{{ url('admin/view-payments') }}" class="sidebar-menu-item {{ request()->routeIs('admin.view-payments') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item">
                 <i class="fas fa-credit-card"></i>
                 <span>Payments</span>
             </a>
-            <a href="{{ url('admin/update-car-registration') }}" class="sidebar-menu-item {{ request()->routeIs('admin.update-car-registration') ? 'active' : '' }}">
+
+            <a href="{{ url('admin/update-car-registration') }}" class="sidebar-menu-item">
                 <i class="fas fa-edit"></i>
                 <span>Update Registration</span>
             </a>
-            <a href="{{ url('admin/car-information-update') }}" class="sidebar-menu-item {{ request()->routeIs('admin.car-information-update') ? 'active' : '' }}">
+
+            <a href="{{ url('admin/car-information-update') }}" class="sidebar-menu-item">
                 <i class="fas fa-info-circle"></i>
                 <span>Car Information</span>
             </a>
-            <a href="{{ url('admin/booked-car') }}" class="sidebar-menu-item {{ request()->routeIs('admin.booked-car') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.booked-car') }}" class="sidebar-menu-item">
                 <i class="fas fa-calendar-check"></i>
                 <span>Booked Cars</span>
             </a>
-    
+
             <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
             </a>
-            <form method="POST" action="{{ route('admin.logout') }}" id="logout-form">
+
+            <form method="POST" action="{{ route('admin.logout') }}" id="logout-form" style="display: none;">
                 @csrf
             </form>
-        </ul>
-    </nav>        
+        </div>
+    </div>
 </div>
 <div class="container mt-4">
     <h2 class="mb-4">Request for Car Inspection</h2>

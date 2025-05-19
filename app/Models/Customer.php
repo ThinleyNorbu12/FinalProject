@@ -69,6 +69,7 @@ class Customer extends Authenticatable
         'date_of_birth',
         'address',
         'gender',
+        'profile_image',
     ];
     
     protected $hidden = [
@@ -188,6 +189,14 @@ class Customer extends Authenticatable
     public function drivingLicense()
     {
         return $this->hasOne(DrivingLicense::class, 'customer_id');
+    }
+
+    public function getProfileImageUrlAttribute()
+    {
+        if ($this->profile_image) {
+            return asset('customerprofile/' . $this->profile_image);
+        }
+        return asset('customerprofile/profile.png'); // Default image
     }
 
 }

@@ -2604,6 +2604,7 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
+     * @property mixed $screenshot_image_path
      * @property string|null $notes
      * @property mixed $collection_method
      * @property string|null $collected_by_admin
@@ -2622,6 +2623,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<PayLaterPayment>|PayLaterPayment whereCollectedByAdmin($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PayLaterPayment>|PayLaterPayment whereCollectionMethod($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PayLaterPayment>|PayLaterPayment whereNotes($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PayLaterPayment>|PayLaterPayment whereScreenshotImagePath($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PayLaterPayment>|PayLaterPayment whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PayLaterPayment>|PayLaterPayment whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PayLaterPayment>|PayLaterPayment newModelQuery()
@@ -3261,7 +3263,7 @@ namespace App\Models {
      * @property int $id
      * @property-read \App\Models\CarBooking $booking
      * @property-read \App\Models\Payment $payment
-     * @property-read \App\Models\User $verifier
+     * @property-read \App\Models\Admin $verifiedBy
      * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment wherePaymentId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<QrPayment>|QrPayment whereBankCode($value)

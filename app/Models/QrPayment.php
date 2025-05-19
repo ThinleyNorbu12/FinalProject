@@ -60,9 +60,13 @@ class QrPayment extends Model
     /**
      * Get the user who verified this payment.
      */
-    public function verifier()
+    // public function verifier()
+    // {
+    //     return $this->belongsTo(User::class, 'verified_by');
+    // }
+    public function verifiedBy()
     {
-        return $this->belongsTo(User::class, 'verified_by');
+        return $this->belongsTo(Admin::class, 'verified_by');
     }
 
 }

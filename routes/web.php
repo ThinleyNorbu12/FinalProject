@@ -291,6 +291,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::post('/payments/{id}/update-status', [PaymentController::class, 'updateStatus'])->name('payments.update-status');
     // Verify QR Payment
     Route::post('payments/{payment}/verify-qr', [PaymentController::class, 'verifyQrPayment'])->name('payments.verify-qr');
+    
     // Collect Pay Later Payment
     Route::post('/payments/{id}/collect-pay-later', [PaymentController::class, 'collectPayLater'])->name('payments.collect-pay-later');
     // Verify Bank Transfer
@@ -349,6 +350,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/profile', [CustomerProfileController::class, 'profile'])->name('profile');
         Route::put('/profile/update', [CustomerProfileController::class, 'update'])->name('profile.update');
         Route::post('/profile/save-license', [CustomerProfileController::class, 'saveLicense'])->name('profile.save-license');
+        Route::post('/profile/update-avatar', [CustomerProfileController::class, 'updateAvatar'])->name('profile.update-avatar');
 
         // Driving License route
         Route::get('/license', [App\Http\Controllers\CustomerProfileController::class, 'showLicenseForm'])->name('license');

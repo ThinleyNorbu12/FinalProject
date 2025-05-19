@@ -11,8 +11,7 @@
         <button id="sidebar-toggle" class="sidebar-toggle">
             <i class="fas fa-bars"></i>
         </button>
-    </div>
-    
+    </div> 
     <div class="admin-profile">
         @if(Auth::guard('admin')->check())
             <div class="profile-avatar">
@@ -24,85 +23,68 @@
             </div>
         @endif
     </div>
-    
-    <nav class="sidebar-nav">
-        <ul>
-            <li>
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-    
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
             <div class="sidebar-divider"></div>
-    
             <div class="sidebar-heading">Car Owner</div>
-    
-            <li>
-                <a href="{{ route('car-admin.new-registration-cars') }}" class="sidebar-menu-item">
-                    <i class="fas fa-car"></i>
-                    <span>Car Registration</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('car-admin.inspection-requests') }}" class="sidebar-menu-item ">
-                    <i class="fas fa-clipboard-check"></i>
-                    <span>Inspection Requests</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('car-admin.approve-inspected-cars') }}" class="sidebar-menu-item active">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Approve Inspections</span>
-                </a>
-            </li>
-    
+
+            <a href="{{ route('car-admin.new-registration-cars') }}" class="sidebar-menu-item ">
+                <i class="fas fa-car"></i>
+                <span>Car Registration</span>
+            </a>
+
+            <a href="{{ route('car-admin.inspection-requests') }}" class="sidebar-menu-item">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Inspection Requests</span>
+            </a>
+
+            <a href="{{ route('car-admin.approve-inspected-cars') }}" class="sidebar-menu-item active">
+                <i class="fas fa-check-circle"></i>
+                <span>Approve Inspections</span>
+            </a>
+
             <div class="sidebar-divider"></div>
-    
             <div class="sidebar-heading">Customer</div>
-    
-            <li>
-                <a href="{{ route('admin.verify-users') }}" class="sidebar-menu-item">
-                    <i class="fas fa-id-card"></i>
-                    <span>Verify Users</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item">
-                    <i class="fas fa-credit-card"></i>
-                    <span>Payments</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url('admin/update-car-registration') }}" class="sidebar-menu-item">
-                    <i class="fas fa-edit"></i>
-                    <span>Update Registration</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url('admin/car-information-update') }}" class="sidebar-menu-item">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Car Information</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url('admin/booked-car') }}" class="sidebar-menu-item">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Booked Cars</span>
-                </a>
-            </li>
-    
-            <li>
-                <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-                <form method="POST" action="{{ route('admin.logout') }}" id="logout-form">
-                    @csrf
-                </form>
-            </li>
-        </ul>
-    </nav>        
+
+            <a href="{{ route('admin.verify-users') }}" class="sidebar-menu-item">
+                <i class="fas fa-id-card"></i>
+                <span>Verify Users</span>
+            </a>
+
+            <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a>
+
+            <a href="{{ url('admin/update-car-registration') }}" class="sidebar-menu-item">
+                <i class="fas fa-edit"></i>
+                <span>Update Registration</span>
+            </a>
+
+            <a href="{{ url('admin/car-information-update') }}" class="sidebar-menu-item">
+                <i class="fas fa-info-circle"></i>
+                <span>Car Information</span>
+            </a>
+
+            <a href="{{ route ('admin.booked-car') }}" class="sidebar-menu-item ">
+                <i class="fas fa-calendar-check"></i>
+                <span>Booked Cars</span>
+            </a>
+
+            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+
+            <form method="POST" action="{{ route('admin.logout') }}" id="logout-form" style="display: none;">
+                @csrf
+            </form>
+        </div>
+    </div>       
 </div>
 
 <div class="container">

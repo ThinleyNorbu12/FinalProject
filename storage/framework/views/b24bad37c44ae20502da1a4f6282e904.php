@@ -64,15 +64,15 @@
                     <div><strong>Price:</strong> Nu <?php echo e(number_format($car->price)); ?>/day</div>
                 </div>
                 <div class="mt-3">
-                    <div class="car-spec"><i class="spec-icon">🚗</i><span><?php echo e($car->number_of_doors); ?> Doors</span></div>
-                    <div class="car-spec"><i class="spec-icon">👥</i><span><?php echo e($car->number_of_seats); ?> Seats</span></div>
-                    <div class="car-spec"><i class="spec-icon">⚙️</i><span><?php echo e(ucfirst($car->transmission_type)); ?></span></div>
-                    <div class="car-spec"><i class="spec-icon">🧳</i><span><?php echo e($car->large_bags_capacity); ?> Large Bags</span></div>
-                    <div class="car-spec"><i class="spec-icon">🎒</i><span><?php echo e($car->small_bags_capacity); ?> Small Bags</span></div>
-                    <div class="car-spec"><i class="spec-icon">⛽</i><span><?php echo e($car->fuel_type); ?></span></div>
-                    <div class="car-spec"><i class="spec-icon">❄️</i><span><?php echo e($car->air_conditioning ? 'Air Conditioning' : 'No AC'); ?></span></div>
-                    <div class="car-spec"><i class="spec-icon">🎥</i><span><?php echo e($car->backup_camera ? 'Backup Camera' : 'No Backup Camera'); ?></span></div>
-                    <div class="car-spec"><i class="spec-icon">🔊</i><span><?php echo e($car->bluetooth ? 'Bluetooth Enabled' : 'No Bluetooth'); ?></span></div>
+                    <div class="car-spec"><i class="fas fa-door-open me-2"></i><span><?php echo e($car->number_of_doors); ?> Doors</span></div>
+                    <div class="car-spec"><i class="fas fa-users me-2"></i><span><?php echo e($car->number_of_seats); ?> Seats</span></div>
+                    <div class="car-spec"><i class="fas fa-cogs me-2"></i><span><?php echo e(ucfirst($car->transmission_type)); ?></span></div>
+                    <div class="car-spec"><i class="fas fa-suitcase-rolling me-2"></i><span><?php echo e($car->large_bags_capacity); ?> Large Bags</span></div>
+                    <div class="car-spec"><i class="fas fa-suitcase me-2"></i><span><?php echo e($car->small_bags_capacity); ?> Small Bags</span></div>
+                    <div class="car-spec"><i class="fas fa-gas-pump me-2"></i><span><?php echo e($car->fuel_type); ?></span></div>
+                    <div class="car-spec"><i class="fas fa-snowflake me-2"></i><span><?php echo e($car->air_conditioning ? 'Air Conditioning' : 'No AC'); ?></span></div>
+                    <div class="car-spec"><i class="fas fa-video me-2"></i><span><?php echo e($car->backup_camera ? 'Backup Camera' : 'No Backup Camera'); ?></span></div>
+                    <div class="car-spec"><i class="fas fa-music me-2"></i><span><?php echo e($car->bluetooth ? 'Bluetooth Enabled' : 'No Bluetooth'); ?></span></div>
                 </div>
                 <?php if($car->description): ?>
                     <div class="mt-3"><p><strong>Description:</strong> <?php echo e($car->description); ?></p></div>
@@ -115,11 +115,7 @@
                                     <input type="text" class="form-control" name="drop_location" required>
                                 </div>
                             </div>
-                            <div class="booking-timeline mb-3">
-                                <div class="timeline-car">🚗</div>
-                                <div class="timeline-line"></div>
-                            </div>
-                            <div class="text-muted small mb-3">Note: Time will be rounded off to the hour</div>
+                            
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">Book</button>
                                 <a href="<?php echo e(route('home')); ?>" class="btn btn-secondary">Cancel</a>

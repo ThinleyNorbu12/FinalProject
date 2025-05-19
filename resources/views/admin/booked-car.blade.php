@@ -2,6 +2,90 @@
 
 @section('content')
 <!-- Main Content -->
+<div class="dashboard-sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
+            <h2>Admin Portal</h2>
+        </div>
+        <button id="sidebar-toggle" class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div> 
+    <div class="admin-profile">
+        @if(Auth::guard('admin')->check())
+            <div class="profile-avatar">
+                <img src="{{ asset('assets/images/thinley.jpg') }}" alt="Admin Avatar">
+            </div>
+            <div class="profile-info">
+                <h3>{{ Auth::guard('admin')->user()->name }}</h3>
+                <span>Administrator</span>
+            </div>
+        @endif
+    </div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-heading">Car Owner</div>
+
+            <a href="{{ route('car-admin.new-registration-cars') }}" class="sidebar-menu-item ">
+                <i class="fas fa-car"></i>
+                <span>Car Registration</span>
+            </a>
+
+            <a href="{{ route('car-admin.inspection-requests') }}" class="sidebar-menu-item">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Inspection Requests</span>
+            </a>
+
+            <a href="{{ route('car-admin.approve-inspected-cars') }}" class="sidebar-menu-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Approve Inspections</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-heading">Customer</div>
+
+            <a href="{{ route('admin.verify-users') }}" class="sidebar-menu-item">
+                <i class="fas fa-id-card"></i>
+                <span>Verify Users</span>
+            </a>
+
+            <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a>
+
+            <a href="{{ url('admin/update-car-registration') }}" class="sidebar-menu-item">
+                <i class="fas fa-edit"></i>
+                <span>Update Registration</span>
+            </a>
+
+            <a href="{{ url('admin/car-information-update') }}" class="sidebar-menu-item">
+                <i class="fas fa-info-circle"></i>
+                <span>Car Information</span>
+            </a>
+
+            <a href="{{ route ('admin.booked-car') }}" class="sidebar-menu-item active">
+                <i class="fas fa-calendar-check"></i>
+                <span>Booked Cars</span>
+            </a>
+
+            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+
+            <form method="POST" action="{{ route('admin.logout') }}" id="logout-form" style="display: none;">
+                @csrf
+            </form>
+        </div>
+    </div>       
+</div>
 <div class="dashboard-content">
     <!-- Page Header -->
     <div class="page-header">
@@ -97,18 +181,19 @@
         </div>
     </div>
 
-    <!-- Bookings Table -->
+    <!-- Live Search -->
     <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Car Bookings</h5>
             <div class="export-options">
-                <button class="btn btn-sm btn-outline-secondary">Export CSV</button>
-                <button class="btn btn-sm btn-outline-secondary">Export PDF</button>
+                <button class="btn btn-sm btn-outline-secondary" id="export-csv">Export CSV</button>
+                <button class="btn btn-sm btn-outline-secondary" id="export-pdf">Export PDF</button>
             </div>
         </div>
         <div class="card-body">
+            <!-- DataTable will automatically add the search box here -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
+                <table id="bookings-table" class="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -141,8 +226,12 @@
                                 @endif
                             </td>
                             <td>{{ $booking->pickup_location }}</td>
-                            <td>{{ $booking->pickup_datetime->format('M d, Y h:i A') }}</td>
-                            <td>{{ $booking->dropoff_datetime->format('M d, Y h:i A') }}</td>
+                            <td data-sort="{{ $booking->pickup_datetime->format('Y-m-d H:i:s') }}">
+                                {{ $booking->pickup_datetime->format('M d, Y h:i A') }}
+                            </td>
+                            <td data-sort="{{ $booking->dropoff_datetime->format('Y-m-d H:i:s') }}">
+                                {{ $booking->dropoff_datetime->format('M d, Y h:i A') }}
+                            </td>
                             <td>
                                 @if($booking->payment && $booking->payment->status === 'completed')
                                     <span class="badge bg-success">Paid</span>
@@ -231,7 +320,45 @@
 </div>
 @endsection
 
+@section('styles')
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+<style>
+    /* Custom styles for the search box */
+    #bookings-table_filter {
+        margin-bottom: 15px;
+    }
+    
+    #live-search {
+        width: 300px;
+        max-width: 100%;
+    }
+    
+    .responsive-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    /* Custom styles for the table */
+    #bookings-table {
+        width: 100% !important;
+    }
+    
+    /* Highlight search terms */
+    .highlight {
+        background-color: #ffff99;
+        padding: 2px;
+    }
+</style>
+@endsection
+
 @section('scripts')
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<!-- Include your custom script -->
+
+<!-- Inline script for existing functionality -->
 <script>
     $(document).ready(function() {
         // Initialize date range picker
@@ -257,6 +384,115 @@
         if (statusParam) {
             $('#status').val(statusParam);
         }
+
+        // Initialize DataTables with chronological sorting and live search
+        const bookingTable = $('#bookings-table').DataTable({
+            order: [[4, 'asc']], // Sort by pickup date (column 4) ascending
+            pageLength: 15,      // Show 15 entries per page
+            lengthMenu: [[10, 15, 25, 50, -1], [10, 15, 25, 50, "All"]],
+            dom: '<"top"fl>rt<"bottom"ip><"clear">',
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search bookings...",
+                lengthMenu: "Show _MENU_ bookings",
+                info: "Showing _START_ to _END_ of _TOTAL_ bookings",
+                infoEmpty: "Showing 0 to 0 of 0 bookings",
+                infoFiltered: "(filtered from _MAX_ total bookings)"
+            },
+            columnDefs: [
+                { targets: -1, orderable: false } // Disable sorting on Actions column
+            ]
+        });
+
+        // Add search box above the table
+        $('#bookings-table_filter').addClass('mb-2');
+        $('#bookings-table_filter input').addClass('form-control');
+        $('#bookings-table_filter input').attr('id', 'live-search');
+        $('#bookings-table_filter').prepend('<label for="live-search" class="form-label">Live Search:</label><br>');
+        
+        // Make the design responsive
+        $('#bookings-table_wrapper').addClass('responsive-wrapper');
+        
+        // Add custom filtering functionality
+        $('#live-search').on('keyup', function() {
+            bookingTable.search(this.value).draw();
+        });
+        
+        // Apply status filter from the main filter form to DataTable
+        $('#status').on('change', function() {
+            let selectedStatus = $(this).val();
+            
+            // Clear any existing filter before applying a new one
+            bookingTable.column(7).search('').draw();
+            
+            if (selectedStatus) {
+                // Apply filter based on the selected status
+                bookingTable.column(7).search(selectedStatus, true, false).draw();
+            }
+        });
+        
+        // Handle export buttons
+        $('#export-csv').on('click', function() {
+            // Create a CSV export of the current filtered data
+            exportTableToCSV($('#bookings-table'), 'car_bookings.csv');
+        });
+        
+        $('#export-pdf').on('click', function() {
+            // For PDF export you'd typically use a library like jsPDF
+            alert('PDF export functionality will be implemented with a library like jsPDF');
+        });
     });
+    
+    // Helper function for CSV export
+    function exportTableToCSV($table, filename) {
+        const $rows = $table.find('tr:has(td,th)'),
+            tmpColDelim = String.fromCharCode(11), // vertical tab as a delimiter
+            tmpRowDelim = String.fromCharCode(0), // null character as a delimiter
+            colDelim = '","',
+            rowDelim = '"\r\n"';
+            
+        let csv = '"';
+        
+        // Get headers
+        $rows.each(function() {
+            const $cells = $(this).find('th, td');
+            $cells.each(function(i) {
+                // Don't include the actions column
+                if (i < $cells.length - 1) {
+                    // Get the text content
+                    csv += $(this).text().replace(/"/g, '""').replace(/\s+/g, ' ').trim();
+                    
+                    // Add delimiter except for the last cell
+                    if (i < $cells.length - 2) {
+                        csv += tmpColDelim;
+                    }
+                }
+            });
+            
+            csv += tmpRowDelim;
+        });
+        
+        // Process to CSV format
+        csv = csv
+            .split(tmpRowDelim).join(rowDelim)
+            .split(tmpColDelim).join(colDelim);
+            
+        // Add closing quotes
+        csv += '"';
+        
+        // Create download link
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const link = document.createElement('a');
+        
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
 </script>
 @endsection

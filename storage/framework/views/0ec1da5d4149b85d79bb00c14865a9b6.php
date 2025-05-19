@@ -143,12 +143,16 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">Customer Information</h5>
-                </div>
+                </div>             
                 <div class="card-body">
                     <?php if($booking->customer): ?>
                         <div class="d-flex align-items-center mb-3">
                             <div class="flex-shrink-0">
-                                <img src="<?php echo e(asset('assets/images/avatar-placeholder.jpg')); ?>" class="rounded-circle" width="50" height="50" alt="Customer Avatar">
+                                <?php if($booking->customer->profile_image && file_exists(public_path('customerprofile/' . $booking->customer->profile_image))): ?>
+                                    <img src="<?php echo e(asset('customerprofile/' . $booking->customer->profile_image)); ?>" class="rounded-circle" width="50" height="50" alt="Customer Avatar" style="object-fit: cover;">
+                                <?php else: ?>
+                                    <img src="<?php echo e(asset('customerprofile/profile.png')); ?>" class="rounded-circle" width="50" height="50" alt="Customer Avatar">
+                                <?php endif; ?>
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0"><?php echo e($booking->customer->name); ?></h6>
@@ -172,25 +176,60 @@
             </div>
 
             <!-- Car Info -->
+            
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">Car Information</h5>
                 </div>
                 <div class="card-body">
                     <?php if($booking->car): ?>
-                        <div class="text-center mb-3">
-                            <img src="<?php echo e(asset('assets/images/car-placeholder.jpg')); ?>" class="img-fluid rounded" alt="Car Image">
-                        </div>
-
-                        <h5 class="mb-3"><?php echo e($booking->car->brand); ?> <?php echo e($booking->car->model); ?></h5>
-
+                        <!-- Car Images Carousel -->
+                        <?php if($booking->car->images && count($booking->car->images)): ?>
+                            <div class="carousel-container mb-4">
+                                <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <?php $__currentLoopData = $booking->car->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <div class="carousel-item <?php echo e($key == 0 ? 'active' : ''); ?>">
+                                                <img src="<?php echo e(asset($image->image_path)); ?>" class="d-block mx-auto" alt="Car Image" style="max-height: 200px; object-fit: cover;">
+                                            </div>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                    <div class="carousel-indicators">
+                                        <?php $__currentLoopData = $booking->car->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <button type="button" data-bs-target="#carImageCarousel" data-bs-slide-to="<?php echo e($key); ?>"
+                                                class="<?php echo e($key == 0 ? 'active' : ''); ?>" aria-current="<?php echo e($key == 0 ? 'true' : 'false'); ?>"
+                                                aria-label="Slide <?php echo e($key + 1); ?>"></button>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php elseif(isset($booking->car->car_image) && !empty($booking->car->car_image)): ?>
+                            <div class="text-center mb-3">
+                                <img src="<?php echo e(asset($booking->car->car_image)); ?>" class="img-fluid rounded" alt="Car Image" style="max-height: 200px; object-fit: cover;">
+                            </div>
+                        <?php else: ?>
+                            <div class="text-center mb-3">
+                                <img src="<?php echo e(asset('carimage/defaultcar.jpg')); ?>" class="img-fluid rounded" alt="Car Image">
+                            </div>
+                        <?php endif; ?>
+                        
+                        <h5 class="mb-3"><?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?></h5>
+                        
                         <div class="car-details">
-                            <p><i class="fas fa-car me-2"></i> <strong>Type:</strong> <?php echo e($booking->car->car_type ?? 'N/A'); ?></p>
-                            <p><i class="fas fa-tachometer-alt me-2"></i> <strong>Year:</strong> <?php echo e($booking->car->year ?? 'N/A'); ?></p>
+                            <p><i class="fas fa-car me-2"></i> <strong>Type:</strong> <?php echo e($booking->car->vehicle_type ?? 'N/A'); ?></p>
+                            <p><i class="fas fa-tachometer-alt me-2"></i> <strong>Mileage:</strong> <?php echo e(number_format($booking->car->mileage ?? 0)); ?> km</p>
                             <p><i class="fas fa-gas-pump me-2"></i> <strong>Fuel Type:</strong> <?php echo e($booking->car->fuel_type ?? 'N/A'); ?></p>
-                            <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN <?php echo e(number_format($booking->car->price_per_day ?? 0, 2)); ?></p>
+                            <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN <?php echo e(number_format($booking->car->price ?? 0, 2)); ?></p>
                         </div>
-
+                        
                         <a href="#" class="btn btn-sm btn-outline-primary mt-2">
                             <i class="fas fa-info-circle"></i> View Car Details
                         </a>

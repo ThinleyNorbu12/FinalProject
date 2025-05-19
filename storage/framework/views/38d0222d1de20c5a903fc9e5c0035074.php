@@ -1,6 +1,7 @@
 
 
 <?php $__env->startSection('content'); ?>
+ <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
 <style>
     /* Admin Dashboard CSS - Improved Version */
 :root {
@@ -60,290 +61,6 @@ a {
     position: relative;
 }
 
-/* Sidebar Styles */
-.dashboard-sidebar {
-    width: var(--sidebar-width);
-    background: #fff;
-    box-shadow: var(--box-shadow);
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    transition: all var(--transition-speed) ease;
-    overflow-y: auto;
-    overflow-x: hidden;
-    will-change: transform, width;
-}
-
-.sidebar-header {
-    height: var(--header-height);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    border-bottom: 1px solid var(--light-gray);
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 10;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    min-width: 0; /* Allows text truncation */
-}
-
-.logo img {
-    height: 40px;
-    width: auto;
-    margin-right: 10px;
-    flex-shrink: 0;
-}
-
-.logo h2 {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--primary-color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.sidebar-toggle {
-    background: transparent;
-    border: none;
-    color: var(--dark-color);
-    font-size: 18px;
-    cursor: pointer;
-    display: none;
-    flex-shrink: 0;
-}
-
-/* Admin Profile */
-.admin-profile {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--light-gray);
-    transition: all var(--transition-speed) ease;
-}
-
-.profile-avatar img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
-}
-
-.profile-info {
-    margin-left: 15px;
-    min-width: 0; /* Allows text truncation */
-    overflow: hidden;
-}
-
-.profile-info h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.profile-info span {
-    font-size: 12px;
-    color: var(--gray-color);
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Navigation */
-.sidebar-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.sidebar-nav a {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    color: #555;
-    margin: 2px 0;
-    border-left: 3px solid transparent;
-    transition: all var(--transition-speed) ease;
-    white-space: nowrap;
-}
-
-.sidebar-nav a:hover {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-}
-
-.sidebar-nav a.active {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-    border-left: 3px solid var(--primary-color);
-    font-weight: 500;
-}
-
-.sidebar-nav a i {
-    font-size: 18px;
-    margin-right: 15px;
-    width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-}
-
-.sidebar-nav a span {
-    opacity: 1;
-    transition: opacity var(--transition-speed) ease;
-}
-
-.sidebar-divider {
-    height: 1px;
-    background-color: var(--light-gray);
-    margin: 10px 20px;
-}
-
-.sidebar-heading {
-    color: var(--gray-color);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 10px 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-}
-
-.sidebar-menu-item.logout-item:hover {
-    background-color: rgba(229, 56, 59, 0.1);
-}
-
-/* Main Content Area */
-.dashboard-content {
-    flex: 1;
-    margin-left: var(--sidebar-width);
-    transition: margin-left var(--transition-speed) ease;
-    padding: 20px;
-    min-height: 100vh;
-    background-color: #f5f7fa;
-}
-
-/* Header Styles */
-.dashboard-header {
-    height: var(--header-height);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #fff;
-    padding: 0 25px;
-    margin-bottom: 20px;
-    border-radius: var(--card-border-radius);
-    box-shadow: var(--box-shadow);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header-search {
-    position: relative;
-    width: 300px;
-}
-
-.header-search input {
-    width: 100%;
-    padding: 10px 15px 10px 40px;
-    border: 1px solid var(--light-gray);
-    border-radius: 30px;
-    font-size: 14px;
-    transition: all var(--transition-speed) ease;
-}
-
-.header-search input:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-}
-
-.header-search i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gray-color);
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.notification, .messages {
-    position: relative;
-    cursor: pointer;
-}
-
-.notification i, .messages i {
-    font-size: 18px;
-    color: var(--dark-color);
-    transition: transform 0.2s ease;
-}
-
-.notification:hover i, .messages:hover i {
-    transform: translateY(-2px);
-    color: var(--primary-color);
-}
-
-.badge {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: var(--danger-color);
-    color: white;
-    font-size: 10px;
-    min-width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 4px;
-}
-
-.account-menu {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 30px;
-    transition: background-color var(--transition-speed) ease;
-}
-
-.account-menu:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.account-menu span {
-    margin-right: 10px;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.account-menu img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
 
 /* Dashboard Cards */
 .dashboard-cards {
@@ -820,11 +537,11 @@ select:focus {
             <i class="fas fa-bars"></i>
         </button>
     </div>
-    
+
     <div class="admin-profile">
         <?php if(Auth::guard('admin')->check()): ?>
             <div class="profile-avatar">
-                
+                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
             </div>
             <div class="profile-info">
                 <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
@@ -832,65 +549,70 @@ select:focus {
             </div>
         <?php endif; ?>
     </div>
-    
-    <nav class="sidebar-nav">
-        <ul>
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
-    
+
             <div class="sidebar-divider"></div>
-    
             <div class="sidebar-heading">Car Owner</div>
-    
-            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.new-registration-cars') ? 'active' : ''); ?>">
+
+            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item ">
                 <i class="fas fa-car"></i>
                 <span>Car Registration</span>
             </a>
-            <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.inspection-requests') ? 'active' : ''); ?>">
+
+            <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-clipboard-check"></i>
                 <span>Inspection Requests</span>
             </a>
-            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.approve-inspected-cars') ? 'active' : ''); ?>">
+
+            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-check-circle"></i>
                 <span>Approve Inspections</span>
             </a>
-    
+
             <div class="sidebar-divider"></div>
-    
             <div class="sidebar-heading">Customer</div>
-    
-            <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.verify-users') || request()->routeIs('admin.user-verification.*') ? 'active' : ''); ?>">
+
+            <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item active">
                 <i class="fas fa-id-card"></i>
                 <span>Verify Users</span>
             </a>
-            <a href="<?php echo e(url('admin/view-payments')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.view-payments') ? 'active' : ''); ?>">
+
+            <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-credit-card"></i>
                 <span>Payments</span>
             </a>
-            <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.update-car-registration') ? 'active' : ''); ?>">
+
+            <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-edit"></i>
                 <span>Update Registration</span>
             </a>
-            <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.car-information-update') ? 'active' : ''); ?>">
+
+            <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-info-circle"></i>
                 <span>Car Information</span>
             </a>
-            <a href="<?php echo e(url('admin/booked-car')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.booked-car') ? 'active' : ''); ?>">
+
+            <a href="<?php echo e(route('admin.booked-car')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-calendar-check"></i>
                 <span>Booked Cars</span>
             </a>
-    
+
             <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
             </a>
-            <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form">
+
+            <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form" style="display: none;">
                 <?php echo csrf_field(); ?>
             </form>
-        </ul>
-    </nav>        
+        </div>
+    </div>
 </div>
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
