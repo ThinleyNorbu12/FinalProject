@@ -1,6 +1,4 @@
-
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,23 +14,16 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-
     @yield('head')
 </head>
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <body>
-
-
     <!-- Content -->
     <div class="content">
         @yield('content')
     </div>
 
-
-
 </body>
-
 </html> 

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('assets/css/admin/adminsidebar.css') }}">
 <!-- Main Content -->
 <div class="dashboard-sidebar">
     <div class="sidebar-header">
