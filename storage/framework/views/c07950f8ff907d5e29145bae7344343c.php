@@ -1,10 +1,10 @@
-@extends('layouts.app')
+
 
 <!-- Link to external CSS files -->
-<link rel="stylesheet" href="{{ asset('assets/css/carowner/dashboard.css') }}">
+<link rel="stylesheet" href="<?php echo e(asset('assets/css/carowner/dashboard.css')); ?>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="dashboard-container">
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -17,56 +17,56 @@
                 <img src="/api/placeholder/60/60" alt="User Profile" class="rounded-circle">
             </div>
             <div class="user-info">
-                @if(Auth::guard('carowner')->check())
-                    <h5>{{ Auth::guard('carowner')->user()->name }}</h5>
+                <?php if(Auth::guard('carowner')->check()): ?>
+                    <h5><?php echo e(Auth::guard('carowner')->user()->name); ?></h5>
                     <p>Car Owner</p>
-                @else
+                <?php else: ?>
                     <h5>Guest User</h5>
                     <p>Please login</p>
-                @endif
+                <?php endif; ?>
             </div>
         </div>
         <div class="sidebar-menu">
             <ul>
                 <li class="active">
-                    <a href="{{ route('carowner.dashboard') }}">
+                    <a href="<?php echo e(route('carowner.dashboard')); ?>">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('carowner.rentCar') }}">
+                    <a href="<?php echo e(route('carowner.rentCar')); ?>">
                         <i class="fas fa-car"></i>
                         <span>Rent a Car</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('carowner.view.rented') }}">
+                    <a href="<?php echo e(route('carowner.view.rented')); ?>">
                         <i class="fas fa-clipboard-list"></i>
                         <span>Registration Requests</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('carowner.car-inspection') }}">
+                    <a href="<?php echo e(route('carowner.car-inspection')); ?>">
                         <i class="fas fa-search"></i>
                         <span>Inspection Requests</span>
                         <span class="badge bg-danger rounded-pill">2</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('carowner.approved') }}">
+                    <a href="<?php echo e(route('carowner.approved')); ?>">
                         <i class="fas fa-check-circle"></i>
                         <span>Approved Cars</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('carowner.rejected') }}">
+                    <a href="<?php echo e(route('carowner.rejected')); ?>">
                         <i class="fas fa-times-circle"></i>
                         <span>Rejected Cars</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url('carowner/payment-summary') }}">
+                    <a href="<?php echo e(url('carowner/payment-summary')); ?>">
                         <i class="fas fa-money-bill-wave"></i>
                         <span>Payment Summary</span>
                     </a>
@@ -79,8 +79,8 @@
                     </a>
                 </li>
                 <li>
-                    <form method="POST" action="{{ route('carowner.logout') }}" id="logoutForm">
-                        @csrf
+                    <form method="POST" action="<?php echo e(route('carowner.logout')); ?>" id="logoutForm">
+                        <?php echo csrf_field(); ?>
                         <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Logout</span>
@@ -108,13 +108,13 @@
                     <span class="badge">3</span>
                 </div>
                 <div class="header-user-info">
-                    @if(Auth::guard('carowner')->check())
-                        <span>{{ Auth::guard('carowner')->user()->name }}</span>
+                    <?php if(Auth::guard('carowner')->check()): ?>
+                        <span><?php echo e(Auth::guard('carowner')->user()->name); ?></span>
                         <img src="/api/placeholder/40/40" alt="User Profile" class="rounded-circle">
-                    @else
+                    <?php else: ?>
                         <span>Guest</span>
                         <img src="/api/placeholder/40/40" alt="User Profile" class="rounded-circle">
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
         </header>
@@ -190,7 +190,7 @@
                 <h4>Quick Actions</h4>
                 <div class="row">
                     <div class="col-md-4">
-                        <a href="{{ route('carowner.rentCar') }}" class="action-card">
+                        <a href="<?php echo e(route('carowner.rentCar')); ?>" class="action-card">
                             <div class="action-icon">
                                 <i class="fas fa-car-side"></i>
                             </div>
@@ -201,7 +201,7 @@
                         </a>
                     </div>
                     <div class="col-md-4">
-                        <a href="{{ route('carowner.car-inspection') }}" class="action-card">
+                        <a href="<?php echo e(route('carowner.car-inspection')); ?>" class="action-card">
                             <div class="action-icon">
                                 <i class="fas fa-clipboard-check"></i>
                             </div>
@@ -213,7 +213,7 @@
                         </a>
                     </div>
                     <div class="col-md-4">
-                        <a href="{{ url('carowner/payment-summary') }}" class="action-card">
+                        <a href="<?php echo e(url('carowner/payment-summary')); ?>" class="action-card">
                             <div class="action-icon">
                                 <i class="fas fa-wallet"></i>
                             </div>
@@ -317,4 +317,5 @@ document.addEventListener("DOMContentLoaded", function() {
     window.addEventListener('resize', checkScreenSize);
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/CarOwner/dashboard.blade.php ENDPATH**/ ?>

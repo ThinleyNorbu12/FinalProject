@@ -1,6 +1,4 @@
-
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,23 +14,16 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/styles.css')); ?>">
-
     <?php echo $__env->yieldContent('head'); ?>
 </head>
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <body>
-
-
     <!-- Content -->
     <div class="content">
         <?php echo $__env->yieldContent('content'); ?>
     </div>
 
-
-
 </body>
-
 </html> <?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/layouts/app.blade.php ENDPATH**/ ?>
