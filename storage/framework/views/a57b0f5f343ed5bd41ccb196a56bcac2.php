@@ -9,15 +9,12 @@
     <title>Customer Profile - Car Rental</title>
     <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/customer/dashboard.css')); ?>">
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
     <!-- Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
@@ -31,16 +28,7 @@
             align-items: center;
             margin-bottom: 30px;
         }
-        
-        /* .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 20px;
-            border: 3px solid #007bff;
-        } */
-        
+              
         .profile-name h2 {
             margin-bottom: 5px;
             color: #333;
@@ -330,79 +318,194 @@
             display: block;
         }
         
+        .profile-header {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            gap: 1.5rem; /* Add spacing between avatar and name */
+        }
+
+        .profile-name {
+            flex: 1;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 100%;
+            max-width: 150px;
+            min-width: 80px; /* Minimum size for smaller screens */
+            margin: 0; /* Remove auto margin for better control */
+            aspect-ratio: 1 / 1;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: #0056b3;
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .avatar-upload:hover {
+            background: #004092;
+            transform: scale(1.1);
+        }
+
+        .avatar-upload i {
+            color: white;
+            font-size: 18px;
+        }
+
+        .avatar-upload input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Upload form section styling */
+        .upload-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .upload-section h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.25rem;
+        }
+
+        .upload-section p {
+            margin-bottom: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Image preview styling */
+        #imagePreview {
+            display: none;
+            max-width: 100%;
+            max-height: 300px; /* Limit maximum height */
+            width: auto;
+            height: auto;
+            margin: 1rem 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            object-fit: contain; /* Maintain aspect ratio */
+        }
+
+        /* Upload button styling */
+        #uploadButton {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        #uploadButton:hover {
+            background-color: #004092;
+        }
+
+        #uploadButton:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Upload status styling */
+        .upload-status {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .upload-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .upload-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
-            /* .profile-header {
+            .profile-header {
                 flex-direction: column;
                 text-align: center;
+                gap: 1rem;
             }
-             */
-
-            .input-with-icon i {
-                top: 13px;
+            
+            .avatar-container {
+                max-width: 120px;
+            }
+            
+            .upload-section {
+                padding: 1rem;
+            }
+            
+            #imagePreview {
+                max-height: 250px;
             }
         }
 
-        /* Profile Header Styles */
-    .profile-header {
-        display: flex;
-        align-items: center;
-        padding: 1.5rem;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        margin-bottom: 2rem;
-        transition: all 0.3s ease;
-    }
-
-    .profile-header:hover {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .profile-header img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #f3f4f6;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        margin-right: 1.5rem;
-    }
-
-    .profile-name {
-        flex: 1;
-    }
-
-    .profile-name h2 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #1f2937;
-        margin: 0 0 0.5rem 0;
-    }
-
-    .profile-status {
-        font-size: 0.9rem;
-        color: #6b7280;
-        display: flex;
-        align-items: center;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 640px) {
-        .profile-header {
-            flex-direction: column;
-            text-align: center;
-            padding: 1.2rem;
+        @media (max-width: 480px) {
+            .profile-header {
+                padding: 1rem;
+            }
+            
+            .avatar-container {
+                max-width: 100px;
+            }
+            
+            .avatar-upload {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .avatar-upload i {
+                font-size: 16px;
+            }
         }
+            
         
-        .profile-header img {
-            margin-right: 0;
-            margin-bottom: 1rem;
-        }
-    }
-
-        
-</style>
-
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -444,12 +547,12 @@
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>
                 
-                <a href="<?php echo e(route('customer.my-reservations')); ?>" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('customer.my-reservations')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-calendar-alt"></i>
                     <span>My Reservations</span>
                 </a>
@@ -463,12 +566,12 @@
                     <span>Profile</span>
                 </a>
                 
-                <a href="<?php echo e(route('customer.rental-history')); ?>" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('customer.rental-history')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-history"></i>
                     <span>Rental History</span>
                 </a>
                 
-                <a href="<?php echo e(route('customer.payment-history')); ?>" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('customer.payment-history')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-credit-card"></i>
                     <span>Payment History</span>
                 </a>
@@ -487,17 +590,17 @@
                 
                 <div class="sidebar-heading">Services</div>
                 
-                <a href="<?php echo e(route('customer.locations')); ?>" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('customer.locations')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-map-marked-alt"></i>
                     <span>Locations</span>
                 </a>
                 
-                <a href="<?php echo e(route('customer.insurance-options')); ?>" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('customer.insurance-options')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-shield-alt"></i>
                     <span>Insurance Options</span>
                 </a>
                 
-                <a href="<?php echo e(route('customer.fuel-policy')); ?>" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('customer.fuel-policy')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-gas-pump"></i>
                     <span>Fuel Policy</span>
                 </a>
@@ -526,9 +629,22 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="profile-container">
-                <!-- Profile Header -->
+                <!-- Profile Header Section -->
                 <div class="profile-header">
-                    <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
+                    <div class="avatar-container">
+                        <img src="<?php echo e(Auth::guard('customer')->check() && Auth::guard('customer')->user()->profile_image 
+                                    ? asset('customerprofile/' . Auth::guard('customer')->user()->profile_image)
+                                    : asset('customerprofile/profile.png')); ?>" 
+                            alt="Profile Picture" 
+                            class="avatar" 
+                            id="avatarPreview">
+                        
+                        <div class="avatar-upload">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" id="avatarInput" name="avatar" accept="image/*">
+                        </div>
+                    </div>
+                    
                     <div class="profile-name">
                         <h2>
                             <?php if(Auth::guard('customer')->check()): ?>
@@ -538,15 +654,15 @@
                                 Guest User
                             <?php endif; ?>
                         </h2>
-                        <div class="profile-status">
-                            Member since <?php if(Auth::guard('customer')->check()): ?>
+                        <p class="text-muted">
+                            Member since 
+                            <?php if(Auth::guard('customer')->check()): ?>
                                 <?php echo e(Auth::guard('customer')->user()->created_at->format('F Y')); ?>
 
                             <?php else: ?>
                                 N/A
                             <?php endif; ?>
-                       
-                        </div>
+                        </p>
                     </div>
                 </div>
                 
@@ -558,8 +674,8 @@
                     <button class="tab-button" data-tab="notifications">Notifications</button>
                 </div>
 
+                <!-- Alert Messages -->
                 <div class="container">
-                    <!-- Display success message if available -->
                     <?php if(session('success')): ?>
                         <div class="alert alert-success">
                             <?php echo e(session('success')); ?>
@@ -567,136 +683,150 @@
                         </div>
                     <?php endif; ?>
             
-                    <!-- Display error message if available -->
                     <?php if(session('error')): ?>
                         <div class="alert alert-danger">
                             <?php echo e(session('error')); ?>
 
                         </div>
                     <?php endif; ?>
-            
-                    <!-- Personal Information Tab -->
-                    <div class="tab-content active" id="personal-info">
-                        <div class="profile-section">
-                            <h3>Personal Information</h3>
-                            <form action="<?php echo e(route('customer.profile.update')); ?>" method="POST">
-                                <?php echo csrf_field(); ?>
-                                <?php echo method_field('PUT'); ?>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="fullName">Full Name</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-user"></i>
-                                                <input type="text" class="form-control" id="fullName" name="name" value="<?php echo e(Auth::guard('customer')->user()->name ?? ''); ?>">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="cid">CID Number</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-id-card"></i>
-                                                <input type="text" class="form-control" id="cid" name="cid" value="<?php echo e(Auth::guard('customer')->user()->cid_no ?? ''); ?>" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="email">Email Address</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-envelope"></i>
-                                                <input type="email" class="form-control" id="email" name="email" value="<?php echo e(Auth::guard('customer')->user()->email ?? ''); ?>">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="phone">Phone Number</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-phone"></i>
-                                                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo e(Auth::guard('customer')->user()->phone ?? ''); ?>">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <?php
-                                            $dob = Auth::guard('customer')->user()->dob ?? '';
-                                            $formattedDob = $dob ? \Carbon\Carbon::parse($dob)->format('d/m/Y') : '';
-                                        ?>
-            
-                                        <div class="form-group">
-                                            <label for="dateOfBirth">Date of Birth(DD/MM/YYYY)</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-calendar"></i>
-                                                <input type="text" class="form-control" id="dateOfBirth" name="dob" value="<?php echo e($formattedDob); ?>" placeholder="DD/MM/YYYY" >
-                                            </div>
-                                        </div>
-            
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="address">Address</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-home"></i>
-                                                <input type="text" class="form-control" id="address" name="address" value="<?php echo e(Auth::guard('customer')->user()->address ?? ''); ?>">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="gender">Gender</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-venus-mars"></i>
-                                                <select class="form-control" id="gender" name="gender">
-                                                    <?php
-                                                        $gender = Auth::guard('customer')->user()->gender ?? '';
-                                                    ?>
-                                                    <option value="">-- Select Gender --</option>
-                                                    <option value="Male" <?php echo e($gender === 'Male' ? 'selected' : ''); ?>>Male</option>
-                                                    <option value="Female" <?php echo e($gender === 'Female' ? 'selected' : ''); ?>>Female</option>
-                                                    <option value="Other" <?php echo e($gender === 'Other' ? 'selected' : ''); ?>>Other</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                
-                                <div class="row mt-4">
-                                    <div class="col-md-12">
-                                        <button type="submit" class="btn-update">Save Changes</button>
-                                    </div>
-                                </div>                            
-                            </form>
-                        </div>
-                    </div>
                 </div>
 
+                <!-- Personal Information Tab -->
+                <div class="tab-content active" id="personal-info">
+                    <!-- Personal Information Form -->
+                    <div class="profile-section">
+                        <h3>Personal Information</h3>
+                        <form action="<?php echo e(route('customer.profile.update')); ?>" method="POST">
+                            <?php echo csrf_field(); ?>
+                            <?php echo method_field('PUT'); ?>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="fullName">Full Name</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-user"></i>
+                                            <input type="text" class="form-control" id="fullName" name="name" 
+                                                value="<?php echo e(Auth::guard('customer')->user()->name ?? ''); ?>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="cid">CID Number</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-id-card"></i>
+                                            <input type="text" class="form-control" id="cid" name="cid" 
+                                                value="<?php echo e(Auth::guard('customer')->user()->cid_no ?? ''); ?>" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email Address</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-envelope"></i>
+                                            <input type="email" class="form-control" id="email" name="email" 
+                                                value="<?php echo e(Auth::guard('customer')->user()->email ?? ''); ?>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-phone"></i>
+                                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                                value="<?php echo e(Auth::guard('customer')->user()->phone ?? ''); ?>">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <?php
+                                        $dob = Auth::guard('customer')->user()->dob ?? '';
+                                        $formattedDob = $dob ? \Carbon\Carbon::parse($dob)->format('d/m/Y') : '';
+                                    ?>
+                                    <div class="form-group">
+                                        <label for="dateOfBirth">Date of Birth (DD/MM/YYYY)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-calendar"></i>
+                                            <input type="text" class="form-control" id="dateOfBirth" name="dob" 
+                                                value="<?php echo e($formattedDob); ?>" placeholder="DD/MM/YYYY">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="address">Address</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-home"></i>
+                                            <input type="text" class="form-control" id="address" name="address" 
+                                                value="<?php echo e(Auth::guard('customer')->user()->address ?? ''); ?>">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-venus-mars"></i>
+                                            <select class="form-control" id="gender" name="gender">
+                                                <?php
+                                                    $gender = Auth::guard('customer')->user()->gender ?? '';
+                                                ?>
+                                                <option value="">-- Select Gender --</option>
+                                                <option value="Male" <?php echo e($gender === 'Male' ? 'selected' : ''); ?>>Male</option>
+                                                <option value="Female" <?php echo e($gender === 'Female' ? 'selected' : ''); ?>>Female</option>
+                                                <option value="Other" <?php echo e($gender === 'Other' ? 'selected' : ''); ?>>Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn-update">Save Changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
 
+                    <!-- Upload Status -->
+                    <div id="uploadStatus" class="upload-status" style="display: none;"></div>
+
+                    <!-- Profile Picture Upload Section - Now inside Personal Information tab -->
+                    <div class="profile-section">
+                        <h3>Profile Picture</h3>
+                        <form id="avatarForm" action="<?php echo e(route('customer.profile.update-avatar')); ?>" method="POST" enctype="multipart/form-data">
+                            <?php echo csrf_field(); ?>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>Upload a new profile picture. Recommended size: 300x300 pixels.</p>
+                                    <div class="preview-container">
+                                        <img id="imagePreview" class="preview-image" alt="New Profile Picture" style="display: none;">
+                                    </div>
+                                    <button type="submit" class="btn-update mt-3" id="uploadButton" style="display: none;">Upload New Picture</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
                 <!-- Driver's License Tab -->
                 <div class="tab-content" id="license-info">
-                    <?php if(session('success')): ?>
-                        <div class="alert alert-success">
-                            <?php echo e(session('success')); ?>
-
-                        </div>
-                    <?php endif; ?>
-
                     <div class="profile-section">
                         <h3>Driving License Information (Bhutan)</h3>
-
                         <form action="<?php echo e(route('customer.profile.save-license')); ?>" method="POST" enctype="multipart/form-data">
                             <?php echo csrf_field(); ?>
-
                             <div class="row">
                                 <!-- License Number -->
                                 <div class="col-md-6">
@@ -719,7 +849,12 @@
                                             <select class="form-control" id="dzongkhag" name="license_dzongkhag">
                                                 <option value="">-- Select Dzongkhag --</option>
                                                 <?php
-                                                    $dzongkhags = ['Bumthang', 'Chukha', 'Dagana', 'Gasa', 'Haa', 'Lhuentse', 'Mongar', 'Paro', 'Pemagatshel', 'Punakha', 'Samdrup Jongkhar', 'Samtse', 'Sarpang', 'Thimphu', 'Trashigang', 'Trashiyangtse', 'Trongsa', 'Tsirang', 'Wangdue Phodrang', 'Zhemgang'];
+                                                    $dzongkhags = [
+                                                        'Bumthang', 'Chukha', 'Dagana', 'Gasa', 'Haa', 'Lhuentse', 
+                                                        'Mongar', 'Paro', 'Pemagatshel', 'Punakha', 'Samdrup Jongkhar', 
+                                                        'Samtse', 'Sarpang', 'Thimphu', 'Trashigang', 'Trashiyangtse', 
+                                                        'Trongsa', 'Tsirang', 'Wangdue Phodrang', 'Zhemgang'
+                                                    ];
                                                 ?>
                                                 <?php $__currentLoopData = $dzongkhags; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dzongkhag): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <option value="<?php echo e($dzongkhag); ?>"
@@ -739,7 +874,7 @@
                                 <!-- Issue Date -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="issueDate">Date of Issue(DD/MM/YYYY)</label>
+                                        <label for="issueDate">Date of Issue (DD/MM/YYYY)</label>
                                         <div class="input-with-icon">
                                             <i class="fas fa-calendar-plus"></i>
                                             <input type="date" class="form-control" id="issueDate" name="license_issue_date"
@@ -751,7 +886,7 @@
                                 <!-- Expiry Date -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="expiryDate">Expiry Date(DD/MM/YYYY)</label>
+                                        <label for="expiryDate">Expiry Date (DD/MM/YYYY)</label>
                                         <div class="input-with-icon">
                                             <i class="fas fa-calendar-times"></i>
                                             <input type="date" class="form-control" id="expiryDate" name="license_expiry_date"
@@ -798,10 +933,12 @@
                         <!-- License Preview -->
                         <div class="license-info mt-4">
                             <?php if(Auth::guard('customer')->user()->license_front): ?>
-                                <img src="<?php echo e(asset('storage/licenses/' . Auth::guard('customer')->user()->license_front)); ?>" alt="Front License" class="license-image">
+                                <img src="<?php echo e(asset('storage/licenses/' . Auth::guard('customer')->user()->license_front)); ?>" 
+                                    alt="Front License" class="license-image">
                             <?php endif; ?>
                             <?php if(Auth::guard('customer')->user()->license_back): ?>
-                                <img src="<?php echo e(asset('storage/licenses/' . Auth::guard('customer')->user()->license_back)); ?>" alt="Back License" class="license-image">
+                                <img src="<?php echo e(asset('storage/licenses/' . Auth::guard('customer')->user()->license_back)); ?>" 
+                                    alt="Back License" class="license-image">
                             <?php endif; ?>
 
                             <div class="license-details mt-3">
@@ -812,8 +949,6 @@
                         </div>
                     </div>
                 </div>
-
-
                 
                 <!-- Security Tab -->
                 <div class="tab-content" id="security">
@@ -1044,6 +1179,152 @@
                 dateFormat: "d/m/Y", // DD/MM/YYYY format
                 allowInput: true
             });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const avatarInput = document.getElementById('avatarInput');
+            const avatarPreview = document.getElementById('avatarPreview');
+            const imagePreview = document.getElementById('imagePreview');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const uploadButton = document.getElementById('uploadButton');
+            const avatarForm = document.getElementById('avatarForm');
+
+            // Handle file selection
+            avatarInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    // Validate file type
+                    if (!file.type.startsWith('image/')) {
+                        showUploadStatus('Please select a valid image file.', 'error');
+                        return;
+                    }
+
+                    // Validate file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showUploadStatus('File size must be less than 5MB.', 'error');
+                        return;
+                    }
+
+                    // Read and preview the file
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Update the avatar preview
+                        avatarPreview.src = e.target.result;
+                        
+                        // Show the larger preview
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                        
+                        // Show upload button
+                        uploadButton.style.display = 'inline-block';
+                        showUploadStatus('Image selected successfully! Click "Upload New Picture" to save.', 'success');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Form submission handler with enhanced error handling
+            avatarForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const fileInput = document.getElementById('avatarInput');
+                const file = fileInput.files[0];
+                
+                if (!file) {
+                    showUploadStatus('Please select an image first.', 'error');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('avatar', file);
+                
+                // Get CSRF token
+                const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                if (!csrfToken) {
+                    showUploadStatus('CSRF token not found. Please refresh the page.', 'error');
+                    return;
+                }
+
+                // Show loading state
+                uploadButton.disabled = true;
+                uploadButton.textContent = 'Uploading...';
+                showUploadStatus('Uploading image...', 'success');
+
+                // Send AJAX request
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    
+                    // Check if response is JSON
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('Server did not return JSON response');
+                    }
+                    
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    
+                    if (data.success) {
+                        showUploadStatus('Profile picture updated successfully!', 'success');
+                        
+                        // Update the main avatar image
+                        if (data.image_url) {
+                            avatarPreview.src = data.image_url;
+                        }
+                        
+                        // Hide preview and button after successful upload
+                        setTimeout(() => {
+                            imagePreview.style.display = 'none';
+                            uploadButton.style.display = 'none';
+                            hideUploadStatus();
+                            // Reset the file input
+                            fileInput.value = '';
+                        }, 2000);
+                    } else {
+                        showUploadStatus(data.message || 'Upload failed. Please try again.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Upload error:', error);
+                    
+                    // More specific error messages
+                    if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                        showUploadStatus('Network error. Please check your connection and try again.', 'error');
+                    } else if (error.message.includes('JSON')) {
+                        showUploadStatus('Server error. Please contact support if this continues.', 'error');
+                    } else {
+                        showUploadStatus('Upload failed: ' + error.message, 'error');
+                    }
+                })
+                .finally(() => {
+                    // Reset button state
+                    uploadButton.disabled = false;
+                    uploadButton.textContent = 'Upload New Picture';
+                });
+            });
+
+            function showUploadStatus(message, type) {
+                uploadStatus.textContent = message;
+                uploadStatus.className = `upload-status ${type}`;
+                uploadStatus.style.display = 'block';
+                
+                // Log to console for debugging
+                console.log(`Upload Status [${type}]:`, message);
+            }
+
+            function hideUploadStatus() {
+                uploadStatus.style.display = 'none';
+            }
         });
     </script>
 </body>

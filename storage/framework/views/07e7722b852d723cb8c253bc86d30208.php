@@ -98,7 +98,7 @@
                     <span>Locations</span>
                 </a>
                 
-                <a href="#" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.insurance-options')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-shield-alt"></i>
                     <span>Insurance Options</span>
                 </a>

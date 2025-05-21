@@ -1,52 +1,54 @@
-@extends('layouts.app')
-    <link rel="stylesheet" href="{{ asset('assets/css/admin/cars.css') }}">
-@section('content')
+
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/cars.css')); ?>">
+<?php $__env->startSection('content'); ?>
 <div class="dashboard-content" id="dashboardContent">
     <!-- Breadcrumb Navigation -->
     <nav class="page-breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <i class="fas fa-home"></i>
-                <a href="{{ route('admin.dashboard') }}">Home</a>
+                <a href="<?php echo e(route('admin.dashboard')); ?>">Home</a>
             </li>
             <li class="breadcrumb-item active">Cars Management</li>
         </ol>
     </nav>
     <div class="notification-container">
-        @if(session('success'))
+        <?php if(session('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="fas fa-check-circle mr-2"></i>
-            {{ session('success') }}
+            <?php echo e(session('success')); ?>
+
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        @endif
+        <?php endif; ?>
 
-        @if(session('error'))
+        <?php if(session('error')): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="fas fa-exclamation-circle mr-2"></i>
-            {{ session('error') }}
+            <?php echo e(session('error')); ?>
+
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        @endif
+        <?php endif; ?>
 
-        @if($errors->any())
+        <?php if($errors->any()): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="fas fa-exclamation-triangle mr-2"></i>
             <strong>Oops! There were some problems with your input.</strong>
             <ul class="mt-2 mb-0">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
+                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <li><?php echo e($error); ?></li>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </ul>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        @endif
+        <?php endif; ?>
     </div>
 
     <!-- Cars Management Content -->
@@ -224,22 +226,36 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="addCarForm" action="{{ route('cars.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                    <form id="addCarForm" action="<?php echo e(route('cars.store')); ?>" method="POST" enctype="multipart/form-data">
+                        <?php echo csrf_field(); ?>
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="maker">Maker <span class="required">*</span></label>
-                                <input type="text" class="form-control" id="maker" name="maker" value="{{ old('maker') }}" required>
-                                @error('maker')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <input type="text" class="form-control" id="maker" name="maker" value="<?php echo e(old('maker')); ?>" required>
+                                <?php $__errorArgs = ['maker'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="model">Model <span class="required">*</span></label>
-                                <input type="text" class="form-control" id="model" name="model" value="{{ old('model') }}" required>
-                                @error('model')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <input type="text" class="form-control" id="model" name="model" value="<?php echo e(old('model')); ?>" required>
+                                <?php $__errorArgs = ['model'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
                         
@@ -248,64 +264,106 @@
                                 <label for="vehicle_type">Vehicle Type <span class="required">*</span></label>
                                 <select id="vehicle_type" name="vehicle_type" class="form-control" required>
                                     <option value="">Select a vehicle type</option>
-                                    <option value="Sedan" {{ old('vehicle_type') == 'Sedan' ? 'selected' : '' }}>Sedan</option>
-                                    <option value="SUV" {{ old('vehicle_type') == 'SUV' ? 'selected' : '' }}>SUV</option>
-                                    <option value="Hatchback" {{ old('vehicle_type') == 'Hatchback' ? 'selected' : '' }}>Hatchback</option>
-                                    <option value="Pickup" {{ old('vehicle_type') == 'Pickup' ? 'selected' : '' }}>Pickup</option>
+                                    <option value="Sedan" <?php echo e(old('vehicle_type') == 'Sedan' ? 'selected' : ''); ?>>Sedan</option>
+                                    <option value="SUV" <?php echo e(old('vehicle_type') == 'SUV' ? 'selected' : ''); ?>>SUV</option>
+                                    <option value="Hatchback" <?php echo e(old('vehicle_type') == 'Hatchback' ? 'selected' : ''); ?>>Hatchback</option>
+                                    <option value="Pickup" <?php echo e(old('vehicle_type') == 'Pickup' ? 'selected' : ''); ?>>Pickup</option>
                                 </select>
-                                @error('vehicle_type')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <?php $__errorArgs = ['vehicle_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="car_condition">Condition <span class="required">*</span></label>
                                 <select id="car_condition" name="car_condition" class="form-control" required>
                                     <option value="">Select condition</option>
-                                    <option value="New" {{ old('car_condition') == 'New' ? 'selected' : '' }}>New</option>
-                                    <option value="Used" {{ old('car_condition') == 'Used' ? 'selected' : '' }}>Used</option>
+                                    <option value="New" <?php echo e(old('car_condition') == 'New' ? 'selected' : ''); ?>>New</option>
+                                    <option value="Used" <?php echo e(old('car_condition') == 'Used' ? 'selected' : ''); ?>>Used</option>
                                 </select>
-                                @error('car_condition')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <?php $__errorArgs = ['car_condition'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
                         
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="mileage">Mileage (in km) <span class="required">*</span></label>
-                                <input type="number" class="form-control" id="mileage" name="mileage" value="{{ old('mileage') }}" required>
-                                @error('mileage')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <input type="number" class="form-control" id="mileage" name="mileage" value="<?php echo e(old('mileage')); ?>" required>
+                                <?php $__errorArgs = ['mileage'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="price">Price per Day <span class="required">*</span></label>
-                                <input type="number" class="form-control" id="price" name="price" value="{{ old('price') }}" required>
-                                @error('price')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <input type="number" class="form-control" id="price" name="price" value="<?php echo e(old('price')); ?>" required>
+                                <?php $__errorArgs = ['price'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
                         
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="registration_no">Registration Number <span class="required">*</span></label>
-                                <input type="text" class="form-control" id="registration_no" name="registration_no" value="{{ old('registration_no') }}" required>
-                                @error('registration_no')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <input type="text" class="form-control" id="registration_no" name="registration_no" value="<?php echo e(old('registration_no')); ?>" required>
+                                <?php $__errorArgs = ['registration_no'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="status">Status <span class="required">*</span></label>
                                 <select id="status" name="status" class="form-control" required>
                                     <option value="">Select status</option>
-                                    <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>Available</option>
-                                    <option value="rented" {{ old('status') == 'rented' ? 'selected' : '' }}>Rented</option>
-                                    <option value="maintenance" {{ old('status') == 'maintenance' ? 'selected' : '' }}>Under Maintenance</option>
+                                    <option value="available" <?php echo e(old('status') == 'available' ? 'selected' : ''); ?>>Available</option>
+                                    <option value="rented" <?php echo e(old('status') == 'rented' ? 'selected' : ''); ?>>Rented</option>
+                                    <option value="maintenance" <?php echo e(old('status') == 'maintenance' ? 'selected' : ''); ?>>Under Maintenance</option>
                                 </select>
-                                @error('status')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <?php $__errorArgs = ['status'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
                         
@@ -314,17 +372,31 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="number_of_doors">Number of Doors <span class="required">*</span></label>
-                                <input type="number" class="form-control" id="number_of_doors" name="number_of_doors" value="{{ old('number_of_doors') }}" required>
-                                @error('number_of_doors')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <input type="number" class="form-control" id="number_of_doors" name="number_of_doors" value="<?php echo e(old('number_of_doors')); ?>" required>
+                                <?php $__errorArgs = ['number_of_doors'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="number_of_seats">Number of Seats <span class="required">*</span></label>
-                                <input type="number" class="form-control" id="number_of_seats" name="number_of_seats" value="{{ old('number_of_seats') }}" required>
-                                @error('number_of_seats')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <input type="number" class="form-control" id="number_of_seats" name="number_of_seats" value="<?php echo e(old('number_of_seats')); ?>" required>
+                                <?php $__errorArgs = ['number_of_seats'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
                         
@@ -333,42 +405,70 @@
                                 <label for="transmission_type">Transmission Type <span class="required">*</span></label>
                                 <select id="transmission_type" name="transmission_type" class="form-control" required>
                                     <option value="">Select transmission</option>
-                                    <option value="Automatic" {{ old('transmission_type') == 'Automatic' ? 'selected' : '' }}>Automatic</option>
-                                    <option value="Manual" {{ old('transmission_type') == 'Manual' ? 'selected' : '' }}>Manual</option>
+                                    <option value="Automatic" <?php echo e(old('transmission_type') == 'Automatic' ? 'selected' : ''); ?>>Automatic</option>
+                                    <option value="Manual" <?php echo e(old('transmission_type') == 'Manual' ? 'selected' : ''); ?>>Manual</option>
                                 </select>
-                                @error('transmission_type')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <?php $__errorArgs = ['transmission_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="fuel_type">Fuel Type <span class="required">*</span></label>
                                 <select id="fuel_type" name="fuel_type" class="form-control" required>
                                     <option value="">Select fuel type</option>
-                                    <option value="Petrol" {{ old('fuel_type') == 'Petrol' ? 'selected' : '' }}>Petrol</option>
-                                    <option value="Diesel" {{ old('fuel_type') == 'Diesel' ? 'selected' : '' }}>Diesel</option>
-                                    <option value="Electric" {{ old('fuel_type') == 'Electric' ? 'selected' : '' }}>Electric</option>
-                                    <option value="Hybrid" {{ old('fuel_type') == 'Hybrid' ? 'selected' : '' }}>Hybrid</option>
+                                    <option value="Petrol" <?php echo e(old('fuel_type') == 'Petrol' ? 'selected' : ''); ?>>Petrol</option>
+                                    <option value="Diesel" <?php echo e(old('fuel_type') == 'Diesel' ? 'selected' : ''); ?>>Diesel</option>
+                                    <option value="Electric" <?php echo e(old('fuel_type') == 'Electric' ? 'selected' : ''); ?>>Electric</option>
+                                    <option value="Hybrid" <?php echo e(old('fuel_type') == 'Hybrid' ? 'selected' : ''); ?>>Hybrid</option>
                                 </select>
-                                @error('fuel_type')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <?php $__errorArgs = ['fuel_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
                         
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="large_bags_capacity">Large Bags Capacity</label>
-                                <input type="number" class="form-control" id="large_bags_capacity" name="large_bags_capacity" value="{{ old('large_bags_capacity') }}">
-                                @error('large_bags_capacity')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <input type="number" class="form-control" id="large_bags_capacity" name="large_bags_capacity" value="<?php echo e(old('large_bags_capacity')); ?>">
+                                <?php $__errorArgs = ['large_bags_capacity'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="small_bags_capacity">Small Bags Capacity</label>
-                                <input type="number" class="form-control" id="small_bags_capacity" name="small_bags_capacity" value="{{ old('small_bags_capacity') }}">
-                                @error('small_bags_capacity')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <input type="number" class="form-control" id="small_bags_capacity" name="small_bags_capacity" value="<?php echo e(old('small_bags_capacity')); ?>">
+                                <?php $__errorArgs = ['small_bags_capacity'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
                         
@@ -378,63 +478,91 @@
                                 <div class="d-flex">
                                     <div class="custom-control custom-radio mr-3">
                                         <input type="radio" id="air_conditioning_yes" name="air_conditioning" value="Yes" 
-                                            class="custom-control-input" {{ old('air_conditioning') == 'Yes' ? 'checked' : '' }}>
+                                            class="custom-control-input" <?php echo e(old('air_conditioning') == 'Yes' ? 'checked' : ''); ?>>
                                         <label class="custom-control-label" for="air_conditioning_yes">Yes</label>
                                     </div>
                                     <div class="custom-control custom-radio">
                                         <input type="radio" id="air_conditioning_no" name="air_conditioning" value="No" 
-                                            class="custom-control-input" {{ old('air_conditioning') == 'No' ? 'checked' : '' }}>
+                                            class="custom-control-input" <?php echo e(old('air_conditioning') == 'No' ? 'checked' : ''); ?>>
                                         <label class="custom-control-label" for="air_conditioning_no">No</label>
                                     </div>
                                 </div>
-                                @error('air_conditioning')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <?php $__errorArgs = ['air_conditioning'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="form-group col-md-4">
                                 <label>Backup Camera</label>
                                 <div class="d-flex">
                                     <div class="custom-control custom-radio mr-3">
                                         <input type="radio" id="backup_camera_yes" name="backup_camera" value="Yes" 
-                                            class="custom-control-input" {{ old('backup_camera') == 'Yes' ? 'checked' : '' }}>
+                                            class="custom-control-input" <?php echo e(old('backup_camera') == 'Yes' ? 'checked' : ''); ?>>
                                         <label class="custom-control-label" for="backup_camera_yes">Yes</label>
                                     </div>
                                     <div class="custom-control custom-radio">
                                         <input type="radio" id="backup_camera_no" name="backup_camera" value="No" 
-                                            class="custom-control-input" {{ old('backup_camera') == 'No' ? 'checked' : '' }}>
+                                            class="custom-control-input" <?php echo e(old('backup_camera') == 'No' ? 'checked' : ''); ?>>
                                         <label class="custom-control-label" for="backup_camera_no">No</label>
                                     </div>
                                 </div>
-                                @error('backup_camera')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <?php $__errorArgs = ['backup_camera'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div class="form-group col-md-4">
                                 <label>Bluetooth</label>
                                 <div class="d-flex">
                                     <div class="custom-control custom-radio mr-3">
                                         <input type="radio" id="bluetooth_yes" name="bluetooth" value="Yes" 
-                                            class="custom-control-input" {{ old('bluetooth') == 'Yes' ? 'checked' : '' }}>
+                                            class="custom-control-input" <?php echo e(old('bluetooth') == 'Yes' ? 'checked' : ''); ?>>
                                         <label class="custom-control-label" for="bluetooth_yes">Yes</label>
                                     </div>
                                     <div class="custom-control custom-radio">
                                         <input type="radio" id="bluetooth_no" name="bluetooth" value="No" 
-                                            class="custom-control-input" {{ old('bluetooth') == 'No' ? 'checked' : '' }}>
+                                            class="custom-control-input" <?php echo e(old('bluetooth') == 'No' ? 'checked' : ''); ?>>
                                         <label class="custom-control-label" for="bluetooth_no">No</label>
                                     </div>
                                 </div>
-                                @error('bluetooth')
-                                    <span style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <?php $__errorArgs = ['bluetooth'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span style="color: red;"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label for="description">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3">{{ old('description') }}</textarea>
-                            @error('description')
-                                <span style="color: red;">{{ $message }}</span>
-                            @enderror
+                            <textarea class="form-control" id="description" name="description" rows="3"><?php echo e(old('description')); ?></textarea>
+                            <?php $__errorArgs = ['description'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <span style="color: red;"><?php echo e($message); ?></span>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                         
                         <div class="form-group">
@@ -453,16 +581,23 @@
                                 </div>
                             </div>
                             
-                            @error('car_images')
-                                <span style="color: red;">{{ $message }}</span>
-                            @enderror
-                            @if($errors->has('car_images.*'))
-                                @foreach($errors->get('car_images.*') as $messages)
-                                    @foreach($messages as $message)
-                                        <span style="color: red;">{{ $message }}</span><br>
-                                    @endforeach
-                                @endforeach
-                            @endif
+                            <?php $__errorArgs = ['car_images'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <span style="color: red;"><?php echo e($message); ?></span>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            <?php if($errors->has('car_images.*')): ?>
+                                <?php $__currentLoopData = $errors->get('car_images.*'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $messages): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php $__currentLoopData = $messages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $message): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <span style="color: red;"><?php echo e($message); ?></span><br>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endif; ?>
                         </div>
                     </form>
                 </div>
@@ -485,9 +620,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {{-- <form id="editCarForm" action="{{ route('admin.cars.update') }}" method="POST" enctype="multipart/form-data"> --}}
-                        @csrf
-                        @method('PUT')
+                    
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('PUT'); ?>
                         <input type="hidden" id="edit_car_id" name="car_id">
                         
                         <!-- Same form fields as Add Car Modal, but with "edit_" prefix -->
@@ -584,9 +719,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    {{-- <form id="deleteCarForm" action="{{ route('admin.cars.destroy') }}" method="POST"> --}}
-                        @csrf
-                        @method('DELETE')
+                    
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('DELETE'); ?>
                         <input type="hidden" id="delete_car_id" name="car_id">
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
@@ -833,4 +968,5 @@
         
     
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/cars.blade.php ENDPATH**/ ?>

@@ -124,8 +124,7 @@ class CarController extends Controller
                 $car->car_image = $primaryImageName;
             }
 
-            $car->save();
-
+ 
             // Handle additional images
             if ($request->hasFile('car_images')) {
                 foreach ($request->file('car_images') as $index => $image) {
