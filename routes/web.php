@@ -299,6 +299,31 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 
 });
 
+use App\Http\Controllers\CarController;
+// add new cars by admin 
+Route::middleware(['auth:admin'])->group(function () {
+    // Main cars listing and management page
+    Route::get('/admin/cars', [CarController::class, 'index'])->name('cars.index');
+    
+    // Create new car
+    Route::get('/admin/cars/create', [CarController::class, 'create'])->name('cars.create');
+    Route::post('/admin/cars', [CarController::class, 'store'])->name('cars.store');
+    
+    // Show car details
+    Route::get('/admin/cars/{id}', [CarController::class, 'show'])->name('cars.show');
+    
+    // Edit car
+    Route::get('/admin/cars/{id}/edit', [CarController::class, 'edit'])->name('cars.edit');
+    Route::put('/admin/cars', [CarController::class, 'update'])->name('cars.update');
+    
+    // Delete car
+    Route::delete('/admin/cars', [CarController::class, 'destroy'])->name('cars.destroy');
+    
+    // Ajax routes for car management
+    Route::get('/admin/get-car-details', [CarController::class, 'getCarDetails'])->name('cars.getDetails');
+    Route::delete('/admin/delete-car-image', [CarController::class, 'deleteCarImage'])->name('cars.deleteImage');
+});
+
 
 
 // customer web.php

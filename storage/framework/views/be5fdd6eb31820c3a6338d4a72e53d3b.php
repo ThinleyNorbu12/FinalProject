@@ -92,6 +92,15 @@
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-heading">Manage Service</div>
+                
+                <a href="<?php echo e(route('cars.index')); ?>" class="sidebar-menu-item ">
+                    <i class="fas fa-car"></i>
+                    <span> Cars</span>
+                    <div class="tooltip"> Cars</div>
+                </a>
+
 
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Car Owner</div>

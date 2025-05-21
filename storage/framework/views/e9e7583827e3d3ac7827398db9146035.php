@@ -1,5 +1,5 @@
 
-
+ <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
 <?php $__env->startSection('content'); ?>
 <div class="dashboard-sidebar">
     <div class="sidebar-header">
