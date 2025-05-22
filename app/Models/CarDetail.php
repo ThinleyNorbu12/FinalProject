@@ -134,5 +134,10 @@ class CarDetail extends Model
 
         return view('your-view-name', compact('recommendedCars'));
     }
+    // In your Car model
+    public function additionalImages()
+    {
+        return $this->hasMany(CarImage::class); // or whatever your additional images model is called
+    }
 
 }

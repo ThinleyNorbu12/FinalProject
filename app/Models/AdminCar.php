@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CarAdditionalImage;
+
 
 class AdminCar extends Model
 {
@@ -55,8 +57,47 @@ class AdminCar extends Model
     /**
      * Get the car images associated with the car.
      */
-    public function carImages()
+    public function adminCarImages()
     {
         return $this->hasMany(AdminCarImage::class, 'car_id');
+    }
+    public function images()
+    {
+        return $this->hasMany(AdminCarImage::class, 'car_id');
+    }
+
+    public function carImages()
+{
+    return $this->hasMany(CarAdditionalImage::class, 'car_id', 'id');
+}
+
+
+    /**
+     * Get additional images for the car
+     */
+    public function additionalImages()
+    {
+        return $this->hasMany(CarAdditionalImage::class, 'car_id', 'id');
+    }
+    
+    /**
+     * Get all images (primary + additional) as a collection
+     */
+    public function getAllImages()
+    {
+        $images = collect();
+        
+        // Add primary image
+        if ($this->car_image) {
+            $images->push((object)[
+                'image_path' => $this->car_image,
+                'is_primary' => true
+            ]);
+        }
+        
+        // Add additional images
+        $images = $images->merge($this->additionalImages);
+        
+        return $images;
     }
 }

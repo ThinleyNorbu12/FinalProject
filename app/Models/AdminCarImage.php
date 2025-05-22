@@ -34,4 +34,8 @@ class AdminCarImage extends Model
     {
         return $this->belongsTo(AdminCar::class, 'car_id');
     }
+    public function adminCar()
+    {
+        return $this->belongsTo(AdminCar::class, 'car_id');
+    }
 }

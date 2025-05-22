@@ -314,14 +314,15 @@ Route::middleware(['auth:admin'])->group(function () {
     
     // Edit car
     Route::get('/admin/cars/{id}/edit', [CarController::class, 'edit'])->name('cars.edit');
-    Route::put('/admin/cars', [CarController::class, 'update'])->name('cars.update');
+    Route::put('/admin/cars/{id}', [CarController::class, 'update'])->name('cars.update');
     
     // Delete car
     Route::delete('/admin/cars', [CarController::class, 'destroy'])->name('cars.destroy');
     
     // Ajax routes for car management
     Route::get('/admin/get-car-details', [CarController::class, 'getCarDetails'])->name('cars.getDetails');
-    Route::delete('/admin/delete-car-image', [CarController::class, 'deleteCarImage'])->name('cars.deleteImage');
+    // Add this route to your routes/web.php
+   Route::post('/admin/cars/delete-image', [CarController::class, 'deleteImage'])->name('cars.delete-image');
 });
 
 

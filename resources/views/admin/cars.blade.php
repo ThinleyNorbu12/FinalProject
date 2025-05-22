@@ -1,6 +1,8 @@
 @extends('layouts.app')
-    <link rel="stylesheet" href="{{ asset('assets/css/admin/cars.css') }}">
+
 @section('content')
+<link rel="stylesheet" href="{{ asset('assets/css/admin/cars.css') }}">
+
 <div class="dashboard-content" id="dashboardContent">
     <!-- Breadcrumb Navigation -->
     <nav class="page-breadcrumb">
@@ -12,6 +14,7 @@
             <li class="breadcrumb-item active">Cars Management</li>
         </ol>
     </nav>
+    
     <div class="notification-container">
         @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -76,18 +79,16 @@
                         <label for="brand-filter">Brand:</label>
                         <select id="brand-filter" class="form-control">
                             <option value="">All Brands</option>
-                            <?php
-                            // Get unique car makers from database
-                            $makers = DB::table('admin_cars_tbl')
-                                ->select('maker')
-                                ->distinct()
-                                ->orderBy('maker')
-                                ->get();
-                                
-                            foreach ($makers as $maker) {
-                                echo '<option value="' . $maker->maker . '">' . $maker->maker . '</option>';
-                            }
-                            ?>
+                            @php
+                                $makers = DB::table('admin_cars_tbl')
+                                    ->select('maker')
+                                    ->distinct()
+                                    ->orderBy('maker')
+                                    ->get();
+                            @endphp
+                            @foreach ($makers as $maker)
+                                <option value="{{ $maker->maker }}">{{ $maker->maker }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -112,108 +113,84 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    // Get cars from database with pagination
-                    $cars = DB::table('admin_cars_tbl')
-                        ->orderBy('id', 'desc')
-                        ->paginate(10);
-
-                    if ($cars->count() > 0) {
-                        foreach ($cars as $car) {
-                            // Determine the status badge class
-                            $statusClass = '';
-                            switch (strtolower($car->status)) {
-                                case 'available':
-                                    $statusClass = 'available';
-                                    break;
-                                case 'booked':
-                                    $statusClass = 'booked';
-                                    break;
-                                case 'maintenance':
-                                    $statusClass = 'maintenance';
-                                    break;
-                                case 'inactive':
-                                    $statusClass = 'inactive';
-                                    break;
-                                default:
-                                    $statusClass = '';
-                            }
-                            
-                            // Car display name (combine maker and model)
-                            $carName = $car->maker . ' ' . $car->model;
-                            
-                            // Image path handling with fallback
-                            $imagePath = !empty($car->car_image) 
-                                ? asset('assets/images/cars/' . $car->car_image) 
-                                : asset('assets/images/cars/default-car.jpg');
-                    ?>
-                    <tr>
-                        <td><?php echo $car->id; ?></td>
-                        <td><img src="<?php echo $imagePath; ?>" alt="<?php echo $carName; ?>" class="car-thumbnail"></td>
-                        <td><?php echo $carName; ?></td>
-                        <td><?php echo $car->maker; ?></td>
-                        <td><?php echo $car->model; ?></td>
-                        <td><?php echo $car->registration_no; ?></td>
-                        <td>$<?php echo $car->price; ?>/day</td>
-                        <td><span class="status-badge <?php echo $statusClass; ?>"><?php echo $car->status; ?></span></td>
-                        <td class="actions">
-                            <button class="action-btn view" title="View Details" data-id="<?php echo $car->id; ?>"><i class="fas fa-eye"></i></button>
-                            <button class="action-btn edit" title="Edit Car" data-toggle="modal" data-target="#editCarModal" data-id="<?php echo $car->id; ?>"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn delete" title="Delete Car" data-id="<?php echo $car->id; ?>"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <?php
-                        }
-                    } else {
-                    ?>
-                    <tr>
-                        <td colspan="9" class="text-center">No cars found</td>
-                    </tr>
-                    <?php
-                    }
-                    ?>
+                    @php
+                        $cars = DB::table('admin_cars_tbl')
+                            ->orderBy('id', 'desc')
+                            ->paginate(10);
+                    @endphp
+                    
+                    @if ($cars->count() > 0)
+                        @foreach ($cars as $car)
+                            @php
+                                // Determine the status badge class
+                                $statusClass = '';
+                                switch (strtolower($car->status)) {
+                                    case 'available':
+                                        $statusClass = 'available';
+                                        break;
+                                    case 'booked':
+                                        $statusClass = 'booked';
+                                        break;
+                                    case 'maintenance':
+                                        $statusClass = 'maintenance';
+                                        break;
+                                    case 'inactive':
+                                        $statusClass = 'inactive';
+                                        break;
+                                    default:
+                                        $statusClass = '';
+                                }
+                                
+                                // Car display name (combine maker and model)
+                                $carName = $car->maker . ' ' . $car->model;
+                                
+                                // Image path handling with fallback
+                                $imagePath = !empty($car->car_image) 
+                                    ? asset('assets/images/cars/' . $car->car_image) 
+                                    : asset('assets/images/cars/default-car.jpg');
+                            @endphp
+                            <tr>
+                                <td>{{ $car->id }}</td>
+                                <td><img src="{{ $imagePath }}" alt="{{ $carName }}" class="car-thumbnail"></td>
+                                <td>{{ $carName }}</td>
+                                <td>{{ $car->maker }}</td>
+                                <td>{{ $car->model }}</td>
+                                <td>{{ $car->registration_no }}</td>
+                                <td>${{ $car->price }}/day</td>
+                                <td><span class="status-badge {{ $statusClass }}">{{ $car->status }}</span></td>
+                                <td class="actions">
+                                    <a href="{{ route('cars.show', $car->id) }}" class="action-btn view" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('cars.edit', $car->id) }}" class="action-btn edit" title="Edit Car">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="action-btn delete" title="Delete Car" data-id="{{ $car->id }}" data-name="{{ $carName }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="9" class="text-center">No cars found</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
 
             <div class="pagination-container">
                 <div class="showing-entries">
-                    Showing <?php echo $cars->firstItem() ?? 0; ?> to <?php echo $cars->lastItem() ?? 0; ?> of <?php echo $cars->total(); ?> entries
+                    Showing {{ $cars->firstItem() ?? 0 }} to {{ $cars->lastItem() ?? 0 }} of {{ $cars->total() }} entries
                 </div>
                 <div class="pagination">
-                    <?php echo $cars->links(); ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- View Car Details Modal -->
-    <div class="modal fade" id="viewCarModal" tabindex="-1" role="dialog" aria-labelledby="viewCarModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewCarModalLabel">Car Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="carDetailsContent">
-                    <!-- Car details will be loaded here via AJAX -->
-                    <div class="text-center">
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    {{ $cars->links() }}
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Add Car Modal -->
-    
-
     <div class="modal fade" id="addCarModal" tabindex="-1" role="dialog" aria-labelledby="addCarModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -438,7 +415,7 @@
                         </div>
                         
                         <div class="form-group">
-                            <label>Car Images <span class="required">*</span></label>
+                            <label>Car Images</label>
                             <div class="file-upload-container" id="dropZone">
                                 <h5 class="text-center mb-2">Drop car images here</h5>
                                 <p class="text-center mb-2">or</p>
@@ -446,7 +423,7 @@
                                     <label for="car_images" class="btn btn-outline-primary">Browse Files</label>
                                     <input type="file" name="car_images[]" id="car_images" class="d-none" multiple accept="image/*">
                                 </div>
-                                <p class="text-center small text-muted">Supported formats: JPEG, PNG, JPG, WEBP, GIF, AVIF(max 2MB each)</p>
+                                <p class="text-center small text-muted">Supported formats: JPEG, PNG, JPG, WEBP, GIF, AVIF (max 2MB each)</p>
                                 
                                 <div id="selectedFiles" class="image-preview-container">
                                     <!-- Image previews will be inserted here -->
@@ -456,138 +433,37 @@
                             @error('car_images')
                                 <span style="color: red;">{{ $message }}</span>
                             @enderror
-                            @if($errors->has('car_images.*'))
-                                @foreach($errors->get('car_images.*') as $messages)
-                                    @foreach($messages as $message)
-                                        <span style="color: red;">{{ $message }}</span><br>
-                                    @endforeach
-                                @endforeach
-                            @endif
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add Car</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" form="addCarForm" class="btn btn-primary">Add Car</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Car Modal -->
-    <div class="modal fade" id="editCarModal" tabindex="-1" role="dialog" aria-labelledby="editCarModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCarModalLabel">Edit Car</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    {{-- <form id="editCarForm" action="{{ route('admin.cars.update') }}" method="POST" enctype="multipart/form-data"> --}}
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" id="edit_car_id" name="car_id">
-                        
-                        <!-- Same form fields as Add Car Modal, but with "edit_" prefix -->
-                        <!-- Form fields would be identical to the add modal but with prefilled values -->
-                        
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="edit_brand">Brand <span class="required">*</span></label>
-                                <select id="edit_brand" name="brand" class="form-control" required>
-                                    <option value="">Select Brand</option>
-                                    <option value="Toyota">Toyota</option>
-                                    <option value="Honda">Honda</option>
-                                    <option value="Maruti Suzuki">Maruti Suzuki</option>
-                                    <option value="Ford">Ford</option>
-                                    <option value="Hyundai">Hyundai</option>
-                                    <option value="BMW">BMW</option>
-                                    <option value="Mercedes">Mercedes</option>
-                                    <option value="Audi">Audi</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="edit_car_name">Car Name <span class="required">*</span></label>
-                                <input type="text" class="form-control" id="edit_car_name" name="car_name" required>
-                            </div>
-                        </div>
-                        
-                        <!-- Additional edit fields would go here, identical to the add form -->
-                        
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" form="editCarForm" class="btn btn-primary">Save Changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- View Car Modal -->
-    <div class="modal fade" id="viewCarModal" tabindex="-1" role="dialog" aria-labelledby="viewCarModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewCarModalLabel">Car Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="car-details-container">
-                        <div class="car-images-slider">
-                            <!-- Car images slider would be here -->
-                            <div class="slider-placeholder">Car Images Slider</div>
-                        </div>
-                        
-                        <div class="car-info">
-                            <h2 id="view_car_name">Toyota XYZ</h2>
-                            <div class="car-info-row">
-                                <div class="info-label">Brand:</div>
-                                <div class="info-value" id="view_brand">Toyota</div>
-                            </div>
-                            <div class="car-info-row">
-                                <div class="info-label">Model:</div>
-                                <div class="info-value" id="view_model">2023</div>
-                            </div>
-                            <div class="car-info-row">
-                                <div class="info-label">Registration:</div>
-                                <div class="info-value" id="view_registration_number">KA0299387</div>
-                            </div>
-                            <!-- Additional car details would be displayed here -->
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteCarModal" tabindex="-1" role="dialog" aria-labelledby="deleteCarModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteCarModalLabel">Confirm Delete</h5>
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete this car? This action cannot be undone.</p>
+                    <p>Are you sure you want to delete <strong id="deleteCarName"></strong>?</p>
+                    <p class="text-danger">This action cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    {{-- <form id="deleteCarForm" action="{{ route('admin.cars.destroy') }}" method="POST"> --}}
+                    <form id="deleteCarForm" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
-                        <input type="hidden" id="delete_car_id" name="car_id">
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </div>
@@ -596,6 +472,7 @@
     </div>
 </div>
 
+@endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -656,9 +533,36 @@
 
         // Handle "Delete" button click
         $('.action-btn.delete').click(function() {
-            const carId = $(this).closest('tr').find('td:first').text();
-            $('#delete_car_id').val(carId);
-            $('#deleteCarModal').modal('show');
+            const carId = $(this).data('id');
+            const carName = $(this).data('name');
+            
+            // Set the car name in the modal
+            $('#deleteCarName').text(carName);
+            
+            // Set the form action URL with the car ID
+            $('#deleteCarForm').attr('action', '/admin/cars?id=' + carId);
+            
+            // Show the modal
+            $('#deleteConfirmModal').modal('show');
+        });
+
+        // Handle modal close buttons
+        $('#deleteConfirmModal .close, #deleteConfirmModal [data-dismiss="modal"]').click(function() {
+            $('#deleteConfirmModal').modal('hide');
+        });
+
+        // Handle modal backdrop click
+        $('#deleteConfirmModal').on('click', function(e) {
+            if (e.target === this) {
+                $(this).modal('hide');
+            }
+        });
+
+        // Handle ESC key press
+        $(document).keyup(function(e) {
+            if (e.keyCode === 27) { // ESC key
+                $('#deleteConfirmModal').modal('hide');
+            }
         });
 
         // Filter functionality
@@ -692,145 +596,149 @@
                 }
             });
         }
+
+        // Auto dismiss alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').each(function() {
+                $(this).addClass('fade-out');
+                var alert = $(this);
+                setTimeout(function() {
+                    alert.alert('close');
+                }, 500);
+            });
+        }, 5000);
     });
+
+    // Drag and drop functionality (separate from jQuery ready)
     document.addEventListener('DOMContentLoaded', function() {
-            const dropZone = document.getElementById('dropZone');
-            const fileInput = document.getElementById('car_images');
-            const previewContainer = document.getElementById('selectedFiles');
-            const form = document.getElementById('carForm');
-            
-            // Track selected files
-            let selectedFiles = new DataTransfer();
-            
-            // Prevent default drag behaviors
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, preventDefaults, false);
-                document.body.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            // Highlight drop zone when dragging over it
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, unhighlight, false);
-            });
-            
-            // Handle dropped files
-            dropZone.addEventListener('drop', handleDrop, false);
-            
-            // Handle files from file input
-            fileInput.addEventListener('change', function(e) {
-                handleFiles(this.files);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            function highlight() {
-                dropZone.classList.add('active');
-            }
-            
-            function unhighlight() {
-                dropZone.classList.remove('active');
-            }
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                handleFiles(files);
-            }
-            
-            function handleFiles(files) {
-                if (files.length > 0) {
-                    // Process each file
-                    Array.from(files).forEach(file => {
-                        if (file.type.startsWith('image/')) {
-                            // Add to DataTransfer object
-                            selectedFiles.items.add(file);
-                            
-                            // Create preview
-                            createImagePreview(file);
-                        }
-                    });
-                    
-                    // Update file input with selected files
-                    updateFileInput();
-                }
-            }
-            
-            function createImagePreview(file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const preview = document.createElement('div');
-                    preview.className = 'image-preview';
-                    preview.dataset.name = file.name;
-                    
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    
-                    const removeBtn = document.createElement('button');
-                    removeBtn.className = 'remove-btn';
-                    removeBtn.innerHTML = '×';
-                    removeBtn.addEventListener('click', function() {
-                        removeFile(file.name);
-                        preview.remove();
-                    });
-                    
-                    preview.appendChild(img);
-                    preview.appendChild(removeBtn);
-                    previewContainer.appendChild(preview);
-                };
-                
-                reader.readAsDataURL(file);
-            }
-            
-            function removeFile(fileName) {
-                // Create a new DataTransfer object
-                const newFiles = new DataTransfer();
-                
-                // Copy all files except the one to be removed
-                for (let i = 0; i < selectedFiles.files.length; i++) {
-                    const file = selectedFiles.files[i];
-                    if (file.name !== fileName) {
-                        newFiles.items.add(file);
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('car_images');
+        const previewContainer = document.getElementById('selectedFiles');
+        const form = document.getElementById('addCarForm'); // Changed from 'carForm' to 'addCarForm'
+        
+        // Only proceed if elements exist
+        if (!dropZone || !fileInput || !previewContainer) {
+            return;
+        }
+        
+        // Track selected files
+        let selectedFiles = new DataTransfer();
+        
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        // Highlight drop zone when dragging over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        // Handle dropped files
+        dropZone.addEventListener('drop', handleDrop, false);
+        
+        // Handle files from file input
+        fileInput.addEventListener('change', function(e) {
+            handleFiles(this.files);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function highlight() {
+            dropZone.classList.add('active');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('active');
+        }
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        function handleFiles(files) {
+            if (files.length > 0) {
+                // Process each file
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        // Add to DataTransfer object
+                        selectedFiles.items.add(file);
+                        
+                        // Create preview
+                        createImagePreview(file);
                     }
-                }
+                });
                 
-                // Replace old DataTransfer with new one
-                selectedFiles = newFiles;
+                // Update file input with selected files
                 updateFileInput();
             }
+        }
+        
+        function createImagePreview(file) {
+            const reader = new FileReader();
             
-            function updateFileInput() {
-                // Update the file input with current selections
-                fileInput.files = selectedFiles.files;
+            reader.onload = function(e) {
+                const preview = document.createElement('div');
+                preview.className = 'image-preview';
+                preview.dataset.name = file.name;
+                
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.innerHTML = '×';
+                removeBtn.type = 'button'; // Prevent form submission
+                removeBtn.addEventListener('click', function() {
+                    removeFile(file.name);
+                    preview.remove();
+                });
+                
+                preview.appendChild(img);
+                preview.appendChild(removeBtn);
+                previewContainer.appendChild(preview);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        function removeFile(fileName) {
+            // Create a new DataTransfer object
+            const newFiles = new DataTransfer();
+            
+            // Copy all files except the one to be removed
+            for (let i = 0; i < selectedFiles.files.length; i++) {
+                const file = selectedFiles.files[i];
+                if (file.name !== fileName) {
+                    newFiles.items.add(file);
+                }
             }
             
-            // Submit the form with the updated file input
+            // Replace old DataTransfer with new one
+            selectedFiles = newFiles;
+            updateFileInput();
+        }
+        
+        function updateFileInput() {
+            // Update the file input with current selections
+            fileInput.files = selectedFiles.files;
+        }
+        
+        // Submit the form with the updated file input
+        if (form) {
             form.addEventListener('submit', function(e) {
                 // The file input is already updated, so just let the form submit
             });
-        });
-
-        $(document).ready(function() {
-            // Auto dismiss alerts after 5 seconds
-            setTimeout(function() {
-                $('.alert').each(function() {
-                    $(this).addClass('fade-out');
-                    var alert = $(this);
-                    setTimeout(function() {
-                        alert.alert('close');
-                    }, 500);
-                });
-            }, 5000);
-        });
-
-        
-    
+        }
+    });
 </script>
-@endsection
