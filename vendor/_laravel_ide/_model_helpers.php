@@ -329,7 +329,7 @@ namespace App\Models {
      * @property mixed $number_of_seats
      * @property mixed $number_of_doors
      * @property mixed $admin_id
-     * @property string|null $car_image
+     * @property mixed $car_image
      * @property string|null $description
      * @property string $status
      * @property string $registration_no
@@ -667,7 +667,7 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property bool $is_primary
-     * @property string $image_path
+     * @property mixed $image_path
      * @property mixed $car_id
      * @property int $id
      * @property-read \App\Models\AdminCar $car
