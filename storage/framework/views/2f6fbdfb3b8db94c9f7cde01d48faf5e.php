@@ -1,12 +1,12 @@
-@extends('layouts.admin')
 
-@section('title', 'Profile')
 
-@section('breadcrumbs')
+<?php $__env->startSection('title', 'Profile'); ?>
+
+<?php $__env->startSection('breadcrumbs'); ?>
     <li class="breadcrumb-item active">Profile</li>
-@endsection
-<link rel="stylesheet" href="{{ asset('assets/css/admin/profile.css') }}">
-@section('content')
+<?php $__env->stopSection(); ?>
+<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/profile.css')); ?>">
+<?php $__env->startSection('content'); ?>
 <!-- Profile Content -->
 <div class="row g-4">
     <!-- Profile Picture Section -->
@@ -15,7 +15,7 @@
             <div class="profile-card-body">
                 <div class="profile-picture-section">
                     <div class="profile-picture-container">
-                        <img src="{{ asset('assets/images/thinley.jpg') }}" 
+                        <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" 
                              alt="Profile Picture" 
                              class="profile-picture" 
                              id="profileImage">
@@ -25,15 +25,15 @@
                     </div>
                     
                     <!-- Profile Picture Upload Form -->
-                    <form id="profilePictureForm" action="{{ route('admin.profile.picture') }}" method="POST" enctype="multipart/form-data" class="d-none">
-                        @csrf
+                    <form id="profilePictureForm" action="<?php echo e(route('admin.profile.picture')); ?>" method="POST" enctype="multipart/form-data" class="d-none">
+                        <?php echo csrf_field(); ?>
                         <input type="file" id="profilePictureInput" name="profile_picture" accept="image/*">
                     </form>
                     
                     <div class="profile-basic-info">
-                        <h4 class="profile-name">{{ Auth::guard('admin')->user()->name }}</h4>
+                        <h4 class="profile-name"><?php echo e(Auth::guard('admin')->user()->name); ?></h4>
                         <p class="profile-role">Administrator</p>
-                        <p class="profile-member-since">Member since {{ Auth::guard('admin')->user()->created_at->format('M Y') }}</p>
+                        <p class="profile-member-since">Member since <?php echo e(Auth::guard('admin')->user()->created_at->format('M Y')); ?></p>
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
             <div class="profile-card-body">
                 <div class="info-item">
                     <label class="info-label">Account ID</label>
-                    <p class="info-value">#{{ Auth::guard('admin')->user()->id }}</p>
+                    <p class="info-value">#<?php echo e(Auth::guard('admin')->user()->id); ?></p>
                 </div>
                 <div class="info-item">
                     <label class="info-label">Role</label>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="info-item">
                     <label class="info-label">Last Updated</label>
-                    <p class="info-value">{{ Auth::guard('admin')->user()->updated_at->format('M d, Y') }}</p>
+                    <p class="info-value"><?php echo e(Auth::guard('admin')->user()->updated_at->format('M d, Y')); ?></p>
                 </div>
             </div>
         </div>
@@ -75,43 +75,58 @@
                 </h5>
             </div>
             <div class="profile-card-body">
-                @if(session('success'))
+                <?php if(session('success')): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="fas fa-check-circle me-2"></i>
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                @if($errors->any())
+                <?php if($errors->any()): ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>
                         <ul class="mb-0">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <li><?php echo e($error); ?></li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </ul>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                <form action="{{ route('admin.profile.update') }}" method="POST" id="profileUpdateForm" class="profile-form">
-                    @csrf
-                    @method('PUT')
+                <form action="<?php echo e(route('admin.profile.update')); ?>" method="POST" id="profileUpdateForm" class="profile-form">
+                    <?php echo csrf_field(); ?>
+                    <?php echo method_field('PUT'); ?>
 
                     <div class="form-group">
                         <label for="name" class="form-label">
                             <i class="fas fa-user me-1"></i>Full Name
                         </label>
                         <input type="text" 
-                               class="form-control @error('name') is-invalid @enderror" 
+                               class="form-control <?php $__errorArgs = ['name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
                                id="name" 
                                name="name" 
-                               value="{{ old('name', Auth::guard('admin')->user()->name) }}" 
+                               value="<?php echo e(old('name', Auth::guard('admin')->user()->name)); ?>" 
                                required>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <?php $__errorArgs = ['name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div class="form-group">
@@ -119,21 +134,35 @@
                             <i class="fas fa-envelope me-1"></i>Email Address
                         </label>
                         <input type="email" 
-                               class="form-control @error('email') is-invalid @enderror" 
+                               class="form-control <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
                                id="email" 
                                name="email" 
-                               value="{{ old('email', Auth::guard('admin')->user()->email) }}" 
+                               value="<?php echo e(old('email', Auth::guard('admin')->user()->email)); ?>" 
                                required>
-                        @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary" id="updateProfileBtn">
                             <i class="fas fa-save me-1"></i> Update Profile
                         </button>
-                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
                         </a>
                     </div>
@@ -149,9 +178,9 @@
                 </h5>
             </div>
             <div class="profile-card-body">
-                <form action="{{ route('admin.password.update') }}" method="POST" id="passwordUpdateForm" class="profile-form">
-                    @csrf
-                    @method('PUT')
+                <form action="<?php echo e(route('admin.password.update')); ?>" method="POST" id="passwordUpdateForm" class="profile-form">
+                    <?php echo csrf_field(); ?>
+                    <?php echo method_field('PUT'); ?>
 
                     <div class="form-group">
                         <label for="current_password" class="form-label">
@@ -159,7 +188,14 @@
                         </label>
                         <div class="password-input-group">
                             <input type="password" 
-                                   class="form-control @error('current_password') is-invalid @enderror" 
+                                   class="form-control <?php $__errorArgs = ['current_password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
                                    id="current_password" 
                                    name="current_password" 
                                    required>
@@ -167,9 +203,16 @@
                                 <i class="fas fa-eye" id="current_password_icon"></i>
                             </button>
                         </div>
-                        @error('current_password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <?php $__errorArgs = ['current_password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div class="row g-3">
@@ -180,7 +223,14 @@
                                 </label>
                                 <div class="password-input-group">
                                     <input type="password" 
-                                           class="form-control @error('new_password') is-invalid @enderror" 
+                                           class="form-control <?php $__errorArgs = ['new_password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
                                            id="new_password" 
                                            name="new_password" 
                                            required 
@@ -189,9 +239,16 @@
                                         <i class="fas fa-eye" id="new_password_icon"></i>
                                     </button>
                                 </div>
-                                @error('new_password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php $__errorArgs = ['new_password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 <small class="form-text">Password must be at least 8 characters long</small>
                             </div>
                         </div>
@@ -225,9 +282,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Profile picture upload handling
@@ -343,4 +400,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/profile.blade.php ENDPATH**/ ?>
