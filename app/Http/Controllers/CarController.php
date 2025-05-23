@@ -163,16 +163,29 @@ class CarController extends Controller
      */
     public function edit($id)
     {
+        // Load the car with the carImages relationship
         $car = AdminCar::with('carImages')->findOrFail($id);
+        
+        // Debug: Check if relationship is loaded (remove in production)
+        if (config('app.debug')) {
+            \Log::info('Car loaded for edit:', [
+                'car_id' => $car->id,
+                'primary_image' => $car->car_image,
+                'additional_images_count' => $car->carImages ? $car->carImages->count() : 'null',
+                'additional_images_loaded' => $car->relationLoaded('carImages')
+            ]);
+        }
+        
         return view('admin.car-edit', compact('car'));
     }
-
+//     public function edit($id)
+// {
+//     // Try different relationship names based on your model
+//     $car = AdminCar::with(['carImages', 'additionalImages', 'adminCarImages', 'images'])
+//               ->findOrFail($id);
     
-    // public function edit($id)
-    // {
-    //     $car = AdminCar::with('additionalImages')->findOrFail($id);
-    //     return view('admin.car-edit', compact('car'));
-    // }
+//     return view('admin.car-edit', compact('car'));
+// }
 
     /**
      * Update the specified car in storage
@@ -293,6 +306,7 @@ class CarController extends Controller
             ->withInput();
     }
 }
+
 public function deleteImage(Request $request)
 {
     try {
@@ -327,15 +341,15 @@ public function deleteImage(Request $request)
             }
             
         } elseif ($imageType === 'additional' && $imageId) {
-            // Delete additional image
-            $additionalImage = \DB::table('car_additional_images')->where('id', $imageId)->first();
+            // Delete additional image - FIXED TABLE NAME
+            $additionalImage = \DB::table('admin_car_images')->where('id', $imageId)->first();
             
             if ($additionalImage && $additionalImage->image_path === $imageName) {
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }
                 
-                \DB::table('car_additional_images')->where('id', $imageId)->delete();
+                \DB::table('admin_car_images')->where('id', $imageId)->delete();
                 $imageDeleted = true;
             }
         }

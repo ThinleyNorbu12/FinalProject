@@ -57,19 +57,21 @@ class AdminCar extends Model
     /**
      * Get the car images associated with the car.
      */
-    public function adminCarImages()
-    {
-        return $this->hasMany(AdminCarImage::class, 'car_id');
-    }
-    public function images()
+    // public function adminCarImages()
+    // {
+    //     return $this->hasMany(AdminCarImage::class, 'car_id');
+    // }
+    
+    
+    public function carImages()
     {
         return $this->hasMany(AdminCarImage::class, 'car_id');
     }
 
-    public function carImages()
-{
-    return $this->hasMany(CarAdditionalImage::class, 'car_id', 'id');
-}
+//     public function carImages()
+// {
+//     return $this->hasMany(CarAdditionalImage::class, 'car_id', 'id');
+// }
 
 
     /**
@@ -79,6 +81,7 @@ class AdminCar extends Model
     {
         return $this->hasMany(CarAdditionalImage::class, 'car_id', 'id');
     }
+    
     
     /**
      * Get all images (primary + additional) as a collection

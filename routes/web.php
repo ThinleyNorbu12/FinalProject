@@ -326,6 +326,23 @@ Route::middleware(['auth:admin'])->group(function () {
 });
 
 
+// profile
+Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Profile Routes
+    Route::get('/profile', [CarAdminController::class, 'profile'])->name('profile');
+    Route::put('/profile/update', [CarAdminController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/picture', [CarAdminController::class, 'updateProfilePicture'])->name('profile.picture');
+    Route::put('/password/update', [CarAdminController::class, 'updatePassword'])->name('password.update');
+    
+    // Optional: API endpoint for profile data
+    Route::get('/profile/data', [CarAdminController::class, 'getProfileData'])->name('profile.data');
+    
+});
+
+
+
+
 
 // customer web.php
 

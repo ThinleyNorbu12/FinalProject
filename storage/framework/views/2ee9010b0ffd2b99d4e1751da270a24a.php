@@ -1,50 +1,302 @@
 
 
 <?php $__env->startSection('content'); ?>
+
+<!-- Fonts and Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<!-- Custom CSS -->
 <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/inspection-approval.css')); ?>">
-<div class="dashboard-sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-            <h2>Admin Portal</h2>
-        </div>
-        <button id="sidebar-toggle" class="sidebar-toggle">
+<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
+<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/darkmode.css')); ?>">
+<style>
+    /* Inspection Approval Styles */
+.container {
+    padding: 2rem;
+    margin-left: 280px; /* Match sidebar width */
+    transition: all 0.3s ease;
+}
+
+/* Table Styles */
+.table {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.table thead th {
+    background: #2c3e50;
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 2px solid #34495e;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+    padding: 1rem;
+    border-color: #dee2e6;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.alert-success {
+    background: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-info {
+    background: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+/* Button Styles */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-success {
+    background: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-danger {
+    background: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    border-color: #bd2130;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+}
+
+/* Badge Styles */
+.badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 700;
+    border-radius: 0.25rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .container {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        border: 0;
+    }
+    
+    .table thead {
+        display: none;
+    }
+    
+    .table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 1rem;
+        flex: 1;
+    }
+    
+    .table td:last-child {
+        border-bottom: 0;
+    }
+}
+
+/* Dark Mode Overrides */
+.dark-mode .table {
+    background: #2d3748;
+    color: #fff;
+}
+
+.dark-mode .table thead th {
+    background: #1a202c;
+    border-color: #2d3748;
+}
+
+.dark-mode .table-hover tbody tr:hover {
+    background-color: #4a5568;
+}
+
+.dark-mode .alert-success {
+    background: #2b5935;
+    border-color: #23482d;
+    color: #c3e6cb;
+}
+
+.dark-mode .alert-info {
+    background: #2b4e59;
+    border-color: #23434d;
+    color: #bee5eb;
+}
+</style>
+<!-- Admin Header -->
+<header class="admin-header" id="adminHeader">
+    <div class="header-left">
+        <button class="mobile-menu-toggle d-md-none" id="mobileMenuToggle">
             <i class="fas fa-bars"></i>
         </button>
-    </div> 
-    <div class="admin-profile">
+
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="header-brand d-none d-md-flex">
+            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
+            <span>Car Rental System</span>
+        </a>
+
+        <div class="header-search d-none d-lg-block">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search anything...">
+        </div>
+    </div>
+
+    <div class="header-actions">
+        <div class="header-action-item" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="badge">3</span>
+        </div>
+
+        <div class="header-action-item" title="Messages">
+            <i class="fas fa-envelope"></i>
+            <span class="badge">5</span>
+        </div>
+
         <?php if(Auth::guard('admin')->check()): ?>
-            <div class="profile-avatar">
-                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
+            <div class="header-profile dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar"
+                         class="rounded-circle me-2" width="32" height="32">
+                    <div class="header-profile-info d-none d-sm-block">
+                        <h4 class="mb-0"><?php echo e(Auth::guard('admin')->user()->name); ?></h4>
+                        <span>Administrator</span>
+                    </div>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li>
+                        <a class="dropdown-item" href="<?php echo e(route('admin.profile')); ?>">
+                            <i class="fas fa-user me-2"></i> Profile
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </a>
+                        <form id="logout-form" action="<?php echo e(route('admin.logout')); ?>" method="POST" class="d-none">
+                            <?php echo csrf_field(); ?>
+                        </form>
+                    </li>
+                </ul>
             </div>
-            <div class="profile-info">
-                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                <span>Administrator</span>
-            </div>
+        <?php else: ?>
+            <a href="<?php echo e(route('admin.login')); ?>" class="btn btn-primary">Login</a>
         <?php endif; ?>
     </div>
-    <div class="sidebar" id="sidebar">
+</header>
+
+<!-- Admin Dashboard -->
+<div class="admin-dashboard" id="adminDashboard">
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <div class="dashboard-sidebar" id="dashboardSidebar">
+
+        <div class="sidebar-header">
+            
+        </div>
+
+        <?php if(Auth::guard('admin')->check()): ?>
+            <div class="admin-profile">
+                <div class="profile-avatar">
+                    <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
+                </div>
+                <div class="profile-info">
+                    <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="sidebar-menu">
             <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
+
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-heading">Manage Service</div>
+
+            <a href="<?php echo e(route('cars.index')); ?>" class="sidebar-menu-item">
+                <i class="fas fa-car"></i>
+                <span>Cars</span>
+                <div class="tooltip">Cars</div>
+            </a>
+
             <div class="sidebar-divider"></div>
             <div class="sidebar-heading">Car Owner</div>
 
-            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item ">
+            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-car"></i>
                 <span>Car Registration</span>
+                <div class="tooltip">Car Registration</div>
             </a>
 
             <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-clipboard-check"></i>
                 <span>Inspection Requests</span>
+                <div class="tooltip">Inspection Requests</div>
             </a>
 
-            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item active">
+            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-check-circle"></i>
                 <span>Approve Inspections</span>
+                <div class="tooltip">Approve Inspections</div>
             </a>
 
             <div class="sidebar-divider"></div>
@@ -53,39 +305,57 @@
             <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-id-card"></i>
                 <span>Verify Users</span>
+                <div class="tooltip">Verify Users</div>
             </a>
 
             <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-credit-card"></i>
                 <span>Payments</span>
+                <div class="tooltip">Payments</div>
             </a>
 
-            <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
+            <a href="#" class="sidebar-menu-item">
                 <i class="fas fa-edit"></i>
                 <span>Update Registration</span>
+                <div class="tooltip">Update Registration</div>
             </a>
 
-            <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
+            <a href="#" class="sidebar-menu-item">
                 <i class="fas fa-info-circle"></i>
                 <span>Car Information</span>
+                <div class="tooltip">Car Information</div>
             </a>
 
-            <a href="<?php echo e(route ('admin.booked-car')); ?>" class="sidebar-menu-item ">
+            <a href="<?php echo e(route('admin.booked-car')); ?>" class="sidebar-menu-item">
                 <i class="fas fa-calendar-check"></i>
                 <span>Booked Cars</span>
+                <div class="tooltip">Booked Cars</div>
             </a>
+
+            <!-- Dark Mode Toggle -->
+            <button class="dark-mode-toggle" id="darkModeToggle">
+                <div class="toggle-text">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
+                </div>
+                <div class="toggle-switch" id="toggleSwitch">
+                    <div class="toggle-slider"></div>
+                </div>
+            </button>
 
             <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
+                <div class="tooltip">Logout</div>
             </a>
 
             <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form" style="display: none;">
                 <?php echo csrf_field(); ?>
             </form>
         </div>
-    </div>       
+    </div>
 </div>
+
 
 <div class="container">
     <h2 class="mb-4 text-center">Approve or Reject Inspected Cars</h2>
@@ -164,6 +434,25 @@
         <div class="alert alert-info text-center">No confirmed inspection requests pending approval.</div>
     <?php endif; ?>
 </div>
+
+<footer class="admin-footer" id="adminFooter">
+    <div class="footer-left">
+        <div class="footer-copy">
+            <p class="mb-0">&copy; <?php echo e(date('Y')); ?> Car Rental System. All rights reserved.</p>
+        </div>
+    </div>
+        
+    <div class="footer-right">
+        <div class="footer-status">
+            <span class="status-dot"></span>
+            System Online
+        </div>
+        <div class="footer-copy">
+            Version 2.1.0
+        </div>
+    </div>
+</footer>
+
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 

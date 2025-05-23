@@ -1,6 +1,6 @@
 @extends('layouts.app')
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<link rel="stylesheet" href="{{ asset('assets/css/admin/cars.css') }}">
 
 @section('content')
 <div class="dashboard-content" id="dashboardContent">
@@ -277,368 +277,55 @@
                     @enderror
                 </div>
                 
-                <!-- Current Images Display - UPDATED SECTION -->
+                <!-- Current Images Display -->
                 <div class="form-group">
                     <label>Current Images</label>
                     <div class="current-images">
-                        @php
-                            $allImages = collect();
-                            
-                            // Add primary image if exists
-                            if($car->car_image) {
-                                $allImages->push([
-                                    'type' => 'primary',
-                                    'path' => $car->car_image,
-                                    'id' => null,
-                                    'label' => 'Primary'
-                                ]);
-                            }
-                            
-                            // For AdminCar model - try different relationship names that might exist
-                            $additionalImages = null;
-                            
-                            // Check for AdminCarImage relationship
-                            if(method_exists($car, 'adminCarImages') && $car->adminCarImages) {
-                                $additionalImages = $car->adminCarImages;
-                            } elseif(method_exists($car, 'carImages') && $car->carImages) {
-                                $additionalImages = $car->carImages;
-                            } elseif(method_exists($car, 'images') && $car->images) {
-                                $additionalImages = $car->images;
-                            } elseif(method_exists($car, 'additionalImages') && $car->additionalImages) {
-                                $additionalImages = $car->additionalImages;
-                            }
-                            
-                            // Try to load relationship dynamically if not loaded
-                            if(!$additionalImages) {
-                                try {
-                                    // Try to load AdminCarImage records directly
-                                    $additionalImages = \App\Models\AdminCarImage::where('car_id', $car->id)->get();
-                                } catch(Exception $e) {
-                                    // If AdminCarImage doesn't exist, try other possible models
-                                    try {
-                                        $additionalImages = \App\Models\CarImage::where('car_id', $car->id)->get();
-                                    } catch(Exception $e2) {
-                                        $additionalImages = collect();
-                                    }
-                                }
-                            }
-                            
-                            if($additionalImages && $additionalImages->count() > 0) {
-                                foreach($additionalImages as $index => $additionalImage) {
-                                    // Try different possible column names for image path
-                                    $imagePath = $additionalImage->image_path ?? 
-                                               $additionalImage->path ?? 
-                                               $additionalImage->image_name ?? 
-                                               $additionalImage->filename ?? 
-                                               $additionalImage->image ??
-                                               $additionalImage->file_name ??
-                                               $additionalImage->name;
-                                               
-                                    if($imagePath) {
-                                        $allImages->push([
-                                            'type' => 'additional',
-                                            'path' => $imagePath,
-                                            'id' => $additionalImage->id,
-                                            'label' => 'Image ' . ($index + 2)
-                                        ]);
-                                    }
-                                }
-                            }
-                            
-                            // If still no additional images found, try other storage methods
-                            if($additionalImages->count() === 0) {
-                                // Check if images are stored as JSON in the main car table
-                                if(isset($car->images) && is_string($car->images)) {
-                                    $jsonImages = json_decode($car->images, true);
-                                    if(is_array($jsonImages)) {
-                                        foreach($jsonImages as $index => $imageName) {
-                                            if($imageName !== $car->car_image) { // Don't duplicate primary image
-                                                $allImages->push([
-                                                    'type' => 'additional',
-                                                    'path' => $imageName,
-                                                    'id' => null,
-                                                    'label' => 'Image ' . ($index + 2)
-                                                ]);
-                                            }
-                                        }
-                                    }
-                                }
+                        @if($car->car_image)
+                            <!-- Primary Image -->
+                            <div class="current-image-item" data-image-type="primary">
+                                <img src="{{ asset('admincar_images/' . $car->car_image) }}"
+                                    alt="Primary Car Image"
+                                    class="img-thumbnail">
+                                <span class="badge badge-primary">Primary</span>
                                 
-                                // Check for comma-separated string in various fields
-                                $stringFields = ['additional_images', 'car_images', 'image_gallery', 'gallery_images'];
-                                foreach($stringFields as $field) {
-                                    if(isset($car->$field) && is_string($car->$field) && !empty($car->$field)) {
-                                        $imageNames = explode(',', $car->$field);
-                                        foreach($imageNames as $index => $imageName) {
-                                            $imageName = trim($imageName);
-                                            if(!empty($imageName)) {
-                                                $allImages->push([
-                                                    'type' => 'additional',
-                                                    'path' => $imageName,
-                                                    'id' => null,
-                                                    'label' => 'Image ' . ($allImages->count() + 1)
-                                                ]);
-                                            }
-                                        }
-                                        break; // Found images, no need to check other fields
-                                    }
-                                }
-                            }
-                        @endphp
-                        
-                        @if($allImages->count() > 0)
-                            @foreach($allImages as $image)
-                                <div class="current-image-item" 
-                                     data-image-type="{{ $image['type'] }}" 
-                                     @if($image['id']) data-image-id="{{ $image['id'] }}" @endif>
-                                    <img src="{{ asset('admincar_images/' . $image['path']) }}"
-                                        alt="{{ $image['label'] }}"
-                                        class="img-thumbnail"
-                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                    <div class="image-error" style="display: none; padding: 20px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; text-align: center;">
-                                        <i class="fas fa-image text-muted"></i>
-                                        <p class="text-muted mb-0">Image not found</p>
-                                        <small class="text-muted">{{ $image['path'] }}</small>
-                                    </div>
-                                    <span class="badge {{ $image['type'] === 'primary' ? 'badge-primary' : 'badge-secondary' }}">
-                                        {{ $image['label'] }}
-                                    </span>
-                                    
-                                    <!-- Delete Button -->
-                                    <button type="button" 
-                                            class="delete-image-btn" 
-                                            data-image-type="{{ $image['type'] }}"
-                                            data-car-id="{{ $car->id }}"
-                                            data-image-name="{{ $image['path'] }}"
-                                            @if($image['id']) data-image-id="{{ $image['id'] }}" @endif
-                                            title="Delete Image">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            @endforeach
-                        @else
-                            <p class="text-muted">No images uploaded yet.</p>
-                        @endif
-                    </div>
-                    
-                    <!-- Enhanced Debug Information -->
-                    <div class="alert alert-info mt-2" style="font-size: 0.875rem;">
-                        <strong>AdminCar Model Debug:</strong><br>
-                        Car ID: {{ $car->id ?? 'Not Set' }}<br>
-                        Model Class: {{ get_class($car) }}<br>
-                        
-                        <strong>Primary Image Field:</strong> 
-                        @if(isset($car->car_image))
-                            @if($car->car_image)
-                                ✓ {{ $car->car_image }}
-                            @else
-                                ✗ Empty/Null
-                            @endif
-                        @else
-                            ✗ Field doesn't exist
-                        @endif
-                        <br>
-                        
-                        <strong>AdminCar Image-Related Fields:</strong><br>
-                        @foreach($car->getAttributes() as $key => $value)
-                            @if(Str::contains($key, ['image', 'picture', 'photo']))
-                                • <span style="color: #007bff;">{{ $key }}</span>: 
-                                @if(is_string($value))
-                                    "{{ Str::limit($value, 50) }}"
-                                @elseif(is_null($value))
-                                    <em>null</em>
-                                @else
-                                    {{ $value }}
-                                @endif
-                                <br>
-                            @endif
-                        @endforeach
-                        
-                        <strong>AdminCarImage Relationship Test:</strong><br>
-                        @php
-                            $relationshipTests = [
-                                'adminCarImages', 'carImages', 'images', 'additionalImages', 
-                                'adminImages', 'car_images', 'additional_images'
-                            ];
-                            $workingRelationships = [];
-                        @endphp
-                        
-                        @foreach($relationshipTests as $relationName)
-                            @try
-                                @if(method_exists($car, $relationName))
-                                    @php
-                                        $relationData = $car->$relationName;
-                                        $count = is_countable($relationData) ? $relationData->count() : 'Not Countable';
-                                        $workingRelationships[$relationName] = $count;
-                                    @endphp
-                                    • {{ $relationName }}: ✓ EXISTS (Count: {{ $count }})
-                                    @if($count > 0)
-                                        <span style="color: green; font-weight: bold;">← FOUND {{ $count }} IMAGES!</span>
-                                    @endif
-                                    <br>
-                                @else
-                                    • {{ $relationName }}: ✗ Method doesn't exist<br>
-                                @endif
-                            @catch(Exception $e)
-                                • {{ $relationName }}: ❌ Error: {{ $e->getMessage() }}<br>
-                            @endtry
-                        @endforeach
-                        
-                        <strong>Direct AdminCarImage Query:</strong><br>
-                        @php
-                            try {
-                                $directImages = \App\Models\AdminCarImage::where('car_id', $car->id)->get();
-                                $directCount = $directImages->count();
-                            } catch(Exception $e) {
-                                $directImages = null;
-                                $directCount = 'Error: ' . $e->getMessage();
-                            }
-                        @endphp
-                        
-                        AdminCarImage records for car_id {{ $car->id }}: 
-                        @if(is_numeric($directCount))
-                            <span style="color: {{ $directCount > 0 ? 'green' : 'orange' }}; font-weight: bold;">
-                                {{ $directCount }} records found
-                            </span>
-                            @if($directCount > 0 && $directImages)
-                                <br>
-                                <details style="margin-left: 20px;">
-                                    <summary>Click to see AdminCarImage records</summary>
-                                    @foreach($directImages->take(5) as $img)
-                                        • ID: {{ $img->id }}, 
-                                        @foreach($img->getAttributes() as $col => $val)
-                                            @if(Str::contains($col, ['image', 'path', 'name', 'file']))
-                                                {{ $col }}: "{{ $val }}", 
-                                            @endif
-                                        @endforeach
-                                        <br>
-                                    @endforeach
-                                    @if($directCount > 5)
-                                        ... and {{ $directCount - 5 }} more
-                                    @endif
-                                </details>
-                            @endif
-                        @else
-                            <span style="color: red;">{{ $directCount }}</span>
-                        @endif
-                        <br>
-                        
-                        <strong>AdminCar Database Structure Check:</strong><br>
-                        @php
-                            try {
-                                $dbCheck = DB::table('admin_cars')->where('id', $car->id)->first();
-                                $imageFields = [];
-                                if($dbCheck) {
-                                    foreach((array)$dbCheck as $key => $value) {
-                                        if(Str::contains($key, ['image', 'picture', 'photo']) && !empty($value)) {
-                                            $imageFields[$key] = $value;
-                                        }
-                                    }
-                                }
-                            } catch(Exception $e) {
-                                $imageFields = ['error' => $e->getMessage()];
-                            }
-                        @endphp
-                        
-                        @if(empty($imageFields))
-                            ⚠️ No image fields with data found in admin_cars table
-                        @elseif(isset($imageFields['error']))
-                            ❌ Database error: {{ $imageFields['error'] }}
-                        @else
-                            @foreach($imageFields as $field => $value)
-                                • admin_cars.{{ $field }}: {{ $value }}<br>
-                            @endforeach
-                        @endif
-                        
-                        <strong>AdminCarImage Table Check:</strong><br>
-                        @php
-                            try {
-                                $imageTableCheck = DB::table('admin_car_images')->where('car_id', $car->id)->get();
-                                $imageTableCount = $imageTableCheck->count();
-                            } catch(Exception $e) {
-                                $imageTableCheck = null;
-                                $imageTableCount = 'Table not found or error: ' . $e->getMessage();
-                            }
-                        @endphp
-                        
-                        admin_car_images table: 
-                        @if(is_numeric($imageTableCount))
-                            <span style="color: {{ $imageTableCount > 0 ? 'green' : 'orange' }}; font-weight: bold;">
-                                {{ $imageTableCount }} records
-                            </span>
-                            @if($imageTableCount > 0)
-                                <br>
-                                <details style="margin-left: 20px;">
-                                    <summary>Click to see table records</summary>
-                                    @foreach($imageTableCheck->take(5) as $record)
-                                        • @foreach((array)$record as $col => $val)
-                                            {{ $col }}: "{{ $val }}", 
-                                        @endforeach<br>
-                                    @endforeach
-                                </details>
-                            @endif
-                        @else
-                            <span style="color: red;">{{ $imageTableCount }}</span>
-                        @endif
-                        <br>
-                        
-                        <strong>File System Check:</strong><br>
-                        @php
-                            $imageDir = public_path('admincar_images');
-                            $dirExists = is_dir($imageDir);
-                            $imageFiles = [];
-                            
-                            if($dirExists) {
-                                $files = glob($imageDir . '/*');
-                                $imageFiles = array_filter($files, function($file) {
-                                    return in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), 
-                                        ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif']);
-                                });
-                            }
-                        @endphp
-                        
-                        Directory 'public/admincar_images': {{ $dirExists ? '✓ EXISTS' : '✗ NOT FOUND' }}<br>
-                        @if($dirExists)
-                            Total image files: {{ count($imageFiles) }}<br>
-                            @if(count($imageFiles) > 0)
-                                <details>
-                                    <summary>Recent files (showing max 10)</summary>
-                                    @foreach(array_slice($imageFiles, -10) as $file)
-                                        • {{ basename($file) }} ({{ date('Y-m-d H:i:s', filemtime($file)) }})<br>
-                                    @endforeach
-                                </details>
-                            @endif
-                        @endif
-                        
-                        <br><strong>Images Successfully Displayed:</strong> {{ $allImages->count() }}
-                        
-                        @if($allImages->count() === 0)
-                            <div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #ffc107;">
-                                <strong>⚠️ Fix Your AdminCar Setup:</strong><br>
-                                
-                                @if(is_numeric($directCount) && $directCount > 0)
-                                    <span style="color: green;">✓ Found {{ $directCount }} AdminCarImage records!</span><br>
-                                    <strong>Issue:</strong> Your AdminCar model needs a relationship. Add this to your AdminCar model:<br>
-                                    <code style="background: #f8f9fa; padding: 2px 4px;">
-                                        public function adminCarImages() {<br>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;return $this->hasMany(AdminCarImage::class, 'car_id');<br>
-                                        }
-                                    </code><br><br>
-                                    
-                                    And in your controller, load it with:<br>
-                                    <code style="background: #f8f9fa; padding: 2px 4px;">
-                                        $car = AdminCar::with('adminCarImages')->findOrFail($id);
-                                    </code>
-                                    
-                                @elseif(is_numeric($imageTableCount) && $imageTableCount > 0)
-                                    <span style="color: green;">✓ Found {{ $imageTableCount }} records in admin_car_images table!</span><br>
-                                    <strong>Issue:</strong> The AdminCarImage model might have wrong foreign key or the relationship isn't defined properly.
-                                    
-                                @else
-                                    <span style="color: red;">✗ No image records found in database</span><br>
-                                    <strong>Issue:</strong> Images might not be saving correctly during upload. Check your upload controller.
-                                @endif
+                                <button type="button" 
+                                        class="delete-image-btn" 
+                                        data-image-type="primary"
+                                        data-car-id="{{ $car->id }}"
+                                        data-image-name="{{ $car->car_image }}"
+                                        title="Delete Image">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
+                        @endif
+                        
+                        @if(isset($car->carImages) && $car->carImages->count() > 0)
+                            <!-- Additional Images -->
+                            @foreach($car->carImages as $index => $carImage)
+                                @if(!empty(trim($carImage->image_path)))
+                                    <div class="current-image-item" data-image-id="{{ $carImage->id }}">
+                                        <img src="{{ asset('admincar_images/' . $carImage->image_path) }}"
+                                            alt="Car Image {{ $index + 2 }}"
+                                            class="img-thumbnail">
+                                        <span class="badge badge-secondary">{{ $index + 2 }}</span>
+                                        
+                                        <button type="button" 
+                                                class="delete-image-btn" 
+                                                data-image-type="additional"
+                                                data-image-id="{{ $carImage->id }}"
+                                                data-car-id="{{ $car->id }}"
+                                                data-image-name="{{ $carImage->image_path }}"
+                                                title="Delete Image">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                @endif
+                            @endforeach
+                        @endif
+                        
+                        @if(!$car->car_image && (!isset($car->carImages) || $car->carImages->count() == 0))
+                            <p class="text-muted">No images uploaded yet.</p>
                         @endif
                     </div>
                 </div>
@@ -676,7 +363,7 @@
                             <label for="car_images" class="btn btn-outline-primary">Browse Files</label>
                             <input type="file" name="car_images[]" id="car_images" class="d-none" multiple accept="image/*">
                         </div>
-                        <p class="text-center small text-muted">Supported formats: JPEG, PNG, JPG, WEBP, GIF, AVIF (max 2MB each)</p>
+                        <p class="text-center small text-muted">Supported formats: JPEG, PNG, JPG, WEBP, GIF (max 2MB each)</p>
                         <p class="text-center small text-info">Leave empty to keep current images</p>
                         
                         <div id="selectedFiles" class="image-preview-container">
@@ -725,16 +412,6 @@
     border-radius: 6px;
 }
 
-.image-error {
-    width: 150px;
-    height: 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Delete button styling with higher z-index and better positioning */
 .delete-image-btn {
     position: absolute;
     top: 5px;
@@ -774,7 +451,6 @@
     line-height: 1 !important;
 }
 
-/* Badge positioning */
 .badge {
     position: absolute;
     top: 5px;
@@ -1259,6 +935,69 @@ $(document).ready(function() {
         $('#confirmDeleteBtn').html('Delete Image').prop('disabled', false);
     });
     
+    // Form validation before submission
+    $('form').on('submit', function(e) {
+        // Basic validation
+        const maker = $('#maker').val().trim();
+        const model = $('#model').val().trim();
+        const vehicleType = $('#vehicle_type').val();
+        const carCondition = $('#car_condition').val();
+        const mileage = $('#mileage').val();
+        const price = $('#price').val();
+        const registrationNo = $('#registration_no').val().trim();
+        const status = $('#status').val();
+        const doors = $('#number_of_doors').val();
+        const seats = $('#number_of_seats').val();
+        const transmission = $('#transmission_type').val();
+        const fuelType = $('#fuel_type').val();
+        
+        // Check required fields
+        if (!maker || !model || !vehicleType || !carCondition || !mileage || 
+            !price || !registrationNo || !status || !doors || !seats || 
+            !transmission || !fuelType) {
+            e.preventDefault();
+            showAlert('error', 'Please fill in all required fields.');
+            return false;
+        }
+        
+        // Validate numeric fields
+        if (isNaN(mileage) || parseFloat(mileage) < 0) {
+            e.preventDefault();
+            showAlert('error', 'Please enter a valid mileage value.');
+            return false;
+        }
+        
+        if (isNaN(price) || parseFloat(price) <= 0) {
+            e.preventDefault();
+            showAlert('error', 'Please enter a valid price value.');
+            return false;
+        }
+        
+        if (isNaN(doors) || parseInt(doors) <= 0) {
+            e.preventDefault();
+            showAlert('error', 'Please enter a valid number of doors.');
+            return false;
+        }
+        
+        if (isNaN(seats) || parseInt(seats) <= 0) {
+            e.preventDefault();
+            showAlert('error', 'Please enter a valid number of seats.');
+            return false;
+        }
+        
+        // Show loading state on submit button
+        const $submitBtn = $('button[type="submit"]');
+        $submitBtn.html('<span class="spinner-border spinner-border-sm" role="status"></span> Updating...');
+        $submitBtn.prop('disabled', true);
+        
+        console.log('Form validation passed, submitting...');
+    });
+    
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(function() {
+        $('.alert').fadeOut();
+    }, 5000);
+    
     // Debug: Log when page loads
     console.log('Available data attributes on delete buttons:');
     $('.delete-image-btn').each(function(index) {
@@ -1269,6 +1008,11 @@ $(document).ready(function() {
             'data-image-id': $(this).data('image-id')
         });
     });
+    
+    // Initialize tooltips if Bootstrap is available
+    if (typeof $().tooltip === 'function') {
+        $('[title]').tooltip();
+    }
+    console.log('Car edit form JavaScript initialized successfully');
 });
 </script>
-@endsection

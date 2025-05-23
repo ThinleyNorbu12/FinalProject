@@ -341,11 +341,7 @@ namespace App\Models {
      * @property string $maker
      * @property int $id
      * @property-read \App\Models\Admin $admin
-     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AdminCarImage> $adminCarImages
-     * @property-read int|null $adminCarImages_count
-     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AdminCarImage> $images
-     * @property-read int|null $images_count
-     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarAdditionalImage> $carImages
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AdminCarImage> $carImages
      * @property-read int|null $carImages_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarAdditionalImage> $additionalImages
      * @property-read int|null $additionalImages_count

@@ -307,6 +307,143 @@ class CarAdminController extends Controller
             ->with('status', $message);
     }
 
+
+
+    public function profile()
+{
+    return view('admin.profile');
+}
+
+/**
+ * Update admin profile information
+ */
+public function updateProfile(Request $request)
+{
+    $admin = Auth::guard('admin')->user();
+    
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => [
+            'required',
+            'email',
+            'max:255',
+            Rule::unique('admins')->ignore($admin->id)
+        ],
+    ]);
+
+    try {
+        $admin->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return redirect()->back()->with('success', 'Profile updated successfully!');
+    } catch (\Exception $e) {
+        return redirect()->back()->withErrors(['error' => 'Failed to update profile. Please try again.']);
+    }
+}
+
+/**
+ * Update admin password
+ */
+public function updatePassword(Request $request)
+{
+    $admin = Auth::guard('admin')->user();
+    
+    $request->validate([
+        'current_password' => 'required',
+        'new_password' => [
+            'required',
+            'string',
+            'min:8',
+            'confirmed',
+            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/' // At least one lowercase, uppercase, and number
+        ],
+    ], [
+        'new_password.regex' => 'Password must contain at least one lowercase letter, one uppercase letter, and one number.',
+        'new_password.confirmed' => 'Password confirmation does not match.',
+    ]);
+
+    // Verify current password
+    if (!Hash::check($request->current_password, $admin->password)) {
+        return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect.']);
+    }
+
+    // Check if new password is different from current password
+    if (Hash::check($request->new_password, $admin->password)) {
+        return redirect()->back()->withErrors(['new_password' => 'New password must be different from current password.']);
+    }
+
+    try {
+        $admin->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        return redirect()->back()->with('success', 'Password changed successfully!');
+    } catch (\Exception $e) {
+        return redirect()->back()->withErrors(['error' => 'Failed to change password. Please try again.']);
+    }
+}
+
+/**
+ * Update admin profile picture
+ */
+public function updateProfilePicture(Request $request)
+{
+    $admin = Auth::guard('admin')->user();
+    
+    $request->validate([
+        'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // 2MB Max
+    ]);
+
+    try {
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            
+            // Generate unique filename
+            $filename = 'profile_' . $admin->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            // Store the file in public/assets/images/profiles directory
+            $path = $file->move(public_path('assets/images/profiles'), $filename);
+            
+            // Delete old profile picture if it exists and is not the default
+            if ($admin->profile_picture && $admin->profile_picture !== 'thinley.jpg') {
+                $oldImagePath = public_path('assets/images/profiles/' . $admin->profile_picture);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+            
+            // Update admin record with new profile picture filename
+            $admin->update([
+                'profile_picture' => $filename
+            ]);
+
+            return redirect()->back()->with('success', 'Profile picture updated successfully!');
+        }
+    } catch (\Exception $e) {
+        return redirect()->back()->withErrors(['error' => 'Failed to update profile picture. Please try again.']);
+    }
+
+    return redirect()->back()->withErrors(['error' => 'No file was uploaded.']);
+}
+
+/**
+ * Get admin profile data for API (optional)
+ */
+public function getProfileData()
+{
+    $admin = Auth::guard('admin')->user();
+    
+    return response()->json([
+        'id' => $admin->id,
+        'name' => $admin->name,
+        'email' => $admin->email,
+        'profile_picture' => $admin->profile_picture ?? 'thinley.jpg',
+        'created_at' => $admin->created_at->format('M Y'),
+        'updated_at' => $admin->updated_at->format('M d, Y'),
+    ]);
+}
     
 
  

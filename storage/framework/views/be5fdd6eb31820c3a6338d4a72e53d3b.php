@@ -1,4 +1,5 @@
 
+
 <?php $__env->startSection('content'); ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,14 +9,14 @@
     <title>Responsive Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/dashboard.css')); ?>">
-    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/darkmode.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/dashboard.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
+    <script src="<?php echo e(asset('assets/js/admin-dashboard.js')); ?>"></script>
 </head>
-<body>
+<body> 
     <!-- Enhanced Admin Header -->
     <header class="admin-header" id="adminHeader">
         <div class="header-left">
@@ -25,7 +26,7 @@
             
             <a href="<?php echo e(route('admin.dashboard')); ?>" class="header-brand d-none d-md-flex">
                 <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-                <span>Car Rental system </span>
+                <span>Car Rental System</span>
             </a>
 
             <div class="header-search d-none d-lg-block">
@@ -44,19 +45,36 @@
                 <i class="fas fa-envelope"></i>
                 <span class="badge">5</span>
             </div>
-            
-            <div class="header-action-item d-none d-md-block" title="Settings">
-                <i class="fas fa-cog"></i>
-            </div>
 
             <?php if(Auth::guard('admin')->check()): ?>
-                <div class="header-profile">
-                    <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
-                    <div class="header-profile-info d-none d-sm-block">
-                        <h4><?php echo e(Auth::guard('admin')->user()->name); ?></h4>
-                        <span>Administrator</span>
-                    </div>
-                    <i class="fas fa-chevron-down d-none d-sm-inline"></i>
+                <div class="header-profile dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar"
+                             class="rounded-circle me-2" width="32" height="32">
+                        <div class="header-profile-info d-none d-sm-block">
+                            <h4 class="mb-0"><?php echo e(Auth::guard('admin')->user()->name); ?></h4>
+                            <span>Administrator</span>
+                        </div>
+                    </a>
+                    
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="<?php echo e(route('admin.profile')); ?>">
+                                <i class="fas fa-user me-2"></i> Profile
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="#"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                            <form id="logout-form" action="<?php echo e(route('admin.logout')); ?>" method="POST" class="d-none">
+                                <?php echo csrf_field(); ?>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             <?php else: ?>
                 <a href="<?php echo e(route('admin.login')); ?>" class="btn btn-primary">Login</a>
@@ -92,15 +110,15 @@
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
+                
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Manage Service</div>
                 
-                <a href="<?php echo e(route('cars.index')); ?>" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('cars.index')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-car"></i>
-                    <span> Cars</span>
-                    <div class="tooltip"> Cars</div>
+                    <span>Cars</span>
+                    <div class="tooltip">Cars</div>
                 </a>
-
 
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Car Owner</div>
@@ -167,13 +185,13 @@
                     </div>
                 </button>
 
-                <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
+                <a href="#" class="sidebar-menu-item" onclick="document.getElementById('sidebar-logout-form').submit();">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                     <div class="tooltip">Logout</div>
                 </a>
 
-                <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form" style="display: none;">
+                <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="sidebar-logout-form" style="display: none;">
                     <?php echo csrf_field(); ?>
                 </form>
             </div>
@@ -203,7 +221,9 @@
                             <div class="card-content">
                                 <h3>New Registrations</h3>
                                 <p class="count">24</p>
-                                <p class="trend up"><i class="fas fa-arrow-up"></i> 12% from last month</p>
+                                <p class="trend up">
+                                    <i class="fas fa-arrow-up"></i> 12% from last month
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -216,7 +236,9 @@
                             <div class="card-content">
                                 <h3>Pending Inspections</h3>
                                 <p class="count">18</p>
-                                <p class="trend down"><i class="fas fa-arrow-down"></i> 5% from last month</p>
+                                <p class="trend down">
+                                    <i class="fas fa-arrow-down"></i> 5% from last month
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -229,7 +251,9 @@
                             <div class="card-content">
                                 <h3>Total Revenue</h3>
                                 <p class="count">$15,890</p>
-                                <p class="trend up"><i class="fas fa-arrow-up"></i> 8% from last month</p>
+                                <p class="trend up">
+                                    <i class="fas fa-arrow-up"></i> 8% from last month
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -242,7 +266,9 @@
                             <div class="card-content">
                                 <h3>Booked Cars</h3>
                                 <p class="count">42</p>
-                                <p class="trend up"><i class="fas fa-arrow-up"></i> 15% from last month</p>
+                                <p class="trend up">
+                                    <i class="fas fa-arrow-up"></i> 15% from last month
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -398,81 +424,6 @@
             </div>
         </div>
     </footer>
-
-    <?php $__env->startSection('scripts'); ?>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-       document.addEventListener('DOMContentLoaded', function() {
-        // Mobile menu toggle (hamburger in header)
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const dashboardSidebar = document.getElementById('dashboardSidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        
-        if (mobileMenuToggle) {
-            mobileMenuToggle.addEventListener('click', function() {
-                dashboardSidebar.classList.toggle('active');
-                sidebarOverlay.classList.toggle('active');
-            });
-        }
-        
-        // Sidebar overlay (closes sidebar when clicking outside)
-        if (sidebarOverlay) {
-            sidebarOverlay.addEventListener('click', function() {
-                dashboardSidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-            });
-        }
-        
-        // Sidebar toggle button (arrow)
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const adminDashboard = document.getElementById('adminDashboard');
-        
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function() {
-                adminDashboard.classList.toggle('sidebar-collapsed');
-                
-                // Store the sidebar state in localStorage
-                const isCollapsed = adminDashboard.classList.contains('sidebar-collapsed');
-                localStorage.setItem('sidebarCollapsed', isCollapsed);
-            });
-            
-            // Restore sidebar state from localStorage on page load
-            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (isCollapsed) {
-                adminDashboard.classList.add('sidebar-collapsed');
-            }
-        }
-        
-        // Dark mode toggle
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const toggleSwitch = document.getElementById('toggleSwitch');
-        
-        if (darkModeToggle) {
-            // Function to set dark mode
-            function setDarkMode(isDark) {
-                if (isDark) {
-                    document.body.classList.add('dark-mode');
-                    toggleSwitch.classList.add('active');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    toggleSwitch.classList.remove('active');
-                }
-                localStorage.setItem('darkMode', isDark);
-            }
-            
-            // Check for saved theme preference
-            const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-            setDarkMode(savedDarkMode);
-            
-            // Toggle dark mode when the button is clicked
-            darkModeToggle.addEventListener('click', function() {
-                const isDarkMode = document.body.classList.contains('dark-mode');
-                setDarkMode(!isDarkMode);
-            });
-        }
-    });
-    </script>
-    <?php $__env->stopSection(); ?>
 </body>
 </html>
 <?php $__env->stopSection(); ?>

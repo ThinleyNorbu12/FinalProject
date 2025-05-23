@@ -1,6 +1,6 @@
 
+
 <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/cars.css')); ?>">
 
 <?php $__env->startSection('content'); ?>
 <div class="dashboard-content" id="dashboardContent">
@@ -405,373 +405,55 @@ endif;
 unset($__errorArgs, $__bag); ?>
                 </div>
                 
-                <!-- Current Images Display - UPDATED SECTION -->
+                <!-- Current Images Display -->
                 <div class="form-group">
                     <label>Current Images</label>
                     <div class="current-images">
-                        <?php
-                            $allImages = collect();
-                            
-                            // Add primary image if exists
-                            if($car->car_image) {
-                                $allImages->push([
-                                    'type' => 'primary',
-                                    'path' => $car->car_image,
-                                    'id' => null,
-                                    'label' => 'Primary'
-                                ]);
-                            }
-                            
-                            // For AdminCar model - try different relationship names that might exist
-                            $additionalImages = null;
-                            
-                            // Check for AdminCarImage relationship
-                            if(method_exists($car, 'adminCarImages') && $car->adminCarImages) {
-                                $additionalImages = $car->adminCarImages;
-                            } elseif(method_exists($car, 'carImages') && $car->carImages) {
-                                $additionalImages = $car->carImages;
-                            } elseif(method_exists($car, 'images') && $car->images) {
-                                $additionalImages = $car->images;
-                            } elseif(method_exists($car, 'additionalImages') && $car->additionalImages) {
-                                $additionalImages = $car->additionalImages;
-                            }
-                            
-                            // Try to load relationship dynamically if not loaded
-                            if(!$additionalImages) {
-                                try {
-                                    // Try to load AdminCarImage records directly
-                                    $additionalImages = \App\Models\AdminCarImage::where('car_id', $car->id)->get();
-                                } catch(Exception $e) {
-                                    // If AdminCarImage doesn't exist, try other possible models
-                                    try {
-                                        $additionalImages = \App\Models\CarImage::where('car_id', $car->id)->get();
-                                    } catch(Exception $e2) {
-                                        $additionalImages = collect();
-                                    }
-                                }
-                            }
-                            
-                            if($additionalImages && $additionalImages->count() > 0) {
-                                foreach($additionalImages as $index => $additionalImage) {
-                                    // Try different possible column names for image path
-                                    $imagePath = $additionalImage->image_path ?? 
-                                               $additionalImage->path ?? 
-                                               $additionalImage->image_name ?? 
-                                               $additionalImage->filename ?? 
-                                               $additionalImage->image ??
-                                               $additionalImage->file_name ??
-                                               $additionalImage->name;
-                                               
-                                    if($imagePath) {
-                                        $allImages->push([
-                                            'type' => 'additional',
-                                            'path' => $imagePath,
-                                            'id' => $additionalImage->id,
-                                            'label' => 'Image ' . ($index + 2)
-                                        ]);
-                                    }
-                                }
-                            }
-                            
-                            // If still no additional images found, try other storage methods
-                            if($additionalImages->count() === 0) {
-                                // Check if images are stored as JSON in the main car table
-                                if(isset($car->images) && is_string($car->images)) {
-                                    $jsonImages = json_decode($car->images, true);
-                                    if(is_array($jsonImages)) {
-                                        foreach($jsonImages as $index => $imageName) {
-                                            if($imageName !== $car->car_image) { // Don't duplicate primary image
-                                                $allImages->push([
-                                                    'type' => 'additional',
-                                                    'path' => $imageName,
-                                                    'id' => null,
-                                                    'label' => 'Image ' . ($index + 2)
-                                                ]);
-                                            }
-                                        }
-                                    }
-                                }
+                        <?php if($car->car_image): ?>
+                            <!-- Primary Image -->
+                            <div class="current-image-item" data-image-type="primary">
+                                <img src="<?php echo e(asset('admincar_images/' . $car->car_image)); ?>"
+                                    alt="Primary Car Image"
+                                    class="img-thumbnail">
+                                <span class="badge badge-primary">Primary</span>
                                 
-                                // Check for comma-separated string in various fields
-                                $stringFields = ['additional_images', 'car_images', 'image_gallery', 'gallery_images'];
-                                foreach($stringFields as $field) {
-                                    if(isset($car->$field) && is_string($car->$field) && !empty($car->$field)) {
-                                        $imageNames = explode(',', $car->$field);
-                                        foreach($imageNames as $index => $imageName) {
-                                            $imageName = trim($imageName);
-                                            if(!empty($imageName)) {
-                                                $allImages->push([
-                                                    'type' => 'additional',
-                                                    'path' => $imageName,
-                                                    'id' => null,
-                                                    'label' => 'Image ' . ($allImages->count() + 1)
-                                                ]);
-                                            }
-                                        }
-                                        break; // Found images, no need to check other fields
-                                    }
-                                }
-                            }
-                        ?>
-                        
-                        <?php if($allImages->count() > 0): ?>
-                            <?php $__currentLoopData = $allImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <div class="current-image-item" 
-                                     data-image-type="<?php echo e($image['type']); ?>" 
-                                     <?php if($image['id']): ?> data-image-id="<?php echo e($image['id']); ?>" <?php endif; ?>>
-                                    <img src="<?php echo e(asset('admincar_images/' . $image['path'])); ?>"
-                                        alt="<?php echo e($image['label']); ?>"
-                                        class="img-thumbnail"
-                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                    <div class="image-error" style="display: none; padding: 20px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; text-align: center;">
-                                        <i class="fas fa-image text-muted"></i>
-                                        <p class="text-muted mb-0">Image not found</p>
-                                        <small class="text-muted"><?php echo e($image['path']); ?></small>
-                                    </div>
-                                    <span class="badge <?php echo e($image['type'] === 'primary' ? 'badge-primary' : 'badge-secondary'); ?>">
-                                        <?php echo e($image['label']); ?>
-
-                                    </span>
-                                    
-                                    <!-- Delete Button -->
-                                    <button type="button" 
-                                            class="delete-image-btn" 
-                                            data-image-type="<?php echo e($image['type']); ?>"
-                                            data-car-id="<?php echo e($car->id); ?>"
-                                            data-image-name="<?php echo e($image['path']); ?>"
-                                            <?php if($image['id']): ?> data-image-id="<?php echo e($image['id']); ?>" <?php endif; ?>
-                                            title="Delete Image">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        <?php else: ?>
-                            <p class="text-muted">No images uploaded yet.</p>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <!-- Enhanced Debug Information -->
-                    <div class="alert alert-info mt-2" style="font-size: 0.875rem;">
-                        <strong>AdminCar Model Debug:</strong><br>
-                        Car ID: <?php echo e($car->id ?? 'Not Set'); ?><br>
-                        Model Class: <?php echo e(get_class($car)); ?><br>
-                        
-                        <strong>Primary Image Field:</strong> 
-                        <?php if(isset($car->car_image)): ?>
-                            <?php if($car->car_image): ?>
-                                ✓ <?php echo e($car->car_image); ?>
-
-                            <?php else: ?>
-                                ✗ Empty/Null
-                            <?php endif; ?>
-                        <?php else: ?>
-                            ✗ Field doesn't exist
-                        <?php endif; ?>
-                        <br>
-                        
-                        <strong>AdminCar Image-Related Fields:</strong><br>
-                        <?php $__currentLoopData = $car->getAttributes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <?php if(Str::contains($key, ['image', 'picture', 'photo'])): ?>
-                                • <span style="color: #007bff;"><?php echo e($key); ?></span>: 
-                                <?php if(is_string($value)): ?>
-                                    "<?php echo e(Str::limit($value, 50)); ?>"
-                                <?php elseif(is_null($value)): ?>
-                                    <em>null</em>
-                                <?php else: ?>
-                                    <?php echo e($value); ?>
-
-                                <?php endif; ?>
-                                <br>
-                            <?php endif; ?>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        
-                        <strong>AdminCarImage Relationship Test:</strong><br>
-                        <?php
-                            $relationshipTests = [
-                                'adminCarImages', 'carImages', 'images', 'additionalImages', 
-                                'adminImages', 'car_images', 'additional_images'
-                            ];
-                            $workingRelationships = [];
-                        ?>
-                        
-                        <?php $__currentLoopData = $relationshipTests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $relationName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            @try
-                                <?php if(method_exists($car, $relationName)): ?>
-                                    <?php
-                                        $relationData = $car->$relationName;
-                                        $count = is_countable($relationData) ? $relationData->count() : 'Not Countable';
-                                        $workingRelationships[$relationName] = $count;
-                                    ?>
-                                    • <?php echo e($relationName); ?>: ✓ EXISTS (Count: <?php echo e($count); ?>)
-                                    <?php if($count > 0): ?>
-                                        <span style="color: green; font-weight: bold;">← FOUND <?php echo e($count); ?> IMAGES!</span>
-                                    <?php endif; ?>
-                                    <br>
-                                <?php else: ?>
-                                    • <?php echo e($relationName); ?>: ✗ Method doesn't exist<br>
-                                <?php endif; ?>
-                            @catch(Exception $e)
-                                • <?php echo e($relationName); ?>: ❌ Error: <?php echo e($e->getMessage()); ?><br>
-                            @endtry
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        
-                        <strong>Direct AdminCarImage Query:</strong><br>
-                        <?php
-                            try {
-                                $directImages = \App\Models\AdminCarImage::where('car_id', $car->id)->get();
-                                $directCount = $directImages->count();
-                            } catch(Exception $e) {
-                                $directImages = null;
-                                $directCount = 'Error: ' . $e->getMessage();
-                            }
-                        ?>
-                        
-                        AdminCarImage records for car_id <?php echo e($car->id); ?>: 
-                        <?php if(is_numeric($directCount)): ?>
-                            <span style="color: <?php echo e($directCount > 0 ? 'green' : 'orange'); ?>; font-weight: bold;">
-                                <?php echo e($directCount); ?> records found
-                            </span>
-                            <?php if($directCount > 0 && $directImages): ?>
-                                <br>
-                                <details style="margin-left: 20px;">
-                                    <summary>Click to see AdminCarImage records</summary>
-                                    <?php $__currentLoopData = $directImages->take(5); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        • ID: <?php echo e($img->id); ?>, 
-                                        <?php $__currentLoopData = $img->getAttributes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $col => $val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php if(Str::contains($col, ['image', 'path', 'name', 'file'])): ?>
-                                                <?php echo e($col); ?>: "<?php echo e($val); ?>", 
-                                            <?php endif; ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        <br>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    <?php if($directCount > 5): ?>
-                                        ... and <?php echo e($directCount - 5); ?> more
-                                    <?php endif; ?>
-                                </details>
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <span style="color: red;"><?php echo e($directCount); ?></span>
-                        <?php endif; ?>
-                        <br>
-                        
-                        <strong>AdminCar Database Structure Check:</strong><br>
-                        <?php
-                            try {
-                                $dbCheck = DB::table('admin_cars')->where('id', $car->id)->first();
-                                $imageFields = [];
-                                if($dbCheck) {
-                                    foreach((array)$dbCheck as $key => $value) {
-                                        if(Str::contains($key, ['image', 'picture', 'photo']) && !empty($value)) {
-                                            $imageFields[$key] = $value;
-                                        }
-                                    }
-                                }
-                            } catch(Exception $e) {
-                                $imageFields = ['error' => $e->getMessage()];
-                            }
-                        ?>
-                        
-                        <?php if(empty($imageFields)): ?>
-                            ⚠️ No image fields with data found in admin_cars table
-                        <?php elseif(isset($imageFields['error'])): ?>
-                            ❌ Database error: <?php echo e($imageFields['error']); ?>
-
-                        <?php else: ?>
-                            <?php $__currentLoopData = $imageFields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $field => $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                • admin_cars.<?php echo e($field); ?>: <?php echo e($value); ?><br>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        <?php endif; ?>
-                        
-                        <strong>AdminCarImage Table Check:</strong><br>
-                        <?php
-                            try {
-                                $imageTableCheck = DB::table('admin_car_images')->where('car_id', $car->id)->get();
-                                $imageTableCount = $imageTableCheck->count();
-                            } catch(Exception $e) {
-                                $imageTableCheck = null;
-                                $imageTableCount = 'Table not found or error: ' . $e->getMessage();
-                            }
-                        ?>
-                        
-                        admin_car_images table: 
-                        <?php if(is_numeric($imageTableCount)): ?>
-                            <span style="color: <?php echo e($imageTableCount > 0 ? 'green' : 'orange'); ?>; font-weight: bold;">
-                                <?php echo e($imageTableCount); ?> records
-                            </span>
-                            <?php if($imageTableCount > 0): ?>
-                                <br>
-                                <details style="margin-left: 20px;">
-                                    <summary>Click to see table records</summary>
-                                    <?php $__currentLoopData = $imageTableCheck->take(5); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $record): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        • <?php $__currentLoopData = (array)$record; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $col => $val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php echo e($col); ?>: "<?php echo e($val); ?>", 
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><br>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </details>
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <span style="color: red;"><?php echo e($imageTableCount); ?></span>
-                        <?php endif; ?>
-                        <br>
-                        
-                        <strong>File System Check:</strong><br>
-                        <?php
-                            $imageDir = public_path('admincar_images');
-                            $dirExists = is_dir($imageDir);
-                            $imageFiles = [];
-                            
-                            if($dirExists) {
-                                $files = glob($imageDir . '/*');
-                                $imageFiles = array_filter($files, function($file) {
-                                    return in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), 
-                                        ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif']);
-                                });
-                            }
-                        ?>
-                        
-                        Directory 'public/admincar_images': <?php echo e($dirExists ? '✓ EXISTS' : '✗ NOT FOUND'); ?><br>
-                        <?php if($dirExists): ?>
-                            Total image files: <?php echo e(count($imageFiles)); ?><br>
-                            <?php if(count($imageFiles) > 0): ?>
-                                <details>
-                                    <summary>Recent files (showing max 10)</summary>
-                                    <?php $__currentLoopData = array_slice($imageFiles, -10); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $file): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        • <?php echo e(basename($file)); ?> (<?php echo e(date('Y-m-d H:i:s', filemtime($file))); ?>)<br>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </details>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                        
-                        <br><strong>Images Successfully Displayed:</strong> <?php echo e($allImages->count()); ?>
-
-                        
-                        <?php if($allImages->count() === 0): ?>
-                            <div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #ffc107;">
-                                <strong>⚠️ Fix Your AdminCar Setup:</strong><br>
-                                
-                                <?php if(is_numeric($directCount) && $directCount > 0): ?>
-                                    <span style="color: green;">✓ Found <?php echo e($directCount); ?> AdminCarImage records!</span><br>
-                                    <strong>Issue:</strong> Your AdminCar model needs a relationship. Add this to your AdminCar model:<br>
-                                    <code style="background: #f8f9fa; padding: 2px 4px;">
-                                        public function adminCarImages() {<br>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;return $this->hasMany(AdminCarImage::class, 'car_id');<br>
-                                        }
-                                    </code><br><br>
-                                    
-                                    And in your controller, load it with:<br>
-                                    <code style="background: #f8f9fa; padding: 2px 4px;">
-                                        $car = AdminCar::with('adminCarImages')->findOrFail($id);
-                                    </code>
-                                    
-                                <?php elseif(is_numeric($imageTableCount) && $imageTableCount > 0): ?>
-                                    <span style="color: green;">✓ Found <?php echo e($imageTableCount); ?> records in admin_car_images table!</span><br>
-                                    <strong>Issue:</strong> The AdminCarImage model might have wrong foreign key or the relationship isn't defined properly.
-                                    
-                                <?php else: ?>
-                                    <span style="color: red;">✗ No image records found in database</span><br>
-                                    <strong>Issue:</strong> Images might not be saving correctly during upload. Check your upload controller.
-                                <?php endif; ?>
+                                <button type="button" 
+                                        class="delete-image-btn" 
+                                        data-image-type="primary"
+                                        data-car-id="<?php echo e($car->id); ?>"
+                                        data-image-name="<?php echo e($car->car_image); ?>"
+                                        title="Delete Image">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
+                        <?php endif; ?>
+                        
+                        <?php if(isset($car->carImages) && $car->carImages->count() > 0): ?>
+                            <!-- Additional Images -->
+                            <?php $__currentLoopData = $car->carImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $carImage): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if(!empty(trim($carImage->image_path))): ?>
+                                    <div class="current-image-item" data-image-id="<?php echo e($carImage->id); ?>">
+                                        <img src="<?php echo e(asset('admincar_images/' . $carImage->image_path)); ?>"
+                                            alt="Car Image <?php echo e($index + 2); ?>"
+                                            class="img-thumbnail">
+                                        <span class="badge badge-secondary"><?php echo e($index + 2); ?></span>
+                                        
+                                        <button type="button" 
+                                                class="delete-image-btn" 
+                                                data-image-type="additional"
+                                                data-image-id="<?php echo e($carImage->id); ?>"
+                                                data-car-id="<?php echo e($car->id); ?>"
+                                                data-image-name="<?php echo e($carImage->image_path); ?>"
+                                                title="Delete Image">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endif; ?>
+                        
+                        <?php if(!$car->car_image && (!isset($car->carImages) || $car->carImages->count() == 0)): ?>
+                            <p class="text-muted">No images uploaded yet.</p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -809,7 +491,7 @@ unset($__errorArgs, $__bag); ?>
                             <label for="car_images" class="btn btn-outline-primary">Browse Files</label>
                             <input type="file" name="car_images[]" id="car_images" class="d-none" multiple accept="image/*">
                         </div>
-                        <p class="text-center small text-muted">Supported formats: JPEG, PNG, JPG, WEBP, GIF, AVIF (max 2MB each)</p>
+                        <p class="text-center small text-muted">Supported formats: JPEG, PNG, JPG, WEBP, GIF (max 2MB each)</p>
                         <p class="text-center small text-info">Leave empty to keep current images</p>
                         
                         <div id="selectedFiles" class="image-preview-container">
@@ -865,16 +547,6 @@ unset($__errorArgs, $__bag); ?>
     border-radius: 6px;
 }
 
-.image-error {
-    width: 150px;
-    height: 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Delete button styling with higher z-index and better positioning */
 .delete-image-btn {
     position: absolute;
     top: 5px;
@@ -914,7 +586,6 @@ unset($__errorArgs, $__bag); ?>
     line-height: 1 !important;
 }
 
-/* Badge positioning */
 .badge {
     position: absolute;
     top: 5px;
@@ -1399,6 +1070,69 @@ $(document).ready(function() {
         $('#confirmDeleteBtn').html('Delete Image').prop('disabled', false);
     });
     
+    // Form validation before submission
+    $('form').on('submit', function(e) {
+        // Basic validation
+        const maker = $('#maker').val().trim();
+        const model = $('#model').val().trim();
+        const vehicleType = $('#vehicle_type').val();
+        const carCondition = $('#car_condition').val();
+        const mileage = $('#mileage').val();
+        const price = $('#price').val();
+        const registrationNo = $('#registration_no').val().trim();
+        const status = $('#status').val();
+        const doors = $('#number_of_doors').val();
+        const seats = $('#number_of_seats').val();
+        const transmission = $('#transmission_type').val();
+        const fuelType = $('#fuel_type').val();
+        
+        // Check required fields
+        if (!maker || !model || !vehicleType || !carCondition || !mileage || 
+            !price || !registrationNo || !status || !doors || !seats || 
+            !transmission || !fuelType) {
+            e.preventDefault();
+            showAlert('error', 'Please fill in all required fields.');
+            return false;
+        }
+        
+        // Validate numeric fields
+        if (isNaN(mileage) || parseFloat(mileage) < 0) {
+            e.preventDefault();
+            showAlert('error', 'Please enter a valid mileage value.');
+            return false;
+        }
+        
+        if (isNaN(price) || parseFloat(price) <= 0) {
+            e.preventDefault();
+            showAlert('error', 'Please enter a valid price value.');
+            return false;
+        }
+        
+        if (isNaN(doors) || parseInt(doors) <= 0) {
+            e.preventDefault();
+            showAlert('error', 'Please enter a valid number of doors.');
+            return false;
+        }
+        
+        if (isNaN(seats) || parseInt(seats) <= 0) {
+            e.preventDefault();
+            showAlert('error', 'Please enter a valid number of seats.');
+            return false;
+        }
+        
+        // Show loading state on submit button
+        const $submitBtn = $('button[type="submit"]');
+        $submitBtn.html('<span class="spinner-border spinner-border-sm" role="status"></span> Updating...');
+        $submitBtn.prop('disabled', true);
+        
+        console.log('Form validation passed, submitting...');
+    });
+    
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(function() {
+        $('.alert').fadeOut();
+    }, 5000);
+    
     // Debug: Log when page loads
     console.log('Available data attributes on delete buttons:');
     $('.delete-image-btn').each(function(index) {
@@ -1409,7 +1143,12 @@ $(document).ready(function() {
             'data-image-id': $(this).data('image-id')
         });
     });
+    
+    // Initialize tooltips if Bootstrap is available
+    if (typeof $().tooltip === 'function') {
+        $('[title]').tooltip();
+    }
+    console.log('Car edit form JavaScript initialized successfully');
 });
 </script>
-<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/car-edit.blade.php ENDPATH**/ ?>
