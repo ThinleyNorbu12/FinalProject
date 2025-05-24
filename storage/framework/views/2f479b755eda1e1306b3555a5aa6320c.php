@@ -1,97 +1,59 @@
 
 
+<?php $__env->startSection('title', 'Edit Car'); ?>
 <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+<?php $__env->startSection('breadcrumbs'); ?>
+    <li class="breadcrumb-item">
+        <a href="<?php echo e(route('cars.index')); ?>">Cars Management</a>
+    </li>
+    <li class="breadcrumb-item active">Edit Car</li>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('styles'); ?>
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/editcar.css')); ?>">
+<?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="dashboard-content" id="dashboardContent">
-    <!-- Breadcrumb Navigation -->
-    <nav class="page-breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <i class="fas fa-home"></i>
-                <a href="<?php echo e(route('admin.dashboard')); ?>">Home</a>
-            </li>
-            <li class="breadcrumb-item">
-                <a href="<?php echo e(route('cars.index')); ?>">Cars Management</a>
-            </li>
-            <li class="breadcrumb-item active">Edit Car</li>
-        </ol>
-    </nav>
-
+<div class="container-fluid">
     <!-- Notification Container -->
-    <div class="notification-container">
-        <?php if(session('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle mr-2"></i>
-            <?php echo e(session('success')); ?>
-
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <?php endif; ?>
-
-        <?php if(session('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle mr-2"></i>
-            <?php echo e(session('error')); ?>
-
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <?php endif; ?>
-
-        <?php if($errors->any()): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle mr-2"></i>
-            <strong>Oops! There were some problems with your input.</strong>
-            <ul class="mt-2 mb-0">
-                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <li><?php echo e($error); ?></li>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </ul>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <?php endif; ?>
+    <div class="notification-container mb-4">
+        <!-- Notifications will be inserted here via JavaScript -->
     </div>
 
     <!-- Edit Car Form -->
     <div class="card">
         <div class="card-header">
-            <h2>Edit Car</h2>
+            <h2><i class="fas fa-edit me-2"></i>Edit Car</h2>
         </div>
         <div class="card-body">
             <form action="<?php echo e(route('cars.update', $car->id)); ?>" method="POST" enctype="multipart/form-data">
                 <?php echo csrf_field(); ?>
                 <?php echo method_field('PUT'); ?>
                 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="maker">Maker <span class="required">*</span></label>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="maker" class="form-label">Maker <span class="required">*</span></label>
                         <input type="text" class="form-control" id="maker" name="maker" value="<?php echo e(old('maker', $car->maker)); ?>" required>
                         <?php $__errorArgs = ['maker'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="model">Model <span class="required">*</span></label>
+                    <div class="col-md-6 mb-3">
+                        <label for="model" class="form-label">Model <span class="required">*</span></label>
                         <input type="text" class="form-control" id="model" name="model" value="<?php echo e(old('model', $car->model)); ?>" required>
                         <?php $__errorArgs = ['model'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -99,10 +61,10 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="vehicle_type">Vehicle Type <span class="required">*</span></label>
-                        <select id="vehicle_type" name="vehicle_type" class="form-control" required>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="vehicle_type" class="form-label">Vehicle Type <span class="required">*</span></label>
+                        <select id="vehicle_type" name="vehicle_type" class="form-select" required>
                             <option value="">Select a vehicle type</option>
                             <option value="Sedan" <?php echo e(old('vehicle_type', $car->vehicle_type) == 'Sedan' ? 'selected' : ''); ?>>Sedan</option>
                             <option value="SUV" <?php echo e(old('vehicle_type', $car->vehicle_type) == 'SUV' ? 'selected' : ''); ?>>SUV</option>
@@ -114,15 +76,15 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="car_condition">Condition <span class="required">*</span></label>
-                        <select id="car_condition" name="car_condition" class="form-control" required>
+                    <div class="col-md-6 mb-3">
+                        <label for="car_condition" class="form-label">Condition <span class="required">*</span></label>
+                        <select id="car_condition" name="car_condition" class="form-select" required>
                             <option value="">Select condition</option>
                             <option value="New" <?php echo e(old('car_condition', $car->car_condition) == 'New' ? 'selected' : ''); ?>>New</option>
                             <option value="Used" <?php echo e(old('car_condition', $car->car_condition) == 'Used' ? 'selected' : ''); ?>>Used</option>
@@ -132,7 +94,7 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -140,30 +102,30 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="mileage">Mileage (in km) <span class="required">*</span></label>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="mileage" class="form-label">Mileage (in km) <span class="required">*</span></label>
                         <input type="number" class="form-control" id="mileage" name="mileage" value="<?php echo e(old('mileage', $car->mileage)); ?>" required>
                         <?php $__errorArgs = ['mileage'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="price">Price per Day <span class="required">*</span></label>
+                    <div class="col-md-6 mb-3">
+                        <label for="price" class="form-label">Price per Day <span class="required">*</span></label>
                         <input type="number" class="form-control" id="price" name="price" value="<?php echo e(old('price', $car->price)); ?>" required>
                         <?php $__errorArgs = ['price'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -171,24 +133,24 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="registration_no">Registration Number <span class="required">*</span></label>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="registration_no" class="form-label">Registration Number <span class="required">*</span></label>
                         <input type="text" class="form-control" id="registration_no" name="registration_no" value="<?php echo e(old('registration_no', $car->registration_no)); ?>" required>
                         <?php $__errorArgs = ['registration_no'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="status">Status <span class="required">*</span></label>
-                        <select id="status" name="status" class="form-control" required>
+                    <div class="col-md-6 mb-3">
+                        <label for="status" class="form-label">Status <span class="required">*</span></label>
+                        <select id="status" name="status" class="form-select" required>
                             <option value="">Select status</option>
                             <option value="available" <?php echo e(old('status', $car->status) == 'available' ? 'selected' : ''); ?>>Available</option>
                             <option value="rented" <?php echo e(old('status', $car->status) == 'rented' ? 'selected' : ''); ?>>Rented</option>
@@ -199,7 +161,7 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -207,32 +169,33 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
                 
-                <h4 class="mt-4 mb-3">Car Features</h4>
+                <hr class="my-4">
+                <h4 class="mb-3"><i class="fas fa-cogs me-2"></i>Car Features</h4>
                 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="number_of_doors">Number of Doors <span class="required">*</span></label>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="number_of_doors" class="form-label">Number of Doors <span class="required">*</span></label>
                         <input type="number" class="form-control" id="number_of_doors" name="number_of_doors" value="<?php echo e(old('number_of_doors', $car->number_of_doors)); ?>" required>
                         <?php $__errorArgs = ['number_of_doors'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="number_of_seats">Number of Seats <span class="required">*</span></label>
+                    <div class="col-md-6 mb-3">
+                        <label for="number_of_seats" class="form-label">Number of Seats <span class="required">*</span></label>
                         <input type="number" class="form-control" id="number_of_seats" name="number_of_seats" value="<?php echo e(old('number_of_seats', $car->number_of_seats)); ?>" required>
                         <?php $__errorArgs = ['number_of_seats'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -240,10 +203,10 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="transmission_type">Transmission Type <span class="required">*</span></label>
-                        <select id="transmission_type" name="transmission_type" class="form-control" required>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="transmission_type" class="form-label">Transmission Type <span class="required">*</span></label>
+                        <select id="transmission_type" name="transmission_type" class="form-select" required>
                             <option value="">Select transmission</option>
                             <option value="Automatic" <?php echo e(old('transmission_type', $car->transmission_type) == 'Automatic' ? 'selected' : ''); ?>>Automatic</option>
                             <option value="Manual" <?php echo e(old('transmission_type', $car->transmission_type) == 'Manual' ? 'selected' : ''); ?>>Manual</option>
@@ -253,15 +216,15 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="fuel_type">Fuel Type <span class="required">*</span></label>
-                        <select id="fuel_type" name="fuel_type" class="form-control" required>
+                    <div class="col-md-6 mb-3">
+                        <label for="fuel_type" class="form-label">Fuel Type <span class="required">*</span></label>
+                        <select id="fuel_type" name="fuel_type" class="form-select" required>
                             <option value="">Select fuel type</option>
                             <option value="Petrol" <?php echo e(old('fuel_type', $car->fuel_type) == 'Petrol' ? 'selected' : ''); ?>>Petrol</option>
                             <option value="Diesel" <?php echo e(old('fuel_type', $car->fuel_type) == 'Diesel' ? 'selected' : ''); ?>>Diesel</option>
@@ -273,7 +236,7 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -281,30 +244,30 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="large_bags_capacity">Large Bags Capacity</label>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="large_bags_capacity" class="form-label">Large Bags Capacity</label>
                         <input type="number" class="form-control" id="large_bags_capacity" name="large_bags_capacity" value="<?php echo e(old('large_bags_capacity', $car->large_bags_capacity)); ?>">
                         <?php $__errorArgs = ['large_bags_capacity'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="small_bags_capacity">Small Bags Capacity</label>
+                    <div class="col-md-6 mb-3">
+                        <label for="small_bags_capacity" class="form-label">Small Bags Capacity</label>
                         <input type="number" class="form-control" id="small_bags_capacity" name="small_bags_capacity" value="<?php echo e(old('small_bags_capacity', $car->small_bags_capacity)); ?>">
                         <?php $__errorArgs = ['small_bags_capacity'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -312,19 +275,19 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label>Air Conditioning</label>
-                        <div class="d-flex">
-                            <div class="custom-control custom-radio mr-3">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Air Conditioning</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
                                 <input type="radio" id="air_conditioning_yes" name="air_conditioning" value="Yes" 
-                                    class="custom-control-input" <?php echo e(old('air_conditioning', $car->air_conditioning) == 'Yes' ? 'checked' : ''); ?>>
-                                <label class="custom-control-label" for="air_conditioning_yes">Yes</label>
+                                    class="form-check-input" <?php echo e(old('air_conditioning', $car->air_conditioning) == 'Yes' ? 'checked' : ''); ?>>
+                                <label class="form-check-label" for="air_conditioning_yes">Yes</label>
                             </div>
-                            <div class="custom-control custom-radio">
+                            <div class="form-check">
                                 <input type="radio" id="air_conditioning_no" name="air_conditioning" value="No" 
-                                    class="custom-control-input" <?php echo e(old('air_conditioning', $car->air_conditioning) == 'No' ? 'checked' : ''); ?>>
-                                <label class="custom-control-label" for="air_conditioning_no">No</label>
+                                    class="form-check-input" <?php echo e(old('air_conditioning', $car->air_conditioning) == 'No' ? 'checked' : ''); ?>>
+                                <label class="form-check-label" for="air_conditioning_no">No</label>
                             </div>
                         </div>
                         <?php $__errorArgs = ['air_conditioning'];
@@ -332,24 +295,24 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label>Backup Camera</label>
-                        <div class="d-flex">
-                            <div class="custom-control custom-radio mr-3">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Backup Camera</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
                                 <input type="radio" id="backup_camera_yes" name="backup_camera" value="Yes" 
-                                    class="custom-control-input" <?php echo e(old('backup_camera', $car->backup_camera) == 'Yes' ? 'checked' : ''); ?>>
-                                <label class="custom-control-label" for="backup_camera_yes">Yes</label>
+                                    class="form-check-input" <?php echo e(old('backup_camera', $car->backup_camera) == 'Yes' ? 'checked' : ''); ?>>
+                                <label class="form-check-label" for="backup_camera_yes">Yes</label>
                             </div>
-                            <div class="custom-control custom-radio">
+                            <div class="form-check">
                                 <input type="radio" id="backup_camera_no" name="backup_camera" value="No" 
-                                    class="custom-control-input" <?php echo e(old('backup_camera', $car->backup_camera) == 'No' ? 'checked' : ''); ?>>
-                                <label class="custom-control-label" for="backup_camera_no">No</label>
+                                    class="form-check-input" <?php echo e(old('backup_camera', $car->backup_camera) == 'No' ? 'checked' : ''); ?>>
+                                <label class="form-check-label" for="backup_camera_no">No</label>
                             </div>
                         </div>
                         <?php $__errorArgs = ['backup_camera'];
@@ -357,24 +320,24 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label>Bluetooth</label>
-                        <div class="d-flex">
-                            <div class="custom-control custom-radio mr-3">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Bluetooth</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
                                 <input type="radio" id="bluetooth_yes" name="bluetooth" value="Yes" 
-                                    class="custom-control-input" <?php echo e(old('bluetooth', $car->bluetooth) == 'Yes' ? 'checked' : ''); ?>>
-                                <label class="custom-control-label" for="bluetooth_yes">Yes</label>
+                                    class="form-check-input" <?php echo e(old('bluetooth', $car->bluetooth) == 'Yes' ? 'checked' : ''); ?>>
+                                <label class="form-check-label" for="bluetooth_yes">Yes</label>
                             </div>
-                            <div class="custom-control custom-radio">
+                            <div class="form-check">
                                 <input type="radio" id="bluetooth_no" name="bluetooth" value="No" 
-                                    class="custom-control-input" <?php echo e(old('bluetooth', $car->bluetooth) == 'No' ? 'checked' : ''); ?>>
-                                <label class="custom-control-label" for="bluetooth_no">No</label>
+                                    class="form-check-input" <?php echo e(old('bluetooth', $car->bluetooth) == 'No' ? 'checked' : ''); ?>>
+                                <label class="form-check-label" for="bluetooth_no">No</label>
                             </div>
                         </div>
                         <?php $__errorArgs = ['bluetooth'];
@@ -382,7 +345,7 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                            <span style="color: red;"><?php echo e($message); ?></span>
+                            <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                         <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -390,24 +353,26 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="description">Description</label>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
                     <textarea class="form-control" id="description" name="description" rows="3"><?php echo e(old('description', $car->description)); ?></textarea>
                     <?php $__errorArgs = ['description'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                        <span style="color: red;"><?php echo e($message); ?></span>
+                        <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                     <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                 </div>
                 
+                <hr class="my-4">
+                
                 <!-- Current Images Display -->
-                <div class="form-group">
-                    <label>Current Images</label>
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-images me-2"></i>Current Images</label>
                     <div class="current-images">
                         <?php if($car->car_image): ?>
                             <!-- Primary Image -->
@@ -415,7 +380,7 @@ unset($__errorArgs, $__bag); ?>
                                 <img src="<?php echo e(asset('admincar_images/' . $car->car_image)); ?>"
                                     alt="Primary Car Image"
                                     class="img-thumbnail">
-                                <span class="badge badge-primary">Primary</span>
+                                <span class="badge bg-primary">Primary</span>
                                 
                                 <button type="button" 
                                         class="delete-image-btn" 
@@ -436,7 +401,7 @@ unset($__errorArgs, $__bag); ?>
                                         <img src="<?php echo e(asset('admincar_images/' . $carImage->image_path)); ?>"
                                             alt="Car Image <?php echo e($index + 2); ?>"
                                             class="img-thumbnail">
-                                        <span class="badge badge-secondary"><?php echo e($index + 2); ?></span>
+                                        <span class="badge bg-secondary"><?php echo e($index + 2); ?></span>
                                         
                                         <button type="button" 
                                                 class="delete-image-btn" 
@@ -458,41 +423,21 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
 
-                <!-- Delete Confirmation Modal -->
-                <div class="modal fade" id="deleteImageModal" tabindex="-1" role="dialog" aria-labelledby="deleteImageModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteImageModalLabel">Confirm Delete</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Are you sure you want to delete this image? This action cannot be undone.</p>
-                                <div class="text-center">
-                                    <img id="deletePreviewImage" src="" alt="Image to delete" class="img-thumbnail" style="max-width: 200px; max-height: 150px;">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Image</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Update Car Images</label>
+                <!-- New Image Upload -->
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-upload me-2"></i>Update Car Images</label>
                     <div class="file-upload-container" id="dropZone">
-                        <h5 class="text-center mb-2">Drop new car images here</h5>
-                        <p class="text-center mb-2">or</p>
-                        <div class="text-center mb-2">
-                            <label for="car_images" class="btn btn-outline-primary">Browse Files</label>
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                        <h5 class="mb-2">Drop new car images here</h5>
+                        <p class="text-muted mb-3">or</p>
+                        <div class="mb-3">
+                            <label for="car_images" class="btn btn-outline-primary">
+                                <i class="fas fa-folder-open me-2"></i>Browse Files
+                            </label>
                             <input type="file" name="car_images[]" id="car_images" class="d-none" multiple accept="image/*">
                         </div>
-                        <p class="text-center small text-muted">Supported formats: JPEG, PNG, JPG, WEBP, GIF (max 2MB each)</p>
-                        <p class="text-center small text-info">Leave empty to keep current images</p>
+                        <p class="small text-muted mb-2">Supported formats: JPEG, PNG, JPG, WEBP, GIF (max 2MB each)</p>
+                        <p class="small text-info">Leave empty to keep current images</p>
                         
                         <div id="selectedFiles" class="image-preview-container">
                             <!-- Image previews will be inserted here -->
@@ -504,165 +449,65 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                        <span style="color: red;"><?php echo e($message); ?></span>
+                        <div class="text-danger small mt-1"><?php echo e($message); ?></div>
                     <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                 </div>
                 
-                <div class="form-group mt-4">
-                    <button type="submit" class="btn btn-primary">Update Car</button>
-                    <a href="<?php echo e(route('cars.index')); ?>" class="btn btn-secondary">Cancel</a>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Update Car
+                    </button>
+                    <a href="<?php echo e(route('cars.index')); ?>" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<style>
-.current-images {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 20px;
-}
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteImageModal" tabindex="-1" role="dialog" aria-labelledby="deleteImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteImageModalLabel">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>Confirm Delete
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">Are you sure you want to delete this image? This action cannot be undone.</p>
+                    <div class="text-center">
+                        <img id="deletePreviewImage" src="" alt="Image to delete" class="img-thumbnail" style="max-width: 200px; max-height: 150px;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-2"></i>Delete Image
+                    </button>
+                </div>
+            </div>
+        </div>
+</div>
+   
+<?php $__env->stopSection(); ?>
 
-.current-image-item {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-}
-
-.current-image-item:hover {
-    transform: scale(1.02);
-}
-
-.current-image-item img {
-    width: 150px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 6px;
-}
-
-.delete-image-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(220, 53, 69, 0.9) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 50% !important;
-    width: 28px !important;
-    height: 28px !important;
-    font-size: 14px !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 1000 !important;
-    transition: all 0.3s ease !important;
-    opacity: 0.8 !important;
-    padding: 0 !important;
-    line-height: 1 !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
-}
-
-.delete-image-btn:hover {
-    opacity: 1 !important;
-    background: rgba(220, 53, 69, 1) !important;
-    transform: scale(1.1) !important;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4) !important;
-}
-
-.current-image-item:hover .delete-image-btn {
-    opacity: 1 !important;
-}
-
-.delete-image-btn i {
-    font-size: 12px !important;
-    line-height: 1 !important;
-}
-
-.badge {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    font-size: 0.75em;
-    padding: 0.25em 0.5em;
-    z-index: 5;
-}
-
-.image-preview-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 15px;
-    justify-content: center;
-}
-
-.image-preview {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.image-preview img {
-    width: 120px;
-    height: 90px;
-    object-fit: cover;
-    border-radius: 6px;
-}
-
-.remove-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(255, 0, 0, 0.8);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.remove-btn:hover {
-    background: rgba(255, 0, 0, 1);
-}
-
-.file-upload-container {
-    border: 2px dashed #ddd;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-#dropZone.active {
-    border-color: #007bff;
-    background-color: rgba(0, 123, 255, 0.1);
-}
-
-.spinner-border-sm {
-    width: 1rem;
-    height: 1rem;
-}
-</style>
-
+<?php $__env->startPush('scripts'); ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
 
 <script>
 $(document).ready(function() {
+     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     let currentImageData = {};
     let selectedFiles = [];
     
@@ -1151,4 +996,4 @@ $(document).ready(function() {
     console.log('Car edit form JavaScript initialized successfully');
 });
 </script>
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/car-edit.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/car-edit.blade.php ENDPATH**/ ?>

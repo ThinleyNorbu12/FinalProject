@@ -216,19 +216,42 @@
 }
 
 /* Modal Styles */
+.modal {
+    z-index: 1060 !important;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+/* Fix for admin panels with high z-index sidebars/headers */
+.modal-dialog {
+    z-index: 1070 !important;
+    position: relative;
+}
+
+/* Ensure modal content is clickable */
 .modal-content {
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1071 !important;
 }
 
-.modal-header {
-    background-color: #f8f9fc;
-    border-bottom: 1px solid #e3e6f0;
+/* Fix for any overlay conflicts */
+body.modal-open {
+    overflow: hidden;
 }
 
-.modal-footer {
-    background-color: #f8f9fc;
-    border-top: 1px solid #e3e6f0;
+/* If you have a fixed sidebar or header, you might need this */
+.modal-open .navbar-fixed-top,
+.modal-open .navbar-fixed-bottom {
+    margin-right: 15px;
+}
+
+/* Additional fix for admin layouts */
+.main-content,
+.sidebar,
+.navbar {
+    z-index: auto !important;
 }
 
 /* Form Styles */

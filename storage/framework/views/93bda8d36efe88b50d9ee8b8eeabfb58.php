@@ -1,40 +1,33 @@
-@extends('layouts.admin')
 
-@section('title', 'Request Car Inspection')
 
-@section('breadcrumbs')
+<?php $__env->startSection('title', 'Request Car Inspection'); ?>
+
+<?php $__env->startSection('breadcrumbs'); ?>
     <li class="breadcrumb-item">
-        <a href="{{ route('car-admin.new-registration-cars') }}">Car Registration</a>
+        <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>">Car Registration</a>
     </li>
-    {{-- <li class="breadcrumb-item">
-        <a href="{{ route('car-admin.view-car') }}">Car Details</a>
-    </li> --}}
+    
     <li class="breadcrumb-item active">Request Inspection</li>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('page-header')
+<?php $__env->startSection('page-header'); ?>
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="page-title">
             <i class="fas fa-clipboard-check me-2"></i>
             Request for Car Inspection
         </h1>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
-            {{-- Success Message --}}
-            {{-- @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif --}}
+            
+            
 
-            {{-- Car Information Card --}}
+            
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5 class="card-title mb-0"><i class="fas fa-car me-2"></i>Vehicle Details</h5>
@@ -42,71 +35,92 @@
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-12 col-sm-6 col-md-4">
-                            <p class="mb-2"><strong>Maker:</strong><br class="d-sm-none"> {{ $car->maker }}</p>
+                            <p class="mb-2"><strong>Maker:</strong><br class="d-sm-none"> <?php echo e($car->maker); ?></p>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <p class="mb-2"><strong>Model:</strong><br class="d-sm-none"> {{ $car->model }}</p>
+                            <p class="mb-2"><strong>Model:</strong><br class="d-sm-none"> <?php echo e($car->model); ?></p>
                         </div>
                         <div class="col-12 col-md-4">
-                            <p class="mb-2"><strong>Registration #:</strong><br class="d-md-none"> <code>{{ $car->registration_no }}</code></p>
+                            <p class="mb-2"><strong>Registration #:</strong><br class="d-md-none"> <code><?php echo e($car->registration_no); ?></code></p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Owner Information Card --}}
+            
             <div class="card shadow mb-4">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="card-title mb-0"><i class="fas fa-user me-2"></i>Owner Information</h5>
                 </div>
                 <div class="card-body">
-                    @if($car->owner)
+                    <?php if($car->owner): ?>
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
-                                <p class="mb-2"><strong>Name:</strong><br class="d-md-none"> {{ $car->owner->name }}</p>
+                                <p class="mb-2"><strong>Name:</strong><br class="d-md-none"> <?php echo e($car->owner->name); ?></p>
                             </div>
                             <div class="col-12 col-md-6">
                                 <p class="mb-2">
                                     <strong>Email:</strong><br class="d-md-none"> 
-                                    <a href="mailto:{{ $car->owner->email }}" class="text-break">{{ $car->owner->email }}</a>
+                                    <a href="mailto:<?php echo e($car->owner->email); ?>" class="text-break"><?php echo e($car->owner->email); ?></a>
                                 </p>
                             </div>
                         </div>
-                    @else
+                    <?php else: ?>
                         <div class="alert alert-warning mb-0">No owner information available</div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
 
-            {{-- Inspection Request Form --}}
+            
             <div class="card shadow">
                 <div class="card-header bg-info text-white">
                     <h5 class="card-title mb-0"><i class="fas fa-clipboard-list me-2"></i>Inspection Details</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ url('car-admin/submit-inspection-request/' . $car->id) }}" method="POST">
-                        @csrf
+                    <form action="<?php echo e(url('car-admin/submit-inspection-request/' . $car->id)); ?>" method="POST">
+                        <?php echo csrf_field(); ?>
                         
-                        {{-- Date, Time, and Location Row --}}
+                        
                         <div class="form-row-mobile form-group-spacing">
                             <div>
                                 <label for="date" class="form-label">Inspection Date <span class="text-danger">*</span></label>
                                 <input type="date" 
                                        id="date" 
                                        name="date" 
-                                       class="form-control @error('date') is-invalid @enderror" 
-                                       min="{{ date('Y-m-d') }}" 
+                                       class="form-control <?php $__errorArgs = ['date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                       min="<?php echo e(date('Y-m-d')); ?>" 
                                        required>
-                                @error('date')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php $__errorArgs = ['date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
 
                             <div>
                                 <label for="time" class="form-label">Time Slot <span class="text-danger">*</span></label>
                                 <select id="time" 
                                         name="time" 
-                                        class="form-select @error('time') is-invalid @enderror" 
+                                        class="form-select <?php $__errorArgs = ['time'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
                                         required
                                         disabled>
                                     <option value="">Select date first</option>
@@ -114,9 +128,16 @@
                                 <div class="spinner-border text-primary mt-2 d-none" id="timeLoader" role="status">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
-                                @error('time')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php $__errorArgs = ['time'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
 
                             <div>
@@ -124,29 +145,57 @@
                                 <input type="text" 
                                        id="location" 
                                        name="location" 
-                                       class="form-control @error('location') is-invalid @enderror" 
+                                       class="form-control <?php $__errorArgs = ['location'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
                                        placeholder="Enter inspection location"
                                        required>
-                                @error('location')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php $__errorArgs = ['location'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
-                        {{-- Additional Details --}}
+                        
                         <div class="form-group-spacing">
                             <label for="details" class="form-label">Additional Notes</label>
                             <textarea id="details" 
                                       name="details" 
-                                      class="form-control @error('details') is-invalid @enderror" 
+                                      class="form-control <?php $__errorArgs = ['details'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
                                       rows="4"
                                       placeholder="Any special requirements or notes..."></textarea>
-                            @error('details')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <?php $__errorArgs = ['details'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
-                        {{-- Submit Button --}}
+                        
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-paper-plane me-2"></i>
@@ -159,9 +208,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
@@ -174,7 +223,7 @@ $(document).ready(function() {
         timeLoader.removeClass('d-none');
 
         $.ajax({
-            url: "{{ route('car-admin.getAvailableTimes') }}",
+            url: "<?php echo e(route('car-admin.getAvailableTimes')); ?>",
             type: "GET",
             data: { date: selectedDate },
             success: function(response) {
@@ -209,4 +258,5 @@ $(document).ready(function() {
     });
 });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/request-inspection.blade.php ENDPATH**/ ?>

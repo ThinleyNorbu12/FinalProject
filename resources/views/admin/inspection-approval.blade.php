@@ -1,507 +1,570 @@
+@extends('layouts.admin')
 
-@extends('layouts.app')
-@section('content')
+@section('title', 'Approve Inspected Cars')
 
-<!-- Fonts and Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+@section('breadcrumbs')
+    <li class="breadcrumb-item active"> Inspections Approval</li>
+@endsection
 
-<!-- Custom CSS -->
-<link rel="stylesheet" href="{{ asset('assets/css/admin/inspection-approval.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/admin/adminsidebar.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/admin/darkmode.css') }}">
-<style>
-    /* Inspection Approval Styles */
-.container {
-    padding: 2rem;
-    margin-left: 280px; /* Match sidebar width */
-    transition: all 0.3s ease;
-}
-
-/* Table Styles */
-.table {
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.table thead th {
-    background: #2c3e50;
-    color: #fff;
-    font-weight: 600;
-    border-bottom: 2px solid #34495e;
-}
-
-.table-hover tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-.table td, .table th {
-    vertical-align: middle;
-    padding: 1rem;
-    border-color: #dee2e6;
-}
-
-/* Alert Styles */
-.alert {
-    border-radius: 8px;
-    padding: 1rem 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.alert-success {
-    background: #d4edda;
-    border-color: #c3e6cb;
-    color: #155724;
-}
-
-.alert-info {
-    background: #d1ecf1;
-    border-color: #bee5eb;
-    color: #0c5460;
-}
-
-/* Button Styles */
-.btn {
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.btn-success {
-    background: #28a745;
-    border-color: #28a745;
-}
-
-.btn-success:hover {
-    background: #218838;
-    border-color: #1e7e34;
-}
-
-.btn-danger {
-    background: #dc3545;
-    border-color: #dc3545;
-}
-
-.btn-danger:hover {
-    background: #c82333;
-    border-color: #bd2130;
-}
-
-.btn-sm {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.875rem;
-}
-
-/* Badge Styles */
-.badge {
-    padding: 0.35em 0.65em;
-    font-size: 0.75em;
-    font-weight: 700;
-    border-radius: 0.25rem;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 992px) {
-    .container {
-        margin-left: 0;
-        padding: 1rem;
-    }
-    
-    .table-responsive {
-        border: 0;
-    }
-    
-    .table thead {
-        display: none;
-    }
-    
-    .table tr {
-        display: block;
-        margin-bottom: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .table td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem;
-        font-size: 0.9rem;
-    }
-    
-    .table td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        margin-right: 1rem;
-        flex: 1;
-    }
-    
-    .table td:last-child {
-        border-bottom: 0;
-    }
-}
-
-/* Dark Mode Overrides */
-.dark-mode .table {
-    background: #2d3748;
-    color: #fff;
-}
-
-.dark-mode .table thead th {
-    background: #1a202c;
-    border-color: #2d3748;
-}
-
-.dark-mode .table-hover tbody tr:hover {
-    background-color: #4a5568;
-}
-
-.dark-mode .alert-success {
-    background: #2b5935;
-    border-color: #23482d;
-    color: #c3e6cb;
-}
-
-.dark-mode .alert-info {
-    background: #2b4e59;
-    border-color: #23434d;
-    color: #bee5eb;
-}
-</style>
-<!-- Admin Header -->
-<header class="admin-header" id="adminHeader">
-    <div class="header-left">
-        <button class="mobile-menu-toggle d-md-none" id="mobileMenuToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-
-        <a href="{{ route('admin.dashboard') }}" class="header-brand d-none d-md-flex">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
-            <span>Car Rental System</span>
-        </a>
-
-        <div class="header-search d-none d-lg-block">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search anything...">
+@section('page-header')
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Approve Inspected Cars</h1>
+            <p class="page-subtitle">Review and approve or reject completed car inspections</p>
         </div>
-    </div>
-
-    <div class="header-actions">
-        <div class="header-action-item" title="Notifications">
-            <i class="fas fa-bell"></i>
-            <span class="badge">3</span>
-        </div>
-
-        <div class="header-action-item" title="Messages">
-            <i class="fas fa-envelope"></i>
-            <span class="badge">5</span>
-        </div>
-
-        @if(Auth::guard('admin')->check())
-            <div class="header-profile dropdown">
-                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="{{ asset('assets/images/thinley.jpg') }}" alt="Admin Avatar"
-                         class="rounded-circle me-2" width="32" height="32">
-                    <div class="header-profile-info d-none d-sm-block">
-                        <h4 class="mb-0">{{ Auth::guard('admin')->user()->name }}</h4>
-                        <span>Administrator</span>
-                    </div>
-                </a>
-
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li>
-                        <a class="dropdown-item" href="{{ route('admin.profile') }}">
-                            <i class="fas fa-user me-2"></i> Profile
-                        </a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fas fa-sign-out-alt me-2"></i> Logout
-                        </a>
-                        <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        @else
-            <a href="{{ route('admin.login') }}" class="btn btn-primary">Login</a>
-        @endif
-    </div>
-</header>
-
-<!-- Admin Dashboard -->
-<div class="admin-dashboard" id="adminDashboard">
-
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- Sidebar -->
-    <div class="dashboard-sidebar" id="dashboardSidebar">
-
-        <div class="sidebar-header">
-            {{-- Reserved for future toggle --}}
-        </div>
-
-        @if(Auth::guard('admin')->check())
-            <div class="admin-profile">
-                <div class="profile-avatar">
-                    <img src="{{ asset('assets/images/thinley.jpg') }}" alt="Admin Avatar">
-                </div>
-                <div class="profile-info">
-                    <h3>{{ Auth::guard('admin')->user()->name }}</h3>
-                    <span>Administrator</span>
-                </div>
-            </div>
-        @endif
-
-        <div class="sidebar-menu">
-            <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Manage Service</div>
-
-            <a href="{{ route('cars.index') }}" class="sidebar-menu-item">
-                <i class="fas fa-car"></i>
-                <span>Cars</span>
-                <div class="tooltip">Cars</div>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Car Owner</div>
-
-            <a href="{{ route('car-admin.new-registration-cars') }}" class="sidebar-menu-item">
-                <i class="fas fa-car"></i>
-                <span>Car Registration</span>
-                <div class="tooltip">Car Registration</div>
-            </a>
-
-            <a href="{{ route('car-admin.inspection-requests') }}" class="sidebar-menu-item">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Inspection Requests</span>
-                <div class="tooltip">Inspection Requests</div>
-            </a>
-
-            <a href="{{ route('car-admin.approve-inspected-cars') }}" class="sidebar-menu-item">
-                <i class="fas fa-check-circle"></i>
-                <span>Approve Inspections</span>
-                <div class="tooltip">Approve Inspections</div>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Customer</div>
-
-            <a href="{{ route('admin.verify-users') }}" class="sidebar-menu-item">
-                <i class="fas fa-id-card"></i>
-                <span>Verify Users</span>
-                <div class="tooltip">Verify Users</div>
-            </a>
-
-            <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item">
-                <i class="fas fa-credit-card"></i>
-                <span>Payments</span>
-                <div class="tooltip">Payments</div>
-            </a>
-
-            <a href="#" class="sidebar-menu-item">
-                <i class="fas fa-edit"></i>
-                <span>Update Registration</span>
-                <div class="tooltip">Update Registration</div>
-            </a>
-
-            <a href="#" class="sidebar-menu-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Car Information</span>
-                <div class="tooltip">Car Information</div>
-            </a>
-
-            <a href="{{ route('admin.booked-car') }}" class="sidebar-menu-item">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booked Cars</span>
-                <div class="tooltip">Booked Cars</div>
-            </a>
-
-            <!-- Dark Mode Toggle -->
-            <button class="dark-mode-toggle" id="darkModeToggle">
-                <div class="toggle-text">
-                    <i class="fas fa-moon"></i>
-                    <span>Dark Mode</span>
-                </div>
-                <div class="toggle-switch" id="toggleSwitch">
-                    <div class="toggle-slider"></div>
-                </div>
+        <div class="page-actions">
+            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#inspectionGuidelinesModal">
+                <i class="fas fa-info-circle me-2"></i>Guidelines
             </button>
-
-            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-                <div class="tooltip">Logout</div>
-            </a>
-
-            <form method="POST" action="{{ route('admin.logout') }}" id="logout-form" style="display: none;">
-                @csrf
-            </form>
         </div>
     </div>
-</div>
+@endsection
 
+@push('styles')
+<style>
+    .approval-table {
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background: white;
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table thead th {
+        border: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+    }
+    
+    .table tbody tr {
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .table tbody tr:hover {
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.05) 0%, rgba(0, 123, 255, 0.02) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .table tbody td {
+        border-top: 1px solid #e9ecef;
+        vertical-align: middle;
+        padding: 1rem 0.75rem;
+    }
+    
+    .car-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .car-maker {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+    }
+    
+    .car-model {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .reg-badge {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #1976d2;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 2px solid #2196f3;
+    }
+    
+    .email-link {
+        color: #495057;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .email-link:hover {
+        color: #007bff;
+        text-decoration: underline;
+    }
+    
+    .date-display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .date-day {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+    
+    .date-month {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+    
+    .time-display {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-weight: 500;
+        color: #495057;
+        border: 1px solid #dee2e6;
+    }
+    
+    .location-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #495057;
+    }
+    
+    .location-display i {
+        color: #dc3545;
+        margin-right: 0.5rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+    
+    .btn-approve {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .btn-approve:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+    
+    .btn-reject {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        border: none;
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .btn-reject:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        color: white;
+    }
+    
+    .loading-btn {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .loading-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    
+    .spinner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px;
+        border: 2px dashed #dee2e6;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-state h4 {
+        color: #495057;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state p {
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-label {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+</style>
+@endpush
 
-<div class="container">
-    <h2 class="mb-4 text-center">Approve or Reject Inspected Cars</h2>
-
-    @if(session('status'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('status') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
+@section('content')
+<div class="container-fluid">
+    <!-- Statistics Card -->
     @if($inspectionRequests->count() > 0)
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle text-center">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Sl. No</th>
-                        <th>Request ID</th>
-                        <th>Car</th>
-                        <th>Reg. No.</th>
-                        <th>Owner Email</th>
-                        <th>Inspection Date</th>
-                        <th>Time</th>
-                        <th>Location</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($inspectionRequests as $request)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $request->id }}</td>
-                            <td>{{ $request->car->maker ?? 'N/A' }} {{ $request->car->model ?? '' }}</td>
-                            <td>{{ $request->car->registration_no ?? 'N/A' }}</td>
-                            <td>{{ $request->car->owner->email ?? 'N/A' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($request->inspection_date)->format('d M Y') }}</td>
-                            @php
-                                $timeRange = $request->inspection_time;
-                                $formattedTime = $timeRange;
-
-                                if (strpos($timeRange, ' - ') !== false) {
-                                    [$startTime, $endTime] = explode(' - ', $timeRange);
-                                    try {
-                                        $formattedStart = \Carbon\Carbon::parse($startTime)->format('h:i A');
-                                        $formattedEnd = \Carbon\Carbon::parse($endTime)->format('h:i A');
-                                        $formattedTime = $formattedStart . ' - ' . $formattedEnd;
-                                    } catch (Exception $e) {
-                                        $formattedTime = $timeRange;
-                                    }
-                                }
-                            @endphp
-                            <td>{{ $formattedTime }}</td>
-                            <td>{{ $request->location ?? 'N/A' }}</td>
-                            <td>
-                                <form action="{{ route('car-admin.inspection-approval') }}" method="POST" class="d-flex justify-content-center gap-2">
-                                    @csrf
-                                    <input type="hidden" name="car_id" value="{{ $request->car->id }}">
-                                    <input type="hidden" name="inspection_request_id" value="{{ $request->id }}">
-                                    
-                                    <button type="submit" name="decision" value="approved" class="btn btn-success btn-sm" data-bs-toggle="tooltip" title="Approve this car">
-                                        <i class="bi bi-check-circle"></i>
-                                    </button>
-
-                                    <button type="submit" name="decision" value="rejected" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Reject this car">
-                                        <i class="bi bi-x-circle"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="stats-card">
+                    <div class="stats-number">{{ $inspectionRequests->count() }}</div>
+                    <div class="stats-label">
+                        <i class="fas fa-clipboard-check me-2"></i>
+                        Inspections Pending Approval
+                    </div>
+                </div>
+            </div>
         </div>
-    @else
-        <div class="alert alert-info text-center">No confirmed inspection requests pending approval.</div>
     @endif
+
+    <div class="row">
+        <div class="col-12">
+            @if($inspectionRequests->count() > 0)
+                <div class="approval-table table-responsive">
+                    <table class="table align-middle text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>
+                                    <i class="fas fa-hashtag me-1"></i>
+                                    Sl. No
+                                </th>
+                                <th>
+                                    <i class="fas fa-id-card me-1"></i>
+                                    Request ID
+                                </th>
+                                <th>
+                                    <i class="fas fa-car me-1"></i>
+                                    Vehicle
+                                </th>
+                                <th>
+                                    <i class="fas fa-certificate me-1"></i>
+                                    Registration
+                                </th>
+                                <th>
+                                    <i class="fas fa-envelope me-1"></i>
+                                    Owner
+                                </th>
+                                <th>
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Date
+                                </th>
+                                <th>
+                                    <i class="fas fa-clock me-1"></i>
+                                    Time
+                                </th>
+                                <th>
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    Location
+                                </th>
+                                <th>
+                                    <i class="fas fa-cogs me-1"></i>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($inspectionRequests as $request)
+                                <tr id="row-{{ $request->id }}">
+                                    <td>
+                                        <span class="badge bg-primary">{{ $loop->iteration }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">#{{ $request->id }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="car-info">
+                                            <div class="car-maker">{{ $request->car->maker ?? 'N/A' }}</div>
+                                            <div class="car-model">{{ $request->car->model ?? 'Model N/A' }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="reg-badge">
+                                            {{ $request->car->registration_no ?? 'N/A' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="mailto:{{ $request->car->owner->email ?? '' }}" 
+                                           class="email-link">
+                                            <i class="fas fa-envelope me-1"></i>
+                                            {{ $request->car->owner->email ?? 'N/A' }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @php
+                                            $date = \Carbon\Carbon::parse($request->inspection_date);
+                                        @endphp
+                                        <div class="date-display">
+                                            <div class="date-day">{{ $date->format('d') }}</div>
+                                            <div class="date-month">{{ $date->format('M Y') }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @php
+                                            $timeRange = $request->inspection_time;
+                                            $formattedTime = $timeRange;
+
+                                            if (strpos($timeRange, ' - ') !== false) {
+                                                [$startTime, $endTime] = explode(' - ', $timeRange);
+                                                try {
+                                                    $formattedStart = \Carbon\Carbon::parse(trim($startTime))->format('h:i A');
+                                                    $formattedEnd = \Carbon\Carbon::parse(trim($endTime))->format('h:i A');
+                                                    $formattedTime = $formattedStart . ' - ' . $formattedEnd;
+                                                } catch (Exception $e) {
+                                                    $formattedTime = $timeRange;
+                                                }
+                                            }
+                                        @endphp
+                                        <div class="time-display">
+                                            <i class="fas fa-clock me-2"></i>
+                                            {{ $formattedTime }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="location-display">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            {{ $request->location ?? 'N/A' }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('car-admin.inspection-approval') }}" 
+                                              method="POST" 
+                                              class="approval-form"
+                                              data-request-id="{{ $request->id }}">
+                                            @csrf
+                                            <input type="hidden" name="car_id" value="{{ $request->car->id }}">
+                                            <input type="hidden" name="inspection_request_id" value="{{ $request->id }}">
+                                            
+                                            <div class="action-buttons">
+                                                <button type="submit" 
+                                                        name="decision" 
+                                                        value="approved" 
+                                                        class="btn btn-approve btn-sm loading-btn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Approve this inspection"
+                                                        onclick="return confirmAction('approve', '{{ $request->car->maker }} {{ $request->car->model }}')">
+                                                    <i class="fas fa-check-circle me-1"></i>
+                                                    Approve
+                                                </button>
+
+                                                <button type="submit" 
+                                                        name="decision" 
+                                                        value="rejected" 
+                                                        class="btn btn-reject btn-sm loading-btn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Reject this inspection"
+                                                        onclick="return confirmAction('reject', '{{ $request->car->maker }} {{ $request->car->model }}')">
+                                                    <i class="fas fa-times-circle me-1"></i>
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Pagination if available --}}
+                @if(method_exists($inspectionRequests, 'links'))
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $inspectionRequests->links() }}
+                    </div>
+                @endif
+            @else
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h4>No Inspections Pending Approval</h4>
+                    <p>All completed inspections have been reviewed. New requests will appear here once inspections are completed.</p>
+                    <a href="{{ route('car-admin.inspection-requests') }}" class="btn btn-primary">
+                        <i class="fas fa-eye me-2"></i>View All Inspection Requests
+                    </a>
+                </div>
+            @endif
+        </div>
+    </div>
 </div>
 
-<footer class="admin-footer" id="adminFooter">
-    <div class="footer-left">
-        <div class="footer-copy">
-            <p class="mb-0">&copy; {{ date('Y') }} Car Rental System. All rights reserved.</p>
+<!-- Guidelines Modal -->
+<div class="modal fade" id="inspectionGuidelinesModal" tabindex="-1" aria-labelledby="inspectionGuidelinesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inspectionGuidelinesModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Inspection Approval Guidelines
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success"><i class="fas fa-check-circle me-2"></i>Approve If:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Vehicle meets safety standards</li>
+                            <li><i class="fas fa-check text-success me-2"></i>All required documents are valid</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Vehicle condition matches description</li>
+                            <li><i class="fas fa-check text-success me-2"></i>No major mechanical issues</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-danger"><i class="fas fa-times-circle me-2"></i>Reject If:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-times text-danger me-2"></i>Safety concerns identified</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Documentation incomplete</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Vehicle condition misrepresented</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Major repairs needed</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
-        
-    <div class="footer-right">
-        <div class="footer-status">
-            <span class="status-dot"></span>
-            System Online
-        </div>
-        <div class="footer-copy">
-            Version 2.1.0
-        </div>
-    </div>
-</footer>
+</div>
+@endsection
 
-{{-- Bootstrap Icons --}}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-{{-- JavaScript for sidebar and tooltips --}}
+@push('scripts')
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        // Sidebar toggle functionality
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const sidebar = document.querySelector('.dashboard-sidebar');
-        const container = document.querySelector('.container');
-        
-        sidebarToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-            document.body.classList.toggle('sidebar-collapsed');
-        });
-        
-        // Mobile responsive toggle
-        function checkWidth() {
-            if (window.innerWidth < 992) {
-                sidebar.classList.add('collapsed');
-                document.body.classList.add('sidebar-collapsed');
-            } else {
-                // Only reset if it was previously collapsed due to small screen
-                if (!sidebar.classList.contains('user-collapsed')) {
-                    sidebar.classList.remove('collapsed');
-                    document.body.classList.remove('sidebar-collapsed');
-                }
-            }
-        }
-        
-        // Run on page load and window resize
-        window.addEventListener('resize', checkWidth);
-        checkWidth();
-        
-        // Store user preference for sidebar state
-        sidebarToggle.addEventListener('click', function() {
-            if (sidebar.classList.contains('collapsed')) {
-                sidebar.classList.add('user-collapsed');
-            } else {
-                sidebar.classList.remove('user-collapsed');
-            }
-        });
-        
-        // Bootstrap tooltip initialization
-        if (typeof bootstrap !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         }
+
+        // Handle form submissions with loading states
+        document.querySelectorAll('.approval-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const submitButton = e.submitter;
+                if (submitButton) {
+                    handleButtonLoading(submitButton);
+                }
+            });
+        });
     });
+
+    function confirmAction(action, carInfo) {
+        const actionText = action === 'approve' ? 'approve' : 'reject';
+        const message = `Are you sure you want to ${actionText} the inspection for ${carInfo}?`;
+        
+        return confirm(message);
+    }
+
+    function handleButtonLoading(button) {
+        const originalContent = button.innerHTML;
+        const isApprove = button.value === 'approved';
+        
+        // Disable button and show loading
+        button.disabled = true;
+        button.innerHTML = `
+            <div class="spinner-overlay">
+                <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <span style="visibility: hidden;">${originalContent}</span>
+        `;
+        
+        // Optional: Add visual feedback to the row
+        const row = button.closest('tr');
+        row.style.opacity = '0.7';
+        row.style.transform = 'scale(0.98)';
+        
+        // Show processing message after a short delay
+        setTimeout(() => {
+            if (isApprove) {
+                button.innerHTML = '<i class="fas fa-check me-1"></i> Processing...';
+                button.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+            } else {
+                button.innerHTML = '<i class="fas fa-times me-1"></i> Processing...';
+                button.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
+            }
+        }, 500);
+    }
+
+    // Add smooth hover effects
+    document.querySelectorAll('.table tbody tr').forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Auto-refresh functionality (optional)
+    let autoRefreshInterval;
+    
+    function startAutoRefresh() {
+        autoRefreshInterval = setInterval(() => {
+            // Only refresh if there are no pending forms
+            const pendingForms = document.querySelectorAll('.approval-form button:disabled');
+            if (pendingForms.length === 0) {
+                location.reload();
+            }
+        }, 30000); // Refresh every 30 seconds
+    }
+    
+    function stopAutoRefresh() {
+        if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+        }
+    }
+    
+    // Start auto-refresh when page loads
+    // startAutoRefresh();
+    
+    // Stop auto-refresh when user is about to leave
+    window.addEventListener('beforeunload', stopAutoRefresh);
 </script>
-@endsection
+@endpush

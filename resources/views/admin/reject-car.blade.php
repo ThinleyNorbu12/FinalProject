@@ -1,103 +1,125 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('title', 'Reject Vehicle Registration')
+
+@section('breadcrumbs')
+    <li class="breadcrumb-item">
+        <a href="{{ route('car-admin.new-registration-cars') }}">Car Registration</a>
+    </li>
+    <li class="breadcrumb-item active">Reject Vehicle</li>
+@endsection
+
+@section('page-header')
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="page-title">
+            <i class="fas fa-times-circle me-2"></i>
+            Reject Vehicle Registration
+        </h1>
+    </div>
+@endsection
 
 @section('content')
-<div class="dashboard-sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
-            <h2>Admin Portal</h2>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            {{-- Vehicle Details Card --}}
+            <div class="card shadow mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0"><i class="fas fa-car me-2"></i>Vehicle Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Maker:</strong> {{ $car->maker }}</p>
+                            <p><strong>Model:</strong> {{ $car->model }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Registration #:</strong> <code>{{ $car->registration_no }}</code></p>
+                            <p><strong>Submitted By:</strong> {{ optional($car->owner)->name ?? 'Unknown Owner' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Rejection Form Card --}}
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0"><i class="fas fa-comment-dots me-2"></i>Rejection Details</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('car-admin.rejectCar', $car->id) }}" method="POST" id="rejectionForm">
+                        @csrf
+
+                        <div class="mb-4">
+                            <label for="rejection_reason" class="form-label fw-bold">
+                                Reason for Rejection <span class="text-danger">*</span>
+                            </label>
+                            <textarea name="rejection_reason" 
+                                    id="rejection_reason" 
+                                    class="form-control @error('rejection_reason') is-invalid @enderror" 
+                                    rows="5"
+                                    placeholder="Provide detailed reason for rejection..."
+                                    required
+                                    minlength="10"></textarea>
+                            
+                            @error('rejection_reason')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @else
+                                <div class="form-text">Minimum 10 characters required</div>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Back to Details
+                            </a>
+                            
+                            <button type="button" 
+                                    class="btn btn-danger" 
+                                    onclick="confirmRejection()">
+                                <i class="fas fa-times-circle me-2"></i>
+                                Confirm Rejection
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div> 
-    <div class="admin-profile">
-        @if(Auth::guard('admin')->check())
-            <div class="profile-avatar">
-                <img src="{{ asset('assets/images/thinley.jpg') }}" alt="Admin Avatar">
-            </div>
-            <div class="profile-info">
-                <h3>{{ Auth::guard('admin')->user()->name }}</h3>
-                <span>Administrator</span>
-            </div>
-        @endif
     </div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-menu">
-            <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Car Owner</div>
-
-            <a href="{{ route('car-admin.new-registration-cars') }}" class="sidebar-menu-item active">
-                <i class="fas fa-car"></i>
-                <span>Car Registration</span>
-            </a>
-
-            <a href="{{ route('car-admin.inspection-requests') }}" class="sidebar-menu-item">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Inspection Requests</span>
-            </a>
-
-            <a href="{{ route('car-admin.approve-inspected-cars') }}" class="sidebar-menu-item">
-                <i class="fas fa-check-circle"></i>
-                <span>Approve Inspections</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Customer</div>
-
-            <a href="{{ route('admin.verify-users') }}" class="sidebar-menu-item">
-                <i class="fas fa-id-card"></i>
-                <span>Verify Users</span>
-            </a>
-
-            <a href="{{ route('admin.payments.index') }}" class="sidebar-menu-item ">
-                <i class="fas fa-credit-card"></i>
-                <span>Payments</span>
-            </a>
-
-            <a href="{{ url('admin/update-car-registration') }}" class="sidebar-menu-item">
-                <i class="fas fa-edit"></i>
-                <span>Update Registration</span>
-            </a>
-
-            <a href="{{ url('admin/car-information-update') }}" class="sidebar-menu-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Car Information</span>
-            </a>
-
-            <a href="{{ route ('admin.booked-car') }}" class="sidebar-menu-item ">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booked Cars</span>
-            </a>
-
-            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-
-            <form method="POST" action="{{ route('admin.logout') }}" id="logout-form" style="display: none;">
-                @csrf
-            </form>
-        </div>
-    </div>       
-</div>
-<div class="container">
-    <h1>Reject Car</h1>
-    <p>Car: {{ $car->maker }} {{ $car->model }}</p>
-    <p>Registration No: {{ $car->registration_no }}</p>
-
-    {{-- Rejection Form --}}
-    <form action="{{ route('car-admin.rejectCar', $car->id) }}" method="POST">
-        @csrf
-        <div class="form-group">
-            <label for="rejection_reason">Reason for Rejection</label>
-            <textarea name="rejection_reason" id="rejection_reason" rows="4" class="form-control" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-danger mt-3">Submit Rejection</button>
-    </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function confirmRejection() {
+    const reason = document.getElementById('rejection_reason').value;
+    const form = document.getElementById('rejectionForm');
+    
+    // Client-side validation
+    if (reason.length < 10) {
+        alert('Please provide at least 10 characters for the rejection reason.');
+        return;
+    }
+
+    if (confirm('Are you absolutely sure you want to reject this registration?\n\nThis action cannot be undone.')) {
+        form.submit();
+    }
+}
+
+// Bootstrap validation
+(function () {
+  'use strict'
+  const forms = document.querySelectorAll('#rejectionForm')
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>
+@endpush

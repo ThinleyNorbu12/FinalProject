@@ -8,6 +8,7 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property string|null $password
+     * @property string|null $profile_picture
      * @property string $email
      * @property string $name
      * @property int $id
@@ -16,6 +17,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Admin>|Admin whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Admin>|Admin whereName($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Admin>|Admin whereEmail($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Admin>|Admin whereProfilePicture($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Admin>|Admin wherePassword($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Admin>|Admin whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Admin>|Admin whereUpdatedAt($value)

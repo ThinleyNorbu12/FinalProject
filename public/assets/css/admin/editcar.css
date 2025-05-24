@@ -1,0 +1,230 @@
+.required {
+    color: #dc3545;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem 1.25rem;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+/* Current Images Display */
+.current-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.current-image-item {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.current-image-item img {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+}
+
+.current-image-item .badge {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    font-size: 0.75rem;
+}
+
+.delete-image-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+.delete-image-btn:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+/* File Upload Styles */
+.file-upload-container {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-upload-container:hover {
+    border-color: #007bff;
+    background-color: #e7f3ff;
+}
+
+.file-upload-container.active {
+    border-color: #007bff;
+    background-color: #e7f3ff;
+    transform: scale(1.02);
+}
+
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.image-preview {
+    position: relative;
+    width: 120px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #dee2e6;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-preview .remove-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.image-preview .remove-btn:hover {
+    background: #c82333;
+}
+
+/* Radio button styling */
+.form-check {
+    margin-right: 1rem;
+}
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Alert improvements */
+.alert {
+    border-radius: 8px;
+    border: none;
+    padding: 1rem 1.25rem;
+}
+
+.alert-success {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Loading spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Modal improvements */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 1.5rem;
+}
+
+#deletePreviewImage {
+    border-radius: 8px;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .current-images {
+        justify-content: center;
+    }
+    
+    .current-image-item img {
+        width: 120px;
+        height: 80px;
+    }
+    
+    .file-upload-container {
+        padding: 20px;
+    }
+}
