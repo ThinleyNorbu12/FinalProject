@@ -3,9 +3,6 @@
 @section('title', 'Car Registration')
 
 @section('breadcrumbs')
-    <li class="breadcrumb-item">
-        <a href="{{ route('car-admin.new-registration-cars') }}">Car Owner</a>
-    </li>
     <li class="breadcrumb-item active">Car Registration</li>
 @endsection
 

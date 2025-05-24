@@ -1,220 +1,576 @@
 
 
-<?php $__env->startSection('content'); ?>
-<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/inspection-approval.css')); ?>">
-<div class="dashboard-sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-            <h2>Admin Portal</h2>
+<?php $__env->startSection('title', 'Approve Inspected Cars'); ?>
+
+<?php $__env->startSection('breadcrumbs'); ?>
+    <li class="breadcrumb-item active"> Inspections Approval</li>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('page-header'); ?>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Approve Inspected Cars</h1>
+            <p class="page-subtitle">Review and approve or reject completed car inspections</p>
         </div>
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div> 
-    <div class="admin-profile">
-        <?php if(Auth::guard('admin')->check()): ?>
-            <div class="profile-avatar">
-                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
-            </div>
-            <div class="profile-info">
-                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                <span>Administrator</span>
-            </div>
-        <?php endif; ?>
+        <div class="page-actions">
+            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#inspectionGuidelinesModal">
+                <i class="fas fa-info-circle me-2"></i>Guidelines
+            </button>
+        </div>
     </div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-menu">
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Car Owner</div>
+<?php $__env->stopSection(); ?>
 
-            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item ">
-                <i class="fas fa-car"></i>
-                <span>Car Registration</span>
-            </a>
+<?php $__env->startPush('styles'); ?>
+<style>
+    .approval-table {
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background: white;
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table thead th {
+        border: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+    }
+    
+    .table tbody tr {
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .table tbody tr:hover {
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.05) 0%, rgba(0, 123, 255, 0.02) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .table tbody td {
+        border-top: 1px solid #e9ecef;
+        vertical-align: middle;
+        padding: 1rem 0.75rem;
+    }
+    
+    .car-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .car-maker {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+    }
+    
+    .car-model {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .reg-badge {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #1976d2;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 2px solid #2196f3;
+    }
+    
+    .email-link {
+        color: #495057;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .email-link:hover {
+        color: #007bff;
+        text-decoration: underline;
+    }
+    
+    .date-display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .date-day {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+    
+    .date-month {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+    
+    .time-display {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-weight: 500;
+        color: #495057;
+        border: 1px solid #dee2e6;
+    }
+    
+    .location-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #495057;
+    }
+    
+    .location-display i {
+        color: #dc3545;
+        margin-right: 0.5rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+    
+    .btn-approve {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .btn-approve:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+    
+    .btn-reject {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        border: none;
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .btn-reject:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        color: white;
+    }
+    
+    .loading-btn {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .loading-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    
+    .spinner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px;
+        border: 2px dashed #dee2e6;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-state h4 {
+        color: #495057;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state p {
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-label {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+</style>
+<?php $__env->stopPush(); ?>
 
-            <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Inspection Requests</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item active">
-                <i class="fas fa-check-circle"></i>
-                <span>Approve Inspections</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Customer</div>
-
-            <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-id-card"></i>
-                <span>Verify Users</span>
-            </a>
-
-            <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-credit-card"></i>
-                <span>Payments</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-edit"></i>
-                <span>Update Registration</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Car Information</span>
-            </a>
-
-            <a href="<?php echo e(route ('admin.booked-car')); ?>" class="sidebar-menu-item ">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booked Cars</span>
-            </a>
-
-            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-
-            <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form" style="display: none;">
-                <?php echo csrf_field(); ?>
-            </form>
-        </div>
-    </div>       
-</div>
-
-<div class="container">
-    <h2 class="mb-4 text-center">Approve or Reject Inspected Cars</h2>
-
-    <?php if(session('status')): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?php echo e(session('status')); ?>
-
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-
+<?php $__env->startSection('content'); ?>
+<div class="container-fluid">
+    <!-- Statistics Card -->
     <?php if($inspectionRequests->count() > 0): ?>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle text-center">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Sl. No</th>
-                        <th>Request ID</th>
-                        <th>Car</th>
-                        <th>Reg. No.</th>
-                        <th>Owner Email</th>
-                        <th>Inspection Date</th>
-                        <th>Time</th>
-                        <th>Location</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php $__currentLoopData = $inspectionRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <tr>
-                            <td><?php echo e($loop->iteration); ?></td>
-                            <td><?php echo e($request->id); ?></td>
-                            <td><?php echo e($request->car->maker ?? 'N/A'); ?> <?php echo e($request->car->model ?? ''); ?></td>
-                            <td><?php echo e($request->car->registration_no ?? 'N/A'); ?></td>
-                            <td><?php echo e($request->car->owner->email ?? 'N/A'); ?></td>
-                            <td><?php echo e(\Carbon\Carbon::parse($request->inspection_date)->format('d M Y')); ?></td>
-                            <?php
-                                $timeRange = $request->inspection_time;
-                                $formattedTime = $timeRange;
-
-                                if (strpos($timeRange, ' - ') !== false) {
-                                    [$startTime, $endTime] = explode(' - ', $timeRange);
-                                    try {
-                                        $formattedStart = \Carbon\Carbon::parse($startTime)->format('h:i A');
-                                        $formattedEnd = \Carbon\Carbon::parse($endTime)->format('h:i A');
-                                        $formattedTime = $formattedStart . ' - ' . $formattedEnd;
-                                    } catch (Exception $e) {
-                                        $formattedTime = $timeRange;
-                                    }
-                                }
-                            ?>
-                            <td><?php echo e($formattedTime); ?></td>
-                            <td><?php echo e($request->location ?? 'N/A'); ?></td>
-                            <td>
-                                <form action="<?php echo e(route('car-admin.inspection-approval')); ?>" method="POST" class="d-flex justify-content-center gap-2">
-                                    <?php echo csrf_field(); ?>
-                                    <input type="hidden" name="car_id" value="<?php echo e($request->car->id); ?>">
-                                    <input type="hidden" name="inspection_request_id" value="<?php echo e($request->id); ?>">
-                                    
-                                    <button type="submit" name="decision" value="approved" class="btn btn-success btn-sm" data-bs-toggle="tooltip" title="Approve this car">
-                                        <i class="bi bi-check-circle"></i>
-                                    </button>
-
-                                    <button type="submit" name="decision" value="rejected" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Reject this car">
-                                        <i class="bi bi-x-circle"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </tbody>
-            </table>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="stats-card">
+                    <div class="stats-number"><?php echo e($inspectionRequests->count()); ?></div>
+                    <div class="stats-label">
+                        <i class="fas fa-clipboard-check me-2"></i>
+                        Inspections Pending Approval
+                    </div>
+                </div>
+            </div>
         </div>
-    <?php else: ?>
-        <div class="alert alert-info text-center">No confirmed inspection requests pending approval.</div>
     <?php endif; ?>
+
+    <div class="row">
+        <div class="col-12">
+            <?php if($inspectionRequests->count() > 0): ?>
+                <div class="approval-table table-responsive">
+                    <table class="table align-middle text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>
+                                    <i class="fas fa-hashtag me-1"></i>
+                                    Sl. No
+                                </th>
+                                <th>
+                                    <i class="fas fa-id-card me-1"></i>
+                                    Request ID
+                                </th>
+                                <th>
+                                    <i class="fas fa-car me-1"></i>
+                                    Vehicle
+                                </th>
+                                <th>
+                                    <i class="fas fa-certificate me-1"></i>
+                                    Registration
+                                </th>
+                                <th>
+                                    <i class="fas fa-envelope me-1"></i>
+                                    Owner
+                                </th>
+                                <th>
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Date
+                                </th>
+                                <th>
+                                    <i class="fas fa-clock me-1"></i>
+                                    Time
+                                </th>
+                                <th>
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    Location
+                                </th>
+                                <th>
+                                    <i class="fas fa-cogs me-1"></i>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__currentLoopData = $inspectionRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <tr id="row-<?php echo e($request->id); ?>">
+                                    <td>
+                                        <span class="badge bg-primary"><?php echo e($loop->iteration); ?></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">#<?php echo e($request->id); ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="car-info">
+                                            <div class="car-maker"><?php echo e($request->car->maker ?? 'N/A'); ?></div>
+                                            <div class="car-model"><?php echo e($request->car->model ?? 'Model N/A'); ?></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="reg-badge">
+                                            <?php echo e($request->car->registration_no ?? 'N/A'); ?>
+
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="mailto:<?php echo e($request->car->owner->email ?? ''); ?>" 
+                                           class="email-link">
+                                            <i class="fas fa-envelope me-1"></i>
+                                            <?php echo e($request->car->owner->email ?? 'N/A'); ?>
+
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $date = \Carbon\Carbon::parse($request->inspection_date);
+                                        ?>
+                                        <div class="date-display">
+                                            <div class="date-day"><?php echo e($date->format('d')); ?></div>
+                                            <div class="date-month"><?php echo e($date->format('M Y')); ?></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            $timeRange = $request->inspection_time;
+                                            $formattedTime = $timeRange;
+
+                                            if (strpos($timeRange, ' - ') !== false) {
+                                                [$startTime, $endTime] = explode(' - ', $timeRange);
+                                                try {
+                                                    $formattedStart = \Carbon\Carbon::parse(trim($startTime))->format('h:i A');
+                                                    $formattedEnd = \Carbon\Carbon::parse(trim($endTime))->format('h:i A');
+                                                    $formattedTime = $formattedStart . ' - ' . $formattedEnd;
+                                                } catch (Exception $e) {
+                                                    $formattedTime = $timeRange;
+                                                }
+                                            }
+                                        ?>
+                                        <div class="time-display">
+                                            <i class="fas fa-clock me-2"></i>
+                                            <?php echo e($formattedTime); ?>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="location-display">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <?php echo e($request->location ?? 'N/A'); ?>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form action="<?php echo e(route('car-admin.inspection-approval')); ?>" 
+                                              method="POST" 
+                                              class="approval-form"
+                                              data-request-id="<?php echo e($request->id); ?>">
+                                            <?php echo csrf_field(); ?>
+                                            <input type="hidden" name="car_id" value="<?php echo e($request->car->id); ?>">
+                                            <input type="hidden" name="inspection_request_id" value="<?php echo e($request->id); ?>">
+                                            
+                                            <div class="action-buttons">
+                                                <button type="submit" 
+                                                        name="decision" 
+                                                        value="approved" 
+                                                        class="btn btn-approve btn-sm loading-btn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Approve this inspection"
+                                                        onclick="return confirmAction('approve', '<?php echo e($request->car->maker); ?> <?php echo e($request->car->model); ?>')">
+                                                    <i class="fas fa-check-circle me-1"></i>
+                                                    Approve
+                                                </button>
+
+                                                <button type="submit" 
+                                                        name="decision" 
+                                                        value="rejected" 
+                                                        class="btn btn-reject btn-sm loading-btn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Reject this inspection"
+                                                        onclick="return confirmAction('reject', '<?php echo e($request->car->maker); ?> <?php echo e($request->car->model); ?>')">
+                                                    <i class="fas fa-times-circle me-1"></i>
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                
+                <?php if(method_exists($inspectionRequests, 'links')): ?>
+                    <div class="d-flex justify-content-center mt-4">
+                        <?php echo e($inspectionRequests->links()); ?>
+
+                    </div>
+                <?php endif; ?>
+            <?php else: ?>
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h4>No Inspections Pending Approval</h4>
+                    <p>All completed inspections have been reviewed. New requests will appear here once inspections are completed.</p>
+                    <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="btn btn-primary">
+                        <i class="fas fa-eye me-2"></i>View All Inspection Requests
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<!-- Guidelines Modal -->
+<div class="modal fade" id="inspectionGuidelinesModal" tabindex="-1" aria-labelledby="inspectionGuidelinesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inspectionGuidelinesModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Inspection Approval Guidelines
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success"><i class="fas fa-check-circle me-2"></i>Approve If:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Vehicle meets safety standards</li>
+                            <li><i class="fas fa-check text-success me-2"></i>All required documents are valid</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Vehicle condition matches description</li>
+                            <li><i class="fas fa-check text-success me-2"></i>No major mechanical issues</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-danger"><i class="fas fa-times-circle me-2"></i>Reject If:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-times text-danger me-2"></i>Safety concerns identified</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Documentation incomplete</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Vehicle condition misrepresented</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Major repairs needed</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
 
-
+<?php $__env->startPush('scripts'); ?>
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        // Sidebar toggle functionality
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const sidebar = document.querySelector('.dashboard-sidebar');
-        const container = document.querySelector('.container');
-        
-        sidebarToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-            document.body.classList.toggle('sidebar-collapsed');
-        });
-        
-        // Mobile responsive toggle
-        function checkWidth() {
-            if (window.innerWidth < 992) {
-                sidebar.classList.add('collapsed');
-                document.body.classList.add('sidebar-collapsed');
-            } else {
-                // Only reset if it was previously collapsed due to small screen
-                if (!sidebar.classList.contains('user-collapsed')) {
-                    sidebar.classList.remove('collapsed');
-                    document.body.classList.remove('sidebar-collapsed');
-                }
-            }
-        }
-        
-        // Run on page load and window resize
-        window.addEventListener('resize', checkWidth);
-        checkWidth();
-        
-        // Store user preference for sidebar state
-        sidebarToggle.addEventListener('click', function() {
-            if (sidebar.classList.contains('collapsed')) {
-                sidebar.classList.add('user-collapsed');
-            } else {
-                sidebar.classList.remove('user-collapsed');
-            }
-        });
-        
-        // Bootstrap tooltip initialization
-        if (typeof bootstrap !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         }
+
+        // Handle form submissions with loading states
+        document.querySelectorAll('.approval-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const submitButton = e.submitter;
+                if (submitButton) {
+                    handleButtonLoading(submitButton);
+                }
+            });
+        });
     });
+
+    function confirmAction(action, carInfo) {
+        const actionText = action === 'approve' ? 'approve' : 'reject';
+        const message = `Are you sure you want to ${actionText} the inspection for ${carInfo}?`;
+        
+        return confirm(message);
+    }
+
+    function handleButtonLoading(button) {
+        const originalContent = button.innerHTML;
+        const isApprove = button.value === 'approved';
+        
+        // Disable button and show loading
+        button.disabled = true;
+        button.innerHTML = `
+            <div class="spinner-overlay">
+                <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <span style="visibility: hidden;">${originalContent}</span>
+        `;
+        
+        // Optional: Add visual feedback to the row
+        const row = button.closest('tr');
+        row.style.opacity = '0.7';
+        row.style.transform = 'scale(0.98)';
+        
+        // Show processing message after a short delay
+        setTimeout(() => {
+            if (isApprove) {
+                button.innerHTML = '<i class="fas fa-check me-1"></i> Processing...';
+                button.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+            } else {
+                button.innerHTML = '<i class="fas fa-times me-1"></i> Processing...';
+                button.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
+            }
+        }, 500);
+    }
+
+    // Add smooth hover effects
+    document.querySelectorAll('.table tbody tr').forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Auto-refresh functionality (optional)
+    let autoRefreshInterval;
+    
+    function startAutoRefresh() {
+        autoRefreshInterval = setInterval(() => {
+            // Only refresh if there are no pending forms
+            const pendingForms = document.querySelectorAll('.approval-form button:disabled');
+            if (pendingForms.length === 0) {
+                location.reload();
+            }
+        }, 30000); // Refresh every 30 seconds
+    }
+    
+    function stopAutoRefresh() {
+        if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+        }
+    }
+    
+    // Start auto-refresh when page loads
+    // startAutoRefresh();
+    
+    // Stop auto-refresh when user is about to leave
+    window.addEventListener('beforeunload', stopAutoRefresh);
 </script>
-<?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/inspection-approval.blade.php ENDPATH**/ ?>
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/inspection-approval.blade.php ENDPATH**/ ?>

@@ -1,424 +1,12 @@
 
 
+<?php $__env->startSection('title', 'Payment Details'); ?>
+
+<?php $__env->startPush('styles'); ?>
+     <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/paymentshow.css')); ?>">
+<?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
-<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
-<style>
-    .dashboard-content {
-    padding: 20px;
-    margin-left: 280px; /* Adjust to match your sidebar width */
-    transition: margin-left 0.3s ease;
-    min-height: 100vh;
-    background-color: #f8f9fa;
-    }
-
-    /* When sidebar is collapsed */
-    .sidebar-collapsed .dashboard-content {
-        margin-left: 70px; /* Adjust to match your collapsed sidebar width */
-    }
-
-    /* Page Header Styling */
-    .dashboard-header-section {
-        margin-bottom: 24px;
-    }
-
-    .dashboard-header-section h1 {
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .breadcrumb {
-        background-color: transparent;
-        padding: 0;
-        margin-bottom: 0;
-    }
-
-    .breadcrumb-item a {
-        color: #6c757d;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    .breadcrumb-item a:hover {
-        color: #0d6efd;
-    }
-
-    .breadcrumb-item.active {
-        color: #495057;
-        font-weight: 500;
-    }
-
-    /* Card Styling */
-    .card {
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        border: none;
-        margin-bottom: 24px;
-    }
-
-    .card-header {
-        background-color: #fff;
-        border-bottom: 1px solid #f0f0f0;
-        padding: 15px 20px;
-        font-weight: 600;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-    }
-
-    .card-body {
-        padding: 20px;
-    }
-
-    /* Table Styling */
-    .table {
-        margin-bottom: 0;
-    }
-
-    .table th {
-        font-weight: 600;
-        color: #495057;
-        background-color: #f8f9fa;
-        border-color: #e9ecef;
-        width: 40%;
-    }
-
-    .table td {
-        color: #212529;
-        border-color: #e9ecef;
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* Badge Styling */
-    .badge {
-        padding: 6px 10px;
-        font-weight: 500;
-        border-radius: 4px;
-    }
-
-    /* Form Controls */
-    .form-control {
-        border-radius: 6px;
-        border: 1px solid #ced4da;
-        padding: 10px 15px;
-        height: auto;
-    }
-
-    .form-control:focus {
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        border-color: #86b7fe;
-    }
-
-    textarea.form-control {
-        min-height: 100px;
-    }
-
-    /* Buttons */
-    .btn {
-        padding: 10px 20px;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-
-    .btn-primary {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-
-    .btn-primary:hover {
-        background-color: #0b5ed7;
-        border-color: #0a58ca;
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-    }
-
-    .btn-secondary:hover {
-        background-color: #5c636a;
-        border-color: #565e64;
-    }
-
-    /* Alert Styling */
-    .alert {
-        border-radius: 8px;
-        padding: 15px 20px;
-        margin-bottom: 20px;
-    }
-
-    /* Image Styling */
-    .img-fluid {
-        max-width: 80%;
-        height: auto;
-        border-radius: 6px;
-    }
-
-    /* Verification Actions */
-    .verification-actions, .collection-actions {
-        background-color: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
-        border: 1px solid #e9ecef;
-    }
-
-    .verification-actions h4, .collection-actions h4 {
-        margin-bottom: 15px;
-        font-weight: 600;
-        color: #495057;
-    }
-
-    /* Payment Section Headers */
-    h4 {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #343a40;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    h5 {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #495057;
-        margin-bottom: 10px;
-    }
-
-    /* Responsive Adjustments */
-    @media (max-width: 1199.98px) {
-        .dashboard-content {
-            margin-left: 250px;
-        }
-        
-        .sidebar-collapsed .dashboard-content {
-            margin-left: 60px;
-        }
-    }
-
-    @media (max-width: 991.98px) {
-        .dashboard-content {
-            margin-left: 0;
-            padding: 15px;
-        }
-        
-        .sidebar-collapsed .dashboard-content {
-            margin-left: 0;
-        }
-        
-        .card-header {
-            padding: 12px 15px;
-        }
-        
-        .card-body {
-            padding: 15px;
-        }
-    }
-
-    @media (max-width: 767.98px) {
-        .dashboard-header-section h1 {
-            font-size: 1.5rem;
-        }
-        
-        .verification-actions, .collection-actions {
-            padding: 15px;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-        }
-        
-        .table th, .table td {
-            padding: 0.5rem;
-        }
-    }
-
-    @media (max-width: 575.98px) {
-        .dashboard-content {
-            padding: 10px;
-        }
-        
-        .dashboard-header-section {
-            margin-bottom: 15px;
-        }
-        
-        .dashboard-header-section h1 {
-            font-size: 1.3rem;
-            margin-bottom: 5px;
-        }
-        
-        .card {
-            margin-bottom: 15px;
-        }
-        
-        .card-header {
-            padding: 10px;
-        }
-        
-        .card-body {
-            padding: 10px;
-        }
-        
-        h4 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-        }
-        
-        h5 {
-            font-size: 0.9rem;
-        }
-        
-        .table th {
-            width: 50%;
-        }
-        
-        /* Stack info on small screens */
-        .col-md-6 {
-            margin-bottom: 15px;
-        }
-    }
-
-    /* Script for toggling sidebar */
-    @media (max-width: 991.98px) {
-        .dashboard-sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            height: 100%;
-            z-index: 1000;
-            transition: left 0.3s ease;
-        }
-
-        .dashboard-sidebar.active {
-            left: 0;
-        }
-        
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-        
-        .sidebar-overlay.active {
-            display: block;
-        }
-    }
-</style>
-<div class="dashboard-sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-            <h2>Admin Portal</h2>
-        </div>
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-    
-    <div class="admin-profile">
-        <?php if(Auth::guard('admin')->check()): ?>
-            <div class="profile-avatar">
-                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
-            </div>
-            <div class="profile-info">
-                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                <span>Administrator</span>
-            </div>
-        <?php endif; ?>
-    </div>
-    
-    <nav class="sidebar-nav">
-        <ul>
-            <li>
-                <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-    
-            <div class="sidebar-divider"></div>
-    
-            <div class="sidebar-heading">Car Owner</div>
-    
-            <li>
-                <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item">
-                    <i class="fas fa-car"></i>
-                    <span>Car Registration</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item ">
-                    <i class="fas fa-clipboard-check"></i>
-                    <span>Inspection Requests</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item ">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Approve Inspections</span>
-                </a>
-            </li>
-    
-            <div class="sidebar-divider"></div>
-    
-            <div class="sidebar-heading">Customer</div>
-    
-            <li>
-                <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item">
-                    <i class="fas fa-id-card"></i>
-                    <span>Verify Users</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item active">
-                    <i class="fas fa-credit-card"></i>
-                    <span>Payments</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
-                    <i class="fas fa-edit"></i>
-                    <span>Update Registration</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Car Information</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?php echo e(url('admin/booked-car')); ?>" class="sidebar-menu-item">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Booked Cars</span>
-                </a>
-            </li>
-    
-            <li>
-                <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-                <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form">
-                    <?php echo csrf_field(); ?>
-                </form>
-            </li>
-        </ul>
-    </nav>        
-</div>
-
 <div class="dashboard-content">
     <!-- Page Header -->
     <div class="dashboard-header-section">
@@ -427,7 +15,7 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?php echo e(route('admin.dashboard')); ?>">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="<?php echo e(route('admin.payments.index')); ?>">Payments</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><?php echo e($payment->reference_number); ?></li>
+                <li class="breadcrumb-item active" aria-current="page">Payments Details</li>
             </ol>
         </nav>
     </div>
@@ -690,20 +278,18 @@
                     </table>
                 </div>
                 <div class="col-md-6">
-                    
                     <?php if($payment->qrPayment && $payment->qrPayment->screenshot_path): ?>
                     <div class="card">
                         <div class="card-header">
                             <h5>Payment Screenshot</h5>
                         </div>
                         <div class="card-body text-center">
-                            <!-- Updated image path handling -->
                             <img src="<?php echo e(asset('qr_payments/' . basename($payment->qrPayment->screenshot_path))); ?>" alt="QR Payment Screenshot" class="img-fluid">
                         </div>
                     </div>
-                <?php else: ?>
-                    <div class="alert alert-info">No screenshot uploaded for this payment.</div>
-                <?php endif; ?>
+                    <?php else: ?>
+                        <div class="alert alert-info">No screenshot uploaded for this payment.</div>
+                    <?php endif; ?>
                 </div>
                 <?php if($payment->status == 'pending_verification'): ?>
                 <div class="col-12 mt-4">
@@ -903,99 +489,154 @@
                             <td><?php echo e($payment->payLaterPayment->notes); ?></td>
                         </tr>
                         <?php endif; ?>
+                        <!-- Add bank code information if available -->
+                        <?php if(!empty($payment->payLaterPayment->bank_code)): ?>
+                        <tr>
+                            <th>Bank Used:</th>
+                            <td>
+                                <?php switch($payment->payLaterPayment->bank_code):
+                                    case ('bob'): ?>
+                                        Bank of Bhutan
+                                        <?php break; ?>
+                                    <?php case ('bnb'): ?>
+                                        Bhutan National Bank
+                                        <?php break; ?>
+                                    <?php case ('tbank'): ?>
+                                        T-Bank
+                                        <?php break; ?>
+                                    <?php case ('dpnb'): ?>
+                                        Druk PNB
+                                        <?php break; ?>
+                                    <?php case ('bdbl'): ?>
+                                        BDBL
+                                        <?php break; ?>
+                                    <?php default: ?>
+                                        <?php echo e(strtoupper($payment->payLaterPayment->bank_code)); ?>
+
+                                <?php endswitch; ?>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
                     </table>
                 </div>
                 <div class="col-md-6">
-                    <?php if($payment->payLaterPayment->status != 'paid'): ?>
-                    <div class="collection-actions">
-                        <h4>Collect Payment</h4>
-                        <form action="<?php echo e(route('admin.payments.collect-pay-later', $payment->id)); ?>" method="POST">
-                            <?php echo csrf_field(); ?>
-                            <div class="mb-3">
-                                <label for="collection_method" class="form-label">Collection Method:</label>
-                                <select name="collection_method" id="collection_method" class="form-control" required>
-                                    <option value="">-- Select Method --</option>
-                                    <option value="cash">Cash</option>
-                                    <option value="card">Card</option>
-                                    <option value="bank_transfer">Bank Transfer</option>
-                                    <option value="qr_code">QR Code</option>
-                                </select>
+                    <?php
+                        // Check for screenshot in multiple ways
+                        $screenshotExists = false;
+                        $screenshotPath = '';
+                        
+                        // First try the stored path if available
+                        if (!empty($payment->payLaterPayment->screenshot_image_path) && 
+                            file_exists(public_path($payment->payLaterPayment->screenshot_image_path))) {
+                            $screenshotExists = true;
+                            $screenshotPath = $payment->payLaterPayment->screenshot_image_path;
+                        } 
+                        // Then try reference number-based paths
+                        else {
+                            $possibleExtensions = ['jpg', 'jpeg', 'png'];
+                            foreach ($possibleExtensions as $ext) {
+                                $testPath = 'pay_later_payments/' . $payment->reference_number . '.' . $ext;
+                                if (file_exists(public_path($testPath))) {
+                                    $screenshotExists = true;
+                                    $screenshotPath = $testPath;
+                                    break;
+                                }
+                            }
+                        }
+                    ?>
+                    
+                    <?php if($screenshotExists): ?>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>QR Payment Screenshot</h5>
                             </div>
-                            <div class="mb-3">
-                                <label for="notes" class="form-label">Notes:</label>
-                                <textarea name="notes" id="notes" class="form-control" rows="3"></textarea>
+                            <div class="card-body text-center">
+                                <img src="<?php echo e(asset($screenshotPath)); ?>"
+                                    alt="Pay Later QR Payment Screenshot" 
+                                    class="img-fluid" 
+                                    style="max-height: 400px; cursor: pointer;" 
+                                    onclick="openImageModal(this.src)">
+                                <p class="text-muted small mt-2">
+                                    Customer paid via QR Code using <?php echo e(ucfirst($payment->payLaterPayment->bank_code ?? 'bank app')); ?>
+
+                                </p>
                             </div>
-                            <button type="submit" class="btn btn-primary">Record Payment</button>
-                        </form>
-                    </div>
+                        </div>
+                    <?php elseif($payment->payLaterPayment->status != 'paid'): ?>
+                        <div class="collection-actions">
+                            <h4>Collect Payment</h4>
+                            <form action="<?php echo e(route('admin.payments.collect-pay-later', $payment->id)); ?>" method="POST" enctype="multipart/form-data">
+                                <?php echo csrf_field(); ?>
+                                <div class="mb-3">
+                                    <label for="collection_method" class="form-label">Collection Method:</label>
+                                    <select name="collection_method" id="collection_method" class="form-control" required>
+                                        <option value="">-- Select Method --</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="card">Card</option>
+                                        <option value="bank_transfer">Bank Transfer</option>
+                                        <option value="qr_code">QR Code</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 qr-screenshot" style="display: none;">
+                                    <label for="screenshot" class="form-label">Payment Screenshot:</label>
+                                    <input type="file" name="screenshot" id="screenshot" class="form-control" accept="image/*">
+                                    <small class="form-text text-muted">Upload screenshot of the QR payment if available</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">Notes:</label>
+                                    <textarea name="notes" id="notes" class="form-control" rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Record Payment</button>
+                            </form>
+                        </div>
                     <?php else: ?>
-                    <div class="alert alert-success">
-                        <h4>Payment Completed</h4>
-                        <p>This pay later payment has been collected successfully.</p>
-                    </div>
+                        <div class="alert alert-info">
+                            <h4>Payment Completed</h4>
+                            <p>This pay later payment has been collected successfully, but no screenshot is available.</p>
+                            <?php if($payment->payLaterPayment->collection_method): ?>
+                                <p><strong>Collection Method:</strong> <?php echo e(ucfirst(str_replace('_', ' ', $payment->payLaterPayment->collection_method))); ?></p>
+                            <?php endif; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
+            <?php endif; ?>
         </div>
     </div>
-    <?php endif; ?>
+</div>
 
-    <!-- Back Button -->
-    <div class="d-flex justify-content-between mt-4">
-        <a href="<?php echo e(route('admin.payments.index')); ?>" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Payments
-        </a>
+<!-- Image Modal for viewing large screenshots -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Payment Screenshot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="Payment Screenshot">
+            </div>
+        </div>
     </div>
 </div>
 <?php $__env->stopSection(); ?>
 
-<?php $__env->startSection('scripts'); ?>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<?php $__env->startPush('scripts'); ?>
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        // Get references to elements
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const dashboardSidebar = document.querySelector('.dashboard-sidebar');
-        const dashboardContent = document.querySelector('.dashboard-content');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show/hide screenshot upload field based on payment method
+        const collectionMethodSelect = document.getElementById('collection_method');
+        const qrScreenshotDiv = document.querySelector('.qr-screenshot');
         
-        // Create overlay for mobile
-        const overlay = document.createElement('div');
-        overlay.className = 'sidebar-overlay';
-        document.body.appendChild(overlay);
-        
-        // Toggle sidebar function
-        function toggleSidebar() {
-            dashboardSidebar.classList.toggle('active');
-            dashboardContent.classList.toggle('sidebar-collapsed');
-            overlay.classList.toggle('active');
-        }
-        
-        // Event listeners
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', toggleSidebar);
-        }
-        
-        // Close sidebar when overlay is clicked
-        overlay.addEventListener('click', function() {
-            if (dashboardSidebar.classList.contains('active')) {
-                toggleSidebar();
-            }
-        });
-        
-        // Handle window resize
-        function handleResize() {
-            if (window.innerWidth > 991) {
-                // On larger screens
-                if (overlay.classList.contains('active')) {
-                    overlay.classList.remove('active');
+        if (collectionMethodSelect && qrScreenshotDiv) {
+            collectionMethodSelect.addEventListener('change', function() {
+                if (this.value === 'qr_code') {
+                    qrScreenshotDiv.style.display = 'block';
+                } else {
+                    qrScreenshotDiv.style.display = 'none';
                 }
-            }
+            });
         }
-        
-        // Initial check and add resize listener
-        handleResize();
-        window.addEventListener('resize', handleResize);
         
         // Image modal functionality for payment screenshots
         const paymentImages = document.querySelectorAll('.card-body img');
@@ -1004,37 +645,7 @@
             image.style.cursor = 'pointer';
             
             image.addEventListener('click', function() {
-                // Create modal elements
-                const modal = document.createElement('div');
-                modal.className = 'modal fade';
-                modal.id = 'imageModal';
-                modal.setAttribute('tabindex', '-1');
-                modal.setAttribute('aria-hidden', 'true');
-                
-                modal.innerHTML = `
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Payment Screenshot</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                <img src="${this.src}" class="img-fluid" alt="Full size screenshot">
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                
-                // Initialize and show the modal
-                const bsModal = new bootstrap.Modal(modal);
-                bsModal.show();
-                
-                // Remove modal from DOM after it's hidden
-                modal.addEventListener('hidden.bs.modal', function() {
-                    document.body.removeChild(modal);
-                });
+                openImageModal(this.src);
             });
         });
         
@@ -1062,7 +673,34 @@
                 return true;
             });
         });
+
+        // Add form submission debugging
+        const forms = document.querySelectorAll('form');
+        forms.forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                const formData = new FormData(this);
+                console.log('Form data being submitted:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+            });
+        });
     });
+
+    // Function to open image modal
+    function openImageModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        
+        modalImage.src = imageSrc;
+        
+        // Initialize and show the modal
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+    }
+
+    // Make the function globally available
+    window.openImageModal = openImageModal;
 </script>
-<?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/paymentshow.blade.php ENDPATH**/ ?>
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/paymentshow.blade.php ENDPATH**/ ?>

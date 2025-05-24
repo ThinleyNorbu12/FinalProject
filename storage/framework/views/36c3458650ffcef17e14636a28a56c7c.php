@@ -1,130 +1,132 @@
 
- <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
-<?php $__env->startSection('content'); ?>
-<div class="dashboard-sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-            <h2>Admin Portal</h2>
+
+<?php $__env->startSection('title', 'Car Details'); ?>
+
+<?php $__env->startSection('breadcrumbs'); ?>
+    <li class="breadcrumb-item">
+        <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>">Car Registration</a>
+    </li>
+    <li class="breadcrumb-item active">Car Details</li>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('page-header'); ?>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Car Details</h1>
+            <p class="page-subtitle">Review and manage car registration details</p>
         </div>
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
+        <div class="page-actions">
+            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
     </div>
+<?php $__env->stopSection(); ?>
 
-    <div class="admin-profile">
-        <?php if(Auth::guard('admin')->check()): ?>
-            <div class="profile-avatar">
-                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
+<?php $__env->startPush('styles'); ?>
+<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/view-car.css')); ?>">
+<?php $__env->stopPush(); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="container-fluid">
+    <div class="car-details-container">
+        <!-- Car Image Section -->
+        <div class="car-image-section">
+            <div class="car-image-wrapper">
+                <?php if($car->car_image): ?>
+                    <img src="<?php echo e(asset($car->car_image)); ?>" alt="Car Image" class="car-image">
+                <?php else: ?>
+                    <div class="no-image-placeholder">
+                        <i class="fas fa-car fa-3x mb-3"></i>
+                        <p class="mb-0">No image available</p>
+                    </div>
+                <?php endif; ?>
             </div>
-            <div class="profile-info">
-                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                <span>Administrator</span>
+        </div>
+
+        <!-- Car Information Section -->
+        <div class="car-info-section">
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-label">Car Maker</div>
+                    <p class="info-value"><?php echo e($car->maker); ?></p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-label">Model</div>
+                    <p class="info-value"><?php echo e($car->model); ?></p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-label">Vehicle Type</div>
+                    <p class="info-value"><?php echo e($car->vehicle_type); ?></p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-label">Condition</div>
+                    <p class="info-value"><?php echo e($car->car_condition); ?></p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-label">Mileage</div>
+                    <p class="info-value"><?php echo e(number_format($car->mileage)); ?> km</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-label">Price per Day</div>
+                    <p class="info-value price-highlight">$<?php echo e(number_format($car->price, 2)); ?></p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-label">Registration Number</div>
+                    <p class="info-value"><?php echo e($car->registration_no); ?></p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-label">Status</div>
+                    <span class="status-badge status-<?php echo e(strtolower($car->status)); ?>">
+                        <i class="fas fa-circle me-1" style="font-size: 0.5rem;"></i>
+                        <?php echo e($car->status); ?>
+
+                    </span>
+                </div>
             </div>
-        <?php endif; ?>
-    </div>
 
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-menu">
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
+            <?php if($car->description): ?>
+                <div class="description-card">
+                    <div class="info-label mb-2">Description</div>
+                    <p class="description-text"><?php echo e($car->description); ?></p>
+                </div>
+            <?php endif; ?>
+        </div>
 
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Car Owner</div>
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <form action="<?php echo e(route('car-admin.admin.requestInspection', ['car' => $car->id])); ?>" method="GET" class="d-inline">
+                <button type="submit" class="btn-action btn-primary-action">
+                    <i class="fas fa-clipboard-check"></i>
+                    Request Inspection
+                </button>
+            </form>
 
-            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item active">
-                <i class="fas fa-car"></i>
-                <span>Car Registration</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Inspection Requests</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-check-circle"></i>
-                <span>Approve Inspections</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Customer</div>
-
-            <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-id-card"></i>
-                <span>Verify Users</span>
-            </a>
-
-            <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-credit-card"></i>
-                <span>Payments</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-edit"></i>
-                <span>Update Registration</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Car Information</span>
-            </a>
-
-            <a href="<?php echo e(route('admin.booked-car')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booked Cars</span>
-            </a>
-
-            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-
-            <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form" style="display: none;">
-                <?php echo csrf_field(); ?>
+            <form action="<?php echo e(route('car-admin.showRejectForm', ['car' => $car->id])); ?>" method="GET" class="d-inline">
+                <button type="submit" class="btn-action btn-danger-action">
+                    <i class="fas fa-times-circle"></i>
+                    Reject Application
+                </button>
             </form>
         </div>
     </div>
 </div>
-
-<div class="container">
-    <h1>Car Details</h1>
-
-    
-    <?php if($car->car_image): ?>
-        <div class="mb-3">
-            <img src="<?php echo e(asset($car->car_image)); ?>" alt="Car Image" style="width: 200px; height: auto;">
-        </div>
-    <?php else: ?>
-        <p>No image available</p>
-    <?php endif; ?>
-
-    
-    <div class="car-details">
-        <p><strong>Car Maker:</strong> <?php echo e($car->maker); ?></p>
-        <p><strong>Model:</strong> <?php echo e($car->model); ?></p>
-        <p><strong>Vehicle Type:</strong> <?php echo e($car->vehicle_type); ?></p>
-        <p><strong>Condition:</strong> <?php echo e($car->car_condition); ?></p>
-        <p><strong>Mileage:</strong> <?php echo e($car->mileage); ?> km</p>
-        <p><strong>Price per Day:</strong> $<?php echo e($car->price); ?> per day</p>
-        <p><strong>Registration Number:</strong> <?php echo e($car->registration_no); ?></p>
-        <p><strong>Status:</strong> <?php echo e($car->status); ?></p>
-        <p><strong>Description:</strong> <?php echo e($car->description); ?></p>
-    </div>
-
-    
-    <div class="car-actions mt-4">
-        <form action="<?php echo e(route('car-admin.admin.requestInspection', ['car' => $car->id])); ?>" method="GET" class="d-inline">
-            <button type="submit" class="btn btn-primary">Request for Inspection</button>
-        </form>
-
-        <form action="<?php echo e(route('car-admin.showRejectForm', ['car' => $car->id])); ?>" method="GET" class="d-inline">
-            <button type="submit" class="btn btn-danger">Reject</button>
-        </form>
-    </div>
-</div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/view-car.blade.php ENDPATH**/ ?>
+<?php $__env->startPush('scripts'); ?>
+<script>
+    // Add any additional JavaScript functionality here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add smooth scrolling or other interactions if needed
+        console.log('Car details page loaded');
+    });
+</script>
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/view-car.blade.php ENDPATH**/ ?>

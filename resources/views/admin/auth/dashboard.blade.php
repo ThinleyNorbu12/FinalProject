@@ -5,6 +5,7 @@
 @section('breadcrumbs')
     <li class="breadcrumb-item active">Dashboard</li>
 @endsection
+
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/css/admin/dashboard.css') }}">
 @endpush

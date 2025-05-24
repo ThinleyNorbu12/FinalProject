@@ -12,8 +12,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    
     <!-- Custom Admin CSS -->
-    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/dashboard.css')); ?>">
+    
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
     <!-- Additional CSS -->
     <?php echo $__env->yieldPushContent('styles'); ?>
@@ -279,23 +280,7 @@
     </div>
 
     <!-- Enhanced Admin Footer -->
-    <footer class="admin-footer" id="adminFooter">
-        <div class="footer-left">
-            <div class="footer-copy">
-                <p class="mb-0">&copy; <?php echo e(date('Y')); ?> Car Rental System. All rights reserved.</p>
-            </div>
-        </div>
-        
-        <div class="footer-right">
-            <div class="footer-status">
-                <span class="status-dot"></span>
-                System Online
-            </div>
-            <div class="footer-copy">
-                Version 2.1.0
-            </div>
-        </div>
-    </footer>
+    
 
     <!-- JavaScript Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

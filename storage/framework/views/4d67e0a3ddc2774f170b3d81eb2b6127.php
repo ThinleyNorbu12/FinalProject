@@ -1,134 +1,26 @@
 
- <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/dashboard.css')); ?>">
- <style>
-    .license-image {
-        max-width: 100%;
-        height: auto;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 5px;
-    }
-    
-    .no-image {
-        padding: 40px 0;
-        color: #6c757d;
-        text-align: center;
-    }
-    
-    .no-image i {
-        font-size: 48px;
-        margin-bottom: 10px;
-        display: block;
-    }
-    
-    .no-image p {
-        margin: 0;
-        font-size: 16px;
-    }
-</style>
+
+<?php $__env->startSection('title', 'User Verification Details'); ?>
+
+<?php $__env->startSection('breadcrumbs'); ?>
+    <li class="breadcrumb-item">
+        <a href="<?php echo e(route('admin.verify-users')); ?>">User Verification</a>
+    </li>
+    <li class="breadcrumb-item active">Verification Details</li>
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
-<div class="dashboard-sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-            <h2>Admin Portal</h2>
-        </div>
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-
-    <div class="admin-profile">
-        <?php if(Auth::guard('admin')->check()): ?>
-            <div class="profile-avatar">
-                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
-            </div>
-            <div class="profile-info">
-                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                <span>Administrator</span>
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-menu">
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Car Owner</div>
-
-            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-car"></i>
-                <span>Car Registration</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Inspection Requests</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-check-circle"></i>
-                <span>Approve Inspections</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Customer</div>
-
-            <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item active">
-                <i class="fas fa-id-card"></i>
-                <span>Verify Users</span>
-            </a>
-
-            <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-credit-card"></i>
-                <span>Payments</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-edit"></i>
-                <span>Update Registration</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Car Information</span>
-            </a>
-
-            <a href="<?php echo e(route('admin.booked-car')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booked Cars</span>
-            </a>
-
-            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-
-            <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form" style="display: none;">
-                <?php echo csrf_field(); ?>
-            </form>
-        </div>
-    </div>
-</div>
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">User Verification Details</h1>
-        <a href="<?php echo e(route('admin.verify-users')); ?>" class="btn btn-sm btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to List
-        </a>
+    
     </div>
 
     <?php if(session('error')): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <?php echo e(session('error')); ?>
 
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <?php endif; ?>
 
@@ -209,9 +101,9 @@
 
                                         
                                         <?php if($customer->isLicenseAboutToExpire()): ?>
-                                        <span class="badge badge-info ml-2">Expiring Soon</span>
+                                        <span class="badge bg-info text-dark ms-2">Expiring Soon</span>
                                         <?php elseif($customer->drivingLicense->expiry_date < now()): ?>
-                                        <span class="badge badge-dark ml-2">Expired</span>
+                                        <span class="badge bg-dark ms-2">Expired</span>
                                         <?php endif; ?>
                                     <?php else: ?>
                                         Not provided
@@ -222,13 +114,13 @@
                                 <th>Status:</th>
                                 <td>
                                     <?php if($customer->drivingLicense->status == 'Pending'): ?>
-                                    <span class="badge badge-warning">Pending</span>
+                                    <span class="badge bg-warning">Pending</span>
                                     <?php elseif($customer->drivingLicense->status == 'Verified'): ?>
-                                    <span class="badge badge-success">Verified</span>
+                                    <span class="badge bg-success">Verified</span>
                                     <?php elseif($customer->drivingLicense->status == 'Rejected'): ?>
-                                    <span class="badge badge-danger">Rejected</span>
+                                    <span class="badge bg-danger">Rejected</span>
                                     <?php else: ?>
-                                    <span class="badge badge-secondary">Not Submitted</span>
+                                    <span class="badge bg-secondary">Not Submitted</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -331,38 +223,38 @@
                         License images are not clearly uploaded or missing. Please verify the user using alternative ID proof.
                     </div>
                     
-                    
+                    <form action="<?php echo e(route('admin.user-verification.alternative', $customer->id)); ?>" method="POST">
                         <?php echo csrf_field(); ?>
                         <?php echo method_field('PUT'); ?>
                         
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="id_proof_type">ID/Document Proof Type</label>
+                                <div class="mb-3">
+                                    <label for="id_proof_type" class="form-label">ID/Document Proof Type</label>
                                     <input type="text" class="form-control" id="id_proof_type" name="id_proof_type" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="id_proof_number">ID Proof Number</label>
+                                <div class="mb-3">
+                                    <label for="id_proof_number" class="form-label">ID Proof Number</label>
                                     <input type="text" class="form-control" id="id_proof_number" name="id_proof_number" required>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="remarks">Remarks (Optional)</label>
+                        <div class="mb-3">
+                            <label for="remarks" class="form-label">Remarks (Optional)</label>
                             <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
                         </div>
                         
-                        <div class="form-group">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="is_verified" name="is_verified" value="1" required>
-                                <label class="custom-control-label" for="is_verified">Is Verified</label>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="is_verified" name="is_verified" value="1" required>
+                                <label class="form-check-label" for="is_verified">Is Verified</label>
                             </div>
                         </div>
                         
-                        <div class="text-right">
+                        <div class="text-end">
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </form>
@@ -385,20 +277,20 @@
                         <?php echo csrf_field(); ?>
                         <?php echo method_field('PUT'); ?>
                         
-                        <div class="form-group">
-                            <label>Verification Decision:</label>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="status-approve" name="status" value="Verified" class="custom-control-input" required>
-                                <label class="custom-control-label" for="status-approve">Approve</label>
+                        <div class="mb-3">
+                            <label class="form-label">Verification Decision:</label>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="status-approve" name="status" value="Verified" class="form-check-input" required>
+                                <label class="form-check-label" for="status-approve">Approve</label>
                             </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="status-reject" name="status" value="Rejected" class="custom-control-input" required>
-                                <label class="custom-control-label" for="status-reject">Reject</label>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="status-reject" name="status" value="Rejected" class="form-check-input" required>
+                                <label class="form-check-label" for="status-reject">Reject</label>
                             </div>
                         </div>
                         
-                        <div class="form-group" id="rejection-reason-group" style="display: none;">
-                            <label for="rejection_reason">Rejection Reason:</label>
+                        <div class="mb-3" id="rejection-reason-group" style="display: none;">
+                            <label for="rejection_reason" class="form-label">Rejection Reason:</label>
                             <textarea class="form-control <?php $__errorArgs = ['rejection_reason'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -407,7 +299,7 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>" id="rejection_reason" name="rejection_reason" rows="3"></textarea>
-                            <small class="form-text text-muted">Please provide a reason for rejection that will be visible to the user.</small>
+                            <div class="form-text">Please provide a reason for rejection that will be visible to the user.</div>
                             <?php $__errorArgs = ['rejection_reason'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -420,7 +312,7 @@ endif;
 unset($__errorArgs, $__bag); ?>
                         </div>
                         
-                        <div class="form-group text-right">
+                        <div class="text-end">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Submit Decision
                             </button>
@@ -449,7 +341,7 @@ unset($__errorArgs, $__bag); ?>
                             Resetting the status to pending will allow the user to update their driving license information.
                         </div>
                         
-                        <div class="form-group text-right">
+                        <div class="text-end">
                             <button type="submit" class="btn btn-warning">
                                 <i class="fas fa-redo"></i> Reset to Pending
                             </button>
@@ -463,42 +355,52 @@ unset($__errorArgs, $__bag); ?>
 </div>
 <?php $__env->stopSection(); ?>
 
-<?php $__env->startSection('scripts'); ?>
+<?php $__env->startPush('scripts'); ?>
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         // Show/hide rejection reason based on selection
-        $('input[name="status"]').change(function() {
-            if($(this).val() === 'Rejected') {
-                $('#rejection-reason-group').show();
-                $('#rejection_reason').attr('required', true);
-            } else {
-                $('#rejection-reason-group').hide();
-                $('#rejection_reason').attr('required', false);
-            }
+        const statusInputs = document.querySelectorAll('input[name="status"]');
+        const rejectionReasonGroup = document.getElementById('rejection-reason-group');
+        const rejectionReasonTextarea = document.getElementById('rejection_reason');
+        
+        statusInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.value === 'Rejected') {
+                    rejectionReasonGroup.style.display = 'block';
+                    rejectionReasonTextarea.setAttribute('required', true);
+                } else {
+                    rejectionReasonGroup.style.display = 'none';
+                    rejectionReasonTextarea.removeAttribute('required');
+                }
+            });
         });
         
         // Function to check if license images are unclear
         function checkImageClarity() {
-            var frontImg = $('.license-image').first()[0];
-            var backImg = $('.license-image').last()[0];
+            const frontImg = document.querySelector('.license-image');
+            const backImg = document.querySelectorAll('.license-image')[1];
             
             if (frontImg && backImg) {
                 // This is a simplified check - in production you might want more sophisticated image clarity detection
                 if (frontImg.naturalWidth < 300 || frontImg.naturalHeight < 200 || 
                     backImg.naturalWidth < 300 || backImg.naturalHeight < 200) {
-                    $('.alternative-verification-form').show();
+                    const altVerificationForm = document.querySelector('.alternative-verification-form');
+                    if (altVerificationForm) {
+                        altVerificationForm.style.display = 'block';
+                    }
                 }
             }
         }
         
         // Run after images are loaded
-        $('.license-image').on('load', function() {
-            checkImageClarity();
+        const licenseImages = document.querySelectorAll('.license-image');
+        licenseImages.forEach(img => {
+            img.addEventListener('load', checkImageClarity);
         });
         
         // Run once on page load (for cached images)
         setTimeout(checkImageClarity, 500);
     });
 </script>
-<?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/user-verification-details.blade.php ENDPATH**/ ?>
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/user-verification-details.blade.php ENDPATH**/ ?>

@@ -6,6 +6,9 @@
     <li class="breadcrumb-item active">Dashboard</li>
 <?php $__env->stopSection(); ?>
 
+<?php $__env->startPush('styles'); ?>
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/dashboard.css')); ?>">
+<?php $__env->stopPush(); ?>
 <?php $__env->startSection('content'); ?>
 <!-- DYNAMIC CONTENT LOADER -->
 <div id="dynamic-content">
