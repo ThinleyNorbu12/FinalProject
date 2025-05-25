@@ -704,7 +704,7 @@
                 <h2>Your Rental History</h2>
                 <p>View all your past and current rentals in one place.</p>
                 
-                <div class="filter-controls">
+                <!-- <div class="filter-controls">
                     <div class="filter-label">Filter by:</div>
                     <div class="filter-buttons">
                         <button class="filter-btn active" data-filter="all">All</button>
@@ -712,7 +712,7 @@
                         <button class="filter-btn" data-filter="completed">Completed</button>
                         <button class="filter-btn" data-filter="cancelled">Cancelled</button>
                     </div>
-                </div>
+                </div> -->
                 
                 @if(count($bookings) > 0)
                     @foreach($bookings as $booking)

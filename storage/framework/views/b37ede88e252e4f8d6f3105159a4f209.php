@@ -16,7 +16,7 @@
             <h3 class="text-center mb-3"><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
 
             <!-- Image Section -->
-            <?php if($car->images && count($car->images)): ?>
+            <!-- <?php if($car->images && count($car->images)): ?>
                 <div class="carousel-container mb-4">
                     <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
@@ -49,7 +49,83 @@
                 </div>
             <?php else: ?>
                 <div class="alert alert-info mb-4">No image available for this car</div>
+            <?php endif; ?> -->
+
+            <!-- Image Section -->
+            <!-- Image Section -->
+<!-- Image Section -->
+            <?php if($car->car_image): ?>
+                <div class="mb-4 text-center">
+                    <?php
+                        // Check if car_image already contains the full path or just filename
+                        $isFullPath = str_contains($car->car_image, '/');
+                        
+                        if ($isFullPath) {
+                            // car_image already contains full path like 'uploads/cars/filename.webp'
+                            $imagePathUploads = $car->car_image;
+                            $imagePathAdmin = str_replace('uploads/cars/', 'admincar_images/', $car->car_image);
+                        } else {
+                            // car_image contains only filename
+                            $imagePathUploads = 'uploads/cars/' . $car->car_image;
+                            $imagePathAdmin = 'admincar_images/' . $car->car_image;
+                        }
+                        
+                        // Check if files exist
+                        $imageExistsInUploads = file_exists(public_path($imagePathUploads));
+                        $imageExistsInAdmin = file_exists(public_path($imagePathAdmin));
+                    ?>
+                    
+                    
+                    <!-- <?php if(config('app.debug')): ?>
+                        <div class="alert alert-warning small">
+                            <strong>Debug Info:</strong><br>
+                            Image name: <?php echo e($car->car_image); ?><br>
+                            Uploads path: <?php echo e(public_path($imagePathUploads)); ?><br>
+                            Admin path: <?php echo e(public_path($imagePathAdmin)); ?><br>
+                            Uploads exists: <?php echo e($imageExistsInUploads ? 'Yes' : 'No'); ?><br>
+                            Admin exists: <?php echo e($imageExistsInAdmin ? 'Yes' : 'No'); ?>
+
+                        </div>
+                    <?php endif; ?> -->
+                    
+                    <?php if($imageExistsInUploads): ?>
+                        <img src="<?php echo e(asset($imagePathUploads)); ?>" 
+                            alt="<?php echo e($car->maker ?? 'Car'); ?> <?php echo e($car->model ?? 'Image'); ?>" 
+                            style="max-width: 100%; max-height: 300px; object-fit: cover;" 
+                            class="img-fluid rounded"
+                            onerror="console.log('Image failed to load: <?php echo e(asset($imagePathUploads)); ?>'); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        
+                    <?php elseif($imageExistsInAdmin): ?>
+                        <img src="<?php echo e(asset($imagePathAdmin)); ?>" 
+                            alt="<?php echo e($car->maker ?? 'Car'); ?> <?php echo e($car->model ?? 'Image'); ?>" 
+                            style="max-width: 100%; max-height: 300px; object-fit: cover;" 
+                            class="img-fluid rounded"
+                            onerror="console.log('Image failed to load: <?php echo e(asset($imagePathAdmin)); ?>'); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        
+                    <?php else: ?>
+                        
+                        <div class="alert alert-warning mb-2">
+                            <small>Image file not found in either directory</small>
+                        </div>
+                    <?php endif; ?>
+                    
+                    
+                    <div style="max-width: 100%; max-height: 300px; min-height: 200px; background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%); display: <?php echo e(($imageExistsInUploads || $imageExistsInAdmin) ? 'none' : 'flex'); ?>; align-items: center; justify-content: center; color: white; font-size: 2rem;" 
+                        class="img-fluid rounded">
+                        <div class="text-center">
+                            <i class="fas fa-car mb-2"></i>
+                            <div style="font-size: 0.8rem;">No Image Available</div>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>No image specified for this car
+                </div>
             <?php endif; ?>
+
+            
+            
 
             <!-- Car Information -->
             <div class="car-details-card mb-4">

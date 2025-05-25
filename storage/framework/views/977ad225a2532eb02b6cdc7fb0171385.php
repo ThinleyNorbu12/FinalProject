@@ -361,7 +361,7 @@
     </script>
 
     <!-- Display Cars -->
-    <section class="cars">
+    <!-- <section class="cars">
         <h2>Available Cars</h2>
         <div class="car-container">
             <?php if($cars->count()): ?>
@@ -370,6 +370,49 @@
                         <img src="<?php echo e(asset($car->car_image)); ?>" alt="<?php echo e($car->model); ?>" style="width: 200px; height: auto;">
                         <h3><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
                         <p><?php echo e($car->price); ?>/day</p>
+                        <div class="car-buttons">
+                            <a href="#" class="btn-details" data-car-id="<?php echo e($car->id); ?>">DETAILS</a>
+                            <a href="<?php echo e(route('book.car', $car->id)); ?>" class="btn-contact">BOOK NOW</a>
+                        </div>
+                    </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php else: ?>
+                <p>No cars available at the moment.</p>
+            <?php endif; ?>
+        </div>
+    </section> -->
+    <section class="cars">
+        <h2>Available Cars</h2>
+        <div class="car-container">
+            <?php if($cars->count()): ?>
+                <?php $__currentLoopData = $cars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $car): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="car">
+                        <?php
+                            $imagePathUploads = 'uploads/cars/' . $car->car_image;
+                            $imagePathAdmin = 'admincar_images/' . $car->car_image;
+                            $imageExistsInUploads = $car->car_image && file_exists(public_path($imagePathUploads));
+                            $imageExistsInAdmin = $car->car_image && file_exists(public_path($imagePathAdmin));
+                        ?>
+
+                        <?php if($imageExistsInUploads): ?>
+                            <img src="<?php echo e(asset($imagePathUploads)); ?>" alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>" style="width: 200px; height: auto;">
+                        <?php elseif($imageExistsInAdmin): ?>
+                            <img src="<?php echo e(asset($imagePathAdmin)); ?>" alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>" style="width: 200px; height: auto;">
+                        <?php elseif($car->car_image): ?>
+                            <!-- Fallback: try the direct path in case it's stored differently -->
+                            <img src="<?php echo e(asset($car->car_image)); ?>" alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>" style="width: 200px; height: auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div style="width: 200px; height: 150px; background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%); display: none; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                <i class="fas fa-car"></i>
+                            </div>
+                        <?php else: ?>
+                            <!-- No image placeholder -->
+                            <div style="width: 200px; height: 150px; background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                <i class="fas fa-car"></i>
+                            </div>
+                        <?php endif; ?>
+
+                        <h3><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
+                        <p>$<?php echo e(number_format($car->price, 2)); ?>/day</p>
                         <div class="car-buttons">
                             <a href="#" class="btn-details" data-car-id="<?php echo e($car->id); ?>">DETAILS</a>
                             <a href="<?php echo e(route('book.car', $car->id)); ?>" class="btn-contact">BOOK NOW</a>

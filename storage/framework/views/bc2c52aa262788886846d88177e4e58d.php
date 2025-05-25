@@ -1117,7 +1117,7 @@
                         <i class="fas fa-print"></i> Print Details
                     </a>
                 </div>
-                <div>
+                <!-- <div>
                     <?php if($booking->status === 'confirmed'): ?>
                         
                             <i class="fas fa-edit"></i> Modify Reservation
@@ -1133,12 +1133,12 @@
                             <i class="fas fa-star"></i> Leave Review
                         </a>
                     <?php endif; ?>
-                </div>
+                </div> -->
             </div>
         </div>
         
         <!-- You might also like section -->
-        <div class="section-title mt-4">
+        <!-- <div class="section-title mt-4">
             <i class="fas fa-thumbs-up"></i> You might also like
         </div>
         
@@ -1166,7 +1166,7 @@
                     </div>
                 </div>
             <?php endif; ?>
-        </div>
+        </div> -->
     </div>
 </div>
 

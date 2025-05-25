@@ -16,7 +16,7 @@
             <h3 class="text-center mb-3">{{ $car->maker }} {{ $car->model }}</h3>
 
             <!-- Image Section -->
-            @if($car->images && count($car->images))
+            <!-- @if($car->images && count($car->images))
                 <div class="carousel-container mb-4">
                     <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
@@ -49,7 +49,94 @@
                 </div>
             @else
                 <div class="alert alert-info mb-4">No image available for this car</div>
+            @endif -->
+
+            <!-- Image Section -->
+            <!-- Image Section -->
+<!-- Image Section -->
+            @if($car->car_image)
+                <div class="mb-4 text-center">
+                    @php
+                        // Check if car_image already contains the full path or just filename
+                        $isFullPath = str_contains($car->car_image, '/');
+                        
+                        if ($isFullPath) {
+                            // car_image already contains full path like 'uploads/cars/filename.webp'
+                            $imagePathUploads = $car->car_image;
+                            $imagePathAdmin = str_replace('uploads/cars/', 'admincar_images/', $car->car_image);
+                        } else {
+                            // car_image contains only filename
+                            $imagePathUploads = 'uploads/cars/' . $car->car_image;
+                            $imagePathAdmin = 'admincar_images/' . $car->car_image;
+                        }
+                        
+                        // Check if files exist
+                        $imageExistsInUploads = file_exists(public_path($imagePathUploads));
+                        $imageExistsInAdmin = file_exists(public_path($imagePathAdmin));
+                    @endphp
+                    
+                    {{-- Debug information (remove in production) --}}
+                    <!-- @if(config('app.debug'))
+                        <div class="alert alert-warning small">
+                            <strong>Debug Info:</strong><br>
+                            Image name: {{ $car->car_image }}<br>
+                            Uploads path: {{ public_path($imagePathUploads) }}<br>
+                            Admin path: {{ public_path($imagePathAdmin) }}<br>
+                            Uploads exists: {{ $imageExistsInUploads ? 'Yes' : 'No' }}<br>
+                            Admin exists: {{ $imageExistsInAdmin ? 'Yes' : 'No' }}
+                        </div>
+                    @endif -->
+                    
+                    @if($imageExistsInUploads)
+                        <img src="{{ asset($imagePathUploads) }}" 
+                            alt="{{ $car->maker ?? 'Car' }} {{ $car->model ?? 'Image' }}" 
+                            style="max-width: 100%; max-height: 300px; object-fit: cover;" 
+                            class="img-fluid rounded"
+                            onerror="console.log('Image failed to load: {{ asset($imagePathUploads) }}'); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        
+                    @elseif($imageExistsInAdmin)
+                        <img src="{{ asset($imagePathAdmin) }}" 
+                            alt="{{ $car->maker ?? 'Car' }} {{ $car->model ?? 'Image' }}" 
+                            style="max-width: 100%; max-height: 300px; object-fit: cover;" 
+                            class="img-fluid rounded"
+                            onerror="console.log('Image failed to load: {{ asset($imagePathAdmin) }}'); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        
+                    @else
+                        {{-- Show this if no file exists --}}
+                        <div class="alert alert-warning mb-2">
+                            <small>Image file not found in either directory</small>
+                        </div>
+                    @endif
+                    
+                    {{-- Fallback placeholder (always present but hidden unless needed) --}}
+                    <div style="max-width: 100%; max-height: 300px; min-height: 200px; background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%); display: {{ ($imageExistsInUploads || $imageExistsInAdmin) ? 'none' : 'flex' }}; align-items: center; justify-content: center; color: white; font-size: 2rem;" 
+                        class="img-fluid rounded">
+                        <div class="text-center">
+                            <i class="fas fa-car mb-2"></i>
+                            <div style="font-size: 0.8rem;">No Image Available</div>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>No image specified for this car
+                </div>
             @endif
+
+            {{-- Alternative simplified version if the above doesn't work --}}
+            {{-- 
+            @if($car->car_image)
+                <div class="mb-4 text-center">
+                    <img src="{{ asset('uploads/cars/' . $car->car_image) }}" 
+                        alt="{{ $car->maker ?? 'Car' }} {{ $car->model ?? 'Image' }}" 
+                        style="max-width: 100%; max-height: 300px; object-fit: cover;" 
+                        class="img-fluid rounded"
+                        onerror="this.onerror=null; this.src='{{ asset('admincar_images/' . $car->car_image) }}';">
+                </div>
+            @else
+                <div class="alert alert-info mb-4">No image available for this car</div>
+            @endif
+            --}}
 
             <!-- Car Information -->
             <div class="car-details-card mb-4">

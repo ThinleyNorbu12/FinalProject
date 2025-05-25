@@ -678,9 +678,33 @@ public function carDetails($id)
     // Merge and limit to 4 similar cars
     $similarCars = $similarFromOwners->merge($similarFromAdmins)->take(4);
 
-    return view('search_results', compact('car', 'similarCars'));
+    return view('customer.cardetails', compact('car', 'similarCars'));
 }
 
+
+// public function bookCar($id)
+// {
+//     // Check if user is logged in
+//     if (!Auth::guard('customer')->check()) {
+//         return redirect()->route('customer.login')
+//                          ->with('error', 'Please login to book a car.');
+//     }
+    
+//     // Get car details
+//     $car = DB::table('car_details_tbl')->where('id', $id)->first();
+    
+//     if (!$car) {
+//         return redirect()->route('customer.browse-cars')
+//                          ->with('error', 'Car not found.');
+//     }
+    
+//     if ($car->status != 'available') {
+//         return redirect()->route('customer.browse-cars')
+//                          ->with('error', 'This car is not available for booking.');
+//     }
+    
+//     return view('cars.book', compact('car'));
+// }
 
 public function bookCar($id)
 {
@@ -690,8 +714,14 @@ public function bookCar($id)
                          ->with('error', 'Please login to book a car.');
     }
     
-    // Get car details
-    $car = DB::table('car_details_tbl')->where('id', $id)->first();
+    // Get car details using Eloquent model with images relationship
+    $car = CarDetail::with('images')->where('id', $id)->first();
+    
+    // Alternative: If you want to load images conditionally
+    // $car = CarDetail::find($id);
+    // if ($car) {
+    //     $car->load('images');
+    // }
     
     if (!$car) {
         return redirect()->route('customer.browse-cars')
@@ -705,6 +735,8 @@ public function bookCar($id)
     
     return view('cars.book', compact('car'));
 }
+
+
 //  when i click on retal history in customer dashboard
 public function rentalHistory() {
     $customer = Auth::guard('customer')->user();
@@ -942,23 +974,23 @@ public function cancelReservation($id)
 
 
 
-    public function showCarDetails($id)
-{
-    // Try to find the car in admin_cars_tbl first
-    $car = DB::table('admin_cars_tbl')->where('id', $id)->first();
+//     public function showCarDetails($id)
+// {
+//     // Try to find the car in admin_cars_tbl first
+//     $car = DB::table('admin_cars_tbl')->where('id', $id)->first();
     
-    // If not found, try car_details_tbl
-    if (!$car) {
-        $car = DB::table('car_details_tbl')->where('id', $id)->first();
-    }
+//     // If not found, try car_details_tbl
+//     if (!$car) {
+//         $car = DB::table('car_details_tbl')->where('id', $id)->first();
+//     }
     
-    // If still not found, return 404
-    if (!$car) {
-        abort(404, 'Car not found');
-    }
+//     // If still not found, return 404
+//     if (!$car) {
+//         abort(404, 'Car not found');
+//     }
     
-    return view('customer.cardetails', compact('car'));
-}
+//     return view('customer.cardetails', compact('car'));
+// }
 
 
 

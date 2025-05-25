@@ -1,7 +1,7 @@
-@extends('layouts.app')
 
-@section('content')
- <link rel="stylesheet" href="{{ asset('assets/css/customer/dashboard.css') }}">
+
+<?php $__env->startSection('content'); ?>
+ <link rel="stylesheet" href="<?php echo e(asset('assets/css/customer/dashboard.css')); ?>">
  <style>
     /* Car Details Container */
 .car-details-container {
@@ -355,15 +355,15 @@
         </div>
         
         <div class="header-user">
-            @if(Auth::guard('customer')->check())
-                <span class="header-user-name">{{ Auth::guard('customer')->user()->name }}</span>
-                <form method="POST" action="{{ route('customer.logout') }}" class="d-inline">
-                    @csrf
+            <?php if(Auth::guard('customer')->check()): ?>
+                <span class="header-user-name"><?php echo e(Auth::guard('customer')->user()->name); ?></span>
+                <form method="POST" action="<?php echo e(route('customer.logout')); ?>" class="d-inline">
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="btn-logout">Logout</button>
                 </form>
-            @else
-                <a href="{{ route('customer.login') }}" class="btn-logout">Login</a>
-            @endif
+            <?php else: ?>
+                <a href="<?php echo e(route('customer.login')); ?>" class="btn-logout">Login</a>
+            <?php endif; ?>
         </div>        
     </header>
 
@@ -372,17 +372,17 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-menu">
-                <a href="{{ route('customer.dashboard') }}" class="sidebar-menu-item active">
+                <a href="<?php echo e(route('customer.dashboard')); ?>" class="sidebar-menu-item active">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="{{ route('customer.browse-cars') }}" class="sidebar-menu-item ">
+                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>
                 
-                <a href="{{ route('customer.my-reservations') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.my-reservations')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-calendar-alt"></i>
                     <span>My Reservations</span>
                 </a>
@@ -391,27 +391,27 @@
                 
                 <div class="sidebar-heading">My Account</div>
                 
-                <a href="{{ route('customer.profile') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.profile')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>
                 
-                <a href="{{ route('customer.rental-history') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.rental-history')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-history"></i>
                     <span>Rental History</span>
                 </a>
                 
-                <a href="{{ route('customer.payment-history') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.payment-history')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-credit-card"></i>
                     <span>Payment History</span>
                 </a>
 
-                <a href="{{ route('customer.paylater') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.paylater')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Pay Later</span>
                 </a>
                 
-                <a href="{{ route('customer.license') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-id-card"></i>
                     <span>Driving License</span>
                 </a>
@@ -420,17 +420,17 @@
                 
                 <div class="sidebar-heading">Services</div>
                 
-                <a href="{{ route('customer.locations') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.locations')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-map-marked-alt"></i>
                     <span>Locations</span>
                 </a>
                 
-                <a href="{{ route('customer.insurance-options') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.insurance-options')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-shield-alt"></i>
                     <span>Insurance Options</span>
                 </a>
                 
-                <a href="{{ route('customer.fuel-policy') }}" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.fuel-policy')); ?>" class="sidebar-menu-item">
                     <i class="fas fa-gas-pump"></i>
                     <span>Fuel Policy</span>
                 </a>
@@ -463,16 +463,16 @@
 
                 <div class="car-details-container">
                     <div class="car-header">
-                        <h1 class="car-title">{{ $car->maker }} {{ $car->model }}</h1>
-                        <p class="car-subtitle">{{ $car->vehicle_type }} • {{ $car->car_condition }}</p>
+                        <h1 class="car-title"><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h1>
+                        <p class="car-subtitle"><?php echo e($car->vehicle_type); ?> • <?php echo e($car->car_condition); ?></p>
                         <div class="price-badge">
-                            ${{ number_format($car->price, 2) }}/day
+                            $<?php echo e(number_format($car->price, 2)); ?>/day
                         </div>
                     </div>
 
                     <div class="car-content">
                         <div class="car-image-section">
-                            @php
+                            <?php
                                 // Extract just the filename from the stored path
                                 $filename = basename($car->car_image);
                                 
@@ -488,29 +488,30 @@
                                 if(config('app.debug')) {
                                     echo "<!-- Debug: Original: {$car->car_image}, Filename: {$filename}, Uploads Path: " . public_path($imagePathUploads) . ", Exists: " . ($imageExistsInUploads ? 'Yes' : 'No') . " -->";
                                 }
-                            @endphp
+                            ?>
                             
-                            @if($imageExistsInUploads)
-                                <img src="{{ asset($imagePathUploads) }}" 
-                                    alt="{{ $car->maker }} {{ $car->model }}" 
+                            <?php if($imageExistsInUploads): ?>
+                                <img src="<?php echo e(asset($imagePathUploads)); ?>" 
+                                    alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>" 
                                     class="car-image"
-                                    onerror="console.log('Failed to load: {{ asset($imagePathUploads) }}');">
-                            @elseif($imageExistsInAdmin)
-                                <img src="{{ asset($imagePathAdmin) }}" 
-                                    alt="{{ $car->maker }} {{ $car->model }}" 
+                                    onerror="console.log('Failed to load: <?php echo e(asset($imagePathUploads)); ?>');">
+                            <?php elseif($imageExistsInAdmin): ?>
+                                <img src="<?php echo e(asset($imagePathAdmin)); ?>" 
+                                    alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>" 
                                     class="car-image"
-                                    onerror="console.log('Failed to load: {{ asset($imagePathAdmin) }}');">
-                            @else
+                                    onerror="console.log('Failed to load: <?php echo e(asset($imagePathAdmin)); ?>');">
+                            <?php else: ?>
                                 <div class="car-image" style="background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
                                     <i class="fas fa-car"></i>
                                 </div>
-                            @endif
+                            <?php endif; ?>
                             
                             <div class="status-badge
-                                @if($car->status == 'available') status-available
-                                @elseif($car->status == 'rented') status-rented
-                                @else status-maintenance @endif">
-                                {{ ucfirst($car->status) }}
+                                <?php if($car->status == 'available'): ?> status-available
+                                <?php elseif($car->status == 'rented'): ?> status-rented
+                                <?php else: ?> status-maintenance <?php endif; ?>">
+                                <?php echo e(ucfirst($car->status)); ?>
+
                             </div>
                         </div>
 
@@ -520,49 +521,49 @@
                                 <div class="info-card">
                                     <i class="fas fa-id-card"></i>
                                     <div class="info-label">Registration No</div>
-                                    <div class="info-value">{{ $car->registration_no }}</div>
+                                    <div class="info-value"><?php echo e($car->registration_no); ?></div>
                                 </div>
 
                                 <div class="info-card">
                                     <i class="fas fa-tachometer-alt"></i>
                                     <div class="info-label">Mileage</div>
-                                    <div class="info-value">{{ number_format($car->mileage) }} km</div>
+                                    <div class="info-value"><?php echo e(number_format($car->mileage)); ?> km</div>
                                 </div>
 
                                 <div class="info-card">
                                     <i class="fas fa-gas-pump"></i>
                                     <div class="info-label">Fuel Type</div>
-                                    <div class="info-value">{{ ucfirst($car->fuel_type) }}</div>
+                                    <div class="info-value"><?php echo e(ucfirst($car->fuel_type)); ?></div>
                                 </div>
 
                                 <div class="info-card">
                                     <i class="fas fa-cog"></i>
                                     <div class="info-label">Transmission</div>
-                                    <div class="info-value">{{ ucfirst($car->transmission_type) }}</div>
+                                    <div class="info-value"><?php echo e(ucfirst($car->transmission_type)); ?></div>
                                 </div>
 
                                 <div class="info-card">
                                     <i class="fas fa-users"></i>
                                     <div class="info-label">Seating Capacity</div>
-                                    <div class="info-value">{{ $car->number_of_seats }} seats</div>
+                                    <div class="info-value"><?php echo e($car->number_of_seats); ?> seats</div>
                                 </div>
 
                                 <div class="info-card">
                                     <i class="fas fa-door-open"></i>
                                     <div class="info-label">Number of Doors</div>
-                                    <div class="info-value">{{ $car->number_of_doors }} doors</div>
+                                    <div class="info-value"><?php echo e($car->number_of_doors); ?> doors</div>
                                 </div>
 
                                 <div class="info-card">
                                     <i class="fas fa-suitcase"></i>
                                     <div class="info-label">Large Bags</div>
-                                    <div class="info-value">{{ $car->large_bags_capacity }}</div>
+                                    <div class="info-value"><?php echo e($car->large_bags_capacity); ?></div>
                                 </div>
 
                                 <div class="info-card">
                                     <i class="fas fa-shopping-bag"></i>
                                     <div class="info-label">Small Bags</div>
-                                    <div class="info-value">{{ $car->small_bags_capacity }}</div>
+                                    <div class="info-value"><?php echo e($car->small_bags_capacity); ?></div>
                                 </div>
                             </div>
                         </div>
@@ -573,49 +574,50 @@
                                 Features & Amenities
                             </h3>
                             <div class="features-grid">
-                                <div class="feature-item {{ $car->air_conditioning ? '' : 'unavailable' }}">
+                                <div class="feature-item <?php echo e($car->air_conditioning ? '' : 'unavailable'); ?>">
                                     <i class="fas fa-snowflake"></i>
-                                    <span>Air Conditioning {{ $car->air_conditioning ? '✓' : '✗' }}</span>
+                                    <span>Air Conditioning <?php echo e($car->air_conditioning ? '✓' : '✗'); ?></span>
                                 </div>
 
-                                <div class="feature-item {{ $car->backup_camera ? '' : 'unavailable' }}">
+                                <div class="feature-item <?php echo e($car->backup_camera ? '' : 'unavailable'); ?>">
                                     <i class="fas fa-video"></i>
-                                    <span>Backup Camera {{ $car->backup_camera ? '✓' : '✗' }}</span>
+                                    <span>Backup Camera <?php echo e($car->backup_camera ? '✓' : '✗'); ?></span>
                                 </div>
 
-                                <div class="feature-item {{ $car->bluetooth ? '' : 'unavailable' }}">
+                                <div class="feature-item <?php echo e($car->bluetooth ? '' : 'unavailable'); ?>">
                                     <i class="fab fa-bluetooth"></i>
-                                    <span>Bluetooth {{ $car->bluetooth ? '✓' : '✗' }}</span>
+                                    <span>Bluetooth <?php echo e($car->bluetooth ? '✓' : '✗'); ?></span>
                                 </div>
                             </div>
                         </div>
 
-                        @if($car->description)
+                        <?php if($car->description): ?>
                         <div class="description-section">
                             <h3 class="section-title">
                                 <i class="fas fa-info-circle"></i>
                                 Description
                             </h3>
                             <div class="description-box">
-                                <p class="description-text">{{ $car->description }}</p>
+                                <p class="description-text"><?php echo e($car->description); ?></p>
                             </div>
                         </div>
-                        @endif
+                        <?php endif; ?>
 
                         <div class="action-buttons">
-                            @if($car->status == 'available')
-                                <a href="{{ route('customer.book-car', $car->id) }}" class="btn btn-success">
+                            <?php if($car->status == 'available'): ?>
+                                <a href="<?php echo e(route('customer.book-car', $car->id)); ?>" class="btn btn-success">
                                     <i class="fas fa-calendar-check"></i>
                                     Book This Car Now
                                 </a>
-                            @else
+                            <?php else: ?>
                                 <button class="btn btn-primary" disabled style="opacity: 0.6; cursor: not-allowed;">
                                     <i class="fas fa-ban"></i>
-                                    Currently {{ ucfirst($car->status) }}
+                                    Currently <?php echo e(ucfirst($car->status)); ?>
+
                                 </button>
-                            @endif
+                            <?php endif; ?>
                             
-                            <a href="{{ route('customer.browse-cars') }}" class="btn btn-primary">
+                            <a href="<?php echo e(route('customer.browse-cars')); ?>" class="btn btn-primary">
                                 <i class="fas fa-search"></i>
                                 Browse More Cars
                             </a>
@@ -637,4 +639,5 @@
         });
     </script>
 </body>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/customer/cardetails.blade.php ENDPATH**/ ?>

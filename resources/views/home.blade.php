@@ -361,7 +361,7 @@
     </script>
 
     <!-- Display Cars -->
-    <section class="cars">
+    <!-- <section class="cars">
         <h2>Available Cars</h2>
         <div class="car-container">
             @if($cars->count())
@@ -370,6 +370,49 @@
                         <img src="{{ asset($car->car_image) }}" alt="{{ $car->model }}" style="width: 200px; height: auto;">
                         <h3>{{ $car->maker }} {{ $car->model }}</h3>
                         <p>{{ $car->price }}/day</p>
+                        <div class="car-buttons">
+                            <a href="#" class="btn-details" data-car-id="{{ $car->id }}">DETAILS</a>
+                            <a href="{{ route('book.car', $car->id) }}" class="btn-contact">BOOK NOW</a>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <p>No cars available at the moment.</p>
+            @endif
+        </div>
+    </section> -->
+    <section class="cars">
+        <h2>Available Cars</h2>
+        <div class="car-container">
+            @if($cars->count())
+                @foreach($cars as $car)
+                    <div class="car">
+                        @php
+                            $imagePathUploads = 'uploads/cars/' . $car->car_image;
+                            $imagePathAdmin = 'admincar_images/' . $car->car_image;
+                            $imageExistsInUploads = $car->car_image && file_exists(public_path($imagePathUploads));
+                            $imageExistsInAdmin = $car->car_image && file_exists(public_path($imagePathAdmin));
+                        @endphp
+
+                        @if($imageExistsInUploads)
+                            <img src="{{ asset($imagePathUploads) }}" alt="{{ $car->maker }} {{ $car->model }}" style="width: 200px; height: auto;">
+                        @elseif($imageExistsInAdmin)
+                            <img src="{{ asset($imagePathAdmin) }}" alt="{{ $car->maker }} {{ $car->model }}" style="width: 200px; height: auto;">
+                        @elseif($car->car_image)
+                            <!-- Fallback: try the direct path in case it's stored differently -->
+                            <img src="{{ asset($car->car_image) }}" alt="{{ $car->maker }} {{ $car->model }}" style="width: 200px; height: auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div style="width: 200px; height: 150px; background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%); display: none; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                <i class="fas fa-car"></i>
+                            </div>
+                        @else
+                            <!-- No image placeholder -->
+                            <div style="width: 200px; height: 150px; background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                <i class="fas fa-car"></i>
+                            </div>
+                        @endif
+
+                        <h3>{{ $car->maker }} {{ $car->model }}</h3>
+                        <p>${{ number_format($car->price, 2) }}/day</p>
                         <div class="car-buttons">
                             <a href="#" class="btn-details" data-car-id="{{ $car->id }}">DETAILS</a>
                             <a href="{{ route('book.car', $car->id) }}" class="btn-contact">BOOK NOW</a>
