@@ -11,10 +11,10 @@ use App\Models\CarBooking;
 use App\Models\Payment;
 use Carbon\Carbon;
 use App\Models\CarDetail;
+use App\Models\AdminCar;
 
 use App\Models\PayLaterPayment;
 use Illuminate\Support\Facades\Storage;
-
 
 class CustomerController extends Controller
 {
@@ -532,67 +532,155 @@ public function cancelPayment($paymentId)
 }
 
 
-    public function browseCars(Request $request)
+//     public function browseCars(Request $request)
+// {
+//     // Query builder for cars
+//     $carsQuery = DB::table('car_details_tbl')
+//         ->where('status', 'available');
+    
+//     // Apply filters if provided
+//     if ($request->has('vehicle_type') && $request->vehicle_type != '') {
+//         $carsQuery->where('vehicle_type', $request->vehicle_type);
+//     }
+    
+//     if ($request->has('transmission_type') && $request->transmission_type != '') {
+//         $carsQuery->where('transmission_type', $request->transmission_type);
+//     }
+    
+//     if ($request->has('min_price') && $request->min_price != '') {
+//         $carsQuery->where('price', '>=', $request->min_price);
+//     }
+    
+//     if ($request->has('max_price') && $request->max_price != '') {
+//         $carsQuery->where('price', '<=', $request->max_price);
+//     }
+    
+//     // Get all distinct vehicle types for filter dropdown
+//     $vehicleTypes = DB::table('car_details_tbl')
+//                       ->select('vehicle_type')
+//                       ->distinct()
+//                       ->pluck('vehicle_type');
+    
+//     // Get all distinct transmission types for filter dropdown
+//     $transmissionTypes = DB::table('car_details_tbl')
+//                           ->select('transmission_type')
+//                           ->distinct()
+//                           ->pluck('transmission_type');
+    
+//     // Get filtered cars
+//     $cars = $carsQuery->get();
+    
+//     return view('customer.browse-cars', compact('cars', 'vehicleTypes', 'transmissionTypes'));
+// }
+
+public function browseCars(Request $request)
 {
-    // Query builder for cars
-    $carsQuery = DB::table('car_details_tbl')
-        ->where('status', 'available');
-    
-    // Apply filters if provided
-    if ($request->has('vehicle_type') && $request->vehicle_type != '') {
-        $carsQuery->where('vehicle_type', $request->vehicle_type);
+    // Filters
+    $vehicleType = $request->vehicle_type;
+    $transmissionType = $request->transmission_type;
+    $minPrice = $request->min_price;
+    $maxPrice = $request->max_price;
+
+    // Base queries for both tables
+    $adminCarsQuery = DB::table('admin_cars_tbl')->where('status', 'available');
+    $carDetailsQuery = DB::table('car_details_tbl')->where('status', 'available');
+
+    // Apply filters to both queries
+    foreach ([$adminCarsQuery, $carDetailsQuery] as $query) {
+        if (!empty($vehicleType)) {
+            $query->where('vehicle_type', $vehicleType);
+        }
+        if (!empty($transmissionType)) {
+            $query->where('transmission_type', $transmissionType);
+        }
+        if (!empty($minPrice)) {
+            $query->where('price', '>=', $minPrice);
+        }
+        if (!empty($maxPrice)) {
+            $query->where('price', '<=', $maxPrice);
+        }
     }
-    
-    if ($request->has('transmission_type') && $request->transmission_type != '') {
-        $carsQuery->where('transmission_type', $request->transmission_type);
-    }
-    
-    if ($request->has('min_price') && $request->min_price != '') {
-        $carsQuery->where('price', '>=', $request->min_price);
-    }
-    
-    if ($request->has('max_price') && $request->max_price != '') {
-        $carsQuery->where('price', '<=', $request->max_price);
-    }
-    
-    // Get all distinct vehicle types for filter dropdown
-    $vehicleTypes = DB::table('car_details_tbl')
-                      ->select('vehicle_type')
-                      ->distinct()
-                      ->pluck('vehicle_type');
-    
-    // Get all distinct transmission types for filter dropdown
-    $transmissionTypes = DB::table('car_details_tbl')
-                          ->select('transmission_type')
-                          ->distinct()
-                          ->pluck('transmission_type');
-    
-    // Get filtered cars
-    $cars = $carsQuery->get();
-    
+
+    // Execute both queries
+    $adminCars = $adminCarsQuery->get();
+    $carDetails = $carDetailsQuery->get();
+
+    // Merge both results
+    $cars = $adminCars->merge($carDetails);
+
+    // Get distinct vehicle types and transmission types from both tables
+    $vehicleTypes = DB::table('admin_cars_tbl')->select('vehicle_type')->distinct()
+        ->union(
+            DB::table('car_details_tbl')->select('vehicle_type')->distinct()
+        )->pluck('vehicle_type')->unique()->sort()->values();
+
+    $transmissionTypes = DB::table('admin_cars_tbl')->select('transmission_type')->distinct()
+        ->union(
+            DB::table('car_details_tbl')->select('transmission_type')->distinct()
+        )->pluck('transmission_type')->unique()->sort()->values();
+
     return view('customer.browse-cars', compact('cars', 'vehicleTypes', 'transmissionTypes'));
 }
 
+// public function carDetails($id)
+// {
+//     // Get car details
+//     $car = DB::table('car_details_tbl')->where('id', $id)->first();
+    
+//     if (!$car) {
+//         return redirect()->route('customer.browse-cars')
+//                          ->with('error', 'Car not found.');
+//     }
+    
+//     // Get similar cars (same vehicle type, excluding the current car)
+//     $similarCars = DB::table('car_details_tbl')
+//                      ->where('vehicle_type', $car->vehicle_type)
+//                      ->where('id', '!=', $id)
+//                      ->where('status', 'available')
+//                      ->limit(4)
+//                      ->get();
+    
+//     return view('search_results', compact('car', 'similarCars'));
+// }
+
 public function carDetails($id)
 {
-    // Get car details
+    // Try to get the car from car_details_tbl first
     $car = DB::table('car_details_tbl')->where('id', $id)->first();
-    
+
+    // If not found in car_details_tbl, try admin_cars_tbl
+    if (!$car) {
+        $car = DB::table('admin_cars_tbl')->where('id', $id)->first();
+        $sourceTable = 'admin_cars_tbl';
+    } else {
+        $sourceTable = 'car_details_tbl';
+    }
+
+    // If still not found, redirect with error
     if (!$car) {
         return redirect()->route('customer.browse-cars')
                          ->with('error', 'Car not found.');
     }
-    
-    // Get similar cars (same vehicle type, excluding the current car)
-    $similarCars = DB::table('car_details_tbl')
-                     ->where('vehicle_type', $car->vehicle_type)
-                     ->where('id', '!=', $id)
-                     ->where('status', 'available')
-                     ->limit(4)
-                     ->get();
-    
+
+    // Get similar cars (from both tables), same vehicle_type, excluding current car
+    $similarFromOwners = DB::table('car_details_tbl')
+                        ->where('vehicle_type', $car->vehicle_type)
+                        ->where('id', '!=', $car->id)
+                        ->where('status', 'available')
+                        ->get();
+
+    $similarFromAdmins = DB::table('admin_cars_tbl')
+                        ->where('vehicle_type', $car->vehicle_type)
+                        ->where('id', '!=', $car->id)
+                        ->where('status', 'available')
+                        ->get();
+
+    // Merge and limit to 4 similar cars
+    $similarCars = $similarFromOwners->merge($similarFromAdmins)->take(4);
+
     return view('search_results', compact('car', 'similarCars'));
 }
+
 
 public function bookCar($id)
 {
@@ -843,6 +931,81 @@ public function cancelReservation($id)
     {
         return view('customer.insurance-options');
     }
+
+
+
+
+
+
+
+
+
+
+
+    public function showCarDetails($id)
+{
+    // Try to find the car in admin_cars_tbl first
+    $car = DB::table('admin_cars_tbl')->where('id', $id)->first();
+    
+    // If not found, try car_details_tbl
+    if (!$car) {
+        $car = DB::table('car_details_tbl')->where('id', $id)->first();
+    }
+    
+    // If still not found, return 404
+    if (!$car) {
+        abort(404, 'Car not found');
+    }
+    
+    return view('customer.cardetails', compact('car'));
+}
+
+
+
+public function showCarDetailsWithModels($id)
+{
+    // Try admin cars first
+    $car = AdminCar::find($id);
+    
+    // If not found, try car details
+    if (!$car) {
+        $car = CarDetail::find($id);
+    }
+    
+    if (!$car) {
+        abort(404, 'Car not found');
+    }
+    
+    return view('customer.cardetails', compact('car'));
+}
+
+// If you want to search both tables and indicate the source:
+
+public function showCarDetailsWithSource($id)
+{
+    $car = null;
+    $source = null;
+    
+    // Check admin_cars_tbl first
+    $adminCar = DB::table('admin_cars_tbl')->where('id', $id)->first();
+    if ($adminCar) {
+        $car = $adminCar;
+        $source = 'admin';
+    } else {
+        // Check car_details_tbl
+        $carDetail = DB::table('car_details_tbl')->where('id', $id)->first();
+        if ($carDetail) {
+            $car = $carDetail;
+            $source = 'owner';
+        }
+    }
+    
+    if (!$car) {
+        abort(404, 'Car not found');
+    }
+    
+    return view('customer.cardetails', compact('car', 'source'));
+}
 
 
     

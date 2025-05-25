@@ -4,7 +4,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @section('breadcrumbs')
     <li class="breadcrumb-item">
-        <a href="{{ route('cars.index') }}">Cars Management</a>
+        <a href="{{ route('admin.cars.index') }}">Cars Management</a>
     </li>
     <li class="breadcrumb-item active">Edit Car</li>
 @endsection
@@ -327,7 +327,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-2"></i>Update Car
                     </button>
-                    <a href="{{ route('cars.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.cars.index') }}" class="btn btn-secondary">
                         <i class="fas fa-times me-2"></i>Cancel
                     </a>
                 </div>

@@ -1,720 +1,306 @@
 
 
+<?php $__env->startSection('title', 'Verify Users'); ?>
+
+<?php $__env->startSection('breadcrumbs'); ?>
+    <li class="breadcrumb-item active">Verify Users</li>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('styles'); ?>
+     <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/verifyuser.css')); ?>">
+<?php $__env->stopPush(); ?>
+
 <?php $__env->startSection('content'); ?>
- <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
-<style>
-    /* Admin Dashboard CSS - Improved Version */
-:root {
-    /* Color Palette */
-    --primary-color: #4361ee;
-    --primary-light: rgba(67, 97, 238, 0.1);
-    --secondary-color: #3f37c9;
-    --success-color: #4cc9f0;
-    --warning-color: #f72585;
-    --danger-color: #e5383b;
-    --info-color: #4895ef;
-    --dark-color: #212529;
-    --light-color: #f8f9fa;
-    --gray-color: #6c757d;
-    --light-gray: #e9ecef;
-    
-    /* Layout */
-    --sidebar-width: 280px;
-    --sidebar-collapsed-width: 80px;
-    --header-height: 70px;
-    --transition-speed: 0.3s;
-    --card-border-radius: 12px;
-    --border-radius-sm: 8px;
-    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --box-shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.1);
-    
-    /* Typography */
-    --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-size-base: 14px;
-}
-
-/* Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: var(--font-family);
-    font-size: var(--font-size-base);
-    background-color: #f5f7fa;
-    color: #333;
-    line-height: 1.5;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-    transition: all var(--transition-speed) ease;
-}
-
-/* Layout Structure */
-.admin-dashboard {
-    display: flex;
-    min-height: 100vh;
-    position: relative;
-}
-
-
-/* Dashboard Cards */
-.dashboard-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
-    margin-bottom: 25px;
-}
-
-.card {
-    background: #fff;
-    border-radius: var(--card-border-radius);
-    padding: 20px;
-    box-shadow: var(--box-shadow);
-    transition: all var(--transition-speed) ease;
-    position: relative;
-    overflow: hidden;
-    border: none;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--box-shadow-hover);
-}
-
-.card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--primary-color);
-    transition: opacity var(--transition-speed) ease;
-    opacity: 0;
-}
-
-.card:hover::before {
-    opacity: 1;
-}
-
-.card-inner {
-    display: flex;
-    align-items: center;
-}
-
-.card-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: var(--border-radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-    flex-shrink: 0;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.card-icon i {
-    font-size: 20px;
-    color: #fff;
-}
-
-.card-content {
-    min-width: 0; /* Allows text truncation */
-}
-
-.card-content h3 {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--gray-color);
-    margin-bottom: 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.card-content .count {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 5px;
-    color: var(--dark-color);
-}
-
-.card-content .trend {
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-}
-
-.trend.up {
-    color: #2ecc71;
-}
-
-.trend.down {
-    color: #e74c3c;
-}
-
-.trend i {
-    margin-right: 5px;
-    font-size: 10px;
-}
-
-/* Quick Actions */
-.quick-actions {
-    background: #fff;
-    border-radius: var(--card-border-radius);
-    padding: 20px;
-    box-shadow: var(--box-shadow);
-    margin-bottom: 25px;
-}
-
-.quick-actions h2 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: var(--dark-color);
-    position: relative;
-    padding-bottom: 10px;
-}
-
-.quick-actions h2::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 50px;
-    height: 3px;
-    background: var(--primary-color);
-    transition: width var(--transition-speed) ease;
-}
-
-.quick-actions:hover h2::after {
-    width: 80px;
-}
-
-.action-buttons {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 15px;
-}
-
-.action-btn {
-    background: var(--light-color);
-    border-radius: var(--card-border-radius);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    transition: all var(--transition-speed) ease;
-}
-
-.action-btn:hover {
-    background: var(--primary-color);
-    color: #fff;
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
-}
-
-.action-btn i {
-    font-size: 24px;
-    margin-bottom: 12px;
-    transition: transform var(--transition-speed) ease;
-}
-
-.action-btn:hover i {
-    transform: scale(1.1);
-}
-
-.action-btn span {
-    font-size: 13px;
-    font-weight: 500;
-}
-
-/* Dashboard Panels */
-.dashboard-panels {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.panel {
-    background: #fff;
-    border-radius: var(--card-border-radius);
-    box-shadow: var(--box-shadow);
-    overflow: hidden;
-    transition: transform var(--transition-speed) ease;
-}
-
-.panel:hover {
-    transform: translateY(-5px);
-}
-
-.panel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--light-gray);
-}
-
-.panel-header h2 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--dark-color);
-}
-
-.view-all {
-    font-size: 13px;
-    color: var(--primary-color);
-    font-weight: 500;
-}
-
-.view-all:hover {
-    text-decoration: underline;
-}
-
-.panel-content {
-    padding: 20px;
-}
-
-/* Activity List */
-.activity-list {
-    list-style: none;
-}
-
-.activity-list li {
-    display: flex;
-    align-items: flex-start;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--light-gray);
-    transition: background-color var(--transition-speed) ease;
-}
-
-.activity-list li:last-child {
-    border-bottom: none;
-}
-
-.activity-list li:hover {
-    background-color: rgba(245, 247, 250, 0.5);
-}
-
-.activity-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 12px;
-    flex-shrink: 0;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-.activity-icon i {
-    color: #fff;
-    font-size: 14px;
-}
-
-.activity-details {
-    flex: 1;
-    min-width: 0;
-}
-
-.activity-details p {
-    font-size: 13px;
-    margin-bottom: 4px;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.activity-details span {
-    font-size: 11px;
-    color: var(--gray-color);
-}
-
-/* Statistics */
-.stat-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.stat-item h4 {
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.stat-item h4 span {
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-.stat-progress {
-    display: flex;
-    align-items: center;
-    background-color: #edf2f7;
-    height: 8px;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    background: var(--primary-color);
-    border-radius: 10px;
-    transition: width 0.6s ease;
-}
-
-.stat-progress span {
-    font-size: 13px;
-    font-weight: 600;
-    margin-left: 8px;
-    color: var(--primary-color);
-}
-
-/* Form Elements */
-select {
-    padding: 8px 12px;
-    border-radius: var(--border-radius-sm);
-    border: 1px solid var(--light-gray);
-    outline: none;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all var(--transition-speed) ease;
-    background-color: white;
-}
-
-select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-}
-
-/* Animations */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-.notification .badge, 
-.messages .badge {
-    animation: pulse 2s infinite;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .dashboard-cards {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .action-buttons {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 992px) {
-    .dashboard-sidebar {
-        width: var(--sidebar-collapsed-width);
-    }
-    
-    .dashboard-content {
-        margin-left: var(--sidebar-collapsed-width);
-    }
-    
-    .logo h2,
-    .profile-info,
-    .sidebar-nav a span,
-    .sidebar-heading {
-        opacity: 0;
-        visibility: hidden;
-        width: 0;
-        height: 0;
-        overflow: hidden;
-    }
-    
-    .sidebar-toggle {
-        display: block;
-    }
-    
-    .admin-dashboard.sidebar-expanded .dashboard-sidebar {
-        width: var(--sidebar-width);
-    }
-    
-    .admin-dashboard.sidebar-expanded .logo h2,
-    .admin-dashboard.sidebar-expanded .profile-info,
-    .admin-dashboard.sidebar-expanded .sidebar-nav a span,
-    .admin-dashboard.sidebar-expanded .sidebar-heading {
-        opacity: 1;
-        visibility: visible;
-        width: auto;
-        height: auto;
-        transition: opacity var(--transition-speed) ease;
-    }
-    
-    .header-search {
-        width: 200px;
-    }
-}
-
-@media (max-width: 768px) {
-    .dashboard-header {
-        flex-wrap: wrap;
-        height: auto;
-        padding: 15px;
-        gap: 15px;
-    }
-    
-    .header-search {
-        order: 1;
-        width: 100%;
-    }
-    
-    .header-actions {
-        order: 2;
-        margin-left: auto;
-    }
-    
-    .dashboard-panels {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 576px) {
-    .dashboard-content {
-        padding: 15px;
-    }
-    
-    .dashboard-cards,
-    .action-buttons {
-        grid-template-columns: 1fr;
-    }
-    
-    .dashboard-sidebar {
-        transform: translateX(-100%);
-        width: var(--sidebar-width);
-    }
-    
-    .admin-dashboard.sidebar-mobile-open .dashboard-sidebar {
-        transform: translateX(0);
-    }
-    
-    .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-    }
-    
-    .admin-dashboard.sidebar-mobile-open .sidebar-overlay {
-        display: block;
-    }
-}
-</style>
-<div class="dashboard-sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-            <h2>Admin Portal</h2>
-        </div>
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-
-    <div class="admin-profile">
-        <?php if(Auth::guard('admin')->check()): ?>
-            <div class="profile-avatar">
-                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
-            </div>
-            <div class="profile-info">
-                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                <span>Administrator</span>
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-menu">
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Car Owner</div>
-
-            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item ">
-                <i class="fas fa-car"></i>
-                <span>Car Registration</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Inspection Requests</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-check-circle"></i>
-                <span>Approve Inspections</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Customer</div>
-
-            <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item active">
-                <i class="fas fa-id-card"></i>
-                <span>Verify Users</span>
-            </a>
-
-            <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-credit-card"></i>
-                <span>Payments</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-edit"></i>
-                <span>Update Registration</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Car Information</span>
-            </a>
-
-            <a href="<?php echo e(route('admin.booked-car')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booked Cars</span>
-            </a>
-
-            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-
-            <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form" style="display: none;">
-                <?php echo csrf_field(); ?>
-            </form>
-        </div>
-    </div>
-</div>
 <div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <h1 class="mb-0">Verify Users</h1>
+        <div class="stats-badges">
+            <span class="badge bg-warning text-dark" id="mobile-pending-count">
+                <?php echo e($pendingCount); ?> Pending
+            </span>
+            <span class="badge bg-success" id="mobile-verified-count">
+                <?php echo e($verifiedCount); ?> Verified
+            </span>
+            <span class="badge bg-danger" id="mobile-rejected-count">
+                <?php echo e($rejectedCount); ?> Rejected
+            </span>
+        </div>
+    </div>
+
+    <!-- Desktop Header -->
+    <div class="d-none d-md-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Verify Users</h1>
     </div>
 
-    <?php if(session('success')): ?>
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <?php echo e(session('success')); ?>
-
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <?php endif; ?>
-
     <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">User Verification Requests</h6>
-            <div>
-                <select id="status-filter" class="form-control form-control-sm mr-2 d-inline-block" style="width: 150px;">
-                    <option value="all">All Statuses</option>
-                    <option value="pending" selected>Pending</option>
-                    <option value="verified">Verified</option>
-                    <option value="rejected">Rejected</option>
-                </select>
-                <span class="badge badge-warning mr-2" id="pending-count">
-                    <?php echo e($pendingCount); ?> Pending
-                </span>
-                <span class="badge badge-success mr-2" id="verified-count">
-                    <?php echo e($verifiedCount); ?> Verified
-                </span>
-                <span class="badge badge-danger mr-2" id="rejected-count">
-                    <?php echo e($rejectedCount); ?> Rejected
-                </span>
+        <div class="card-header py-3 d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center">
+            <h6 class="m-0 font-weight-bold text-primary mb-3 mb-lg-0">User Verification Requests</h6>
+            <div class="table-controls w-100 w-lg-auto">
+                <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2">
+                    <select id="status-filter" class="form-select form-select-sm" style="min-width: 150px;">
+                        <option value="all">All Statuses</option>
+                        <option value="pending" selected>Pending</option>
+                        <option value="verified">Verified</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <div class="stats-badges d-none d-lg-flex">
+                        <span class="badge bg-warning text-dark" id="pending-count">
+                            <?php echo e($pendingCount); ?> Pending
+                        </span>
+                        <span class="badge bg-success" id="verified-count">
+                            <?php echo e($verifiedCount); ?> Verified
+                        </span>
+                        <span class="badge bg-danger" id="rejected-count">
+                            <?php echo e($rejectedCount); ?> Rejected
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="users-table" width="100%" cellspacing="0">
-                    <thead>
+        
+        <div class="card-body p-0 p-md-3">
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading users...</p>
+            </div>
+
+            <!-- Desktop Table View -->
+            <div class="table-responsive desktop-table">
+                <table class="table table-bordered table-hover mb-0" id="users-table">
+                    <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>CID No.</th>
-                            <th>License No.</th>
-                            <th>Status</th>
-                            <th>Registered On</th>
-                            <th>Action</th>
+                            <th class="text-nowrap">ID</th>
+                            <th class="text-nowrap">Name</th>
+                            <th class="text-nowrap">Email</th>
+                            <th class="text-nowrap">Phone</th>
+                            <th class="text-nowrap">CID No.</th>
+                            <th class="text-nowrap">License No.</th>
+                            <th class="text-nowrap">Status</th>
+                            <th class="text-nowrap">Registered On</th>
+                            <th class="text-nowrap">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__empty_1 = true; $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr class="status-row <?php echo e($customer->drivingLicense ? strtolower($customer->drivingLicense->status) : 'incomplete'); ?>">
                             <td><?php echo e($customer->id); ?></td>
-                            <td><?php echo e($customer->name); ?></td>
+                            <td class="text-nowrap"><?php echo e($customer->name); ?></td>
                             <td><?php echo e($customer->email); ?></td>
-                            <td><?php echo e($customer->phone); ?></td>
-                            <td><?php echo e($customer->cid_no); ?></td>
-                            <td><?php echo e($customer->drivingLicense ? $customer->drivingLicense->license_no : 'Not submitted'); ?></td>
+                            <td class="text-nowrap"><?php echo e($customer->phone); ?></td>
+                            <td class="text-nowrap"><?php echo e($customer->cid_no); ?></td>
+                            <td class="text-nowrap"><?php echo e($customer->drivingLicense ? $customer->drivingLicense->license_no : 'Not submitted'); ?></td>
                             <td>
                                 <?php if(!$customer->drivingLicense): ?>
-                                    <span class="badge badge-secondary">Not Submitted</span>
+                                    <span class="badge bg-secondary">Not Submitted</span>
                                 <?php else: ?>
                                     <?php
                                         $status = $customer->drivingLicense->status;
                                         $badgeClass = [
-                                            'Pending' => 'badge-warning',
-                                            'Verified' => 'badge-success',
-                                            'Rejected' => 'badge-danger'
-                                        ][$status] ?? 'badge-secondary';
+                                            'Pending' => 'bg-warning text-dark',
+                                            'Verified' => 'bg-success',
+                                            'Rejected' => 'bg-danger'
+                                        ][$status] ?? 'bg-secondary';
                                     ?>
                                     <span class="badge <?php echo e($badgeClass); ?>"><?php echo e($status); ?></span>
                                 <?php endif; ?>
                             </td>
-                            <td><?php echo e(\Carbon\Carbon::parse($customer->created_at)->format('d M Y')); ?></td>
-                            <td>
+                            <td class="text-nowrap"><?php echo e(\Carbon\Carbon::parse($customer->created_at)->format('d M Y')); ?></td>
+                            <td class="text-nowrap">
                                 <?php if($customer->drivingLicense): ?>
                                 <a href="<?php echo e(route('admin.user-verification.show', $customer->id)); ?>" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-eye"></i> View
+                                    <i class="fas fa-eye"></i>
+                                    <span class="d-none d-xl-inline"> View</span>
                                 </a>
                                 <?php else: ?>
                                 <button class="btn btn-secondary btn-sm" disabled>
-                                    <i class="fas fa-eye-slash"></i> No License
+                                    <i class="fas fa-eye-slash"></i>
+                                    <span class="d-none d-xl-inline"> No License</span>
                                 </button>
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                <div class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    <h5>No users found</h5>
+                                    <p class="text-muted">There are no users to verify at the moment.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
-
-                <div class="mt-4">
-                    <?php echo e($customers->links()); ?>
-
-                </div>
             </div>
+
+            <!-- Mobile Cards View -->
+            <div class="mobile-cards d-block d-md-none">
+                <?php $__empty_1 = true; $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <div class="mobile-card status-<?php echo e($customer->drivingLicense ? strtolower($customer->drivingLicense->status) : 'incomplete'); ?>">
+                    <div class="mobile-card-header">
+                        <div class="flex-grow-1">
+                            <div class="mobile-card-title"><?php echo e($customer->name); ?></div>
+                            <div class="mobile-card-subtitle">ID: <?php echo e($customer->id); ?></div>
+                        </div>
+                        <div>
+                            <?php if(!$customer->drivingLicense): ?>
+                                <span class="badge bg-secondary">Not Submitted</span>
+                            <?php else: ?>
+                                <?php
+                                    $status = $customer->drivingLicense->status;
+                                    $badgeClass = [
+                                        'Pending' => 'bg-warning text-dark',
+                                        'Verified' => 'bg-success',
+                                        'Rejected' => 'bg-danger'
+                                    ][$status] ?? 'bg-secondary';
+                                ?>
+                                <span class="badge <?php echo e($badgeClass); ?>"><?php echo e($status); ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    
+                    <div class="mobile-card-body">
+                        <div class="mobile-field">
+                            <div class="mobile-field-label">Email</div>
+                            <div class="mobile-field-value"><?php echo e($customer->email); ?></div>
+                        </div>
+                        <div class="mobile-field">
+                            <div class="mobile-field-label">Phone</div>
+                            <div class="mobile-field-value"><?php echo e($customer->phone); ?></div>
+                        </div>
+                        <div class="mobile-field">
+                            <div class="mobile-field-label">CID No.</div>
+                            <div class="mobile-field-value"><?php echo e($customer->cid_no); ?></div>
+                        </div>
+                        <div class="mobile-field">
+                            <div class="mobile-field-label">License No.</div>
+                            <div class="mobile-field-value"><?php echo e($customer->drivingLicense ? $customer->drivingLicense->license_no : 'Not submitted'); ?></div>
+                        </div>
+                        <div class="mobile-field">
+                            <div class="mobile-field-label">Registered On</div>
+                            <div class="mobile-field-value"><?php echo e(\Carbon\Carbon::parse($customer->created_at)->format('d M Y')); ?></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mobile-card-actions">
+                        <?php if($customer->drivingLicense): ?>
+                        <a href="<?php echo e(route('admin.user-verification.show', $customer->id)); ?>" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-eye me-1"></i> View Details
+                        </a>
+                        <?php else: ?>
+                        <button class="btn btn-secondary btn-sm w-100" disabled>
+                            <i class="fas fa-eye-slash me-1"></i> No License Submitted
+                        </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <h5>No users found</h5>
+                    <p class="text-muted">There are no users to verify at the moment.</p>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Pagination -->
+            <?php if($customers->hasPages()): ?>
+            <div class="d-flex justify-content-center mt-4 px-3">
+                <?php echo e($customers->links()); ?>
+
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
-<?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/verify-users.blade.php ENDPATH**/ ?>
+<?php $__env->startPush('scripts'); ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusFilter = document.getElementById('status-filter');
+    const tableRows = document.querySelectorAll('#users-table tbody .status-row');
+    const mobileCards = document.querySelectorAll('.mobile-card');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    
+    // Status filter functionality
+    statusFilter.addEventListener('change', function() {
+        const selectedStatus = this.value;
+        
+        // Show loading spinner
+        if (loadingSpinner) {
+            loadingSpinner.style.display = 'block';
+        }
+        
+        setTimeout(() => {
+            // Filter table rows
+            tableRows.forEach(row => {
+                if (selectedStatus === 'all') {
+                    row.style.display = '';
+                } else {
+                    const hasStatusClass = row.classList.contains(selectedStatus) || 
+                                         (selectedStatus === 'incomplete' && row.classList.contains('incomplete'));
+                    row.style.display = hasStatusClass ? '' : 'none';
+                }
+            });
+            
+            // Filter mobile cards
+            mobileCards.forEach(card => {
+                if (selectedStatus === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const hasStatusClass = card.classList.contains(`status-${selectedStatus}`);
+                    card.style.display = hasStatusClass ? 'block' : 'none';
+                }
+            });
+            
+            // Hide loading spinner
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
+            
+            // Update counts (you can implement this based on your needs)
+            updateVisibleCounts();
+        }, 300);
+    });
+    
+    // Update visible counts after filtering
+    function updateVisibleCounts() {
+        // This function can be enhanced to show filtered counts
+        // For now, it keeps the original counts
+    }
+    
+    // Add smooth scroll for mobile
+    if (window.innerWidth <= 768) {
+        const cards = document.querySelectorAll('.mobile-card');
+        cards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!e.target.closest('.btn')) {
+                    // Add some interaction feedback
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                }
+            });
+        });
+    }
+    
+    // Handle window resize
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            // Refresh any size-dependent calculations
+            console.log('Window resized to:', window.innerWidth);
+        }, 250);
+    });
+});
+</script>
+<?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/verify-users.blade.php ENDPATH**/ ?>

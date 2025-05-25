@@ -4,7 +4,7 @@
 <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 <?php $__env->startSection('breadcrumbs'); ?>
     <li class="breadcrumb-item">
-        <a href="<?php echo e(route('cars.index')); ?>">Cars Management</a>
+        <a href="<?php echo e(route('admin.cars.index')); ?>">Cars Management</a>
     </li>
     <li class="breadcrumb-item active">Edit Car</li>
 <?php $__env->stopSection(); ?>
@@ -460,7 +460,7 @@ unset($__errorArgs, $__bag); ?>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-2"></i>Update Car
                     </button>
-                    <a href="<?php echo e(route('cars.index')); ?>" class="btn btn-secondary">
+                    <a href="<?php echo e(route('admin.cars.index')); ?>" class="btn btn-secondary">
                         <i class="fas fa-times me-2"></i>Cancel
                     </a>
                 </div>

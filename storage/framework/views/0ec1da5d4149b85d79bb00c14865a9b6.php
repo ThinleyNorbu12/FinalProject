@@ -1,326 +1,249 @@
 
 
+<?php $__env->startSection('title', 'Booking Details'); ?>
+
+<?php $__env->startSection('breadcrumbs'); ?>
+    <li class="breadcrumb-item">
+        <a href="<?php echo e(route('admin.booked-car')); ?>">Booked Cars</a>
+    </li>
+    <li class="breadcrumb-item active">Booking #<?php echo e($booking->id); ?></li>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('page-header'); ?>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Booking Details</h1>
+            <p class="text-muted mb-0">View and manage booking information</p>
+        </div>
+        <div>
+            <a href="<?php echo e(route('admin.booked-car')); ?>" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Bookings
+            </a>
+        </div>
+    </div>
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
-<!-- Main Content -->
-<div class="dashboard-sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-            <h2>Admin Portal</h2>
-        </div>
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div> 
-    <div class="admin-profile">
-        <?php if(Auth::guard('admin')->check()): ?>
-            <div class="profile-avatar">
-                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
+<div class="row">
+    <!-- Booking Details Card -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Booking Information</h5>
             </div>
-            <div class="profile-info">
-                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                <span>Administrator</span>
-            </div>
-        <?php endif; ?>
-    </div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-menu">
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Car Owner</div>
-
-            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item ">
-                <i class="fas fa-car"></i>
-                <span>Car Registration</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Inspection Requests</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-check-circle"></i>
-                <span>Approve Inspections</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Customer</div>
-
-            <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-id-card"></i>
-                <span>Verify Users</span>
-            </a>
-
-            <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-credit-card"></i>
-                <span>Payments</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-edit"></i>
-                <span>Update Registration</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Car Information</span>
-            </a>
-
-            <a href="<?php echo e(route ('admin.booked-car')); ?>" class="sidebar-menu-item active">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booked Cars</span>
-            </a>
-
-            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-
-            <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form" style="display: none;">
-                <?php echo csrf_field(); ?>
-            </form>
-        </div>
-    </div>       
-</div>
-<div class="dashboard-content">
-    <!-- Page Header -->
-    <div class="page-header">
-        <h1>Booking Details</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?php echo e(route('admin.dashboard')); ?>">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="<?php echo e(route('admin.booked-car')); ?>">Booked Cars</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Booking #<?php echo e($booking->id); ?></li>
-            </ol>
-        </nav>
-    </div>
-
-    <div class="row">
-        <!-- Booking Details Card -->
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Booking Information</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold">Booking ID</h6>
-                            <p><?php echo e($booking->id); ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="fw-bold">Booking Status</h6>
-                            <p>
-                                <?php switch($booking->status):
-                                    case ('confirmed'): ?>
-                                        <span class="badge bg-success">Confirmed</span>
-                                        <?php break; ?>
-                                    <?php case ('pending'): ?>
-                                        <span class="badge bg-warning">Pending</span>
-                                        <?php break; ?>
-                                    <?php case ('pending_verification'): ?>
-                                        <span class="badge bg-info">Pending Verification</span>
-                                        <?php break; ?>
-                                    <?php case ('cancelled'): ?>
-                                        <span class="badge bg-danger">Cancelled</span>
-                                        <?php break; ?>
-                                    <?php case ('completed'): ?>
-                                        <span class="badge bg-secondary">Completed</span>
-                                        <?php break; ?>
-                                    <?php default: ?>
-                                        <span class="badge bg-secondary"><?php echo e(ucfirst($booking->status)); ?></span>
-                                <?php endswitch; ?>
-                            </p>
-                        </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Booking ID</h6>
+                        <p><?php echo e($booking->id); ?></p>
                     </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold">Pickup Location</h6>
-                            <p><?php echo e($booking->pickup_location); ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="fw-bold">Dropoff Location</h6>
-                            <p><?php echo e($booking->dropoff_location); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold">Pickup Date & Time</h6>
-                            <p><?php echo e($booking->pickup_datetime->format('M d, Y h:i A')); ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="fw-bold">Return Date & Time</h6>
-                            <p><?php echo e($booking->dropoff_datetime->format('M d, Y h:i A')); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold">Booking Duration</h6>
-                            <p><?php echo e($booking->pickup_datetime->diffInDays($booking->dropoff_datetime) + 1); ?> days</p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="fw-bold">Created On</h6>
-                            <p><?php echo e($booking->created_at->format('M d, Y h:i A')); ?></p>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <h6 class="fw-bold">Payment Information</h6>
-                            <?php if($booking->payment): ?>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <th>Payment Method</th>
-                                            <td><?php echo e(ucfirst(str_replace('_', ' ', $booking->payment->payment_method))); ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Amount</th>
-                                            <td><?php echo e($booking->payment->currency); ?> <?php echo e(number_format($booking->payment->amount, 2)); ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Status</th>
-                                            <td>
-                                                <?php if($booking->payment->status === 'completed'): ?>
-                                                    <span class="badge bg-success">Paid</span>
-                                                <?php elseif($booking->payment->status === 'pending_verification'): ?>
-                                                    <span class="badge bg-warning">Pending Verification</span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-danger"><?php echo e(ucfirst($booking->payment->status)); ?></span>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Reference Number</th>
-                                            <td><?php echo e($booking->payment->reference_number); ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Payment Date</th>
-                                            <td><?php echo e($booking->payment->payment_date->format('M d, Y h:i A')); ?></td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            <?php else: ?>
-                                <p class="text-muted">No payment information available</p>
-                            <?php endif; ?>
-                        </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Booking Status</h6>
+                        <p>
+                            <?php switch($booking->status):
+                                case ('confirmed'): ?>
+                                    <span class="badge bg-success">Confirmed</span>
+                                    <?php break; ?>
+                                <?php case ('pending'): ?>
+                                    <span class="badge bg-warning">Pending</span>
+                                    <?php break; ?>
+                                <?php case ('pending_verification'): ?>
+                                    <span class="badge bg-info">Pending Verification</span>
+                                    <?php break; ?>
+                                <?php case ('cancelled'): ?>
+                                    <span class="badge bg-danger">Cancelled</span>
+                                    <?php break; ?>
+                                <?php case ('completed'): ?>
+                                    <span class="badge bg-secondary">Completed</span>
+                                    <?php break; ?>
+                                <?php default: ?>
+                                    <span class="badge bg-secondary"><?php echo e(ucfirst($booking->status)); ?></span>
+                            <?php endswitch; ?>
+                        </p>
                     </div>
                 </div>
-                <div class="card-footer text-end">
-                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
-                        <i class="fas fa-edit"></i> Update Status
-                    </button>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Pickup Location</h6>
+                        <p><?php echo e($booking->pickup_location); ?></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Dropoff Location</h6>
+                        <p><?php echo e($booking->dropoff_location); ?></p>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Customer & Car Info Cards -->
-        <div class="col-md-4">
-            <!-- Customer Info -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Customer Information</h5>
-                </div>             
-                <div class="card-body">
-                    <?php if($booking->customer): ?>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="flex-shrink-0">
-                                <?php if($booking->customer->profile_image && file_exists(public_path('customerprofile/' . $booking->customer->profile_image))): ?>
-                                    <img src="<?php echo e(asset('customerprofile/' . $booking->customer->profile_image)); ?>" class="rounded-circle" width="50" height="50" alt="Customer Avatar" style="object-fit: cover;">
-                                <?php else: ?>
-                                    <img src="<?php echo e(asset('customerprofile/profile.png')); ?>" class="rounded-circle" width="50" height="50" alt="Customer Avatar">
-                                <?php endif; ?>
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                                <h6 class="mb-0"><?php echo e($booking->customer->name); ?></h6>
-                                <p class="text-muted mb-0">Customer ID: <?php echo e($booking->customer->id); ?></p>
-                            </div>
-                        </div>
-
-                        <div class="customer-details mt-3">
-                            <p><i class="fas fa-envelope me-2"></i> <?php echo e($booking->customer->email); ?></p>
-                            <p><i class="fas fa-phone me-2"></i> <?php echo e($booking->customer->phone ?? 'N/A'); ?></p>
-                            <p><i class="fas fa-map-marker-alt me-2"></i> <?php echo e($booking->customer->address ?? 'N/A'); ?></p>
-                        </div>
-
-                        <a href="#" class="btn btn-sm btn-outline-primary mt-2">
-                            <i class="fas fa-user"></i> View Customer Profile
-                        </a>
-                    <?php else: ?>
-                        <p class="text-muted">Customer information not available</p>
-                    <?php endif; ?>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Pickup Date & Time</h6>
+                        <p><?php echo e($booking->pickup_datetime->format('M d, Y h:i A')); ?></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Return Date & Time</h6>
+                        <p><?php echo e($booking->dropoff_datetime->format('M d, Y h:i A')); ?></p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Car Info -->
-            
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Car Information</h5>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Booking Duration</h6>
+                        <p><?php echo e($booking->pickup_datetime->diffInDays($booking->dropoff_datetime) + 1); ?> days</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Created On</h6>
+                        <p><?php echo e($booking->created_at->format('M d, Y h:i A')); ?></p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <?php if($booking->car): ?>
-                        <!-- Car Images Carousel -->
-                        <?php if($booking->car->images && count($booking->car->images)): ?>
-                            <div class="carousel-container mb-4">
-                                <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        <?php $__currentLoopData = $booking->car->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <div class="carousel-item <?php echo e($key == 0 ? 'active' : ''); ?>">
-                                                <img src="<?php echo e(asset($image->image_path)); ?>" class="d-block mx-auto" alt="Car Image" style="max-height: 200px; object-fit: cover;">
-                                            </div>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                    <div class="carousel-indicators">
-                                        <?php $__currentLoopData = $booking->car->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <button type="button" data-bs-target="#carImageCarousel" data-bs-slide-to="<?php echo e($key); ?>"
-                                                class="<?php echo e($key == 0 ? 'active' : ''); ?>" aria-current="<?php echo e($key == 0 ? 'true' : 'false'); ?>"
-                                                aria-label="Slide <?php echo e($key + 1); ?>"></button>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php elseif(isset($booking->car->car_image) && !empty($booking->car->car_image)): ?>
-                            <div class="text-center mb-3">
-                                <img src="<?php echo e(asset($booking->car->car_image)); ?>" class="img-fluid rounded" alt="Car Image" style="max-height: 200px; object-fit: cover;">
+
+                <div class="row">
+                    <div class="col-12">
+                        <h6 class="fw-bold">Payment Information</h6>
+                        <?php if($booking->payment): ?>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>Payment Method</th>
+                                        <td><?php echo e(ucfirst(str_replace('_', ' ', $booking->payment->payment_method))); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Amount</th>
+                                        <td><?php echo e($booking->payment->currency); ?> <?php echo e(number_format($booking->payment->amount, 2)); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Status</th>
+                                        <td>
+                                            <?php if($booking->payment->status === 'completed'): ?>
+                                                <span class="badge bg-success">Paid</span>
+                                            <?php elseif($booking->payment->status === 'pending_verification'): ?>
+                                                <span class="badge bg-warning">Pending Verification</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-danger"><?php echo e(ucfirst($booking->payment->status)); ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Reference Number</th>
+                                        <td><?php echo e($booking->payment->reference_number); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Payment Date</th>
+                                        <td><?php echo e($booking->payment->payment_date->format('M d, Y h:i A')); ?></td>
+                                    </tr>
+                                </table>
                             </div>
                         <?php else: ?>
-                            <div class="text-center mb-3">
-                                <img src="<?php echo e(asset('carimage/defaultcar.jpg')); ?>" class="img-fluid rounded" alt="Car Image">
-                            </div>
+                            <p class="text-muted">No payment information available</p>
                         <?php endif; ?>
-                        
-                        <h5 class="mb-3"><?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?></h5>
-                        
-                        <div class="car-details">
-                            <p><i class="fas fa-car me-2"></i> <strong>Type:</strong> <?php echo e($booking->car->vehicle_type ?? 'N/A'); ?></p>
-                            <p><i class="fas fa-tachometer-alt me-2"></i> <strong>Mileage:</strong> <?php echo e(number_format($booking->car->mileage ?? 0)); ?> km</p>
-                            <p><i class="fas fa-gas-pump me-2"></i> <strong>Fuel Type:</strong> <?php echo e($booking->car->fuel_type ?? 'N/A'); ?></p>
-                            <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN <?php echo e(number_format($booking->car->price ?? 0, 2)); ?></p>
-                        </div>
-                        
-                        <a href="#" class="btn btn-sm btn-outline-primary mt-2">
-                            <i class="fas fa-info-circle"></i> View Car Details
-                        </a>
-                    <?php else: ?>
-                        <p class="text-muted">Car information not available</p>
-                    <?php endif; ?>
+                    </div>
                 </div>
+            </div>
+            <div class="card-footer text-end">
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
+                    <i class="fas fa-edit"></i> Update Status
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer & Car Info Cards -->
+    <div class="col-md-4">
+        <!-- Customer Info -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Customer Information</h5>
+            </div>             
+            <div class="card-body">
+                <?php if($booking->customer): ?>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <?php if($booking->customer->profile_image && file_exists(public_path('customerprofile/' . $booking->customer->profile_image))): ?>
+                                <img src="<?php echo e(asset('customerprofile/' . $booking->customer->profile_image)); ?>" class="rounded-circle" width="50" height="50" alt="Customer Avatar" style="object-fit: cover;">
+                            <?php else: ?>
+                                <img src="<?php echo e(asset('customerprofile/profile.png')); ?>" class="rounded-circle" width="50" height="50" alt="Customer Avatar">
+                            <?php endif; ?>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-0"><?php echo e($booking->customer->name); ?></h6>
+                            <p class="text-muted mb-0">Customer ID: <?php echo e($booking->customer->id); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="customer-details mt-3">
+                        <p><i class="fas fa-envelope me-2"></i> <?php echo e($booking->customer->email); ?></p>
+                        <p><i class="fas fa-phone me-2"></i> <?php echo e($booking->customer->phone ?? 'N/A'); ?></p>
+                        <p><i class="fas fa-map-marker-alt me-2"></i> <?php echo e($booking->customer->address ?? 'N/A'); ?></p>
+                    </div>
+
+                    <a href="#" class="btn btn-sm btn-outline-primary mt-2">
+                        <i class="fas fa-user"></i> View Customer Profile
+                    </a>
+                <?php else: ?>
+                    <p class="text-muted">Customer information not available</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Car Info -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Car Information</h5>
+            </div>
+            <div class="card-body">
+                <?php if($booking->car): ?>
+                    <!-- Car Images Carousel -->
+                    <?php if($booking->car->images && count($booking->car->images)): ?>
+                        <div class="carousel-container mb-4">
+                            <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <?php $__currentLoopData = $booking->car->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <div class="carousel-item <?php echo e($key == 0 ? 'active' : ''); ?>">
+                                            <img src="<?php echo e(asset($image->image_path)); ?>" class="d-block mx-auto" alt="Car Image" style="max-height: 200px; object-fit: cover;">
+                                        </div>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                                <div class="carousel-indicators">
+                                    <?php $__currentLoopData = $booking->car->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <button type="button" data-bs-target="#carImageCarousel" data-bs-slide-to="<?php echo e($key); ?>"
+                                            class="<?php echo e($key == 0 ? 'active' : ''); ?>" aria-current="<?php echo e($key == 0 ? 'true' : 'false'); ?>"
+                                            aria-label="Slide <?php echo e($key + 1); ?>"></button>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php elseif(isset($booking->car->car_image) && !empty($booking->car->car_image)): ?>
+                        <div class="text-center mb-3">
+                            <img src="<?php echo e(asset($booking->car->car_image)); ?>" class="img-fluid rounded" alt="Car Image" style="max-height: 200px; object-fit: cover;">
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center mb-3">
+                            <img src="<?php echo e(asset('carimage/defaultcar.jpg')); ?>" class="img-fluid rounded" alt="Car Image">
+                        </div>
+                    <?php endif; ?>
+                    
+                    <h5 class="mb-3"><?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?></h5>
+                    
+                    <div class="car-details">
+                        <p><i class="fas fa-car me-2"></i> <strong>Type:</strong> <?php echo e($booking->car->vehicle_type ?? 'N/A'); ?></p>
+                        <p><i class="fas fa-tachometer-alt me-2"></i> <strong>Mileage:</strong> <?php echo e(number_format($booking->car->mileage ?? 0)); ?> km</p>
+                        <p><i class="fas fa-gas-pump me-2"></i> <strong>Fuel Type:</strong> <?php echo e($booking->car->fuel_type ?? 'N/A'); ?></p>
+                        <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN <?php echo e(number_format($booking->car->price ?? 0, 2)); ?></p>
+                    </div>
+                    
+                    <a href="#" class="btn btn-sm btn-outline-primary mt-2">
+                        <i class="fas fa-info-circle"></i> View Car Details
+                    </a>
+                <?php else: ?>
+                    <p class="text-muted">Car information not available</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -362,4 +285,4 @@
     </div>
 </div>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/booking-details.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/booking-details.blade.php ENDPATH**/ ?>

@@ -131,7 +131,7 @@ class CarController extends Controller
             }
         }
 
-        return redirect()->route('cars.index')->with('success', 'Car added successfully!');
+        return redirect()->route('admin.cars.index')->with('success', 'Car added successfully!');
 
     } catch (\Exception $e) {
         \Log::error('Failed to add car: ' . $e->getMessage());
@@ -296,7 +296,7 @@ class CarController extends Controller
 
         $car->save();
 
-        return redirect()->route('cars.index')->with('success', 'Car updated successfully!');
+        return redirect()->route('admin.cars.index')->with('success', 'Car updated successfully!');
 
     } catch (\Exception $e) {
         \Log::error('Failed to update car: ' . $e->getMessage());
@@ -407,7 +407,7 @@ public function deleteImage(Request $request)
         // Delete the car record
         $car->delete();
         
-        return redirect()->route('cars.index')->with('success', 'Car deleted successfully!');
+        return redirect()->route('admin.cars.index')->with('success', 'Car deleted successfully!');
     }
 
     /**

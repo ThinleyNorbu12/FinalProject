@@ -3,9 +3,6 @@
 <?php $__env->startSection('title', 'Car Registration'); ?>
 
 <?php $__env->startSection('breadcrumbs'); ?>
-    <li class="breadcrumb-item">
-        <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>">Car Owner</a>
-    </li>
     <li class="breadcrumb-item active">Car Registration</li>
 <?php $__env->stopSection(); ?>
 

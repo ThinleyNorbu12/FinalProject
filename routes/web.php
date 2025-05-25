@@ -215,8 +215,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/get-available-times', [CarAdminController::class, 'getAvailableTimes'])->name('getAvailableTimes');
 
    // ✅ Corrected route for inspection requests
-   Route::get('/', [CarAdminController::class, 'showInspectionRequests'])->name('inspection-requests');
-
+    //    Route::get('/', [CarAdminController::class, 'showInspectionRequests'])->name('inspection-requests');
+    Route::get('inspection-requests', [CarAdminController::class, 'showInspectionRequests'])->name('inspection-requests');
     //    "Ok" and "Send Mail"  under the Admin/menage-inspection-requests.blade
     // For confirming date and time (Ok button)
     Route::post('confirm-inspection/{id}', [CarAdminController::class, 'confirm'])->name('inspection.confirm');
@@ -227,7 +227,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // this is under >APPROVE/REJECT INSPECTED CARS<
     // Display the approval page (GET)
     Route::get('/approve-inspected-cars', [CarAdminController::class, 'showInspectionApprovals'])->name('approve-inspected-cars');
-
+    Route::get('/approve-inspected-cars', [CarAdminController::class, 'showInspectionApprovals']) ->name('approve-inspected-cars'); // ✅ Automatically becomes "car-admin.approve-inspected-cars"
     // Handle the approval or rejection form (POST)
     Route::post('/approve-inspected-cars', [CarAdminController::class, 'processInspectionApproval'])->name('inspection-approval');
 
@@ -303,8 +303,8 @@ use App\Http\Controllers\CarController;
 // add new cars by admin 
 Route::middleware(['auth:admin'])->group(function () {
     // Main cars listing and management page
-    Route::get('/admin/cars', [CarController::class, 'index'])->name('cars.index');
-    
+    // Route::get('/admin/cars', [CarController::class, 'index'])->name('cars.index');
+     Route::get('/admin/cars', [CarController::class, 'index'])->name('admin.cars.index');
     // Create new car
     Route::get('/admin/cars/create', [CarController::class, 'create'])->name('cars.create');
     Route::post('/admin/cars', [CarController::class, 'store'])->name('cars.store');
@@ -434,5 +434,15 @@ Route::prefix('customer')->name('customer.')->group(function () {
 
 
 
+
+    Route::get('/customer/car-details/{id}', [CustomerController::class, 'showCarDetails']) ->name('customer.cardetails');
+
+    // Or if you're using a separate CarController:
+    Route::get('/customer/car-details/{id}', [CarController::class, 'showCarDetails']) ->name('customer.cardetails');
+
+    // You might also want to add middleware for authentication:
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/customer/car-details/{id}', [CustomerController::class, 'showCarDetails']) ->name('customer.cardetails');
+    });
 });
 

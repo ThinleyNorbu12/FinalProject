@@ -96,7 +96,8 @@
             </div>
         </div>
 
-        <table class="data-table">
+       <table class="data-table">
+            <table class="data-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -112,70 +113,72 @@
             </thead>
             <tbody>
                 <?php
-                    $cars = DB::table('admin_cars_tbl')
-                        ->orderBy('id', 'desc')
-                        ->paginate(10);
+                $cars = DB::table('admin_cars_tbl')
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
                 ?>
-                
                 <?php if($cars->count() > 0): ?>
-                    <?php $__currentLoopData = $cars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $car): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <?php
-                            // Determine the status badge class
-                            $statusClass = '';
-                            switch (strtolower($car->status)) {
-                                case 'available':
-                                    $statusClass = 'available';
-                                    break;
-                                case 'booked':
-                                    $statusClass = 'booked';
-                                    break;
-                                case 'maintenance':
-                                    $statusClass = 'maintenance';
-                                    break;
-                                case 'inactive':
-                                    $statusClass = 'inactive';
-                                    break;
-                                default:
-                                    $statusClass = '';
-                            }
-                            
-                            // Car display name (combine maker and model)
-                            $carName = $car->maker . ' ' . $car->model;
-                            
-                            // Image path handling with fallback
-                            $imagePath = !empty($car->car_image) 
-                                ? asset('assets/images/cars/' . $car->car_image) 
-                                : asset('assets/images/cars/default-car.jpg');
-                        ?>
-                        <tr>
-                            <td><?php echo e($car->id); ?></td>
-                            <td><img src="<?php echo e($imagePath); ?>" alt="<?php echo e($carName); ?>" class="car-thumbnail"></td>
-                            <td><?php echo e($carName); ?></td>
-                            <td><?php echo e($car->maker); ?></td>
-                            <td><?php echo e($car->model); ?></td>
-                            <td><?php echo e($car->registration_no); ?></td>
-                            <td>$<?php echo e($car->price); ?>/day</td>
-                            <td><span class="status-badge <?php echo e($statusClass); ?>"><?php echo e($car->status); ?></span></td>
-                            <td class="actions">
-                                <a href="<?php echo e(route('cars.show', $car->id)); ?>" class="action-btn view" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="<?php echo e(route('cars.edit', $car->id)); ?>" class="action-btn edit" title="Edit Car">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button class="action-btn delete" title="Delete Car" data-id="<?php echo e($car->id); ?>" data-name="<?php echo e($carName); ?>">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php $__currentLoopData = $cars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $car): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php
+                // Determine the status badge class
+                $statusClass = '';
+                switch (strtolower($car->status)) {
+                    case 'available':
+                        $statusClass = 'available';
+                        break;
+                    case 'booked':
+                        $statusClass = 'booked';
+                        break;
+                    case 'maintenance':
+                        $statusClass = 'maintenance';
+                        break;
+                    case 'inactive':
+                        $statusClass = 'inactive';
+                        break;
+                    default:
+                        $statusClass = '';
+                }
+
+                // Car display name (combine maker and model)
+                $carName = $car->maker . ' ' . $car->model;
+
+                // Image path handling with fallback
+                $imagePath = asset('admincar_images/' . $car->car_image); // Assuming 'admincar_images' is a directory in your public folder
+                if (!file_exists(public_path('admincar_images/' . $car->car_image))) {
+                    $imagePath = asset('assets/images/cars/default-car.jpg'); // Fallback image path
+                }
+                ?>
+                <tr>
+                    <td><?php echo e($car->id); ?></td>
+                    <td><img src="<?php echo e($imagePath); ?>" alt="<?php echo e($carName); ?>" class="car-thumbnail"></td>
+                    <td><?php echo e($carName); ?></td>
+                    <td><?php echo e($car->maker); ?></td>
+                    <td><?php echo e($car->model); ?></td>
+                    <td><?php echo e($car->registration_no); ?></td>
+                    <td>$<?php echo e($car->price); ?>/day</td>
+                    <td><span class="status-badge <?php echo e($statusClass); ?>"><?php echo e($car->status); ?></span></td>
+                    <td class="actions">
+                        <a href="<?php echo e(route('cars.show', $car->id)); ?>" class="action-btn view" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="<?php echo e(route('cars.edit', $car->id)); ?>" class="action-btn edit" title="Edit Car">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button class="action-btn delete" title="Delete Car" data-id="<?php echo e($car->id); ?>" data-name="<?php echo e($carName); ?>">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 <?php else: ?>
-                    <tr>
-                        <td colspan="9" class="text-center">No cars found</td>
-                    </tr>
+                <tr>
+                    <td colspan="9" class="text-center">No cars found</td>
+                </tr>
                 <?php endif; ?>
             </tbody>
         </table>
+
+
 
         <div class="pagination-container">
             <div class="showing-entries">

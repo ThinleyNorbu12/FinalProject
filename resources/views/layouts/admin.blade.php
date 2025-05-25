@@ -110,6 +110,14 @@
                 @endif
             </div>
 
+                <!-- Add this at the top of your sidebar for debugging -->
+            {{-- <div style="background: #f8f9fa; padding: 10px; margin: 10px; border: 1px solid #ddd; font-size: 12px;">
+                <strong>Debug Info:</strong><br>
+                Current Route: {{ Route::currentRouteName() }}<br>
+                Current URL: {{ request()->url() }}<br>
+                Route Pattern: {{ request()->route()->uri ?? 'N/A' }}
+            </div> --}}
+
             <div class="sidebar-menu">
                 <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt"></i>
@@ -119,7 +127,8 @@
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Manage Service</div>
                 
-                <a href="{{ route('cars.index') }}" class="sidebar-menu-item {{ request()->routeIs('cars.index') ? 'active' : '' }}">
+                <!-- Updated Cars link with better condition -->
+                <a href="{{ route('admin.cars.index') }}" class="sidebar-menu-item {{ request()->routeIs('admin.cars.index') || request()->routeIs('admin.cars.create') || request()->routeIs('admin.cars.edit') || request()->routeIs('admin.cars.show') ? 'active' : '' }}">
                     <i class="fas fa-car"></i>
                     <span>Cars</span>
                     <div class="tooltip">Cars</div>

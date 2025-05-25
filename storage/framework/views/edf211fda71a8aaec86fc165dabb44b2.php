@@ -108,6 +108,9 @@
                 <?php endif; ?>
             </div>
 
+                <!-- Add this at the top of your sidebar for debugging -->
+            
+
             <div class="sidebar-menu">
                 <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
                     <i class="fas fa-tachometer-alt"></i>
@@ -117,7 +120,8 @@
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Manage Service</div>
                 
-                <a href="<?php echo e(route('cars.index')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('cars.index') ? 'active' : ''); ?>">
+                <!-- Updated Cars link with better condition -->
+                <a href="<?php echo e(route('admin.cars.index')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.cars.index') || request()->routeIs('admin.cars.create') || request()->routeIs('admin.cars.edit') || request()->routeIs('admin.cars.show') ? 'active' : ''); ?>">
                     <i class="fas fa-car"></i>
                     <span>Cars</span>
                     <div class="tooltip">Cars</div>

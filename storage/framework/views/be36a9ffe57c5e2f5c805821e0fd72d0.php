@@ -5,7 +5,7 @@
 
 <?php $__env->startSection('breadcrumbs'); ?>
     <li class="breadcrumb-item">
-        <a href="<?php echo e(route('cars.index')); ?>">Cars Management</a>
+        <a href="<?php echo e(route('admin.cars.index')); ?>">Cars Management</a>
     </li>
     <li class="breadcrumb-item active">View Car</li>
 <?php $__env->stopSection(); ?>
@@ -16,17 +16,6 @@
 <?php $__env->startSection('content'); ?>
 <!-- Car Details -->
 <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h2><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h2>
-        <div>
-            <a href="<?php echo e(route('cars.edit', $car->id)); ?>" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Edit Car
-            </a>
-            <a href="<?php echo e(route('cars.index')); ?>" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to List
-            </a>
-        </div>
-    </div>
     <div class="card-body">
         <!-- Car Images -->
         <div class="row">
@@ -295,7 +284,7 @@
                     <a href="<?php echo e(route('cars.edit', $car->id)); ?>" class="btn btn-primary">
                         <i class="fas fa-edit"></i> Edit Car
                     </a>
-                    <a href="<?php echo e(route('cars.index')); ?>" class="btn btn-secondary">
+                    <a href="<?php echo e(route('admin.cars.index')); ?>" class="btn btn-secondary">
                         <i class="fas fa-list"></i> Back to Cars List
                     </a>
                 </div>

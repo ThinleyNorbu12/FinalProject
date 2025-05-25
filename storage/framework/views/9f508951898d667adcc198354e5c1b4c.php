@@ -16,315 +16,492 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Global styles */
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --header-height: 60px;
-            --footer-height: 60px;
-            --sidebar-width: 260px;
-            --sidebar-collapsed-width: 70px;
-        }
-        
+        /* Main Layout */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f9f9f9;
             margin: 0;
             padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: #f5f7fa;
+            overflow-x: hidden;
         }
-        
-        /* Header styles */
-        .main-header {
+
+        .dashboard-container {
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            height: 100vh;
             background-color: white;
-            height: var(--header-height);
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-        
-        .header-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
-        
-        .header-search {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            max-width: 500px;
-            margin: 0 20px;
-        }
-        
-        .header-search input {
-            width: 100%;
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            border-radius: 20px 0 0 20px;
-            outline: none;
-        }
-        
-        .header-search button {
-            padding: 8px 15px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 0 20px 20px 0;
-            cursor: pointer;
-        }
-        
-        .header-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .header-user-name {
-            font-weight: 500;
-        }
-        
-        .btn-logout {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            color: #333;
-            font-size: 0.9rem;
-        }
-        
-        .btn-logout:hover {
-            background-color: #e9ecef;
-        }
-        
-        .header-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--secondary-color);
-        }
-        
-        /* Sidebar styles */
-        .sidebar {
-            position: fixed;
-            top: var(--header-height);
-            left: 0;
-            width: var(--sidebar-width);
-            height: calc(100vh - var(--header-height) - var(--footer-height));
-            background-color: white;
-            border-right: 1px solid #e0e0e0;
-            z-index: 900;
             overflow-y: auto;
-            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            padding-top: 56px; /* Height of header */
+            transition: transform 0.3s ease, width 0.3s ease;
         }
-        
-        .sidebar-collapsed {
-            width: var(--sidebar-collapsed-width);
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: #3366ff;
         }
-        
+
+        .sidebar-brand img {
+            width: 30px;
+            margin-right: 10px;
+        }
+
+        .sidebar-brand span {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
         .sidebar-menu {
-            padding: 20px 0;
+            padding: 10px 0;
         }
-        
-        .sidebar-heading {
-            padding: 10px 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: #666;
-            text-transform: uppercase;
-        }
-        
+
         .sidebar-menu-item {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            color: #333;
+            padding: 10px 20px;
+            color: #0f0f0f;
             text-decoration: none;
-            gap: 10px;
-            position: relative;
             transition: all 0.3s;
         }
-        
-        .sidebar-menu-item i {
-            width: 20px;
-            text-align: center;
-        }
-        
+
         .sidebar-menu-item:hover {
-            background-color: #f5f7fa;
-            color: var(--primary-color);
+            background-color: #f2f2f2;
         }
-        
+
         .sidebar-menu-item.active {
-            background-color: #e9f4fe;
-            color: var(--primary-color);
-            border-left: 3px solid var(--primary-color);
+            background-color: #e5e5e5;
+            font-weight: 500;
         }
-        
-        .sidebar-menu-item.active::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 3px;
-            background-color: var(--primary-color);
+
+        .sidebar-menu-item i {
+            font-size: 18px;
+            width: 24px;
+            margin-right: 24px;
+            color: #606060;
         }
-        
+
         .sidebar-divider {
-            margin: 15px 0;
-            border-top: 1px solid #e0e0e0;
+            height: 1px;
+            background-color: #e5e5e5;
+            margin: 10px 0;
         }
-        
-        /* Main content styles */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            margin-bottom: var(--footer-height);
-            padding: 20px;
-            min-height: calc(100vh - var(--header-height) - var(--footer-height));
-            transition: all 0.3s ease;
+
+        .sidebar-heading {
+            color: #606060;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            text-transform: uppercase;
         }
-        
-        .main-content-expanded {
-            margin-left: var(--sidebar-collapsed-width);
-        }
-        
-        /* Dashboard container styles */
-        .dashboard-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        
-        /* Footer styles */
-        .main-footer {
+
+        /* Header */
+        .main-header {
+            height: 56px;
             background-color: white;
-            height: var(--footer-height);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            border-top: 1px solid #e0e0e0;
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             right: 0;
-            z-index: 900;
-        }
-        
-        .footer-copyright {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .footer-links {
             display: flex;
-            gap: 20px;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
         }
-        
-        .footer-link {
+
+        .header-menu-toggle {
+            margin-right: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            margin-right: 40px;
+        }
+
+        .header-logo i {
+            color: #3366ff;
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
+        .header-logo span {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .header-search {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .header-search input {
+            width: 100%;
+            height: 36px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 0 40px 0 16px;
+            font-size: 14px;
+        }
+
+        .header-search button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 36px;
+            width: 36px;
+            border: none;
+            background: #f8f8f8;
+            border-radius: 0 20px 20px 0;
+            cursor: pointer;
+        }
+
+        .header-user {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-user-name {
+            margin-right: 12px;
+            font-weight: 500;
+        }
+
+        .btn-logout {
+            background-color: #3366ff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            margin-left: 240px; /* Width of sidebar */
+            margin-top: 56px; /* Height of header */
+            width: calc(100% - 240px);
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-card h2 {
+            margin-top: 0;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .welcome-card p {
             color: #666;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
+            margin-bottom: 0;
         }
-        
-        .footer-link:hover {
-            color: var(--primary-color);
+
+        /* License Container */
+        .license-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-        
-        .footer-social {
+
+        .license-container.no-license {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .license-container.no-license i {
+            font-size: 64px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .license-container.no-license h3 {
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .license-container.no-license p {
+            max-width: 500px;
+            margin-bottom: 24px;
+            color: #666;
+        }
+
+        /* License Header */
+        .license-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 15px;
+        }
+
+        .license-title h2 {
+            margin: 0 0 5px 0;
+            font-size: 22px;
+            color: #333;
+        }
+
+        .license-title p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .license-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .status-valid {
+            background-color: #e6f7eb;
+            color: #28a745;
+        }
+
+        .status-expiring {
+            background-color: #fff3cd;
+            color: #ffc107;
+        }
+
+        .status-expired {
+            background-color: #ffebee;
+            color: #dc3545;
+        }
+
+        /* License Info */
+        .license-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .license-info > div {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .info-group {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* License Status Section */
+        .license-status-section {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* License Validity */
+        .validity-section {
+            margin-bottom: 20px;
+        }
+
+        .validity-text {
+            margin-bottom: 10px;
+        }
+
+        .validity-progress {
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* License Images */
+        .license-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .image-container {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .image-container h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .license-image {
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid #e5e5e5;
+            object-fit: cover;
+            max-height: 200px;
+        }
+
+        .no-image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            background-color: #f5f5f5;
+            border-radius: 6px;
+            border: 1px dashed #ccc;
+            color: #999;
+            text-align: center;
+        }
+
+        .no-image i {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        /* License Actions */
+        .license-actions {
             display: flex;
             gap: 15px;
+            margin-top: 30px;
         }
-        
-        .footer-social a {
-            color: #666;
-            font-size: 1.1rem;
-            transition: color 0.3s;
+
+        .btn-primary {
+            background-color: #3366ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
-        
-        .footer-social a:hover {
-            color: var(--primary-color);
+
+        .btn-outline {
+            background-color: transparent;
+            color: #3366ff;
+            border: 1px solid #3366ff;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
-        
-        /* Responsive styles */
+
+        /* Responsive Adjustments */
         @media (max-width: 992px) {
-            .header-menu-toggle {
-                display: block;
-            }
-            
             .sidebar {
-                width: var(--sidebar-collapsed-width);
-                transform: translateX(-100%);
+                width: 70px;
             }
             
-            .sidebar.show {
-                transform: translateX(0);
-                width: var(--sidebar-width);
+            .sidebar-menu-item span,
+            .sidebar-heading {
+                display: none;
             }
             
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .sidebar-menu-item span {
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s;
-                position: absolute;
-                left: 40px;
-            }
-            
-            .sidebar.show .sidebar-menu-item span {
-                opacity: 1;
-                visibility: visible;
-                position: static;
+            .sidebar-menu-item i {
+                margin-right: 0;
             }
             
             .sidebar-menu-item {
-                padding: 12px 0;
                 justify-content: center;
+                padding: 14px 0;
             }
             
-            .sidebar.show .sidebar-menu-item {
-                padding: 12px 20px;
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+            
+            .sidebar.expanded {
+                width: 240px;
+            }
+            
+            .sidebar.expanded .sidebar-menu-item span,
+            .sidebar.expanded .sidebar-heading {
+                display: block;
+            }
+            
+            .sidebar.expanded .sidebar-menu-item {
                 justify-content: flex-start;
-            }
-            
-            .sidebar-heading {
-                text-align: center;
-                padding: 10px 5px;
-            }
-            
-            .sidebar.show .sidebar-heading {
-                text-align: left;
                 padding: 10px 20px;
             }
+            
+            .sidebar.expanded .sidebar-menu-item i {
+                margin-right: 24px;
+            }
         }
-        
+
         @media (max-width: 768px) {
+            .license-info,
+            .license-images {
+                flex-direction: column;
+            }
+            
             .header-search {
                 max-width: 300px;
             }
@@ -332,52 +509,47 @@
             .header-user-name {
                 display: none;
             }
-            
-            .footer-links {
-                display: none;
-            }
-            
-            .main-footer {
-                justify-content: space-between;
-            }
         }
-        
+
         @media (max-width: 576px) {
-            .main-header {
-                padding: 0 10px;
+            .sidebar {
+                transform: translateX(-100%);
+                width: 240px;
             }
             
-            .header-search {
-                display: none;
+            .sidebar.expanded {
+                transform: translateX(0);
             }
             
-            .footer-copyright {
-                font-size: 0.8rem;
+            .sidebar.expanded .sidebar-menu-item span,
+            .sidebar.expanded .sidebar-heading {
+                display: block;
             }
             
-            .footer-social {
-                gap: 10px;
+            .sidebar.expanded .sidebar-menu-item {
+                justify-content: flex-start;
+                padding: 10px 20px;
             }
             
-            .rental-details {
+            .sidebar.expanded .sidebar-menu-item i {
+                margin-right: 24px;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .license-header {
                 flex-direction: column;
-                align-items: center;
+                align-items: flex-start;
             }
             
-            .car-image {
-                width: 100%;
-                margin-bottom: 20px;
-            }
-            
-            .rental-info {
-                width: 100%;
-            }
-            
-            .cars-grid {
-                grid-template-columns: 1fr;
+            .license-status {
+                margin-top: 10px;
             }
         }
-    </style>
+    </style> 
 </head>
 <body>
     <!-- Header -->
@@ -410,16 +582,17 @@
     </header>
 
     <!-- Dashboard Container -->
+    <!-- Dashboard Container -->
     <div class="dashboard-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-menu">
-                <a href="#" class="sidebar-menu-item active">
+                <a href="<?php echo e(route('customer.dashboard')); ?>" class="sidebar-menu-item active ">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.browse-cars')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-car"></i>
                     <span>Browse Cars</span>
                 </a>
@@ -453,7 +626,7 @@
                     <span>Pay Later</span>
                 </a>
                 
-                <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item">
+                <a href="<?php echo e(route('customer.license')); ?>" class="sidebar-menu-item ">
                     <i class="fas fa-id-card"></i>
                     <span>Driving License</span>
                 </a>
@@ -617,10 +790,7 @@
                                 </div>
                             </div>
                             
-                            <div class="rental-actions">
-                                <button class="btn-extend" data-booking-id="<?php echo e($currentRental->booking_id); ?>">Extend Rental</button>
-                                <button class="btn-return" data-booking-id="<?php echo e($currentRental->booking_id); ?>">Early Return</button>
-                            </div>
+                            
                         </div>
                     </div>
                 <?php else: ?>
@@ -646,11 +816,6 @@
                 <div class="stat-card">
                     <div class="stat-number">8</div>
                     <div class="stat-label">Completed Rentals</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-number">850</div>
-                    <div class="stat-label">Loyalty Points</div>
                 </div>
             </div>
             
@@ -767,7 +932,7 @@
                                 <?php if($car->car_image): ?>
                                     <img src="<?php echo e(asset($car->car_image)); ?>" alt="<?php echo e($car->model); ?>" >
                                 <?php else: ?>
-                                    <img src="<?php echo e(asset('images/car-placeholder.jpg')); ?>" alt="Car Image">
+                                   <img src="<?php echo e(asset('carimage/defaultcar.jpg')); ?>" alt="Car Image">
                                 <?php endif; ?>
                             </div>
                             
@@ -780,6 +945,7 @@
                                 </div>
                                 <div class="car-price">$<?php echo e(number_format($car->price, 2)); ?>/day</div>
                                 <a href="<?php echo e(route('customer.car-details', $car->id)); ?>" class="btn btn-primary">View Details</a>
+
                                 <a href="<?php echo e(route('customer.book-car', $car->id)); ?>" class="btn-book-now">Book Now</a>
                             </div>
                         </div>
@@ -792,27 +958,6 @@
                 <?php endif; ?>
             </div>
         </div>
-        
-        <!-- Footer -->
-        <footer class="main-footer">
-            <div class="footer-copyright">
-                &copy; 2025 CarRental. All rights reserved.
-            </div>
-            
-            <div class="footer-links">
-                <a href="#" class="footer-link">Terms of Service</a>
-                <a href="#" class="footer-link">Privacy Policy</a>
-                <a href="#" class="footer-link">Rental Agreement</a>
-                <a href="#" class="footer-link">Contact Us</a>
-            </div>
-            
-            <div class="footer-social">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-            </div>
-        </footer>
     </div>
 
     <!-- Bootstrap JS and jQuery -->

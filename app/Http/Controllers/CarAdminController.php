@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\InspectionConfirmedMail;
 use App\Models\InspectionDecision;
 use App\Mail\InspectionDecisionMail;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 
 

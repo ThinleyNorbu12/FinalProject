@@ -94,7 +94,8 @@
             </div>
         </div>
 
-        <table class="data-table">
+       <table class="data-table">
+            <table class="data-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -110,70 +111,72 @@
             </thead>
             <tbody>
                 @php
-                    $cars = DB::table('admin_cars_tbl')
-                        ->orderBy('id', 'desc')
-                        ->paginate(10);
+                $cars = DB::table('admin_cars_tbl')
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
                 @endphp
-                
                 @if ($cars->count() > 0)
-                    @foreach ($cars as $car)
-                        @php
-                            // Determine the status badge class
-                            $statusClass = '';
-                            switch (strtolower($car->status)) {
-                                case 'available':
-                                    $statusClass = 'available';
-                                    break;
-                                case 'booked':
-                                    $statusClass = 'booked';
-                                    break;
-                                case 'maintenance':
-                                    $statusClass = 'maintenance';
-                                    break;
-                                case 'inactive':
-                                    $statusClass = 'inactive';
-                                    break;
-                                default:
-                                    $statusClass = '';
-                            }
-                            
-                            // Car display name (combine maker and model)
-                            $carName = $car->maker . ' ' . $car->model;
-                            
-                            // Image path handling with fallback
-                            $imagePath = !empty($car->car_image) 
-                                ? asset('assets/images/cars/' . $car->car_image) 
-                                : asset('assets/images/cars/default-car.jpg');
-                        @endphp
-                        <tr>
-                            <td>{{ $car->id }}</td>
-                            <td><img src="{{ $imagePath }}" alt="{{ $carName }}" class="car-thumbnail"></td>
-                            <td>{{ $carName }}</td>
-                            <td>{{ $car->maker }}</td>
-                            <td>{{ $car->model }}</td>
-                            <td>{{ $car->registration_no }}</td>
-                            <td>${{ $car->price }}/day</td>
-                            <td><span class="status-badge {{ $statusClass }}">{{ $car->status }}</span></td>
-                            <td class="actions">
-                                <a href="{{ route('cars.show', $car->id) }}" class="action-btn view" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('cars.edit', $car->id) }}" class="action-btn edit" title="Edit Car">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button class="action-btn delete" title="Delete Car" data-id="{{ $car->id }}" data-name="{{ $carName }}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    @endforeach
+                @foreach ($cars as $car)
+                @php
+                // Determine the status badge class
+                $statusClass = '';
+                switch (strtolower($car->status)) {
+                    case 'available':
+                        $statusClass = 'available';
+                        break;
+                    case 'booked':
+                        $statusClass = 'booked';
+                        break;
+                    case 'maintenance':
+                        $statusClass = 'maintenance';
+                        break;
+                    case 'inactive':
+                        $statusClass = 'inactive';
+                        break;
+                    default:
+                        $statusClass = '';
+                }
+
+                // Car display name (combine maker and model)
+                $carName = $car->maker . ' ' . $car->model;
+
+                // Image path handling with fallback
+                $imagePath = asset('admincar_images/' . $car->car_image); // Assuming 'admincar_images' is a directory in your public folder
+                if (!file_exists(public_path('admincar_images/' . $car->car_image))) {
+                    $imagePath = asset('assets/images/cars/default-car.jpg'); // Fallback image path
+                }
+                @endphp
+                <tr>
+                    <td>{{ $car->id }}</td>
+                    <td><img src="{{ $imagePath }}" alt="{{ $carName }}" class="car-thumbnail"></td>
+                    <td>{{ $carName }}</td>
+                    <td>{{ $car->maker }}</td>
+                    <td>{{ $car->model }}</td>
+                    <td>{{ $car->registration_no }}</td>
+                    <td>${{ $car->price }}/day</td>
+                    <td><span class="status-badge {{ $statusClass }}">{{ $car->status }}</span></td>
+                    <td class="actions">
+                        <a href="{{ route('cars.show', $car->id) }}" class="action-btn view" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ route('cars.edit', $car->id) }}" class="action-btn edit" title="Edit Car">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button class="action-btn delete" title="Delete Car" data-id="{{ $car->id }}" data-name="{{ $carName }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                @endforeach
                 @else
-                    <tr>
-                        <td colspan="9" class="text-center">No cars found</td>
-                    </tr>
+                <tr>
+                    <td colspan="9" class="text-center">No cars found</td>
+                </tr>
                 @endif
             </tbody>
         </table>
+
+
 
         <div class="pagination-container">
             <div class="showing-entries">

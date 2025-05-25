@@ -1,534 +1,82 @@
 <!-- resources/views/admin/payments/index.blade.php -->
 
 
+<?php $__env->startSection('title', 'Payment Management'); ?>
+
 <?php $__env->startSection('content'); ?>
-<link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
-<div class="dashboard-sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-            <h2>Admin Portal</h2>
-        </div>
-        <button id="sidebar-toggle" class="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div> 
-    <div class="admin-profile">
-        <?php if(Auth::guard('admin')->check()): ?>
-            <div class="profile-avatar">
-                <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
-            </div>
-            <div class="profile-info">
-                <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                <span>Administrator</span>
-            </div>
-        <?php endif; ?>
-    </div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-menu">
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Car Owner</div>
-
-            <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item ">
-                <i class="fas fa-car"></i>
-                <span>Car Registration</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-clipboard-check"></i>
-                <span>Inspection Requests</span>
-            </a>
-
-            <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-check-circle"></i>
-                <span>Approve Inspections</span>
-            </a>
-
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-heading">Customer</div>
-
-            <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-id-card"></i>
-                <span>Verify Users</span>
-            </a>
-
-            <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item active">
-                <i class="fas fa-credit-card"></i>
-                <span>Payments</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/update-car-registration')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-edit"></i>
-                <span>Update Registration</span>
-            </a>
-
-            <a href="<?php echo e(url('admin/car-information-update')); ?>" class="sidebar-menu-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Car Information</span>
-            </a>
-
-            <a href="<?php echo e(route ('admin.booked-car')); ?>" class="sidebar-menu-item ">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booked Cars</span>
-            </a>
-
-            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-
-            <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="logout-form" style="display: none;">
-                <?php echo csrf_field(); ?>
-            </form>
-        </div>
-    </div>       
+<!-- Page Header -->
+<div class="dashboard-header-section">
+    <h1>Payment Management</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?php echo e(route('admin.dashboard')); ?>">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Payments</li>
+        </ol>
+    </nav>
 </div>
-<style>
-        /* Payment Management Main Layout Styles */
-    .dashboard-content {
-    padding: 1.5rem;
-    width: 100%;
-    transition: all 0.3s ease;
-    }
 
-    /* Responsive layout with sidebar */
-    @media (min-width: 992px) {
-    .dashboard-content {
-        margin-left: 250px; /* Adjust this to match your sidebar width */
-    }
-    
-    body.sidebar-collapsed .dashboard-content {
-        margin-left: 70px; /* Adjust for collapsed sidebar width */
-    }
-    }
-
-    /* Header Section */
-    .dashboard-header-section {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-    }
-
-    .dashboard-header-section h1 {
-    margin-bottom: 0.5rem;
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #333;
-    }
-
-    .breadcrumb {
-    background: transparent;
-    padding: 0;
-    margin-bottom: 0;
-    }
-
-    .breadcrumb-item a {
-    color: #007bff;
-    text-decoration: none;
-    }
-
-    .breadcrumb-item.active {
-    color: #6c757d;
-    }
-
-    /* Stat Cards */
-    .dashboard-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    }
-
-    .card {
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border: none;
-    transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-inner {
-    display: flex;
-    align-items: center;
-    padding: 1.25rem;
-    }
-
-    .card-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-    margin-right: 1rem;
-    color: white;
-    }
-
-    .bg-primary {
-    background-color: #007bff;
-    }
-
-    .bg-success {
-    background-color: #28a745;
-    }
-
-    .bg-warning {
-    background-color: #ffc107;
-    }
-
-    .bg-danger {
-    background-color: #dc3545;
-    }
-
-    .card-content h3 {
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
-    color: #6c757d;
-    }
-
-    .card-content .count {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
-    color: #333;
-    }
-
-    /* Panel Styles */
-    .panel {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1.5rem;
-    }
-
-    .panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e0e0e0;
-    flex-wrap: wrap;
-    gap: 1rem;
-    }
-
-    .panel-header h2 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin: 0;
-    }
-
-    .panel-actions {
-    display: flex;
-    gap: 0.5rem;
-    }
-
-    .panel-content {
-    padding: 1.5rem;
-    }
-
-    /* Form Elements */
-    .form-inline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    }
-
-    .input-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    }
-
-    .form-control {
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    padding: 0.375rem 0.75rem;
-    }
-
-    .btn {
-    border-radius: 4px;
-    padding: 0.375rem 0.75rem;
-    font-weight: 500;
-    }
-
-    .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: white;
-    }
-
-    .btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    }
-
-    /* Table Styles */
-    .table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    }
-
-    .table {
-    width: 100%;
-    margin-bottom: 0;
-    color: #212529;
-    border-collapse: collapse;
-    }
-
-    .table th {
-    padding: 0.75rem;
-    vertical-align: top;
-    border-top: 1px solid #dee2e6;
-    background-color: #f8f9fa;
-    font-weight: 600;
-    }
-
-    .table td {
-    padding: 0.75rem;
-    vertical-align: middle;
-    border-top: 1px solid #dee2e6;
-    }
-
-    .table-hover tbody tr:hover {
-    background-color: rgba(0, 123, 255, 0.05);
-    }
-
-    .badge {
-    display: inline-block;
-    padding: 0.25em 0.6em;
-    font-size: 75%;
-    font-weight: 500;
-    line-height: 1;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: 0.25rem;
-    color: white;
-    }
-
-    /* Pagination */
-    .pagination-container {
-    margin-top: 1.5rem;
-    display: flex;
-    justify-content: center;
-    }
-
-    .pagination {
-    display: flex;
-    padding-left: 0;
-    list-style: none;
-    border-radius: 0.25rem;
-    }
-
-    .pagination .page-item .page-link {
-    position: relative;
-    display: block;
-    padding: 0.5rem 0.75rem;
-    margin-left: -1px;
-    line-height: 1.25;
-    color: #007bff;
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-    }
-
-    .pagination .page-item.active .page-link {
-    z-index: 3;
-    color: #fff;
-    background-color: #007bff;
-    border-color: #007bff;
-    }
-
-    /* Modal Styles */
-    .modal-content {
-    border-radius: 8px;
-    border: none;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-header {
-    border-bottom: 1px solid #e0e0e0;
-    padding: 1rem 1.5rem;
-    }
-
-    .modal-body {
-    padding: 1.5rem;
-    }
-
-    .modal-footer {
-    border-top: 1px solid #e0e0e0;
-    padding: 1rem 1.5rem;
-    }
-
-    .img-fluid {
-    max-width: 100%;
-    height: auto;
-    border-radius: 4px;
-    }
-
-    /* Additional Responsive Adjustments */
-    @media (max-width: 991.98px) {
-    .dashboard-content {
-        margin-left: 0;
-        padding: 1rem;
-    }
-    
-    .dashboard-header-section h1 {
-        font-size: 1.5rem;
-    }
-    
-    .panel-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .panel-actions {
-        width: 100%;
-        margin-top: 0.5rem;
-    }
-    
-    .form-inline, 
-    .input-group {
-        width: 100%;
-    }
-    
-    .form-control, 
-    .btn {
-        width: 100%;
-    }
-    }
-
-    @media (max-width: 767.98px) {
-    .dashboard-cards {
-        grid-template-columns: 1fr;
-    }
-    
-    .table th, 
-    .table td {
-        padding: 0.5rem;
-    }
-    
-    .dashboard-header-section {
-        margin-bottom: 1rem;
-    }
-    
-    .panel-content {
-        padding: 1rem;
-    }
-    }
-
-    /* For mobile screens */
-    @media (max-width: 575.98px) {
-    .card-inner {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .card-icon {
-        margin-right: 0;
-        margin-bottom: 0.75rem;
-    }
-    }
-
-    /* For sidebar toggle functionality */
-    .sidebar-toggle-btn {
-    display: none;
-    }
-
-    @media (max-width: 991.98px) {
-    .sidebar-toggle-btn {
-        display: block;
-        position: fixed;
-        top: 1rem;
-        left: 1rem;
-        z-index: 1030;
-        padding: 0.25rem 0.5rem;
-        background-color: #fff;
-        border-radius: 4px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    }
-</style>
-<?php $__env->startSection('content'); ?>
-<!-- Main Content -->
-<div class="dashboard-content">
-    <!-- Page Header -->
-    <div class="dashboard-header-section">
-        <h1>Payment Management</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?php echo e(route('admin.dashboard')); ?>">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Payments</li>
-            </ol>
-        </nav>
-    </div>
-
-    <!-- Payments Stats Cards -->
-    <div class="dashboard-cards payments-stats">
-        <div class="card">
-            <div class="card-inner">
-                <div class="card-icon bg-primary">
-                    <i class="fas fa-credit-card"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Total Payments</h3>
-                    <p class="count"><?php echo e($payments->total()); ?></p>
-                </div>
+<!-- Payments Stats Cards -->
+<div class="dashboard-cards payments-stats">
+    <div class="card">
+        <div class="card-inner">
+            <div class="card-icon bg-primary">
+                <i class="fas fa-credit-card"></i>
             </div>
-        </div>
-
-        <div class="card">
-            <div class="card-inner">
-                <div class="card-icon bg-success">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Completed</h3>
-                    <p class="count"><?php echo e($payments->where('status', 'completed')->count()); ?></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-inner">
-                <div class="card-icon bg-warning">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Pending</h3>
-                    <p class="count"><?php echo e($payments->whereIn('status', ['pending', 'pending_verification', 'processing'])->count()); ?></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-inner">
-                <div class="card-icon bg-danger">
-                    <i class="fas fa-times-circle"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Failed/Cancelled</h3>
-                    <p class="count"><?php echo e($payments->whereIn('status', ['failed', 'cancelled'])->count()); ?></p>
-                </div>
+            <div class="card-content">
+                <h3>Total Payments</h3>
+                <p class="count"><?php echo e($payments->total()); ?></p>
             </div>
         </div>
     </div>
 
-    <!-- Payments Table Panel -->
-    <div class="panel payments-panel">
-        <div class="panel-header">
-            <h2>All Payments</h2>
-            <div class="panel-actions">
-                <form action="<?php echo e(route('admin.payments.index')); ?>" method="GET" class="form-inline">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Search reference..." value="<?php echo e(request('search')); ?>">
+    <div class="card">
+        <div class="card-inner">
+            <div class="card-icon bg-success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="card-content">
+                <h3>Completed</h3>
+                <p class="count"><?php echo e($payments->where('status', 'completed')->count()); ?></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-inner">
+            <div class="card-icon bg-warning">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h3>Pending</h3>
+                <p class="count"><?php echo e($payments->whereIn('status', ['pending', 'pending_verification', 'processing'])->count()); ?></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-inner">
+            <div class="card-icon bg-danger">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="card-content">
+                <h3>Failed/Cancelled</h3>
+                <p class="count"><?php echo e($payments->whereIn('status', ['failed', 'cancelled'])->count()); ?></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payments Table Panel -->
+<div class="panel payments-panel">
+    <div class="panel-header">
+        <h2>All Payments</h2>
+        <div class="panel-actions">
+            <form action="<?php echo e(route('admin.payments.index')); ?>" method="GET" class="filter-form">
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <input type="text" name="search" class="form-control" placeholder="Search reference, customer..." value="<?php echo e(request('search')); ?>">
+                    </div>
+                    <div class="filter-item">
                         <select name="status" class="form-control">
                             <option value="">All Statuses</option>
                             <option value="pending" <?php echo e(request('status') == 'pending' ? 'selected' : ''); ?>>Pending</option>
@@ -539,118 +87,136 @@
                             <option value="refunded" <?php echo e(request('status') == 'refunded' ? 'selected' : ''); ?>>Refunded</option>
                             <option value="cancelled" <?php echo e(request('status') == 'cancelled' ? 'selected' : ''); ?>>Cancelled</option>
                         </select>
-                        <button type="submit" class="btn btn-primary">Filter</button>
                     </div>
-                </form>
-            </div>
+                    <div class="filter-item">
+                        <select name="payment_method" class="form-control">
+                            <option value="">All Methods</option>
+                            <option value="qr_code" <?php echo e(request('payment_method') == 'qr_code' ? 'selected' : ''); ?>>QR Code</option>
+                            <option value="bank_transfer" <?php echo e(request('payment_method') == 'bank_transfer' ? 'selected' : ''); ?>>Bank Transfer</option>
+                            <option value="pay_later" <?php echo e(request('payment_method') == 'pay_later' ? 'selected' : ''); ?>>Pay Later</option>
+                            <option value="card" <?php echo e(request('payment_method') == 'card' ? 'selected' : ''); ?>>Card</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Filter
+                        </button>
+                    </div>
+                    <div class="filter-item">
+                        <a href="<?php echo e(route('admin.payments.index')); ?>" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="panel-content">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Reference</th>
-                            <th>Customer</th>
-                            <th>Method</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $__empty_1 = true; $__currentLoopData = $payments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                        <tr>
-                            <td><?php echo e($payment->id); ?></td>
-                            <td><?php echo e($payment->reference_number); ?></td>
-                            <td>
-                                <?php if($payment->customer): ?>
-                                    <?php echo e($payment->customer->name); ?>
+    </div>
+    <div class="panel-content">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Reference</th>
+                        <th>Customer</th>
+                        <th>Method</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $__empty_1 = true; $__currentLoopData = $payments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                    <tr>
+                        <td><?php echo e($payment->id); ?></td>
+                        <td><?php echo e($payment->reference_number); ?></td>
+                        <td>
+                            <?php if($payment->customer): ?>
+                                <?php echo e($payment->customer->name); ?>
 
-                                <?php else: ?>
-                                    Unknown
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?php switch($payment->payment_method):
-                                    case ('qr_code'): ?>
-                                        <span class="badge bg-info">QR Code</span>
-                                        <?php break; ?>
-                                    <?php case ('bank_transfer'): ?>
-                                        <span class="badge bg-primary">Bank Transfer</span>
-                                        <?php break; ?>
-                                    <?php case ('pay_later'): ?>
-                                        <span class="badge bg-warning">Pay Later</span>
-                                        <?php break; ?>
-                                    <?php case ('card'): ?>
-                                        <span class="badge bg-success">Card</span>
-                                        <?php break; ?>
-                                    <?php default: ?>
-                                        <span class="badge bg-secondary"><?php echo e($payment->payment_method); ?></span>
-                                <?php endswitch; ?>
-                            </td>
-                            <td><?php echo e(number_format($payment->amount, 2)); ?> <?php echo e($payment->currency); ?></td>
-                            <td>
-                                <?php switch($payment->status):
-                                    case ('pending'): ?>
-                                        <span class="badge bg-warning">Pending</span>
-                                        <?php break; ?>
-                                    <?php case ('pending_verification'): ?>
-                                        <span class="badge bg-info">Pending Verification</span>
-                                        <?php break; ?>
-                                    <?php case ('processing'): ?>
-                                        <span class="badge bg-primary">Processing</span>
-                                        <?php break; ?>
-                                    <?php case ('completed'): ?>
-                                        <span class="badge bg-success">Completed</span>
-                                        <?php break; ?>
-                                    <?php case ('failed'): ?>
-                                        <span class="badge bg-danger">Failed</span>
-                                        <?php break; ?>
-                                    <?php case ('refunded'): ?>
-                                        <span class="badge bg-secondary">Refunded</span>
-                                        <?php break; ?>
-                                    <?php case ('cancelled'): ?>
-                                        <span class="badge bg-danger">Cancelled</span>
-                                        <?php break; ?>
-                                    <?php default: ?>
-                                        <span class="badge bg-secondary"><?php echo e($payment->status); ?></span>
-                                <?php endswitch; ?>
-                            </td>
-                            <td><?php echo e($payment->payment_date->format('M d, Y H:i')); ?></td>
-                            <td>
-                                <a href="<?php echo e(route('admin.payments.show', $payment->id)); ?>" class="btn btn-sm btn-info">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                
-                                <?php if($payment->payment_method == 'qr_code' && $payment->status == 'pending_verification'): ?>
-                                <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#verifyModal<?php echo e($payment->id); ?>">
-                                    <i class="fas fa-check"></i>
-                                </a>
-                                <?php endif; ?>
-                                
-                                <?php if($payment->payment_method == 'pay_later' && $payment->payLaterPayment && $payment->payLaterPayment->status != 'paid'): ?>
-                                <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#collectModal<?php echo e($payment->id); ?>">
-                                    <i class="fas fa-hand-holding-usd"></i>
-                                </a>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                        <tr>
-                            <td colspan="8" class="text-center">No payments found</td>
-                        </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Pagination Links -->
-            <div class="pagination-container">
-                <?php echo e($payments->links()); ?>
+                            <?php else: ?>
+                                Unknown
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php switch($payment->payment_method):
+                                case ('qr_code'): ?>
+                                    <span class="badge bg-info">QR Code</span>
+                                    <?php break; ?>
+                                <?php case ('bank_transfer'): ?>
+                                    <span class="badge bg-primary">Bank Transfer</span>
+                                    <?php break; ?>
+                                <?php case ('pay_later'): ?>
+                                    <span class="badge bg-warning">Pay Later</span>
+                                    <?php break; ?>
+                                <?php case ('card'): ?>
+                                    <span class="badge bg-success">Card</span>
+                                    <?php break; ?>
+                                <?php default: ?>
+                                    <span class="badge bg-secondary"><?php echo e($payment->payment_method); ?></span>
+                            <?php endswitch; ?>
+                        </td>
+                        <td><?php echo e(number_format($payment->amount, 2)); ?> <?php echo e($payment->currency); ?></td>
+                        <td>
+                            <?php switch($payment->status):
+                                case ('pending'): ?>
+                                    <span class="badge bg-warning">Pending</span>
+                                    <?php break; ?>
+                                <?php case ('pending_verification'): ?>
+                                    <span class="badge bg-info">Pending Verification</span>
+                                    <?php break; ?>
+                                <?php case ('processing'): ?>
+                                    <span class="badge bg-primary">Processing</span>
+                                    <?php break; ?>
+                                <?php case ('completed'): ?>
+                                    <span class="badge bg-success">Completed</span>
+                                    <?php break; ?>
+                                <?php case ('failed'): ?>
+                                    <span class="badge bg-danger">Failed</span>
+                                    <?php break; ?>
+                                <?php case ('refunded'): ?>
+                                    <span class="badge bg-secondary">Refunded</span>
+                                    <?php break; ?>
+                                <?php case ('cancelled'): ?>
+                                    <span class="badge bg-danger">Cancelled</span>
+                                    <?php break; ?>
+                                <?php default: ?>
+                                    <span class="badge bg-secondary"><?php echo e($payment->status); ?></span>
+                            <?php endswitch; ?>
+                        </td>
+                        <td><?php echo e($payment->payment_date->format('M d, Y H:i')); ?></td>
+                        <td>
+                            <a href="<?php echo e(route('admin.payments.show', $payment->id)); ?>" class="btn btn-sm btn-info" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            
+                            <?php if($payment->payment_method == 'qr_code' && $payment->status == 'pending_verification'): ?>
+                            <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#verifyModal<?php echo e($payment->id); ?>" title="Verify Payment">
+                                <i class="fas fa-check"></i>
+                            </a>
+                            <?php endif; ?>
+                            
+                            <?php if($payment->payment_method == 'pay_later' && $payment->payLaterPayment && $payment->payLaterPayment->status != 'paid'): ?>
+                            <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#collectModal<?php echo e($payment->id); ?>" title="Collect Payment">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                    <tr>
+                        <td colspan="8" class="text-center">No payments found</td>
+                    </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination Links -->
+        <div class="pagination-container">
+            <?php echo e($payments->links()); ?>
 
-            </div>
         </div>
     </div>
 </div>
@@ -658,11 +224,11 @@
 <!-- Verification Modals -->
 <?php $__currentLoopData = $payments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <?php if($payment->payment_method == 'qr_code' && $payment->status == 'pending_verification'): ?>
-    <div class="modal fade" id="verifyModal<?php echo e($payment->id); ?>" tabindex="-1" aria-labelledby="verifyModalLabel" aria-hidden="true">
+    <div class="modal fade" id="verifyModal<?php echo e($payment->id); ?>" tabindex="-1" aria-labelledby="verifyModalLabel<?php echo e($payment->id); ?>" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="verifyModalLabel">Verify QR Payment</h5>
+                    <h5 class="modal-title" id="verifyModalLabel<?php echo e($payment->id); ?>">Verify QR Payment</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="<?php echo e(route('admin.payments.verify-qr', $payment->id)); ?>" method="POST">
@@ -675,18 +241,23 @@
                         <div class="mb-3">
                             <label class="form-label">Payment Screenshot:</label>
                             <div>
-                                <img src="<?php echo e(asset('storage/' . $payment->qrPayment->screenshot_path)); ?>" alt="QR Payment Screenshot" class="img-fluid">
+                                <img src="<?php echo e(asset('storage/' . $payment->qrPayment->screenshot_path)); ?>" alt="QR Payment Screenshot" class="img-fluid" style="max-height: 300px;">
                             </div>
                         </div>
                         <?php endif; ?>
                         
                         <div class="mb-3">
-                            <label for="verification_status" class="form-label">Verification Decision:</label>
-                            <select name="verification_status" id="verification_status" class="form-control" required>
+                            <label for="verification_status<?php echo e($payment->id); ?>" class="form-label">Verification Decision:</label>
+                            <select name="verification_status" id="verification_status<?php echo e($payment->id); ?>" class="form-control" required>
                                 <option value="">-- Select --</option>
                                 <option value="confirmed">Confirm Payment</option>
                                 <option value="rejected">Reject Payment</option>
                             </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="admin_notes<?php echo e($payment->id); ?>" class="form-label">Admin Notes (Optional):</label>
+                            <textarea name="admin_notes" id="admin_notes<?php echo e($payment->id); ?>" class="form-control" rows="3" placeholder="Add any notes about this verification..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -700,11 +271,11 @@
     <?php endif; ?>
     
     <?php if($payment->payment_method == 'pay_later' && $payment->payLaterPayment && $payment->payLaterPayment->status != 'paid'): ?>
-    <div class="modal fade" id="collectModal<?php echo e($payment->id); ?>" tabindex="-1" aria-labelledby="collectModalLabel" aria-hidden="true">
+    <div class="modal fade" id="collectModal<?php echo e($payment->id); ?>" tabindex="-1" aria-labelledby="collectModalLabel<?php echo e($payment->id); ?>" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="collectModalLabel">Collect Pay Later Payment</h5>
+                    <h5 class="modal-title" id="collectModalLabel<?php echo e($payment->id); ?>">Collect Pay Later Payment</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="<?php echo e(route('admin.payments.collect-pay-later', $payment->id)); ?>" method="POST">
@@ -712,10 +283,11 @@
                     <div class="modal-body">
                         <p><strong>Reference:</strong> <?php echo e($payment->reference_number); ?></p>
                         <p><strong>Amount Due:</strong> <?php echo e(number_format($payment->amount, 2)); ?> <?php echo e($payment->currency); ?></p>
+                        <p><strong>Customer:</strong> <?php echo e($payment->customer ? $payment->customer->name : 'Unknown'); ?></p>
                         
                         <div class="mb-3">
-                            <label for="collection_method" class="form-label">Collection Method:</label>
-                            <select name="collection_method" id="collection_method" class="form-control" required>
+                            <label for="collection_method<?php echo e($payment->id); ?>" class="form-label">Collection Method:</label>
+                            <select name="collection_method" id="collection_method<?php echo e($payment->id); ?>" class="form-control" required>
                                 <option value="">-- Select Method --</option>
                                 <option value="cash">Cash</option>
                                 <option value="card">Card</option>
@@ -725,8 +297,14 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="notes" class="form-label">Notes:</label>
-                            <textarea name="notes" id="notes" class="form-control" rows="3"></textarea>
+                            <label for="collection_amount<?php echo e($payment->id); ?>" class="form-label">Amount Collected:</label>
+                            <input type="number" name="collection_amount" id="collection_amount<?php echo e($payment->id); ?>" 
+                                   class="form-control" step="0.01" value="<?php echo e($payment->amount); ?>" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes<?php echo e($payment->id); ?>" class="form-label">Notes:</label>
+                            <textarea name="notes" id="notes<?php echo e($payment->id); ?>" class="form-control" rows="3" placeholder="Add any notes about this collection..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -741,8 +319,205 @@
 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 <?php $__env->stopSection(); ?>
 
-<?php $__env->startSection('scripts'); ?>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/payment.blade.php ENDPATH**/ ?>
+<?php $__env->startPush('styles'); ?>
+<style>
+.payments-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.payments-stats .card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.payments-stats .card:hover {
+    transform: translateY(-5px);
+}
+
+.card-inner {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.card-icon.bg-primary { background-color: #007bff; }
+.card-icon.bg-success { background-color: #28a745; }
+.card-icon.bg-warning { background-color: #ffc107; }
+.card-icon.bg-danger { background-color: #dc3545; }
+
+.card-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.card-content .count {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.panel {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.filter-form {
+    width: 100%;
+}
+
+.filter-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+}
+
+.filter-item .form-control {
+    min-width: 150px;
+    height: 38px;
+}
+
+.filter-item .btn {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-content {
+    padding: 0;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.pagination-container {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+.modal-body img {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
+    .panel-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-item {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-item .form-control,
+    .filter-item .btn {
+        width: 100%;
+        min-width: auto;
+    }
+}
+</style>
+<?php $__env->stopPush(); ?>
+
+<?php $__env->startPush('scripts'); ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh payment status every 30 seconds
+    setInterval(function() {
+        // Only refresh if no modals are open
+        if (!document.querySelector('.modal.show')) {
+            location.reload();
+        }
+    }, 30000);
+    
+    // Form validation for verification modals
+    document.querySelectorAll('form[action*="verify-qr"]').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            const select = form.querySelector('select[name="verification_status"]');
+            if (!select.value) {
+                e.preventDefault();
+                alert('Please select a verification decision.');
+                select.focus();
+            }
+        });
+    });
+    
+    // Form validation for collection modals
+    document.querySelectorAll('form[action*="collect-pay-later"]').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            const method = form.querySelector('select[name="collection_method"]');
+            const amount = form.querySelector('input[name="collection_amount"]');
+            
+            if (!method.value) {
+                e.preventDefault();
+                alert('Please select a collection method.');
+                method.focus();
+                return;
+            }
+            
+            if (!amount.value || parseFloat(amount.value) <= 0) {
+                e.preventDefault();
+                alert('Please enter a valid collection amount.');
+                amount.focus();
+                return;
+            }
+        });
+    });
+});
+</script>
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/payment.blade.php ENDPATH**/ ?>
