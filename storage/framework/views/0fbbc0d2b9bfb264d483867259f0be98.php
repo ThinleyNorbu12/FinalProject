@@ -14,16 +14,34 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/styles.css')); ?>">
+
     <?php echo $__env->yieldContent('head'); ?>
 </head>
+<body class="bg-light d-flex flex-column min-vh-100">
 
+    
+
+    <!-- Main Content Section -->
+    <main class="flex-grow-1 py-4">
+        <div class="container">
+            <?php echo $__env->yieldContent('content'); ?>
+        </div>
+    </main>
+
+    
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <body>
-    <!-- Content -->
-    <div class="content">
-        <?php echo $__env->yieldContent('content'); ?>
-    </div>
 
+    <!-- AJAX setup for CSRF token -->
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+
+    <!-- Page Specific Scripts -->
+    <?php echo $__env->yieldContent('scripts'); ?>
 </body>
-</html> <?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/layouts/app.blade.php ENDPATH**/ ?>
+</html><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/layouts/app.blade.php ENDPATH**/ ?>

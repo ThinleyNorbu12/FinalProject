@@ -191,42 +191,11 @@
                                 <a href="<?php echo e(route('admin.booked-car.show', $booking->id)); ?>" class="btn btn-sm btn-info" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#statusModal<?php echo e($booking->id); ?>" title="Update Status">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                                
                             </div>
 
                             <!-- Status Update Modal -->
-                            <div class="modal fade" id="statusModal<?php echo e($booking->id); ?>" tabindex="-1" aria-labelledby="statusModalLabel<?php echo e($booking->id); ?>" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="statusModalLabel<?php echo e($booking->id); ?>">Update Booking Status</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <form action="<?php echo e(route('admin.booked-car.update-status', $booking->id)); ?>" method="POST">
-                                            <?php echo csrf_field(); ?>
-                                            <?php echo method_field('PUT'); ?>
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label for="status" class="form-label">Status</label>
-                                                    <select name="status" id="status" class="form-select">
-                                                        <option value="pending" <?php echo e($booking->status == 'pending' ? 'selected' : ''); ?>>Pending</option>
-                                                        <option value="confirmed" <?php echo e($booking->status == 'confirmed' ? 'selected' : ''); ?>>Confirmed</option>
-                                                        <option value="pending_verification" <?php echo e($booking->status == 'pending_verification' ? 'selected' : ''); ?>>Pending Verification</option>
-                                                        <option value="cancelled" <?php echo e($booking->status == 'cancelled' ? 'selected' : ''); ?>>Cancelled</option>
-                                                        <option value="completed" <?php echo e($booking->status == 'completed' ? 'selected' : ''); ?>>Completed</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>

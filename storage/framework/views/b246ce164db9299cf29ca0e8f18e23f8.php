@@ -3,19 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ADD: CSRF Token Meta Tag -->
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title><?php echo $__env->yieldContent('title', 'Admin Dashboard'); ?> - Car Rental System</title>
     
+    <!-- ADD: Bootstrap CSS (consistent version) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- CSS Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
     
     <!-- Custom Admin CSS -->
-    
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
+    
+    <!-- ADD: Custom CSS from main app -->
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/styles.css')); ?>">
+    
+    <!-- ADD: Head section for additional CSS -->
+    <?php echo $__env->yieldContent('head'); ?>
+    
     <!-- Additional CSS -->
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
@@ -108,9 +116,6 @@
                 <?php endif; ?>
             </div>
 
-                <!-- Add this at the top of your sidebar for debugging -->
-            
-
             <div class="sidebar-menu">
                 <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
                     <i class="fas fa-tachometer-alt"></i>
@@ -163,22 +168,22 @@
                     <div class="tooltip">Payments</div>
                 </a>
 
-                <a href="#" class="sidebar-menu-item">
+                <!-- <a href="#" class="sidebar-menu-item">
                     <i class="fas fa-edit"></i>
                     <span>Update Registration</span>
                     <div class="tooltip">Update Registration</div>
-                </a>
-
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Car Information</span>
-                    <div class="tooltip">Car Information</div>
-                </a>
+                </a> -->
 
                 <a href="<?php echo e(route('admin.booked-car')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.booked-car') ? 'active' : ''); ?>">
                     <i class="fas fa-calendar-check"></i>
                     <span>Booked Cars</span>
                     <div class="tooltip">Booked Cars</div>
+                </a>
+
+                <a href="<?php echo e(route('admin.reports.index')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.reports.index') ? 'active' : ''); ?>">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Report</span>
+                    <div class="tooltip">Report</div>
                 </a>
 
                 <!-- Dark Mode Toggle -->
@@ -283,12 +288,29 @@
         </div>
     </div>
 
-    <!-- Enhanced Admin Footer -->
-    
-
     <!-- JavaScript Dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ADD: Consistent Bootstrap version -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ADD: jQuery (if needed for AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- ADD: AJAX setup for CSRF token -->
+    <script>
+        // Only setup AJAX if jQuery is available
+        if (typeof $ !== 'undefined') {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        }
+    </script>
+    
     <script src="<?php echo e(asset('assets/js/admin-dashboard.js')); ?>"></script>
+    
+    <!-- ADD: Page Specific Scripts section -->
+    <?php echo $__env->yieldContent('scripts'); ?>
     
     <!-- Additional JavaScript -->
     <?php echo $__env->yieldPushContent('scripts'); ?>

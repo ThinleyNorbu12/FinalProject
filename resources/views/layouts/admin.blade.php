@@ -170,22 +170,22 @@
                     <div class="tooltip">Payments</div>
                 </a>
 
-                <a href="#" class="sidebar-menu-item">
+                <!-- <a href="#" class="sidebar-menu-item">
                     <i class="fas fa-edit"></i>
                     <span>Update Registration</span>
                     <div class="tooltip">Update Registration</div>
-                </a>
-
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Car Information</span>
-                    <div class="tooltip">Car Information</div>
-                </a>
+                </a> -->
 
                 <a href="{{ route('admin.booked-car') }}" class="sidebar-menu-item {{ request()->routeIs('admin.booked-car') ? 'active' : '' }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>Booked Cars</span>
                     <div class="tooltip">Booked Cars</div>
+                </a>
+
+                <a href="{{ route('admin.reports.index') }}" class="sidebar-menu-item {{ request()->routeIs('admin.reports.index') ? 'active' : '' }}">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Report</span>
+                    <div class="tooltip">Report</div>
                 </a>
 
                 <!-- Dark Mode Toggle -->

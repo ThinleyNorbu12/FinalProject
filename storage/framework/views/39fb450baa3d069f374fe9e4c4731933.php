@@ -1,14 +1,8 @@
-@extends('layouts.carowner')
 
-@section('title', 'Edit Inspection Date & Time')
 
-@section('breadcrumbs')
-    <li class="breadcrumb-item">
-        <a href="{{ route('carowner.car-inspection') }}">Inspection Requests</a>
-    </li>
-    <li class="breadcrumb-item active">Edit Date/Time</li>
-@endsection
-@section('content')
+<?php $__env->startSection('title', 'Edit Inspection Date & Time'); ?>
+
+<?php $__env->startSection('content'); ?>
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -20,18 +14,18 @@
                     </h4>
                 </div>
                 <div class="card-body">
-                    @if ($errors->any())
+                    <?php if($errors->any()): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-circle me-2"></i>
                             <strong>Please fix the following errors:</strong>
                             <ul class="mb-0 mt-2">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
+                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li><?php echo e($error); ?></li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </ul>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
                     <!-- Current Inspection Details -->
                     <div class="row mb-4">
@@ -42,10 +36,12 @@
                                 <div class="mt-2">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <strong>Date:</strong> {{ \Carbon\Carbon::parse($request->inspection_date)->format('F j, Y') }}
+                                            <strong>Date:</strong> <?php echo e(\Carbon\Carbon::parse($request->inspection_date)->format('F j, Y')); ?>
+
                                         </div>
                                         <div class="col-md-6">
-                                            <strong>Time:</strong> {{ $request->inspection_time }}
+                                            <strong>Time:</strong> <?php echo e($request->inspection_time); ?>
+
                                         </div>
                                     </div>
                                 </div>
@@ -53,8 +49,8 @@
                         </div>
                     </div>
 
-                    <form method="POST" action="{{ route('inspection.updatedatetime', $request->id) }}" id="inspectionForm">
-                        @csrf
+                    <form method="POST" action="<?php echo e(route('inspection.updatedatetime', $request->id)); ?>" id="inspectionForm">
+                        <?php echo csrf_field(); ?>
                         
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -65,13 +61,27 @@
                                 <input type="date" 
                                        name="inspection_date" 
                                        id="inspection_date" 
-                                       class="form-control @error('inspection_date') is-invalid @enderror" 
-                                       value="{{ $request->inspection_date }}" 
-                                       min="{{ date('Y-m-d') }}"
+                                       class="form-control <?php $__errorArgs = ['inspection_date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                       value="<?php echo e($request->inspection_date); ?>" 
+                                       min="<?php echo e(date('Y-m-d')); ?>"
                                        required>
-                                @error('inspection_date')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php $__errorArgs = ['inspection_date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 <div class="form-text">
                                     <i class="fas fa-info-circle me-1"></i>
                                     Please select a date from today onwards
@@ -85,18 +95,33 @@
                                 </label>
                                 <select name="inspection_time" 
                                         id="inspection_time" 
-                                        class="form-select @error('inspection_time') is-invalid @enderror" 
+                                        class="form-select <?php $__errorArgs = ['inspection_time'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
                                         required>
                                     <option selected disabled>Select Time Slot</option>
-                                    @foreach($timeSlots as $slot)
-                                        <option value="{{ $slot }}" {{ $slot == $request->inspection_time ? 'selected' : '' }}>
-                                            {{ $slot }}
+                                    <?php $__currentLoopData = $timeSlots; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $slot): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($slot); ?>" <?php echo e($slot == $request->inspection_time ? 'selected' : ''); ?>>
+                                            <?php echo e($slot); ?>
+
                                         </option>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
-                                @error('inspection_time')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php $__errorArgs = ['inspection_time'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 <div class="form-text">
                                     <i class="fas fa-info-circle me-1"></i>
                                     Available time slots will update based on selected date
@@ -133,9 +158,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     .card {
         box-shadow: 0 0 20px rgba(0,0,0,0.1);
@@ -213,9 +238,9 @@
         border-left: 4px solid #dc3545;
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 $(document).ready(function() {
     const dateInput = $('#inspection_date');
@@ -226,7 +251,7 @@ $(document).ready(function() {
     // Handle date change
     dateInput.on('change', function() {
         const date = $(this).val();
-        const id = {{ $request->id }};
+        const id = <?php echo e($request->id); ?>;
         
         if (!date) return;
         
@@ -238,7 +263,7 @@ $(document).ready(function() {
         timeSelect.empty().append('<option disabled selected>Loading...</option>');
         
         $.ajax({
-            url: '{{ route('inspection.available-slots') }}',
+            url: '<?php echo e(route('inspection.available-slots')); ?>',
             method: 'GET',
             data: { 
                 date: date, 
@@ -336,4 +361,5 @@ $(document).ready(function() {
     }
 });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.carowner', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/CarOwner/inspection_requests/editdatetime.blade.php ENDPATH**/ ?>

@@ -773,22 +773,7 @@
                                 </div>
                             </div>
                             
-                            <div class="rental-info-row">
-                                <div class="rental-info-label">Remaining Time:</div>
-                                <div>
-                                    <?php
-                                        $now = \Carbon\Carbon::now();
-                                        $endDate = \Carbon\Carbon::parse($currentRental->dropoff_datetime);
-                                        $diff = $now->diff($endDate);
-                                        
-                                        if ($diff->days > 0) {
-                                            echo $diff->days . ' days, ' . $diff->h . ' hours';
-                                        } else {
-                                            echo $diff->h . ' hours, ' . $diff->i . ' minutes';
-                                        }
-                                    ?>
-                                </div>
-                            </div>
+                            
                             
                             
                         </div>

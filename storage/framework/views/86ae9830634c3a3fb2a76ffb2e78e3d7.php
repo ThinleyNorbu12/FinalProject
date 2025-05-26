@@ -534,7 +534,11 @@
                                 </div>
                                 <div class="reservation-body">
                                     <div class="car-image-container">
-                                        <img src="<?php echo e($booking->car->image_path ?? '/api/placeholder/180/120'); ?>" alt="<?php echo e($booking->car->make); ?> <?php echo e($booking->car->model); ?>">
+                                        <?php if($booking->car->car_image): ?>
+                                            <img src="<?php echo e(asset($booking->car->car_image)); ?>" alt="<?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?>" onerror="this.src='/api/placeholder/300/200';">
+                                        <?php else: ?>
+                                            <img src="/api/placeholder/300/200" alt="<?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?>">
+                                        <?php endif; ?>
                                     </div>
                                     <div class="reservation-details">
                                         <div class="car-name"><?php echo e($booking->car->make); ?> <?php echo e($booking->car->model); ?> (<?php echo e($booking->car->year); ?>)</div>
@@ -546,11 +550,29 @@
                                             <div class="detail-label">Return Date:</div>
                                             <div class="detail-value"><?php echo e(\Carbon\Carbon::parse($booking->dropoff_datetime)->format('M d, Y - h:i A')); ?></div>
                                         </div>
+                                        <?php
+                                            $pickup = \Carbon\Carbon::parse($booking->pickup_datetime);
+                                            $dropoff = \Carbon\Carbon::parse($booking->dropoff_datetime);
+                                            $diff = $pickup->diff($dropoff);
+
+                                            $durationParts = [];
+
+                                            if ($diff->d > 0) {
+                                                $durationParts[] = $diff->d . ' day' . ($diff->d > 1 ? 's' : '');
+                                            }
+                                            if ($diff->h > 0) {
+                                                $durationParts[] = $diff->h . ' hour' . ($diff->h > 1 ? 's' : '');
+                                            }
+                                            if ($diff->i > 0) {
+                                                $durationParts[] = $diff->i . ' minute' . ($diff->i > 1 ? 's' : '');
+                                            }
+
+                                            $formattedDuration = implode(', ', $durationParts);
+                                        ?>
+
                                         <div class="detail-row">
                                             <div class="detail-label">Duration:</div>
-                                            <div class="detail-value">
-                                                <?php echo e(\Carbon\Carbon::parse($booking->pickup_datetime)->diffInDays(\Carbon\Carbon::parse($booking->dropoff_datetime))); ?> days
-                                            </div>
+                                            <div class="detail-value"><?php echo e($formattedDuration); ?></div>
                                         </div>
                                         <div class="detail-row">
                                             <div class="detail-label">Pickup Location:</div>
@@ -601,7 +623,11 @@
                                 </div>
                                 <div class="reservation-body">
                                     <div class="car-image-container">
-                                        <img src="<?php echo e($booking->car->image_path ?? '/api/placeholder/180/120'); ?>" alt="<?php echo e($booking->car->make); ?> <?php echo e($booking->car->model); ?>">
+                                        <?php if($booking->car->car_image): ?>
+                                            <img src="<?php echo e(asset($booking->car->car_image)); ?>" alt="<?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?>" onerror="this.src='/api/placeholder/300/200';">
+                                        <?php else: ?>
+                                            <img src="/api/placeholder/300/200" alt="<?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?>">
+                                        <?php endif; ?>
                                     </div>
                                     <div class="reservation-details">
                                         <div class="car-name"><?php echo e($booking->car->make); ?> <?php echo e($booking->car->model); ?> (<?php echo e($booking->car->year); ?>)</div>

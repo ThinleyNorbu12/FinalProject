@@ -325,7 +325,7 @@ Route::middleware(['auth:admin'])->group(function () {
    Route::post('/admin/cars/delete-image', [CarController::class, 'deleteImage'])->name('cars.delete-image');
 });
 
-
+use App\Http\Controllers\ReportController;
 // profile
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
     
@@ -338,10 +338,13 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     // Optional: API endpoint for profile data
     Route::get('/profile/data', [CarAdminController::class, 'getProfileData'])->name('profile.data');
     
+    Route::get('/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/export', [App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');
+
 });
 
 
-
+    
 
 
 // customer web.php
