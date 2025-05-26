@@ -40,12 +40,12 @@
                         <span>Rent a Car</span>
                     </a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="{{ route('carowner.view.rented') }}">
                         <i class="fas fa-clipboard-list"></i>
                         <span>Registration Requests</span>
                     </a>
-                </li>
+                </li> --}}
                 <li>
                     <a href="{{ route('carowner.car-inspection') }}">
                         <i class="fas fa-search"></i>

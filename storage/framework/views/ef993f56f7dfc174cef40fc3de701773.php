@@ -3,28 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- ADD: CSRF Token Meta Tag -->
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-    <title><?php echo $__env->yieldContent('title', 'Admin Dashboard'); ?> - Car Rental System</title>
-    
-    <!-- ADD: Bootstrap CSS (consistent version) -->
+    <title><?php echo $__env->yieldContent('title', 'Car Owner Dashboard'); ?> - Car Rental System</title>
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- CSS Dependencies -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    
-    <!-- Custom Admin CSS -->
-    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
-    
-    <!-- ADD: Custom CSS from main app -->
-    <link rel="stylesheet" href="<?php echo e(asset('assets/css/styles.css')); ?>">
-    
-    <!-- ADD: Head section for additional CSS -->
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/carowner/carownersidebar.css')); ?>">
+
     <?php echo $__env->yieldContent('head'); ?>
-    
-    <!-- Additional CSS -->
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body>
@@ -64,8 +57,8 @@
                         <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar"
                              class="rounded-circle me-2" width="32" height="32">
                         <div class="header-profile-info d-none d-sm-block">
-                            <h4 class="mb-0"><?php echo e(Auth::guard('admin')->user()->name); ?></h4>
-                            <span>Administrator</span>
+                            <h4 class="mb-0"><?php echo e(Auth::guard('carowner')->user()->name); ?>!</h4>
+                            <span>Car Owner</span>
                         </div>
                     </a>
                     
@@ -81,14 +74,14 @@
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="fas fa-sign-out-alt me-2"></i> Logout
                             </a>
-                            <form id="logout-form" action="<?php echo e(route('admin.logout')); ?>" method="POST" class="d-none">
+                            <form id="logout-form" action="<?php echo e(route('carowner.logout')); ?>" method="POST" class="d-none">
                                 <?php echo csrf_field(); ?>
                             </form>
                         </li>
                     </ul>
                 </div>
             <?php else: ?>
-                <a href="<?php echo e(route('admin.login')); ?>" class="btn btn-primary">Login</a>
+                <a href="<?php echo e(route('carowner.login')); ?>" class="btn btn-primary">Login</a>
             <?php endif; ?>
         </div>
     </header>
@@ -105,19 +98,19 @@
             </div>
 
             <div class="admin-profile">
-                <?php if(Auth::guard('admin')->check()): ?>
+                <?php if(Auth::guard('carowner')->check()): ?>
                     <div class="profile-avatar">
                         <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
                     </div>
                     <div class="profile-info">
-                        <h3><?php echo e(Auth::guard('admin')->user()->name); ?></h3>
-                        <span>Administrator</span>
+                        <h3><?php echo e(Auth::guard('carowner')->user()->name); ?></h3>
+                        <span>Car Owner</span>
                     </div>
                 <?php endif; ?>
             </div>
 
             <div class="sidebar-menu">
-                <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
+                <a href="<?php echo e(route('carowner.dashboard')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -315,4 +308,5 @@
     <!-- Additional JavaScript -->
     <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
-</html><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/layouts/admin.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/layouts/carowner.blade.php ENDPATH**/ ?>

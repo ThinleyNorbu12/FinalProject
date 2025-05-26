@@ -248,7 +248,7 @@
         </div>
     </div>
 </div>
-
+@endsection
 <!-- Update Status Modal -->
 <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -284,4 +284,3 @@
         </div>
     </div>
 </div>
-@endsection

@@ -772,7 +772,7 @@
                                 </div>
                             </div>
                             
-                            <div class="rental-info-row">
+                            {{-- <div class="rental-info-row">
                                 <div class="rental-info-label">Remaining Time:</div>
                                 <div>
                                     @php
@@ -787,7 +787,7 @@
                                         }
                                     @endphp
                                 </div>
-                            </div>
+                            </div> --}}
                             
                             {{-- <div class="rental-actions">
                                 <button class="btn-extend" data-booking-id="{{ $currentRental->booking_id }}">Extend Rental</button>

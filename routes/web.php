@@ -226,7 +226,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // this is under >APPROVE/REJECT INSPECTED CARS<
     // Display the approval page (GET)
-    Route::get('/approve-inspected-cars', [CarAdminController::class, 'showInspectionApprovals'])->name('approve-inspected-cars');
+    // Route::get('/approve-inspected-cars', [CarAdminController::class, 'showInspectionApprovals'])->name('approve-inspected-cars');
     Route::get('/approve-inspected-cars', [CarAdminController::class, 'showInspectionApprovals']) ->name('approve-inspected-cars'); // ✅ Automatically becomes "car-admin.approve-inspected-cars"
     // Handle the approval or rejection form (POST)
     Route::post('/approve-inspected-cars', [CarAdminController::class, 'processInspectionApproval'])->name('inspection-approval');

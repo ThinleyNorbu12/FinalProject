@@ -3,19 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ADD: CSRF Token Meta Tag -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Dashboard') - Car Rental System</title>
     
+    <!-- ADD: Bootstrap CSS (consistent version) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- CSS Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
     
     <!-- Custom Admin CSS -->
-    
     <link rel="stylesheet" href="{{ asset('assets/css/admin/adminsidebar.css') }}">
+    
+    <!-- ADD: Custom CSS from main app -->
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    
+    <!-- ADD: Head section for additional CSS -->
+    @yield('head')
+    
     <!-- Additional CSS -->
     @stack('styles')
 </head>
@@ -109,14 +117,6 @@
                     </div>
                 @endif
             </div>
-
-                <!-- Add this at the top of your sidebar for debugging -->
-            {{-- <div style="background: #f8f9fa; padding: 10px; margin: 10px; border: 1px solid #ddd; font-size: 12px;">
-                <strong>Debug Info:</strong><br>
-                Current Route: {{ Route::currentRouteName() }}<br>
-                Current URL: {{ request()->url() }}<br>
-                Route Pattern: {{ request()->route()->uri ?? 'N/A' }}
-            </div> --}}
 
             <div class="sidebar-menu">
                 <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
@@ -286,28 +286,29 @@
         </div>
     </div>
 
-    <!-- Enhanced Admin Footer -->
-    {{-- <footer class="admin-footer" id="adminFooter">
-        <div class="footer-left">
-            <div class="footer-copy">
-                <p class="mb-0">&copy; {{ date('Y') }} Car Rental System. All rights reserved.</p>
-            </div>
-        </div>
-        
-        <div class="footer-right">
-            <div class="footer-status">
-                <span class="status-dot"></span>
-                System Online
-            </div>
-            <div class="footer-copy">
-                Version 2.1.0
-            </div>
-        </div>
-    </footer> --}}
-
     <!-- JavaScript Dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ADD: Consistent Bootstrap version -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ADD: jQuery (if needed for AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- ADD: AJAX setup for CSRF token -->
+    <script>
+        // Only setup AJAX if jQuery is available
+        if (typeof $ !== 'undefined') {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        }
+    </script>
+    
     <script src="{{ asset('assets/js/admin-dashboard.js') }}"></script>
+    
+    <!-- ADD: Page Specific Scripts section -->
+    @yield('scripts')
     
     <!-- Additional JavaScript -->
     @stack('scripts')

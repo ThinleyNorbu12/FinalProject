@@ -335,7 +335,7 @@
         </div>
     </div>
 </div>
-
+@endsection
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteImageModal" tabindex="-1" role="dialog" aria-labelledby="deleteImageModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -366,7 +366,7 @@
         </div>
 </div>
    
-@endsection
+
 
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

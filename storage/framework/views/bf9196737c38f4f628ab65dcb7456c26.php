@@ -40,12 +40,7 @@
                         <span>Rent a Car</span>
                     </a>
                 </li>
-                <li>
-                    <a href="<?php echo e(route('carowner.view.rented')); ?>">
-                        <i class="fas fa-clipboard-list"></i>
-                        <span>Registration Requests</span>
-                    </a>
-                </li>
+                
                 <li>
                     <a href="<?php echo e(route('carowner.car-inspection')); ?>">
                         <i class="fas fa-search"></i>

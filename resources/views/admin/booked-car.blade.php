@@ -187,13 +187,13 @@
                                 <a href="{{ route('admin.booked-car.show', $booking->id) }}" class="btn btn-sm btn-info" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#statusModal{{ $booking->id }}" title="Update Status">
+                                {{-- <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#statusModal{{ $booking->id }}" title="Update Status">
                                     <i class="fas fa-edit"></i>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <!-- Status Update Modal -->
-                            <div class="modal fade" id="statusModal{{ $booking->id }}" tabindex="-1" aria-labelledby="statusModalLabel{{ $booking->id }}" aria-hidden="true">
+                            {{-- <div class="modal fade" id="statusModal{{ $booking->id }}" tabindex="-1" aria-labelledby="statusModalLabel{{ $booking->id }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -222,7 +222,7 @@
                                         </form>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </td>
                     </tr>
                     @empty

@@ -248,7 +248,7 @@
         </div>
     </div>
 </div>
-
+<?php $__env->stopSection(); ?>
 <!-- Update Status Modal -->
 <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -284,5 +284,5 @@
         </div>
     </div>
 </div>
-<?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/admin/booking-details.blade.php ENDPATH**/ ?>

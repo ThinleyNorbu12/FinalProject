@@ -14,16 +14,34 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+
     @yield('head')
 </head>
+<body class="bg-light d-flex flex-column min-vh-100">
 
+    
+
+    <!-- Main Content Section -->
+    <main class="flex-grow-1 py-4">
+        <div class="container">
+            @yield('content')
+        </div>
+    </main>
+
+    
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <body>
-    <!-- Content -->
-    <div class="content">
-        @yield('content')
-    </div>
 
+    <!-- AJAX setup for CSRF token -->
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+
+    <!-- Page Specific Scripts -->
+    @yield('scripts')
 </body>
-</html> 
+</html>

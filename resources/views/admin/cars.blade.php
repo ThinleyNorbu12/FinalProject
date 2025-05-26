@@ -98,7 +98,6 @@
             <table class="data-table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Image</th>
                     <th>Car Name</th>
                     <th>Brand</th>
@@ -147,7 +146,7 @@
                 }
                 @endphp
                 <tr>
-                    <td>{{ $car->id }}</td>
+  
                     <td><img src="{{ $imagePath }}" alt="{{ $carName }}" class="car-thumbnail"></td>
                     <td>{{ $carName }}</td>
                     <td>{{ $car->maker }}</td>
@@ -188,7 +187,7 @@
         </div>
     </div>
 </div>
-
+@endsection
 <!-- Add Car Modal -->
 <div class="modal fade" id="addCarModal" tabindex="-1" role="dialog" aria-labelledby="addCarModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -481,7 +480,7 @@
         </div>
     </div>
 </div>
-@endsection
+
 
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
