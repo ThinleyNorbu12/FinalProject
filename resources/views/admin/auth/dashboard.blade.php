@@ -9,10 +9,11 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/css/admin/dashboard.css') }}">
 @endpush
+
 @section('content')
 <!-- DYNAMIC CONTENT LOADER -->
 <div id="dynamic-content">
-    <!-- Default Dashboard Cards -->
+    <!-- Dashboard Cards with Real Data -->
     <div class="dashboard-cards">
         <div class="card">
             <div class="card-inner">
@@ -21,9 +22,10 @@
                 </div>
                 <div class="card-content">
                     <h3>New Registrations</h3>
-                    <p class="count">24</p>
-                    <p class="trend up">
-                        <i class="fas fa-arrow-up"></i> 12% from last month
+                    <p class="count">{{ $stats['new_registrations']['count'] }}</p>
+                    <p class="trend {{ $stats['new_registrations']['trend']['direction'] }}">
+                        <i class="fas fa-arrow-{{ $stats['new_registrations']['trend']['direction'] }}"></i> 
+                        {{ $stats['new_registrations']['trend']['percentage'] }}% from last month
                     </p>
                 </div>
             </div>
@@ -36,9 +38,10 @@
                 </div>
                 <div class="card-content">
                     <h3>Pending Inspections</h3>
-                    <p class="count">18</p>
-                    <p class="trend down">
-                        <i class="fas fa-arrow-down"></i> 5% from last month
+                    <p class="count">{{ $stats['pending_inspections']['count'] }}</p>
+                    <p class="trend {{ $stats['pending_inspections']['trend']['direction'] }}">
+                        <i class="fas fa-arrow-{{ $stats['pending_inspections']['trend']['direction'] }}"></i> 
+                        {{ $stats['pending_inspections']['trend']['percentage'] }}% from last month
                     </p>
                 </div>
             </div>
@@ -51,9 +54,10 @@
                 </div>
                 <div class="card-content">
                     <h3>Total Revenue</h3>
-                    <p class="count">$15,890</p>
-                    <p class="trend up">
-                        <i class="fas fa-arrow-up"></i> 8% from last month
+                    <p class="count">BTN {{ $stats['total_revenue']['amount'] }}</p>
+                    <p class="trend {{ $stats['total_revenue']['trend']['direction'] }}">
+                        <i class="fas fa-arrow-{{ $stats['total_revenue']['trend']['direction'] }}"></i> 
+                        {{ $stats['total_revenue']['trend']['percentage'] }}% from last month
                     </p>
                 </div>
             </div>
@@ -66,9 +70,10 @@
                 </div>
                 <div class="card-content">
                     <h3>Booked Cars</h3>
-                    <p class="count">42</p>
-                    <p class="trend up">
-                        <i class="fas fa-arrow-up"></i> 15% from last month
+                    <p class="count">{{ $stats['booked_cars']['count'] }}</p>
+                    <p class="trend {{ $stats['booked_cars']['trend']['direction'] }}">
+                        <i class="fas fa-arrow-{{ $stats['booked_cars']['trend']['direction'] }}"></i> 
+                        {{ $stats['booked_cars']['trend']['percentage'] }}% from last month
                     </p>
                 </div>
             </div>
@@ -100,72 +105,48 @@
 
     <!-- Recent Activity & Stats Panel -->
     <div class="dashboard-panels">
-        <!-- Recent Activity -->
+        <!-- Recent Activity with Real Data -->
         <div class="panel recent-activity">
             <div class="panel-header">
                 <h2>Recent Activity</h2>
-                <a href="#" class="view-all">View All</a>
+                <!-- <a href="#" class="view-all">View All</a> -->
             </div>
             <div class="panel-content">
                 <ul class="activity-list">
-                    <li>
-                        <div class="activity-icon bg-success">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div class="activity-details">
-                            <p>Car inspection approved for Honda Civic</p>
-                            <span>10 minutes ago</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="activity-icon bg-primary">
-                            <i class="fas fa-car"></i>
-                        </div>
-                        <div class="activity-details">
-                            <p>New registration request from John Doe</p>
-                            <span>1 hour ago</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="activity-icon bg-warning">
-                            <i class="fas fa-calendar"></i>
-                        </div>
-                        <div class="activity-details">
-                            <p>Inspection scheduled for Toyota Corolla</p>
-                            <span>3 hours ago</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="activity-icon bg-danger">
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <div class="activity-details">
-                            <p>Car inspection rejected for Ford Focus</p>
-                            <span>Yesterday</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="activity-icon bg-info">
-                            <i class="fas fa-credit-card"></i>
-                        </div>
-                        <div class="activity-details">
-                            <p>Payment received for Tesla Model 3</p>
-                            <span>Yesterday</span>
-                        </div>
-                    </li>
+                    @forelse($recentActivities as $activity)
+                        <li>
+                            <div class="activity-icon {{ $activity['color'] }}">
+                                <i class="{{ $activity['icon'] }}"></i>
+                            </div>
+                            <div class="activity-details">
+                                <p>{{ $activity['message'] }}</p>
+                                <span>{{ $activity['time'] }}</span>
+                            </div>
+                        </li>
+                    @empty
+                        <li>
+                            <div class="activity-icon bg-secondary">
+                                <i class="fas fa-info"></i>
+                            </div>
+                            <div class="activity-details">
+                                <p>No recent activity</p>
+                                <span>Start managing your car rental business!</span>
+                            </div>
+                        </li>
+                    @endforelse
                 </ul>
             </div>
         </div>
 
-        <!-- Statistics -->
+        <!-- Statistics with Real Data -->
         <div class="panel statistics">
             <div class="panel-header">
                 <h2>Monthly Statistics</h2>
                 <div class="panel-actions">
                     <select id="month-selector">
-                        <option value="may">May 2025</option>
-                        <option value="april">April 2025</option>
-                        <option value="march">March 2025</option>
+                        <option value="may">{{ Carbon\Carbon::now()->format('F Y') }}</option>
+                        <option value="april">{{ Carbon\Carbon::now()->subMonth()->format('F Y') }}</option>
+                        <option value="march">{{ Carbon\Carbon::now()->subMonths(2)->format('F Y') }}</option>
                     </select>
                 </div>
             </div>
@@ -174,34 +155,54 @@
                     <div class="stat-item">
                         <h4>New Registrations</h4>
                         <div class="stat-progress">
-                            <div class="progress-bar" style="width: 75%"></div>
-                            <span>75%</span>
+                            <div class="progress-bar" style="width: {{ $monthlyStats['registrations']['percentage'] }}%"></div>
+                            <span>{{ $monthlyStats['registrations']['percentage'] }}%</span>
                         </div>
+                        <small>{{ $monthlyStats['registrations']['actual'] }}/{{ $monthlyStats['registrations']['target'] }} target</small>
                     </div>
                     <div class="stat-item">
                         <h4>Completed Inspections</h4>
                         <div class="stat-progress">
-                            <div class="progress-bar" style="width: 60%"></div>
-                            <span>60%</span>
+                            <div class="progress-bar" style="width: {{ $monthlyStats['inspections']['percentage'] }}%"></div>
+                            <span>{{ $monthlyStats['inspections']['percentage'] }}%</span>
                         </div>
+                        <small>{{ $monthlyStats['inspections']['actual'] }}/{{ $monthlyStats['inspections']['target'] }} target</small>
                     </div>
                     <div class="stat-item">
                         <h4>Approved Cars</h4>
                         <div class="stat-progress">
-                            <div class="progress-bar" style="width: 85%"></div>
-                            <span>85%</span>
+                            <div class="progress-bar" style="width: {{ $monthlyStats['approvals']['percentage'] }}%"></div>
+                            <span>{{ $monthlyStats['approvals']['percentage'] }}%</span>
                         </div>
+                        <small>{{ $monthlyStats['approvals']['actual'] }}/{{ $monthlyStats['approvals']['target'] }} target</small>
                     </div>
                     <div class="stat-item">
                         <h4>Total Revenue</h4>
                         <div class="stat-progress">
-                            <div class="progress-bar" style="width: 45%"></div>
-                            <span>45%</span>
+                            <div class="progress-bar" style="width: {{ $monthlyStats['revenue']['percentage'] }}%"></div>
+                            <span>{{ $monthlyStats['revenue']['percentage'] }}%</span>
                         </div>
+                        <small>BTN {{ number_format($monthlyStats['revenue']['actual'], 2) }}/BTN {{ number_format($monthlyStats['revenue']['target'], 2) }} target</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    // Auto-refresh dashboard data every 5 minutes
+    setInterval(function() {
+        location.reload();
+    }, 300000);
+    
+    // Month selector functionality (you can implement AJAX here)
+    document.getElementById('month-selector').addEventListener('change', function() {
+        // Implement month filtering functionality
+        console.log('Month changed to:', this.value);
+    });
+</script>
+@endpush
+
 @endsection

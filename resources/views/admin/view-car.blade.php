@@ -74,7 +74,7 @@
 
                 <div class="info-card">
                     <div class="info-label">Price per Day</div>
-                    <p class="info-value price-highlight">${{ number_format($car->price, 2) }}</p>
+                    <p class="info-value price-highlight">BTN {{ number_format($car->price, 2) }}</p>
                 </div>
 
                 <div class="info-card">

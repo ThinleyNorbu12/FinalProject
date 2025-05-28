@@ -231,13 +231,10 @@
         
         <div class="header-logo">
             <i class="fas fa-car"></i>
-            <span>CarRental</span>
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
         </div>
         
-        <div class="header-search">
-            <input type="text" placeholder="Search for cars...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
+
         
         <div class="header-user">
             @if(Auth::guard('customer')->check())
@@ -320,24 +317,7 @@
                     <span>Fuel Policy</span>
                 </a>
                 
-                <div class="sidebar-divider"></div>
                 
-                <div class="sidebar-heading">Help</div>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-headset"></i>
-                    <span>Support</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span>FAQ</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>Report Issue</span>
-                </a>
             </div>
         </div>
         
@@ -471,7 +451,7 @@
                                     <span class="car-feature"><i class="fas fa-suitcase"></i> {{ $car->large_bags_capacity ?? '0' }} Large / {{ $car->small_bags_capacity ?? '0' }} Small</span>
                                 </div>
                                 
-                                <div class="car-price">${{ number_format($car->price, 2) }}/day</div>
+                                <div class="car-price">BTN {{ number_format($car->price, 2) }}/day</div>
                                 
                                 <div class="car-actions">
                                     <a href="{{ route('customer.car-details', $car->id) }}" class="btn-view-details">View Details</a>

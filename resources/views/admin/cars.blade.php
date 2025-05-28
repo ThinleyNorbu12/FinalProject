@@ -152,7 +152,7 @@
                     <td>{{ $car->maker }}</td>
                     <td>{{ $car->model }}</td>
                     <td>{{ $car->registration_no }}</td>
-                    <td>${{ $car->price }}/day</td>
+                    <td>BTN {{ $car->price }}/day</td>
                     <td><span class="status-badge {{ $statusClass }}">{{ $car->status }}</span></td>
                     <td class="actions">
                         <a href="{{ route('cars.show', $car->id) }}" class="action-btn view" title="View Details">

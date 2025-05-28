@@ -26,25 +26,13 @@
         <button class="mobile-menu-toggle d-md-none" id="mobileMenuToggle">
             <i class="fas fa-bars"></i>
         </button>
-        <a href="<?php echo e(route('admin.dashboard')); ?>" class="header-brand d-none d-md-flex">
-            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-            <span>Car Rental System</span>
+         <a href="<?php echo e(route('carowner.dashboard')); ?>" class="header-brand d-none d-md-flex">
+            <img src="<?php echo e(asset('assets/images/logo1.png')); ?>" alt="Logo" style="height: 80px !important;">
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
         </a>
-        <div class="header-search d-none d-lg-block">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search anything...">
-        </div>
     </div>
 
     <div class="header-actions">
-        <div class="header-action-item" title="Notifications">
-            <i class="fas fa-bell"></i>
-            <span class="badge">3</span>
-        </div>
-        <div class="header-action-item" title="Messages">
-            <i class="fas fa-envelope"></i>
-            <span class="badge">5</span>
-        </div>
 
         <?php if(Auth::guard('carowner')->check()): ?>
             <div class="header-profile dropdown">

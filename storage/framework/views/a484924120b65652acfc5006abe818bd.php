@@ -9,7 +9,7 @@
 <?php $__env->startSection('page-header'); ?>
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="page-title">Rescheduled Inspection Requests</h1>
+            <h1 class="page-title">Inspection Requests</h1>
             <p class="page-subtitle">Manage and confirm rescheduled inspection appointments</p>
         </div>
     </div>
@@ -35,8 +35,7 @@
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Location</th>
-                                <th>Response</th>
-                                <th>Status</th>
+                                <th>CarOwner Response</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -96,13 +95,7 @@
                                             </span>
                                         <?php endif; ?>
                                     </td>                           
-                                    <td>
-                                        <span class="badge bg-<?php echo e($request->status === 'canceled' ? 'danger' : 'primary'); ?>">
-                                            <i class="fas fa-<?php echo e($request->status === 'canceled' ? 'times-circle' : 'info-circle'); ?> me-1"></i>
-                                            <?php echo e(ucfirst($request->status)); ?>
-
-                                        </span>
-                                    </td>
+                                    
                                     <td>
                                         <?php if($request->status !== 'canceled'): ?>
                                             <?php if(!$request->is_confirmed_by_admin): ?>
@@ -122,7 +115,7 @@
                                                 <button class="btn btn-secondary btn-sm" 
                                                         disabled
                                                         title="Already Confirmed">
-                                                    <i class="bi bi-check2-circle me-1"></i>Done
+                                                    <i class="bi bi-check2-circle me-1"></i>Booked
                                                 </button>
                                             <?php endif; ?>
                                         <?php else: ?>

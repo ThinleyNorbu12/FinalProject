@@ -133,7 +133,7 @@
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Daily Rate:</span>
-                        <span class="detail-value">${{ number_format($car->price, 2) }}</span>
+                        <span class="detail-value">BTN {{ number_format($car->price, 2) }}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Status:</span>

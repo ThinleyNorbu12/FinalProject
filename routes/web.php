@@ -175,7 +175,31 @@ use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\Auth\AdminRegisterController;
 use App\Http\Controllers\CarAdminController;
 use App\Http\Controllers\UserVerificationController;
+use App\Http\Controllers\AdminDashboardController;
 // Admin Routes
+// Route::prefix('admin')->name('admin.')->group(function () {
+
+//     // Admin Login Routes
+//     Route::get('login', [AdminLoginController::class, 'showLoginForm'])->name('login');
+//     Route::post('login', [AdminLoginController::class, 'login']);
+
+//     // Admin Register & Set Password Routes
+//     Route::get('register', [AdminRegisterController::class, 'showRegisterForm'])->name('register');
+//     Route::post('register', [AdminRegisterController::class, 'register']);
+//     Route::get('set-password/{token}', [AdminRegisterController::class, 'showSetPasswordForm'])->name('set-password');
+//     Route::post('set-password/{token}', [AdminRegisterController::class, 'setPassword'])->name('set-password.submit');
+
+//     // Admin Dashboard (Protected by Admin Middleware)
+//     Route::get('dashboard', function () {
+//         return view('admin.auth.dashboard');
+//     })->middleware('auth:admin')->name('dashboard');
+    
+//     // Optional Admin Logout Route
+//     Route::post('logout', function () {
+//         Auth::guard('admin')->logout();
+//         return redirect()->route('admin.login');
+//     })->name('logout');
+// });
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Admin Login Routes
@@ -188,10 +212,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('set-password/{token}', [AdminRegisterController::class, 'showSetPasswordForm'])->name('set-password');
     Route::post('set-password/{token}', [AdminRegisterController::class, 'setPassword'])->name('set-password.submit');
 
-    // Admin Dashboard (Protected by Admin Middleware)
-    Route::get('dashboard', function () {
-        return view('admin.auth.dashboard');
-    })->middleware('auth:admin')->name('dashboard');
+    // Admin Dashboard (Protected by Admin Middleware) - Updated to use controller
+    Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])
+        ->middleware('auth:admin')
+        ->name('dashboard');
     
     // Optional Admin Logout Route
     Route::post('logout', function () {

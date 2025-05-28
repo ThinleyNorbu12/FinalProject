@@ -76,18 +76,153 @@ class CarOwnerController extends Controller
     //     return view('CarOwner.dashboard', compact('carOwner'));
     // }
 
-    public function dashboard()
-    {
-        $carOwnerId = auth('carowner')->id();
+    // public function dashboard()
+    // {
+    //     $carOwnerId = auth('carowner')->id();
 
-        $pendingInspectionCount = DB::table('inspection_requests')
-            ->join('car_details_tbl', 'inspection_requests.car_id', '=', 'car_details_tbl.id')
-            ->where('car_details_tbl.car_owner_id', $carOwnerId)
-            ->where('inspection_requests.status', 'pending')
-            ->count();
+    //     $pendingInspectionCount = DB::table('inspection_requests')
+    //         ->join('car_details_tbl', 'inspection_requests.car_id', '=', 'car_details_tbl.id')
+    //         ->where('car_details_tbl.car_owner_id', $carOwnerId)
+    //         ->where('inspection_requests.status', 'pending')
+    //         ->count();
 
-        return view('CarOwner.dashboard', compact('pendingInspectionCount'));
-    }
+    //     return view('CarOwner.dashboard', compact('pendingInspectionCount'));
+    // }
+ public function dashboard()
+{
+    $carOwnerId = auth('carowner')->id();
+
+    // Get total cars count for this car owner
+    $totalCarsCount = DB::table('car_details_tbl')
+        ->where('car_owner_id', $carOwnerId)
+        ->count();
+
+    // Get approved cars count (cars with approved inspection decisions)
+    $approvedCarsCount = DB::table('car_details_tbl')
+        ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
+        ->join('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
+        ->where('car_details_tbl.car_owner_id', $carOwnerId)
+        ->where('inspection_decisions.decision', 'approved')
+        ->count();
+
+    // Get rejected cars count (cars with rejected inspection decisions)
+    $rejectedCarsCount = DB::table('car_details_tbl')
+        ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
+        ->join('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
+        ->where('car_details_tbl.car_owner_id', $carOwnerId)
+        ->where('inspection_decisions.decision', 'rejected')
+        ->count();
+
+    // Get pending cars count (cars that have inspection requests but no decisions yet)
+    $pendingCarsCount = DB::table('car_details_tbl')
+        ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
+        ->leftJoin('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
+        ->where('car_details_tbl.car_owner_id', $carOwnerId)
+        ->whereNull('inspection_decisions.id') // No decision made yet
+        ->count();
+
+    // Get recent activities (last 10 activities)
+    $recentActivities = collect();
+    
+    // Get recent approvals
+    $recentApprovals = DB::table('car_details_tbl')
+        ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
+        ->join('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
+        ->where('car_details_tbl.car_owner_id', $carOwnerId)
+        ->where('inspection_decisions.decision', 'approved')
+        ->select(
+            'car_details_tbl.maker',
+            'car_details_tbl.model',
+            'inspection_decisions.created_at',
+            DB::raw("'approved' as activity_type")
+        )
+        ->get();
+    
+    // Get recent rejections
+    $recentRejections = DB::table('car_details_tbl')
+        ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
+        ->join('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
+        ->where('car_details_tbl.car_owner_id', $carOwnerId)
+        ->where('inspection_decisions.decision', 'rejected')
+        ->select(
+            'car_details_tbl.maker',
+            'car_details_tbl.model',
+            'inspection_decisions.created_at',
+            DB::raw("'rejected' as activity_type")
+        )
+        ->get();
+    
+    // Get recent car registrations
+    $recentRegistrations = DB::table('car_details_tbl')
+        ->where('car_owner_id', $carOwnerId)
+        ->select(
+            'maker',
+            'model',
+            'created_at',
+            DB::raw("'registered' as activity_type")
+        )
+        ->get();
+    
+    // Combine all activities and convert created_at to Carbon instances
+    $recentActivities = $recentApprovals
+        ->concat($recentRejections)
+        ->concat($recentRegistrations)
+        ->map(function ($activity) {
+            $activity->created_at = \Carbon\Carbon::parse($activity->created_at);
+            return $activity;
+        })
+        ->sortByDesc('created_at')
+        ->take(10);
+    
+    // Get monthly earnings data (assuming you have a bookings/rentals table)
+    $currentMonth = now()->format('Y-m');
+    $monthlyEarnings = 0; // Default value
+    $activeRentals = 0;
+    $avgDailyRate = 0;
+    
+    // If you have a bookings table, uncomment and modify these queries:
+    /*
+    $monthlyEarnings = DB::table('bookings')
+        ->join('car_details_tbl', 'bookings.car_id', '=', 'car_details_tbl.id')
+        ->where('car_details_tbl.car_owner_id', $carOwnerId)
+        ->whereRaw('DATE_FORMAT(bookings.created_at, "%Y-%m") = ?', [$currentMonth])
+        ->where('bookings.status', 'completed')
+        ->sum('bookings.total_amount');
+    
+    $activeRentals = DB::table('bookings')
+        ->join('car_details_tbl', 'bookings.car_id', '=', 'car_details_tbl.id')
+        ->where('car_details_tbl.car_owner_id', $carOwnerId)
+        ->where('bookings.status', 'active')
+        ->count();
+    
+    $avgDailyRate = DB::table('bookings')
+        ->join('car_details_tbl', 'bookings.car_id', '=', 'car_details_tbl.id')
+        ->where('car_details_tbl.car_owner_id', $carOwnerId)
+        ->where('bookings.status', 'completed')
+        ->avg('bookings.daily_rate');
+    */
+    
+    // Calculate progress percentage for monthly goal
+    $monthlyGoal = 3000; // You can make this configurable
+    $progressPercentage = $monthlyGoal > 0 ? min(($monthlyEarnings / $monthlyGoal) * 100, 100) : 0;
+    
+    // Mock customer rating (you'll need to implement this based on your reviews system)
+    $customerRating = 4.8;
+
+    return view('CarOwner.dashboard', compact(
+        'totalCarsCount',
+        'approvedCarsCount', 
+        'pendingCarsCount',
+        'rejectedCarsCount',
+        'recentActivities',
+        'monthlyEarnings',
+        'monthlyGoal',
+        'progressPercentage',
+        'activeRentals',
+        'avgDailyRate',
+        'customerRating'
+    ));
+}
     // Handle logout
     public function logout(Request $request)
     {

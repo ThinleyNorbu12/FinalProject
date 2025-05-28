@@ -102,26 +102,26 @@ class AdminDashboard {
     }
 
     // Sidebar functionality
-    addSidebarToggleButton() {
-        if (!this.state.isMobile && this.elements.sidebar) {
-            const toggleButton = document.createElement('button');
-            toggleButton.className = 'sidebar-arrow-toggle';
-            toggleButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
-            toggleButton.setAttribute('title', 'Toggle Sidebar');
+    // addSidebarToggleButton() {
+    //     if (!this.state.isMobile && this.elements.sidebar) {
+    //         const toggleButton = document.createElement('button');
+    //         toggleButton.className = 'sidebar-arrow-toggle';
+    //         toggleButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    //         toggleButton.setAttribute('title', 'Toggle Sidebar');
             
-            toggleButton.addEventListener('click', () => {
-                this.toggleSidebar();
-            });
+    //         toggleButton.addEventListener('click', () => {
+    //             this.toggleSidebar();
+    //         });
 
-            this.elements.sidebar.appendChild(toggleButton);
-        }
-    }
+    //         this.elements.sidebar.appendChild(toggleButton);
+    //     }
+    // }
 
-    toggleSidebar() {
-        this.state.sidebarCollapsed = !this.state.sidebarCollapsed;
-        this.applySidebarState();
-        this.saveState('sidebarCollapsed', this.state.sidebarCollapsed);
-    }
+    // toggleSidebar() {
+    //     this.state.sidebarCollapsed = !this.state.sidebarCollapsed;
+    //     this.applySidebarState();
+    //     this.saveState('sidebarCollapsed', this.state.sidebarCollapsed);
+    // }
 
     toggleMobileMenu() {
         this.state.mobileMenuOpen = !this.state.mobileMenuOpen;

@@ -37,7 +37,7 @@
             
             <a href="{{ route('admin.dashboard') }}" class="header-brand d-none d-md-flex">
                 <img src="{{ asset('assets/images/logo1.png') }}" alt="Logo" style="height: 80px !important;">
-                <span style="font-size: 1.5rem !important; font-weight: 400 !important;">CAR  RENTAL SYSTEM</span>
+                <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
             </a>
         </div>
 
@@ -87,11 +87,11 @@
         <!-- Dashboard Sidebar -->
         <div class="dashboard-sidebar" id="dashboardSidebar">
             <!-- Enhanced Arrow Toggle Button -->
-            <div class="sidebar-header">
-                {{-- <button id="sidebar-toggle" class="sidebar-toggle">
+            <!-- <div class="sidebar-header">
+               <button id="sidebar-toggle" class="sidebar-toggle">
                     <i class="fas fa-bars"></i>
-                </button> --}}
-            </div>
+                </button> 
+            </div> -->
 
             <div class="admin-profile">
                 @if(Auth::guard('admin')->check())

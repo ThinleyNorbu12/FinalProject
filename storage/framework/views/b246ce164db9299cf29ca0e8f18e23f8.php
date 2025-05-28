@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin/adminsidebar.css')); ?>">
     
     <!-- ADD: Custom CSS from main app -->
-    <link rel="stylesheet" href="<?php echo e(asset('assets/css/styles.css')); ?>">
+    
     
     <!-- ADD: Head section for additional CSS -->
     <?php echo $__env->yieldContent('head'); ?>
@@ -36,26 +36,13 @@
             </button>
             
             <a href="<?php echo e(route('admin.dashboard')); ?>" class="header-brand d-none d-md-flex">
-                <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-                <span>Car Rental System</span>
+                <img src="<?php echo e(asset('assets/images/logo1.png')); ?>" alt="Logo" style="height: 80px !important;">
+                <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
             </a>
-
-            <div class="header-search d-none d-lg-block">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search anything...">
-            </div>
         </div>
 
         <div class="header-actions">
-            <div class="header-action-item" title="Notifications">
-                <i class="fas fa-bell"></i>
-                <span class="badge">3</span>
-            </div>
             
-            <div class="header-action-item" title="Messages">
-                <i class="fas fa-envelope"></i>
-                <span class="badge">5</span>
-            </div>
 
             <?php if(Auth::guard('admin')->check()): ?>
                 <div class="header-profile dropdown">
@@ -100,9 +87,11 @@
         <!-- Dashboard Sidebar -->
         <div class="dashboard-sidebar" id="dashboardSidebar">
             <!-- Enhanced Arrow Toggle Button -->
-            <div class="sidebar-header">
-                
-            </div>
+            <!-- <div class="sidebar-header">
+               <button id="sidebar-toggle" class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button> 
+            </div> -->
 
             <div class="admin-profile">
                 <?php if(Auth::guard('admin')->check()): ?>
@@ -137,7 +126,7 @@
 
                 <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.new-registration-cars') ? 'active' : ''); ?>">
                     <i class="fas fa-car"></i>
-                    <span>Car Registration</span>
+                    <span>Car Registration Request</span>
                     <div class="tooltip">Car Registration</div>
                 </a>
 
@@ -152,6 +141,14 @@
                     <span>Approve Inspections</span>
                     <div class="tooltip">Approve Inspections</div>
                 </a>
+
+                <a href="<?php echo e(route('car-admin.car-management-reports')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.car-management-reports') ? 'active' : ''); ?>">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Car Management Reports</span>
+                    <div class="tooltip">Complete Car Management Reports</div>
+                </a>
+
+                
 
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Customer</div>
@@ -168,17 +165,15 @@
                     <div class="tooltip">Payments</div>
                 </a>
 
-                <!-- <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-edit"></i>
-                    <span>Update Registration</span>
-                    <div class="tooltip">Update Registration</div>
-                </a> -->
-
                 <a href="<?php echo e(route('admin.booked-car')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.booked-car') ? 'active' : ''); ?>">
                     <i class="fas fa-calendar-check"></i>
                     <span>Booked Cars</span>
                     <div class="tooltip">Booked Cars</div>
                 </a>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-heading">Reports</div>
+
 
                 <a href="<?php echo e(route('admin.reports.index')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.reports.index') ? 'active' : ''); ?>">
                     <i class="fas fa-chart-bar"></i>

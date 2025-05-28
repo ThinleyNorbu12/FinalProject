@@ -316,14 +316,10 @@
         </button>
     <div class="header-logo">
         <i class="fas fa-car"></i>
-        <span>CarRental</span>
+        <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
     </div>
     
-    <div class="header-search">
-        <input type="text" placeholder="Search for cars...">
-        <button><i class="fas fa-search"></i></button>
-    </div>
-    
+
     <div class="header-user">
         @if(Auth::guard('customer')->check())
             <span class="header-user-name">{{ Auth::guard('customer')->user()->name }}</span>
@@ -407,22 +403,7 @@
             
             <div class="sidebar-divider"></div>
             
-            <div class="sidebar-heading">Help</div>
-            
-            <a href="#" class="sidebar-menu-item">
-                <i class="fas fa-headset"></i>
-                <span>Support</span>
-            </a>
-            
-            <a href="#" class="sidebar-menu-item">
-                <i class="fas fa-question-circle"></i>
-                <span>FAQ</span>
-            </a>
-            
-            <a href="#" class="sidebar-menu-item">
-                <i class="fas fa-exclamation-circle"></i>
-                <span>Report Issue</span>
-            </a>
+        
         </div>
     </div>
     
@@ -632,37 +613,49 @@
                             <h5 class="mb-3">Price Breakdown</h5>
                             
                             <!-- Rental Base Rate -->
+                            @php
+                                $pickup = \Carbon\Carbon::parse($booking->pickup_datetime);
+                                $dropoff = \Carbon\Carbon::parse($booking->dropoff_datetime);
+                                $diff = $pickup->diff($dropoff);
+                            @endphp
+
+                            <!-- Rental Base Rate -->
                             <div class="price-item">
-                                <div>Rental Rate ({{ \Carbon\Carbon::parse($booking->pickup_datetime)->diffInDays(\Carbon\Carbon::parse($booking->dropoff_datetime)) }} days)</div>
-                                <div>${{ number_format($booking->base_price, 2) }}</div>
+                                <div>
+                                    Rental Rate (
+                                    {{ $diff->d > 0 ? $diff->d . ' day' . ($diff->d > 1 ? 's' : '') : '' }}
+                                    {{ $diff->h > 0 ? $diff->h . ' hour' . ($diff->h > 1 ? 's' : '') : '' }}
+                                    )
+                                </div>
+                                <!-- <div>${{ number_format($booking->base_price, 2) }}</div> -->
                             </div>
-                            
+
                             <!-- Additional Fees from booking table -->
                             @if($booking->insurance_fee > 0)
                             <div class="price-item">
                                 <div>Insurance</div>
-                                <div>${{ number_format($booking->insurance_fee, 2) }}</div>
+                                <div>BTN {{ number_format($booking->insurance_fee, 2) }}</div>
                             </div>
                             @endif
                             
                             @if($booking->additional_services_fee > 0)
                             <div class="price-item">
                                 <div>Additional Services</div>
-                                <div>${{ number_format($booking->additional_services_fee, 2) }}</div>
+                                <div>BTN {{ number_format($booking->additional_services_fee, 2) }}</div>
                             </div>
                             @endif
                             
                             @if($booking->discount > 0)
                             <div class="price-item">
                                 <div>Discount</div>
-                                <div>-${{ number_format($booking->discount, 2) }}</div>
+                                <div>-BTN {{ number_format($booking->discount, 2) }}</div>
                             </div>
                             @endif
                             
                             @if($booking->tax > 0)
                             <div class="price-item">
                                 <div>Tax</div>
-                                <div>${{ number_format($booking->tax, 2) }}</div>
+                                <div>BTN s{{ number_format($booking->tax, 2) }}</div>
                             </div>
                             @endif
                             
@@ -682,7 +675,7 @@
                                         <span class="badge badge-{{ $payment->status == 'completed' ? 'success' : 'warning' }}">
                                             {{ ucfirst($payment->status) }}
                                         </span>
-                                        ${{ number_format($payment->amount, 2) }} {{ $payment->currency }}
+                                              {{ number_format($payment->amount, 2) }} {{ $payment->currency }}
                                     </div>
                                 </div>
                                 @endforeach
@@ -692,7 +685,7 @@
                             <!-- Total Amount -->
                             <div class="price-total">
                                 <div>Total Amount</div>
-                                <div>${{ number_format($booking->total_amount, 2) }}</div>
+                                <!-- <div>BTN {{ number_format($booking->total_amount, 2) }}</div> -->
                             </div>
                             
                             <!-- Amount Paid from payments table -->
@@ -970,7 +963,7 @@
                 </div>
             </div>
             
-            <!-- Pay Later Schedule (if applicable) -->
+            <!-- Pay Later Schedule (if applicable)
             @if($booking->payLaterPayments && $booking->payLaterPayments->count() > 0)
             <div class="detail-section">
                 <div class="section-title">
@@ -1013,7 +1006,7 @@
                     </table>
                 </div>
             </div>
-            @endif
+            @endif -->
             
             <!-- Rental Instructions & Important Information -->
             <div class="related-info">

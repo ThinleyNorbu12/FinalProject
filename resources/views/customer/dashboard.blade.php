@@ -560,14 +560,10 @@
         
         <div class="header-logo">
             <i class="fas fa-car"></i>
-            <span>CarRental</span>
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
         </div>
         
-        <div class="header-search">
-            <input type="text" placeholder="Search for cars...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
-        
+      
         <div class="header-user">
             @if(Auth::guard('customer')->check())
                 <span class="header-user-name">{{ Auth::guard('customer')->user()->name }}</span>
@@ -650,24 +646,7 @@
                     <span>Fuel Policy</span>
                 </a>
                 
-                <div class="sidebar-divider"></div>
                 
-                <div class="sidebar-heading">Help</div>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-headset"></i>
-                    <span>Support</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span>FAQ</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>Report Issue</span>
-                </a>
             </div>
         </div>
         
@@ -803,7 +782,7 @@
                 @endif
             </div>
             
-            <!-- Stats -->
+            <!-- Stats
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number">1</div>
@@ -819,7 +798,7 @@
                     <div class="stat-number">8</div>
                     <div class="stat-label">Completed Rentals</div>
                 </div>
-            </div>
+            </div> -->
             
             <!-- Rental History -->
             <div class="history-card">
@@ -882,7 +861,7 @@
                                                 // Calculate the total cost (days * daily price)
                                                 $totalCost = $days * $rental->price;
                                                 // Format as currency
-                                                echo '$' . number_format($totalCost, 2);
+                                                echo 'BTN ' . number_format($totalCost, 2);
                                             @endphp
                                         </td>
                                         <td>
@@ -944,7 +923,7 @@
                                     <span><i class="fas fa-cog"></i> {{ $car->transmission_type }}</span>
                                     <span><i class="fas fa-users"></i> {{ $car->number_of_seats }} seats</span>
                                 </div>
-                                <div class="car-price">${{ number_format($car->price, 2) }}/day</div>
+                                <div class="car-price">BTN {{ number_format($car->price, 2) }}/day</div>
                                 <a href="{{ route('customer.car-details', $car->id) }}" class="btn btn-primary">View Details</a>
 
                                 <a href="{{ route('customer.book-car', $car->id) }}" class="btn-book-now">Book Now</a>

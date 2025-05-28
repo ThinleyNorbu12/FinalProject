@@ -22,74 +22,74 @@
 
 @section('content')
 <!-- Stats Cards -->
-<div class="row g-4 mb-4">
-    <div class="col-xl-3 col-md-6">
-        <div class="card stat-card border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-3 p-3 me-3">
-                        <i class="fas fa-car fa-2x"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1">My Cars</h6>
-                        <h2 class="mb-0 fw-bold">12</h2>
-                        <small class="text-muted">Total registered cars</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-xl-3 col-md-6">
-        <div class="card stat-card border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="stat-icon bg-success bg-opacity-10 text-success rounded-3 p-3 me-3">
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1">Approved</h6>
-                        <h2 class="mb-0 fw-bold text-success">8</h2>
-                        <small class="text-muted">Cars ready for rent</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-xl-3 col-md-6">
-        <div class="card stat-card border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded-3 p-3 me-3">
-                        <i class="fas fa-clock fa-2x"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1">Pending</h6>
-                        <h2 class="mb-0 fw-bold text-warning">3</h2>
-                        <small class="text-muted">Awaiting approval</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-xl-3 col-md-6">
-        <div class="card stat-card border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="stat-icon bg-danger bg-opacity-10 text-danger rounded-3 p-3 me-3">
-                        <i class="fas fa-times-circle fa-2x"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1">Rejected</h6>
-                        <h2 class="mb-0 fw-bold text-danger">1</h2>
-                        <small class="text-muted">Denied applications</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="row g-4 mb-4">     
+    <div class="col-xl-3 col-md-6">         
+        <div class="card stat-card border-0 shadow-sm">             
+            <div class="card-body">                 
+                <div class="d-flex align-items-center">                     
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded-3 p-3 me-3">                         
+                        <i class="fas fa-car fa-2x"></i>                     
+                    </div>                     
+                    <div class="flex-grow-1">                         
+                        <h6 class="text-muted mb-1">My Cars</h6>                         
+                        <h2 class="mb-0 fw-bold">{{ $totalCarsCount }}</h2>                         
+                        <small class="text-muted">Total registered cars</small>                     
+                    </div>                 
+                </div>             
+            </div>         
+        </div>     
+    </div>          
+
+    <div class="col-xl-3 col-md-6">         
+        <div class="card stat-card border-0 shadow-sm">             
+            <div class="card-body">                 
+                <div class="d-flex align-items-center">                     
+                    <div class="stat-icon bg-success bg-opacity-10 text-success rounded-3 p-3 me-3">                         
+                        <i class="fas fa-check-circle fa-2x"></i>                     
+                    </div>                     
+                    <div class="flex-grow-1">                         
+                        <h6 class="text-muted mb-1">Approved</h6>                         
+                        <h2 class="mb-0 fw-bold text-success">{{ $approvedCarsCount }}</h2>                         
+                        <small class="text-muted">Cars ready for rent</small>                     
+                    </div>                 
+                </div>             
+            </div>         
+        </div>     
+    </div>          
+
+    <div class="col-xl-3 col-md-6">         
+        <div class="card stat-card border-0 shadow-sm">             
+            <div class="card-body">                 
+                <div class="d-flex align-items-center">                     
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded-3 p-3 me-3">                         
+                        <i class="fas fa-clock fa-2x"></i>                     
+                    </div>                     
+                    <div class="flex-grow-1">                         
+                        <h6 class="text-muted mb-1">Pending</h6>                         
+                        <h2 class="mb-0 fw-bold text-warning">{{ $pendingCarsCount }}</h2>                         
+                        <small class="text-muted">Awaiting approval</small>                     
+                    </div>                 
+                </div>             
+            </div>         
+        </div>     
+    </div>          
+
+    <div class="col-xl-3 col-md-6">         
+        <div class="card stat-card border-0 shadow-sm">             
+            <div class="card-body">                 
+                <div class="d-flex align-items-center">                     
+                    <div class="stat-icon bg-danger bg-opacity-10 text-danger rounded-3 p-3 me-3">                         
+                        <i class="fas fa-times-circle fa-2x"></i>                     
+                    </div>                     
+                    <div class="flex-grow-1">                         
+                        <h6 class="text-muted mb-1">Rejected</h6>                         
+                        <h2 class="mb-0 fw-bold text-danger">{{ $rejectedCarsCount }}</h2>                         
+                        <small class="text-muted">Denied applications</small>                     
+                    </div>                 
+                </div>             
+            </div>         
+        </div>     
+    </div> 
 </div>
 
 <!-- Quick Actions -->
@@ -123,24 +123,22 @@
                                 </div>
                                 <h6 class="fw-semibold mb-2">Inspection Requests</h6>
                                 <p class="text-muted small mb-0">View pending inspections</p>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    2
-                                </span>
                             </div>
                         </a>
                     </div>
                     
                     <div class="col-lg-4 col-md-6">
-                        <a href="{{ url('carowner/payment-summary') }}" class="text-decoration-none">
+                        <a href="{{ route('carowner.approved') }}" class="text-decoration-none">
                             <div class="action-card border rounded-3 p-4 h-100 text-center hover-shadow transition-all">
                                 <div class="action-icon text-success mb-3">
-                                    <i class="fas fa-wallet fa-3x"></i>
+                                    <i class="fas fa-check-circle fa-3x"></i>
                                 </div>
-                                <h6 class="fw-semibold mb-2">Payment Summary</h6>
-                                <p class="text-muted small mb-0">View your earnings</p>
+                                <h6 class="fw-semibold mb-2">Approved Cars</h6>
+                                <p class="text-muted small mb-0">View your cars that have been approved</p>
                             </div>
                         </a>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -148,104 +146,134 @@
 </div>
 
 <!-- Recent Activity -->
-<div class="row g-4">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-history text-primary me-2"></i>Recent Activities
-                </h5>
-                <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
-            </div>
-            <div class="card-body">
+<div class="row g-4">     
+    <div class="col-lg-8">         
+        <div class="card border-0 shadow-sm">             
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">                 
+                <h5 class="card-title mb-0">                     
+                    <i class="fas fa-history text-primary me-2"></i>Recent Activities                 
+                </h5>                 
+                <a href="#" class="btn btn-sm btn-outline-primary">View All</a>             
+            </div>             
+            <div class="card-body">                 
                 <div class="activity-timeline">
-                    <div class="activity-item d-flex align-items-start mb-4">
-                        <div class="activity-icon bg-success bg-opacity-10 text-success rounded-circle p-2 me-3 flex-shrink-0">
-                            <i class="fas fa-check"></i>
+                    @forelse($recentActivities as $activity)
+                        <div class="activity-item d-flex align-items-start {{ !$loop->last ? 'mb-4' : '' }}">                         
+                            <div class="activity-icon 
+                                @if($activity->activity_type === 'approved') 
+                                    bg-success bg-opacity-10 text-success 
+                                @elseif($activity->activity_type === 'rejected') 
+                                    bg-danger bg-opacity-10 text-danger 
+                                @else 
+                                    bg-primary bg-opacity-10 text-primary 
+                                @endif 
+                                rounded-circle p-2 me-3 flex-shrink-0">                             
+                                @if($activity->activity_type === 'approved')
+                                    <i class="fas fa-check"></i>
+                                @elseif($activity->activity_type === 'rejected')
+                                    <i class="fas fa-times"></i>
+                                @else
+                                    <i class="fas fa-car"></i>
+                                @endif                         
+                            </div>                         
+                            <div class="activity-content flex-grow-1">                             
+                                <h6 class="mb-1 fw-semibold">
+                                    @if($activity->activity_type === 'approved')
+                                        Car Approved
+                                    @elseif($activity->activity_type === 'rejected')
+                                        Car Rejected
+                                    @else
+                                        Car Registration
+                                    @endif
+                                </h6>                             
+                                <p class="text-muted mb-1">
+                                    @if($activity->activity_type === 'approved')
+                                        Your {{ $activity->maker }} {{ $activity->model }} has been approved for rental
+                                    @elseif($activity->activity_type === 'rejected')
+                                        Your {{ $activity->maker }} {{ $activity->model }} application was rejected
+                                    @else
+                                        You registered {{ $activity->maker }} {{ $activity->model }} for inspection
+                                    @endif
+                                </p>                             
+                                <small class="text-muted">                                 
+                                    <i class="fas fa-clock me-1"></i>{{ $activity->created_at->diffForHumans() }}                             
+                                </small>                         
+                            </div>                     
                         </div>
-                        <div class="activity-content flex-grow-1">
-                            <h6 class="mb-1 fw-semibold">Car Approved</h6>
-                            <p class="text-muted mb-1">Your Toyota Camry has been approved for rental</p>
-                            <small class="text-muted">
-                                <i class="fas fa-clock me-1"></i>Today, 10:30 AM
-                            </small>
+                    @empty
+                        <div class="text-center py-4">
+                            <i class="fas fa-history text-muted fa-3x mb-3"></i>
+                            <p class="text-muted">No recent activities found</p>
                         </div>
-                    </div>
-                    
-                    <div class="activity-item d-flex align-items-start mb-4">
-                        <div class="activity-icon bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-3 flex-shrink-0">
-                            <i class="fas fa-car"></i>
-                        </div>
-                        <div class="activity-content flex-grow-1">
-                            <h6 class="mb-1 fw-semibold">Car Registration</h6>
-                            <p class="text-muted mb-1">You registered Honda Civic for inspection</p>
-                            <small class="text-muted">
-                                <i class="fas fa-clock me-1"></i>Yesterday, 3:45 PM
-                            </small>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-item d-flex align-items-start">
-                        <div class="activity-icon bg-warning bg-opacity-10 text-warning rounded-circle p-2 me-3 flex-shrink-0">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="activity-content flex-grow-1">
-                            <h6 class="mb-1 fw-semibold">Inspection Scheduled</h6>
-                            <p class="text-muted mb-1">Inspection for BMW X5 scheduled on May 25, 2025</p>
-                            <small class="text-muted">
-                                <i class="fas fa-clock me-1"></i>May 20, 2025, 11:20 AM
-                            </small>
-                        </div>
-                    </div>
+                    @endforelse                 
+                </div>             
+            </div>         
+        </div>     
+    </div>          
+
+    <!-- <div class="col-lg-4">         
+        <div class="card border-0 shadow-sm">             
+            <div class="card-header bg-transparent border-0">                 
+                <h5 class="card-title mb-0">                     
+                    <i class="fas fa-chart-line text-primary me-2"></i>Monthly Earnings                 
+                </h5>             
+            </div>             
+            <div class="card-body">                 
+                <div class="text-center mb-3">                     
+                    <h2 class="text-success fw-bold mb-1">${{ number_format($monthlyEarnings, 0) }}</h2>                     
+                    <small class="text-muted">This month</small>                 
+                </div>                 
+                <div class="progress mb-3" style="height: 8px;">                     
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ $progressPercentage }}%"></div>                 
+                </div>                 
+                <div class="d-flex justify-content-between text-muted small">                     
+                    <span>Goal: ${{ number_format($monthlyGoal, 0) }}</span>                     
+                    <span>{{ number_format($progressPercentage, 0) }}%</span>                 
+                </div>                                  
+                <hr class="my-3">                                  
+                <div class="d-flex justify-content-between align-items-center mb-2">                     
+                    <span class="text-muted small">Total Cars</span>                     
+                    <span class="fw-semibold">{{ $totalCarsCount }}</span>                 
+                </div>                 
+                <div class="d-flex justify-content-between align-items-center mb-2">                     
+                    <span class="text-muted small">Approved Cars</span>                     
+                    <span class="fw-semibold text-success">{{ $approvedCarsCount }}</span>                 
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-4">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-chart-line text-primary me-2"></i>Monthly Earnings
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="text-center mb-3">
-                    <h2 class="text-success fw-bold mb-1">$2,450</h2>
-                    <small class="text-muted">This month</small>
-                </div>
-                <div class="progress mb-3" style="height: 8px;">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
-                </div>
-                <div class="d-flex justify-content-between text-muted small">
-                    <span>Goal: $3,000</span>
-                    <span>75%</span>
-                </div>
-                
-                <hr class="my-3">
-                
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small">Active Rentals</span>
-                    <span class="fw-semibold">5</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small">Avg. Daily Rate</span>
-                    <span class="fw-semibold">$85</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small">Customer Rating</span>
-                    <div class="text-warning">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                        <span class="text-dark ms-1">4.8</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">                     
+                    <span class="text-muted small">Active Rentals</span>                     
+                    <span class="fw-semibold">{{ $activeRentals }}</span>                 
+                </div>                 
+                <div class="d-flex justify-content-between align-items-center mb-2">                     
+                    <span class="text-muted small">Avg. Daily Rate</span>                     
+                    <span class="fw-semibold">${{ number_format($avgDailyRate, 0) }}</span>                 
+                </div>                 
+                <div class="d-flex justify-content-between align-items-center">                     
+                    <span class="text-muted small">Customer Rating</span>                     
+                    <div class="text-warning">                         
+                        @php
+                            $fullStars = floor($customerRating);
+                            $hasHalfStar = ($customerRating - $fullStars) >= 0.5;
+                            $emptyStars = 5 - $fullStars - ($hasHalfStar ? 1 : 0);
+                        @endphp
+                        
+                        @for($i = 0; $i < $fullStars; $i++)
+                            <i class="fas fa-star"></i>
+                        @endfor
+                        
+                        @if($hasHalfStar)
+                            <i class="fas fa-star-half-alt"></i>
+                        @endif
+                        
+                        @for($i = 0; $i < $emptyStars; $i++)
+                            <i class="far fa-star"></i>
+                        @endfor
+                        
+                        <span class="text-dark ms-1">{{ number_format($customerRating, 1) }}</span>                     
+                    </div>                 
+                </div>             
+            </div>         
+        </div>     
+    </div>  -->
 </div>
 @endsection
 

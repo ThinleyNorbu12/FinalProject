@@ -86,10 +86,17 @@
                 </div>
 
                 <div class="row mb-4">
+                    @php
+                        $diff = $booking->pickup_datetime->diff($booking->dropoff_datetime);
+                    @endphp
                     <div class="col-md-6">
                         <h6 class="fw-bold">Booking Duration</h6>
-                        <p>{{ $booking->pickup_datetime->diffInDays($booking->dropoff_datetime) + 1 }} days</p>
+                        <p>
+                            {{ $diff->d > 0 ? $diff->d . ' day' . ($diff->d > 1 ? 's' : '') . ' ' : '' }}
+                            {{ $diff->h > 0 ? $diff->h . ' hour' . ($diff->h > 1 ? 's' : '') : '' }}
+                        </p>
                     </div>
+
                     <div class="col-md-6">
                         <h6 class="fw-bold">Created On</h6>
                         <p>{{ $booking->created_at->format('M d, Y h:i A') }}</p>
@@ -175,9 +182,9 @@
                         <p><i class="fas fa-map-marker-alt me-2"></i> {{ $booking->customer->address ?? 'N/A' }}</p>
                     </div>
 
-                    <a href="#" class="btn btn-sm btn-outline-primary mt-2">
+                    <!-- <a href="#" class="btn btn-sm btn-outline-primary mt-2">
                         <i class="fas fa-user"></i> View Customer Profile
-                    </a>
+                    </a> -->
                 @else
                     <p class="text-muted">Customer information not available</p>
                 @endif
@@ -238,9 +245,9 @@
                         <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN {{ number_format($booking->car->price ?? 0, 2) }}</p>
                     </div>
                     
-                    <a href="#" class="btn btn-sm btn-outline-primary mt-2">
+                    <!-- <a href="#" class="btn btn-sm btn-outline-primary mt-2">
                         <i class="fas fa-info-circle"></i> View Car Details
-                    </a>
+                    </a> -->
                 @else
                     <p class="text-muted">Car information not available</p>
                 @endif

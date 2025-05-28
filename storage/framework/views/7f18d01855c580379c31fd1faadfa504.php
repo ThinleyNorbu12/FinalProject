@@ -78,8 +78,11 @@
                                                 <code><?php echo e($car->registration_no); ?></code>
                                             </td>
                                             <td>
-                                                <?php if(isset($car->updated_at)): ?>
-                                                    <small class="text-muted"><?php echo e($car->updated_at->format('M d, Y')); ?></small>
+                                                <?php if(isset($car->updated_at) && $car->updated_at): ?>
+                                                    <small class="text-muted">
+                                                        <?php echo e(\Carbon\Carbon::parse($car->updated_at)->format('M d, Y')); ?>
+
+                                                    </small>
                                                 <?php else: ?>
                                                     <small class="text-muted">N/A</small>
                                                 <?php endif; ?>

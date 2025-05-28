@@ -552,32 +552,32 @@
             <li>
                 <a href="{{ url('/') }}">
                     <i class="fas fa-home"></i>
-                    <span>Home</span>
+                    <span style="text-transform: uppercase;">Home</span>
                 </a>
             </li>
             <li>
                 <a href="{{ route('carowner.login') }}">
                     <i class="fas fa-car"></i>
-                    <span>Car Owner Dashboard</span>
+                    <span style="text-transform: uppercase;">Car Owner Dashboard</span>
                 </a>
             </li>
             <li>
                 <a href="{{ route('admin.dashboard') }}">
                     <i class="fas fa-user-shield"></i>
-                    <span>Admin Dashboard</span>
+                    <span style="text-transform: uppercase;">Admin Dashboard</span>
                 </a>
             </li>
             @auth('customer')
                 <li>
                     <a href="{{ route('customer.dashboard') }}">
                         <i class="fas fa-user"></i>
-                        <span>Customer Dashboard</span>
+                        <span style="text-transform: uppercase;">Customer Dashboard</span>
                     </a>
                 </li>
                 <li>
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
+                        <span style="text-transform: uppercase;">Logout</span>
                     </a>
                     <form id="logout-form" action="{{ route('customer.logout') }}" method="POST" style="display: none;">
                         @csrf
@@ -587,31 +587,17 @@
                 <li>
                     <a href="{{ route('customer.login') }}">
                         <i class="fas fa-sign-in-alt"></i>
-                        <span>Login as Customer</span>
+                        <span style="text-transform: uppercase;">Login as Customer</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('customer.register') }}">
                         <i class="fas fa-user-plus"></i>
-                        <span>Register</span>
+                        <span style="text-transform: uppercase;">Register</span>
                     </a>
                 </li>
             @endauth
             
-            <div class="sidebar-divider"></div>
-            
-            <li>
-                <a href="{{ url('/contact') }}">
-                    <i class="fas fa-envelope"></i>
-                    <span>Contact</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url('/available-cars') }}">
-                    <i class="fas fa-car-side"></i>
-                    <span>Browse Cars</span>
-                </a>
-            </li>
         </ul>
     </div>
 </div>

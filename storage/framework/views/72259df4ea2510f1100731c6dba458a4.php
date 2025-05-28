@@ -20,417 +20,435 @@
     </div>
 <?php $__env->stopSection(); ?>
 
-<?php $__env->startPush('styles'); ?>
-<style>
-    .approval-table {
-        border-radius: 12px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        background: white;
-    }
-    
-    .table {
-        margin-bottom: 0;
-    }
-    
-    .table thead th {
-        border: none;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-        background: linear-gradient(135deg, #343a40 0%, #495057 100%);
-    }
-    
-    .table tbody tr {
-        transition: all 0.3s ease;
-        border: none;
-    }
-    
-    .table tbody tr:hover {
-        background: linear-gradient(135deg, rgba(0, 123, 255, 0.05) 0%, rgba(0, 123, 255, 0.02) 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    .table tbody td {
-        border-top: 1px solid #e9ecef;
-        vertical-align: middle;
-        padding: 1rem 0.75rem;
-    }
-    
-    .car-info {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .car-maker {
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 0.25rem;
-    }
-    
-    .car-model {
-        font-size: 0.85rem;
-        color: #6c757d;
-    }
-    
-    .reg-badge {
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        color: #1976d2;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        border: 2px solid #2196f3;
-    }
-    
-    .email-link {
-        color: #495057;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-    
-    .email-link:hover {
-        color: #007bff;
-        text-decoration: underline;
-    }
-    
-    .date-display {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .date-day {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #2c3e50;
-    }
-    
-    .date-month {
-        font-size: 0.85rem;
-        color: #6c757d;
-        text-transform: uppercase;
-    }
-    
-    .time-display {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 0.75rem;
-        border-radius: 8px;
-        font-weight: 500;
-        color: #495057;
-        border: 1px solid #dee2e6;
-    }
-    
-    .location-display {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #495057;
-    }
-    
-    .location-display i {
-        color: #dc3545;
-        margin-right: 0.5rem;
-    }
-    
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-        justify-content: center;
-    }
-    
-    .btn-approve {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        border: none;
-        color: white;
-        padding: 0.6rem 1rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        font-weight: 500;
-    }
-    
-    .btn-approve:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-        color: white;
-    }
-    
-    .btn-reject {
-        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-        border: none;
-        color: white;
-        padding: 0.6rem 1rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        font-weight: 500;
-    }
-    
-    .btn-reject:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
-        color: white;
-    }
-    
-    .loading-btn {
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .loading-btn:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-    
-    .spinner-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border-radius: 12px;
-        border: 2px dashed #dee2e6;
-    }
-    
-    .empty-state-icon {
-        font-size: 4rem;
-        color: #6c757d;
-        margin-bottom: 1.5rem;
-    }
-    
-    .empty-state h4 {
-        color: #495057;
-        margin-bottom: 1rem;
-    }
-    
-    .empty-state p {
-        color: #6c757d;
-        margin-bottom: 2rem;
-    }
-    
-    .stats-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-    
-    .stats-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-    
-    .stats-label {
-        font-size: 1rem;
-        opacity: 0.9;
-    }
-</style>
-<?php $__env->stopPush(); ?>
-
 <?php $__env->startSection('content'); ?>
-<div class="container-fluid">
-    <!-- Statistics Card -->
-    <?php if($inspectionRequests->count() > 0): ?>
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="stats-card">
-                    <div class="stats-number"><?php echo e($inspectionRequests->count()); ?></div>
-                    <div class="stats-label">
-                        <i class="fas fa-clipboard-check me-2"></i>
-                        Inspections Pending Approval
-                    </div>
-                </div>
-            </div>
+<div class="container">
+    <h2 class="mb-4 text-center">Approve or Reject Inspected Cars</h2>
+
+    <?php if(session('status')): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?php echo e(session('status')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
-    <div class="row">
-        <div class="col-12">
-            <?php if($inspectionRequests->count() > 0): ?>
-                <div class="approval-table table-responsive">
-                    <table class="table align-middle text-center">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>
-                                    <i class="fas fa-hashtag me-1"></i>
-                                    Sl. No
-                                </th>
-                                <th>
-                                    <i class="fas fa-id-card me-1"></i>
-                                    Request ID
-                                </th>
-                                <th>
-                                    <i class="fas fa-car me-1"></i>
-                                    Vehicle
-                                </th>
-                                <th>
-                                    <i class="fas fa-certificate me-1"></i>
-                                    Registration
-                                </th>
-                                <th>
-                                    <i class="fas fa-envelope me-1"></i>
-                                    Owner
-                                </th>
-                                <th>
-                                    <i class="fas fa-calendar me-1"></i>
-                                    Date
-                                </th>
-                                <th>
-                                    <i class="fas fa-clock me-1"></i>
-                                    Time
-                                </th>
-                                <th>
-                                    <i class="fas fa-map-marker-alt me-1"></i>
-                                    Location
-                                </th>
-                                <th>
-                                    <i class="fas fa-cogs me-1"></i>
-                                    Action
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $__currentLoopData = $inspectionRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <tr id="row-<?php echo e($request->id); ?>">
-                                    <td>
-                                        <span class="badge bg-primary"><?php echo e($loop->iteration); ?></span>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-secondary">#<?php echo e($request->id); ?></span>
-                                    </td>
-                                    <td>
-                                        <div class="car-info">
-                                            <div class="car-maker"><?php echo e($request->car->maker ?? 'N/A'); ?></div>
-                                            <div class="car-model"><?php echo e($request->car->model ?? 'Model N/A'); ?></div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="reg-badge">
-                                            <?php echo e($request->car->registration_no ?? 'N/A'); ?>
-
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="mailto:<?php echo e($request->car->owner->email ?? ''); ?>" 
-                                           class="email-link">
-                                            <i class="fas fa-envelope me-1"></i>
-                                            <?php echo e($request->car->owner->email ?? 'N/A'); ?>
-
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <?php
-                                            $date = \Carbon\Carbon::parse($request->inspection_date);
-                                        ?>
-                                        <div class="date-display">
-                                            <div class="date-day"><?php echo e($date->format('d')); ?></div>
-                                            <div class="date-month"><?php echo e($date->format('M Y')); ?></div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <?php
-                                            $timeRange = $request->inspection_time;
+    <?php if($inspectionRequests->count() > 0): ?>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Sl. No</th>
+                        <th>Car</th>
+                        <th>Reg. No.</th>
+                        <th>Owner Email</th>
+                        <th>Inspection Date</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $__currentLoopData = $inspectionRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <tr>
+                            <td><?php echo e($loop->iteration); ?></td>
+                            <td><?php echo e($request->car->maker ?? 'N/A'); ?> <?php echo e($request->car->model ?? ''); ?></td>
+                            <td><?php echo e($request->car->registration_no ?? 'N/A'); ?></td>
+                            <td><?php echo e($request->car->owner->email ?? 'N/A'); ?></td>
+                            <td><?php echo e(\Carbon\Carbon::parse($request->inspection_date)->format('d M Y')); ?></td>
+                            <td>
+                                <?php
+                                    $timeRange = $request->inspection_time;
+                                    if (strpos($timeRange, ' - ') !== false) {
+                                        [$start, $end] = explode(' - ', $timeRange);
+                                        try {
+                                            $startFormatted = \Carbon\Carbon::parse($start)->format('h:i A');
+                                            $endFormatted = \Carbon\Carbon::parse($end)->format('h:i A');
+                                            $formattedTime = "$startFormatted - $endFormatted";
+                                        } catch (\Exception $e) {
                                             $formattedTime = $timeRange;
+                                        }
+                                    } else {
+                                        $formattedTime = $timeRange;
+                                    }
+                                ?>
+                                <?php echo e($formattedTime); ?>
 
-                                            if (strpos($timeRange, ' - ') !== false) {
-                                                [$startTime, $endTime] = explode(' - ', $timeRange);
-                                                try {
-                                                    $formattedStart = \Carbon\Carbon::parse(trim($startTime))->format('h:i A');
-                                                    $formattedEnd = \Carbon\Carbon::parse(trim($endTime))->format('h:i A');
-                                                    $formattedTime = $formattedStart . ' - ' . $formattedEnd;
-                                                } catch (Exception $e) {
-                                                    $formattedTime = $timeRange;
-                                                }
-                                            }
-                                        ?>
-                                        <div class="time-display">
-                                            <i class="fas fa-clock me-2"></i>
-                                            <?php echo e($formattedTime); ?>
+                            </td>
+                            <td><?php echo e($request->location ?? 'N/A'); ?></td>
+                            <td>
+                                <button type="button" 
+                                        onclick="viewInspectionDetails(<?php echo e($request->car->id); ?>, '<?php echo e($request->car->registration_no ?? ''); ?>', '<?php echo e($request->car->owner->license_number ?? ''); ?>')" 
+                                        class="btn btn-primary btn-sm" 
+                                        data-bs-toggle="tooltip" 
+                                        title="View inspection details">
+                                    <i class="bi bi-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </tbody>
+            </table>
+        </div>
+    <?php else: ?>
+        <div class="alert alert-info text-center">No confirmed inspection requests pending approval.</div>
+    <?php endif; ?>
+</div>
+<?php $__env->stopSection(); ?>
 
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="location-display">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                            <?php echo e($request->location ?? 'N/A'); ?>
+<div class="modal fade" id="inspectionDetailsModal" tabindex="-1" aria-labelledby="inspectionDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inspectionDetailsModalLabel">
+                    <i class="fas fa-car me-2"></i>Car Inspection Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="inspectionForm" action="<?php echo e(route('car-admin.inspection-approval')); ?>" method="POST">
+                    <?php echo csrf_field(); ?>
+                    <input type="hidden" name="car_id" id="modalCarId">
+                    <input type="hidden" name="decision" id="modalDecision">
+                    <input type="hidden" name="rejection_reason" id="modalRejectionReason">
 
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <form action="<?php echo e(route('car-admin.inspection-approval')); ?>" 
-                                              method="POST" 
-                                              class="approval-form"
-                                              data-request-id="<?php echo e($request->id); ?>">
-                                            <?php echo csrf_field(); ?>
-                                            <input type="hidden" name="car_id" value="<?php echo e($request->car->id); ?>">
-                                            <input type="hidden" name="inspection_request_id" value="<?php echo e($request->id); ?>">
-                                            
-                                            <div class="action-buttons">
-                                                <button type="submit" 
-                                                        name="decision" 
-                                                        value="approved" 
-                                                        class="btn btn-approve btn-sm loading-btn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        title="Approve this inspection"
-                                                        onclick="return confirmAction('approve', '<?php echo e($request->car->maker); ?> <?php echo e($request->car->model); ?>')">
-                                                    <i class="fas fa-check-circle me-1"></i>
-                                                    Approve
-                                                </button>
-
-                                                <button type="submit" 
-                                                        name="decision" 
-                                                        value="rejected" 
-                                                        class="btn btn-reject btn-sm loading-btn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        title="Reject this inspection"
-                                                        onclick="return confirmAction('reject', '<?php echo e($request->car->maker); ?> <?php echo e($request->car->model); ?>')">
-                                                    <i class="fas fa-times-circle me-1"></i>
-                                                    Reject
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                
-                <?php if(method_exists($inspectionRequests, 'links')): ?>
-                    <div class="d-flex justify-content-center mt-4">
-                        <?php echo e($inspectionRequests->links()); ?>
-
+                    <!-- Vehicle & Owner Information -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Vehicle & Owner Information</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="vehicle_registration_number" class="form-label">
+                                            <strong>Vehicle Registration Number</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="vehicle_registration_number" 
+                                               name="vehicle_registration_number" required 
+                                               pattern="[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}" 
+                                               placeholder="e.g.,BP-1-A0000" readonly>
+                                        <div class="form-text">Format: ,BP-1-A0000 (Auto-filled from system)</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="owner_license_number" class="form-label">
+                                            <strong>Owner License Number</strong> <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="owner_license_number" 
+                                               name="owner_license_number" required 
+                                               pattern="[A-Z]{2}[0-9]{13}" 
+                                               placeholder="e.g., T-100000">
+                                        <div class="form-text">Format: T-100000</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                <?php endif; ?>
-            <?php else: ?>
-                <div class="empty-state">
-                    <div class="empty-state-icon">
-                        <i class="fas fa-clipboard-check"></i>
+
+                    <!-- Required Documents/Certificates -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>Required Documents/Certificates</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="valid_registration" name="valid_registration" value="1">
+                                        <label class="form-check-label" for="valid_registration">Valid Registration</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="insurance_valid" name="insurance_valid" value="1">
+                                        <label class="form-check-label" for="insurance_valid">Insurance Valid</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="road_tax_paid" name="road_tax_paid" value="1">
+                                        <label class="form-check-label" for="road_tax_paid">Road Tax Paid</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="fitness_certificate" name="fitness_certificate" value="1">
+                                        <label class="form-check-label" for="fitness_certificate">Fitness Certificate</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="pollution_certificate" name="pollution_certificate" value="1">
+                                        <label class="form-check-label" for="pollution_certificate">Pollution Certificate</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h4>No Inspections Pending Approval</h4>
-                    <p>All completed inspections have been reviewed. New requests will appear here once inspections are completed.</p>
-                    <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="btn btn-primary">
-                        <i class="fas fa-eye me-2"></i>View All Inspection Requests
-                    </a>
-                </div>
-            <?php endif; ?>
+
+                    <!-- Exterior Condition -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-warning text-dark">
+                            <h6 class="mb-0"><i class="fas fa-car-side me-2"></i>Exterior Condition</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="scratches" class="form-label">Scratches Description</label>
+                                        <textarea class="form-control" id="scratches" name="scratches" rows="3" 
+                                                  placeholder="Describe any scratches, their location and severity..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="dents" class="form-label">Dents Description</label>
+                                        <textarea class="form-control" id="dents" name="dents" rows="3" 
+                                                  placeholder="Describe any dents, their location and severity..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="cracked_lights_or_mirrors" class="form-label">Cracked Lights or Mirrors</label>
+                                        <textarea class="form-control" id="cracked_lights_or_mirrors" name="cracked_lights_or_mirrors" rows="3" 
+                                                  placeholder="Describe any damage to lights, mirrors, or glass components..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="tire_condition" class="form-label">Tire Condition</label>
+                                        <select class="form-select" id="tire_condition" name="tire_condition">
+                                            <option value="">Select tire condition...</option>
+                                            <option value="excellent">Excellent</option>
+                                            <option value="good">Good</option>
+                                            <option value="fair">Fair</option>
+                                            <option value="poor">Poor</option>
+                                            <option value="needs_replacement">Needs Replacement</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="body_exterior_acceptable" name="body_exterior_acceptable" value="1">
+                                        <label class="form-check-label" for="body_exterior_acceptable">Body Exterior Acceptable</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interior Condition -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-secondary text-white">
+                            <h6 class="mb-0"><i class="fas fa-couch me-2"></i>Interior Condition</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="seat_dashboard_condition" class="form-label">Seat & Dashboard Condition</label>
+                                        <textarea class="form-control" id="seat_dashboard_condition" name="seat_dashboard_condition" rows="3" 
+                                                  placeholder="Describe the condition of seats, dashboard, and interior components..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="ac_working" name="ac_working" value="1">
+                                            <label class="form-check-label" for="ac_working">AC Working</label>
+                                        </div>
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input" type="checkbox" id="interior_condition_good" name="interior_condition_good" value="1">
+                                            <label class="form-check-label" for="interior_condition_good">Interior Condition Good</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mechanical & Safety -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0"><i class="fas fa-tools me-2"></i>Mechanical & Safety</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="engine_condition_good" name="engine_condition_good" value="1">
+                                        <label class="form-check-label" for="engine_condition_good">Engine Condition Good</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="brakes_functional" name="brakes_functional" value="1">
+                                        <label class="form-check-label" for="brakes_functional">Brakes Functional</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="lights_working" name="lights_working" value="1">
+                                        <label class="form-check-label" for="lights_working">Lights Working</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="horn_working" name="horn_working" value="1">
+                                        <label class="form-check-label" for="horn_working">Horn Working</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="no_engine_warning_lights" name="no_engine_warning_lights" value="1">
+                                        <label class="form-check-label" for="no_engine_warning_lights">No Engine Warning Lights</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="indicators_wipers_working" name="indicators_wipers_working" value="1">
+                                        <label class="form-check-label" for="indicators_wipers_working">Indicators & Wipers Working</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="safety_features_working" name="safety_features_working" value="1">
+                                        <label class="form-check-label" for="safety_features_working">Safety Features Working</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accessories & Tools -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-dark text-white">
+                            <h6 class="mb-0"><i class="fas fa-wrench me-2"></i>Accessories & Tools</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="spare_tire_available" name="spare_tire_available" value="1">
+                                        <label class="form-check-label" for="spare_tire_available">Spare Tire Available</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="jack_available" name="jack_available" value="1">
+                                        <label class="form-check-label" for="jack_available">Jack Available</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fuel Level -->
+                    <div class="card mb-4">
+                        <div class="card-header" style="background-color: #6c757d; color: white;">
+                            <h6 class="mb-0"><i class="fas fa-gas-pump me-2"></i>Fuel Information</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Initial Fuel Level</label>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="initial_fuel_level" id="fuel_full" value="full">
+                                            <label class="form-check-label" for="fuel_full">Full</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="initial_fuel_level" id="fuel_three_quarter" value="three_quarter">
+                                            <label class="form-check-label" for="fuel_three_quarter">3/4</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="initial_fuel_level" id="fuel_half" value="half">
+                                            <label class="form-check-label" for="fuel_half">Half</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="initial_fuel_level" id="fuel_quarter" value="quarter">
+                                            <label class="form-check-label" for="fuel_quarter">1/4</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="initial_fuel_level" id="fuel_empty" value="empty">
+                                            <label class="form-check-label" for="fuel_empty">Empty</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes and Status -->
+                    <div class="card mb-4">
+                        <div class="card-header" style="background-color: #6c757d; color: white;">
+                            <h6 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Additional Information</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="additional_notes" class="form-label">Additional Notes</label>
+                                <textarea class="form-control" id="additional_notes" name="additional_notes" rows="4" 
+                                          placeholder="Provide any additional observations, concerns, or comments about the vehicle..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="overall_status" class="form-label">Overall Status (Admin Only)</label>
+                                <select class="form-select" id="overall_status" name="overall_status">
+                                    <option value="pending" selected>Pending</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rejection Reason Section (Initially Hidden) -->
+                    <div class="card mb-4" id="rejectionReasonSection" style="display: none;">
+                        <div class="card-header bg-danger text-white">
+                            <h6 class="mb-0"><i class="fas fa-times-circle me-2"></i>Rejection Reason</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="rejectionReasonSelect" class="form-label">Select Reason for Rejection:</label>
+                                <select class="form-select" id="rejectionReasonSelect">
+                                    <option value="">Choose a reason...</option>
+                                    <option value="Safety concerns identified">Safety concerns identified</option>
+                                    <option value="Documentation incomplete or invalid">Documentation incomplete or invalid</option>
+                                    <option value="Vehicle condition misrepresented">Vehicle condition misrepresented</option>
+                                    <option value="Major repairs needed">Major repairs needed</option>
+                                    <option value="Failed emission standards">Failed emission standards</option>
+                                    <option value="Structural damage found">Structural damage found</option>
+                                    <option value="Other">Other (specify below)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="rejectionReasonText" class="form-label">Additional Comments:</label>
+                                <textarea class="form-control" id="rejectionReasonText" rows="3" placeholder="Provide additional details about the rejection..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="approveInspection()">
+                    <i class="fas fa-check-circle me-2"></i>Approve
+                </button>
+                <button type="button" class="btn btn-danger" onclick="showRejectionSection()">
+                    <i class="fas fa-times-circle me-2"></i>Reject
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmRejectBtn" onclick="rejectInspection()" style="display: none;">
+                    <i class="fas fa-times-circle me-2"></i>Confirm Rejection
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -473,104 +491,113 @@
         </div>
     </div>
 </div>
-<?php $__env->stopSection(); ?>
 
-<?php $__env->startPush('scripts'); ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize tooltips
-        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        }
-
-        // Handle form submissions with loading states
-        document.querySelectorAll('.approval-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                const submitButton = e.submitter;
-                if (submitButton) {
-                    handleButtonLoading(submitButton);
-                }
-            });
+    document.addEventListener('DOMContentLoaded', function () {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     });
 
-    function confirmAction(action, carInfo) {
-        const actionText = action === 'approve' ? 'approve' : 'reject';
-        const message = `Are you sure you want to ${actionText} the inspection for ${carInfo}?`;
+    let currentCarId = null;
+
+    function viewInspectionDetails(carId, registrationNo = '', licenseNo = '') {
+        currentCarId = carId;
+        document.getElementById('modalCarId').value = carId;
         
-        return confirm(message);
+        // Auto-fill the registration number if provided
+        if (registrationNo && registrationNo !== 'N/A') {
+            document.getElementById('vehicle_registration_number').value = registrationNo;
+        }
+        
+        // Auto-fill the license number if provided
+        if (licenseNo && licenseNo !== 'N/A') {
+            document.getElementById('owner_license_number').value = licenseNo;
+        }
+        
+        // Reset form to default state
+        resetModalForm();
+        
+        const modal = new bootstrap.Modal(document.getElementById('inspectionDetailsModal'));
+        modal.show();
     }
 
-    function handleButtonLoading(button) {
-        const originalContent = button.innerHTML;
-        const isApprove = button.value === 'approved';
+    function resetModalForm() {
+        // Reset all checkboxes
+        const checkboxes = document.querySelectorAll('#inspectionDetailsModal input[type="checkbox"]');
+        checkboxes.forEach(checkbox => checkbox.checked = false);
         
-        // Disable button and show loading
-        button.disabled = true;
-        button.innerHTML = `
-            <div class="spinner-overlay">
-                <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-            <span style="visibility: hidden;">${originalContent}</span>
-        `;
+        // Reset all textareas
+        const textareas = document.querySelectorAll('#inspectionDetailsModal textarea');
+        textareas.forEach(textarea => textarea.value = '');
         
-        // Optional: Add visual feedback to the row
-        const row = button.closest('tr');
-        row.style.opacity = '0.7';
-        row.style.transform = 'scale(0.98)';
+        // Reset selects to default
+        document.getElementById('tire_condition').value = '';
+        document.getElementById('overall_status').value = 'pending';
         
-        // Show processing message after a short delay
-        setTimeout(() => {
-            if (isApprove) {
-                button.innerHTML = '<i class="fas fa-check me-1"></i> Processing...';
-                button.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
-            } else {
-                button.innerHTML = '<i class="fas fa-times me-1"></i> Processing...';
-                button.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
-            }
-        }, 500);
+        // Reset radio buttons
+        const radios = document.querySelectorAll('#inspectionDetailsModal input[type="radio"]');
+        radios.forEach(radio => radio.checked = false);
+        
+        // Hide rejection section
+        document.getElementById('rejectionReasonSection').style.display = 'none';
+        document.querySelector('.btn-danger:not(#confirmRejectBtn)').style.display = 'inline-block';
+        document.getElementById('confirmRejectBtn').style.display = 'none';
+        
+        // Reset rejection reason fields
+        document.getElementById('rejectionReasonSelect').value = '';
+        document.getElementById('rejectionReasonText').value = '';
+        
+        // Reset hidden form fields
+        document.getElementById('modalDecision').value = '';
+        document.getElementById('modalRejectionReason').value = '';
     }
 
-    // Add smooth hover effects
-    document.querySelectorAll('.table tbody tr').forEach(row => {
-        row.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-3px)';
-        });
-        
-        row.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-
-    // Auto-refresh functionality (optional)
-    let autoRefreshInterval;
-    
-    function startAutoRefresh() {
-        autoRefreshInterval = setInterval(() => {
-            // Only refresh if there are no pending forms
-            const pendingForms = document.querySelectorAll('.approval-form button:disabled');
-            if (pendingForms.length === 0) {
-                location.reload();
-            }
-        }, 30000); // Refresh every 30 seconds
-    }
-    
-    function stopAutoRefresh() {
-        if (autoRefreshInterval) {
-            clearInterval(autoRefreshInterval);
+    function approveInspection() {
+        if (confirm('Are you sure you want to APPROVE this car inspection?\n\nThis action cannot be undone.')) {
+            document.getElementById('modalDecision').value = 'approved';
+            document.getElementById('overall_status').value = 'approved';
+            document.getElementById('inspectionForm').submit();
         }
     }
-    
-    // Start auto-refresh when page loads
-    // startAutoRefresh();
-    
-    // Stop auto-refresh when user is about to leave
-    window.addEventListener('beforeunload', stopAutoRefresh);
+
+    function showRejectionSection() {
+        document.getElementById('rejectionReasonSection').style.display = 'block';
+        document.querySelector('.btn-danger:not(#confirmRejectBtn)').style.display = 'none';
+        document.getElementById('confirmRejectBtn').style.display = 'inline-block';
+    }
+
+    function rejectInspection() {
+        const reasonSelect = document.getElementById('rejectionReasonSelect').value;
+        const reasonText = document.getElementById('rejectionReasonText').value;
+        
+        if (!reasonSelect) {
+            alert('Please select a reason for rejection.');
+            return;
+        }
+        
+        let fullReason = reasonSelect;
+        if (reasonText.trim()) {
+            fullReason += ': ' + reasonText.trim();
+        }
+        
+        if (confirm('Are you sure you want to REJECT this car inspection?\n\nReason: ' + fullReason + '\n\nThis action cannot be undone.')) {
+            document.getElementById('modalDecision').value = 'rejected';
+            document.getElementById('overall_status').value = 'rejected';
+            document.getElementById('modalRejectionReason').value = fullReason;
+            document.getElementById('inspectionForm').submit();
+        }
+    }
+
+    // Form validation for registration and license patterns
+    document.getElementById('vehicle_registration_number').addEventListener('input', function(e) {
+        this.value = this.value.toUpperCase();
+    });
+
+    document.getElementById('owner_license_number').addEventListener('input', function(e) {
+        this.value = this.value.toUpperCase();
+    });
 </script>
-<?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/inspection-approval.blade.php ENDPATH**/ ?>

@@ -86,10 +86,19 @@
                 </div>
 
                 <div class="row mb-4">
+                    <?php
+                        $diff = $booking->pickup_datetime->diff($booking->dropoff_datetime);
+                    ?>
                     <div class="col-md-6">
                         <h6 class="fw-bold">Booking Duration</h6>
-                        <p><?php echo e($booking->pickup_datetime->diffInDays($booking->dropoff_datetime) + 1); ?> days</p>
+                        <p>
+                            <?php echo e($diff->d > 0 ? $diff->d . ' day' . ($diff->d > 1 ? 's' : '') . ' ' : ''); ?>
+
+                            <?php echo e($diff->h > 0 ? $diff->h . ' hour' . ($diff->h > 1 ? 's' : '') : ''); ?>
+
+                        </p>
                     </div>
+
                     <div class="col-md-6">
                         <h6 class="fw-bold">Created On</h6>
                         <p><?php echo e($booking->created_at->format('M d, Y h:i A')); ?></p>
@@ -175,9 +184,9 @@
                         <p><i class="fas fa-map-marker-alt me-2"></i> <?php echo e($booking->customer->address ?? 'N/A'); ?></p>
                     </div>
 
-                    <a href="#" class="btn btn-sm btn-outline-primary mt-2">
+                    <!-- <a href="#" class="btn btn-sm btn-outline-primary mt-2">
                         <i class="fas fa-user"></i> View Customer Profile
-                    </a>
+                    </a> -->
                 <?php else: ?>
                     <p class="text-muted">Customer information not available</p>
                 <?php endif; ?>
@@ -238,9 +247,9 @@
                         <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN <?php echo e(number_format($booking->car->price ?? 0, 2)); ?></p>
                     </div>
                     
-                    <a href="#" class="btn btn-sm btn-outline-primary mt-2">
+                    <!-- <a href="#" class="btn btn-sm btn-outline-primary mt-2">
                         <i class="fas fa-info-circle"></i> View Car Details
-                    </a>
+                    </a> -->
                 <?php else: ?>
                     <p class="text-muted">Car information not available</p>
                 <?php endif; ?>
@@ -248,7 +257,7 @@
         </div>
     </div>
 </div>
-
+<?php $__env->stopSection(); ?>
 <!-- Update Status Modal -->
 <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -284,5 +293,5 @@
         </div>
     </div>
 </div>
-<?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/admin/booking-details.blade.php ENDPATH**/ ?>
