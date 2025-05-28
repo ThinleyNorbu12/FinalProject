@@ -381,7 +381,7 @@ class CarOwnerController extends Controller
         }
     
         // Redirect with a success message
-        return redirect()->route('carowner.rentCar')->with('success', 'Car registered successfully!');
+        return redirect()->route('carowner.dashboard')->with('success', 'Car registered successfully!');
     }
     
 
@@ -403,18 +403,33 @@ class CarOwnerController extends Controller
     }
 
 // car inspection send by admin
+    // public function showInspectionMessages()
+    // {
+    //     $carOwner = Auth::guard('carowner')->user();
+
+    //     // Use the car_detail relationship to get inspections for cars owned by this car owner
+    //     $inspectionRequests = InspectionRequest::whereHas('car', function ($query) use ($carOwner) {
+    //         $query->where('car_owner_id', $carOwner->id);
+    //     })->latest()->get();
+
+    //     return view('CarOwner.inspection-messages', compact('inspectionRequests'));
+    // }
+    
     public function showInspectionMessages()
-    {
-        $carOwner = Auth::guard('carowner')->user();
-
-        // Use the car_detail relationship to get inspections for cars owned by this car owner
-        $inspectionRequests = InspectionRequest::whereHas('car', function ($query) use ($carOwner) {
-            $query->where('car_owner_id', $carOwner->id);
-        })->latest()->get();
-
-        return view('CarOwner.inspection-messages', compact('inspectionRequests'));
+{
+    $carOwner = Auth::guard('carowner')->user();
+    
+    // Add this check
+    if (!$carOwner) {
+        return redirect()->route('carowner.login')->with('error', 'Please login to continue.');
     }
     
+    $inspectionRequests = InspectionRequest::whereHas('car', function ($query) use ($carOwner) {
+        $query->where('car_owner_id', $carOwner->id);
+    })->latest()->get();
+    
+    return view('CarOwner.inspection-messages', compact('inspectionRequests'));
+}
 
 
     // inspection cancel by carowner when admin send inspection request to car owner

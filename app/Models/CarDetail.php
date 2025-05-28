@@ -139,5 +139,9 @@ class CarDetail extends Model
     {
         return $this->hasMany(CarImage::class); // or whatever your additional images model is called
     }
+     public function bookings()
+    {
+        return $this->hasMany(CarBooking::class, 'car_id');
+    }
 
 }

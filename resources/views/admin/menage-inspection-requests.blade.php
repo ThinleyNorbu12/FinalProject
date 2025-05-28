@@ -9,7 +9,7 @@
 @section('page-header')
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="page-title">Rescheduled Inspection Requests</h1>
+            <h1 class="page-title">Inspection Requests</h1>
             <p class="page-subtitle">Manage and confirm rescheduled inspection appointments</p>
         </div>
     </div>
@@ -35,8 +35,7 @@
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Location</th>
-                                <th>Response</th>
-                                <th>Status</th>
+                                <th>CarOwner Response</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -91,12 +90,7 @@
                                             </span>
                                         @endif
                                     </td>                           
-                                    <td>
-                                        <span class="badge bg-{{ $request->status === 'canceled' ? 'danger' : 'primary' }}">
-                                            <i class="fas fa-{{ $request->status === 'canceled' ? 'times-circle' : 'info-circle' }} me-1"></i>
-                                            {{ ucfirst($request->status) }}
-                                        </span>
-                                    </td>
+                                    
                                     <td>
                                         @if($request->status !== 'canceled')
                                             @if(!$request->is_confirmed_by_admin)
@@ -116,7 +110,7 @@
                                                 <button class="btn btn-secondary btn-sm" 
                                                         disabled
                                                         title="Already Confirmed">
-                                                    <i class="bi bi-check2-circle me-1"></i>Done
+                                                    <i class="bi bi-check2-circle me-1"></i>Booked
                                                 </button>
                                             @endif
                                         @else

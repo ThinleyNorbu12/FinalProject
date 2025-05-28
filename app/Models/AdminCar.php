@@ -103,4 +103,8 @@ class AdminCar extends Model
         
         return $images;
     }
+    public function bookings()
+    {
+        return $this->hasMany(CarBooking::class, 'car_id');
+    }
 }

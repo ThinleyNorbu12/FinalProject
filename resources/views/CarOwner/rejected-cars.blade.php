@@ -78,8 +78,10 @@
                                                 <code>{{ $car->registration_no }}</code>
                                             </td>
                                             <td>
-                                                @if(isset($car->updated_at))
-                                                    <small class="text-muted">{{ $car->updated_at->format('M d, Y') }}</small>
+                                                @if(isset($car->updated_at) && $car->updated_at)
+                                                    <small class="text-muted">
+                                                        {{ \Carbon\Carbon::parse($car->updated_at)->format('M d, Y') }}
+                                                    </small>
                                                 @else
                                                     <small class="text-muted">N/A</small>
                                                 @endif

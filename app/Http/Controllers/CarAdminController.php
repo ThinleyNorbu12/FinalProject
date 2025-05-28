@@ -56,40 +56,90 @@ class CarAdminController extends Controller
 
     // Method to handle the inspection request submission
     
+    // public function submitInspectionRequest(Request $request, $carId)
+    // {
+    //     // Validate input data
+    //     $request->validate([
+    //         'date' => 'required|date',
+    //         'time' => 'required',
+    //         'location' => 'required|string|max:255',
+    //         'details' => 'nullable|string',
+    //     ]);
+
+    //     // Find the car and eager load its 'owner' relationship
+    //     $car = CarDetail::with('owner')->findOrFail($carId);
+
+    //     // Create a new inspection request
+    //     $inspectionRequest = InspectionRequest::create([
+    //         'car_id' => $carId,
+    //         'inspection_date' => $request->date,
+    //         'inspection_time' => $request->time,
+    //         'location' => $request->location,
+    //         'details' => $request->details,
+    //         'status' => 'booked',
+    //     ]);
+
+    //     // Eager load the 'car' and 'owner' relationships for the inspection request
+    //     $inspectionRequest->load('car.owner');
+
+    //     // Send an email to the car owner if the owner and email exist
+    //     if ($car->owner && $car->owner->email) {
+    //         Mail::to($car->owner->email)->send(new CarInspectionRequested($inspectionRequest));
+    //     }
+
+    //     // Redirect back with a success message
+    //     return back()->with('success', 'Inspection request submitted and email sent to the car owner.');
+    // }
+
     public function submitInspectionRequest(Request $request, $carId)
-    {
-        // Validate input data
-        $request->validate([
-            'date' => 'required|date',
-            'time' => 'required',
-            'location' => 'required|string|max:255',
-            'details' => 'nullable|string',
-        ]);
-
-        // Find the car and eager load its 'owner' relationship
-        $car = CarDetail::with('owner')->findOrFail($carId);
-
-        // Create a new inspection request
-        $inspectionRequest = InspectionRequest::create([
-            'car_id' => $carId,
-            'inspection_date' => $request->date,
-            'inspection_time' => $request->time,
-            'location' => $request->location,
-            'details' => $request->details,
-            'status' => 'booked',
-        ]);
-
-        // Eager load the 'car' and 'owner' relationships for the inspection request
-        $inspectionRequest->load('car.owner');
-
-        // Send an email to the car owner if the owner and email exist
-        if ($car->owner && $car->owner->email) {
-            Mail::to($car->owner->email)->send(new CarInspectionRequested($inspectionRequest));
-        }
-
-        // Redirect back with a success message
-        return back()->with('success', 'Inspection request submitted and email sent to the car owner.');
+{
+    // Validate input data
+    $request->validate([
+        'date' => 'required|date',
+        'time' => 'required',
+        'location' => 'required|string|max:255',
+        'details' => 'nullable|string',
+    ]);
+    
+    // Find the car and eager load its 'owner' relationship
+    $car = CarDetail::with('owner')->findOrFail($carId);
+    
+    // Create a new inspection request
+    $inspectionRequest = InspectionRequest::create([
+        'car_id' => $carId,
+        'inspection_date' => $request->date,
+        'inspection_time' => $request->time,
+        'location' => $request->location,
+        'details' => $request->details,
+        'status' => 'booked',
+    ]);
+    
+    // Eager load the 'car' and 'owner' relationships for the inspection request
+    $inspectionRequest->load('car.owner');
+    
+    // Send an email to the car owner if the owner and email exist
+    if ($car->owner && $car->owner->email) {
+        Mail::to($car->owner->email)->send(new CarInspectionRequested($inspectionRequest));
     }
+    
+    // Format the date for display (convert from Y-m-d to d/m/Y)
+    $formattedDate = date('d/m/Y', strtotime($request->date));
+    
+    // Create the detailed success message
+    $successMessage = "Inspection request submitted and email sent to the car owner\n\n" .
+                     "**Maker:** " . $car->maker . "\n" .
+                     "**Model:** " . $car->model . "\n" .
+                     "**Registration #:** `" . $car->registration_no . "`\n" .
+                     "**Owner Information**\n" .
+                     "**Name:** " . ($car->owner ? $car->owner->name : 'N/A') . "\n" .
+                     "**Email:** " . ($car->owner ? $car->owner->email : 'N/A') . "\n" .
+                     "Inspection date: " . $formattedDate . "\n" .
+                     "Time: " . $request->time . "\n" .
+                     "Location: " . $request->location;
+    
+    // Redirect to the newly registered cars page with success message
+    return redirect()->route('car-admin.new-registration-cars')->with('success', $successMessage);
+}
 
     public function showRejectForm(CarDetail $car)
     {
@@ -263,52 +313,102 @@ class CarAdminController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function processInspectionApproval(Request $request)
-    {
-        $request->validate([
-            'car_id' => 'required|exists:car_details_tbl,id',
-            'decision' => 'required|in:approved,rejected',
-        ]);
+    // public function processInspectionApproval(Request $request)
+    // {
+    //     $request->validate([
+    //         'car_id' => 'required|exists:car_details_tbl,id',
+    //         'decision' => 'required|in:approved,rejected',
+    //     ]);
 
-        // Find inspection request
-        $inspectionRequest = InspectionRequest::where('car_id', $request->car_id)
-            ->where('is_confirmed_by_admin', true)
-            ->where('status', '!=', 'canceled')
-            ->firstOrFail();
+    //     // Find inspection request
+    //     $inspectionRequest = InspectionRequest::where('car_id', $request->car_id)
+    //         ->where('is_confirmed_by_admin', true)
+    //         ->where('status', '!=', 'canceled')
+    //         ->firstOrFail();
 
-        // Check if a decision already exists
-        $existingDecision = InspectionDecision::where('inspection_request_id', $inspectionRequest->id)->first();
+    //     // Check if a decision already exists
+    //     $existingDecision = InspectionDecision::where('inspection_request_id', $inspectionRequest->id)->first();
         
-        if ($existingDecision) {
-            // Update the existing decision instead of creating a new one
-            $existingDecision->update([
-                'decision' => $request->decision,
-                'admin_id' => auth()->id(),
-                'updated_at' => now()
-            ]);
+    //     if ($existingDecision) {
+    //         // Update the existing decision instead of creating a new one
+    //         $existingDecision->update([
+    //             'decision' => $request->decision,
+    //             'admin_id' => auth()->id(),
+    //             'updated_at' => now()
+    //         ]);
             
-            $message = 'Decision has been updated successfully and the owner has been notified.';
-        } else {
-            // Create a new decision
+    //         $message = 'Decision has been updated successfully and the owner has been notified.';
+    //     } else {
+    //         // Create a new decision
+    //         InspectionDecision::create([
+    //             'inspection_request_id' => $inspectionRequest->id,
+    //             'decision' => $request->decision,
+    //             'admin_id' => auth()->id(),
+    //             'remarks' => null,
+    //         ]);
+            
+    //         $message = 'Car has been ' . $request->decision . ' successfully and the owner has been notified.';
+    //     }
+
+    //     // Send mail to car owner
+    //     if ($inspectionRequest->car && $inspectionRequest->car->owner) {
+    //         Mail::to($inspectionRequest->car->owner->email)
+    //             ->send(new InspectionDecisionMail($inspectionRequest, $request->decision));
+    //     }
+
+    //     return redirect()->route('car-admin.approve-inspected-cars')
+    //         ->with('status', $message);
+    // }
+
+    public function processInspectionApproval(Request $request)
+{
+    $request->validate([
+        'car_id' => 'required|exists:car_details_tbl,id',
+        'decision' => 'required|in:approved,rejected',
+        'rejection_reason' => 'nullable|string',
+    ]);
+
+    // Find inspection request
+    $inspectionRequest = InspectionRequest::where('car_id', $request->car_id)
+        ->where('is_confirmed_by_admin', true)
+        ->where('status', '!=', 'canceled')
+        ->firstOrFail();
+
+    // Check if a decision already exists
+    $existingDecision = InspectionDecision::where('inspection_request_id', $inspectionRequest->id)->first();
+    
+    if ($existingDecision) {
+        $existingDecision->update([
+            'decision' => $request->decision,
+            'admin_id' => auth()->id(),
+            'rejection_reason' => $request->rejection_reason, // Use dedicated field
+            'updated_at' => now()
+        ]);
+        
+        $message = 'Decision has been updated successfully and the owner has been notified.';
+    } else {
+        // Create a new decision
             InspectionDecision::create([
-                'inspection_request_id' => $inspectionRequest->id,
-                'decision' => $request->decision,
-                'admin_id' => auth()->id(),
-                'remarks' => null,
-            ]);
-            
-            $message = 'Car has been ' . $request->decision . ' successfully and the owner has been notified.';
-        }
-
-        // Send mail to car owner
-        if ($inspectionRequest->car && $inspectionRequest->car->owner) {
-            Mail::to($inspectionRequest->car->owner->email)
-                ->send(new InspectionDecisionMail($inspectionRequest, $request->decision));
-        }
-
-        return redirect()->route('car-admin.approve-inspected-cars')
-            ->with('status', $message);
+            'inspection_request_id' => $inspectionRequest->id,
+            'decision' => $request->decision,
+            'admin_id' => auth()->id(),
+            'rejection_reason' => $request->rejection_reason, // Use dedicated field
+        ]);
+        
+        $message = 'Car has been ' . $request->decision . ' successfully and the owner has been notified.';
     }
+
+    // Send mail to car owner
+    if ($inspectionRequest->car && $inspectionRequest->car->owner) {
+        Mail::to($inspectionRequest->car->owner->email)
+            ->send(new InspectionDecisionMail($inspectionRequest, $request->decision, $request->rejection_reason));
+    }
+
+    return redirect()->route('car-admin.approve-inspected-cars')
+        ->with('status', $message);
+}
+
+
 
 
 

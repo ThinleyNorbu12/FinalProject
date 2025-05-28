@@ -26,14 +26,6 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
-            {{-- Success Message --}}
-            {{-- @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif --}}
-
             {{-- Car Information Card --}}
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary text-white">
@@ -150,7 +142,7 @@
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-paper-plane me-2"></i>
-                                Submit Request
+                                Send Request
                             </button>
                         </div>
                     </form>
@@ -168,8 +160,28 @@ $(document).ready(function() {
     const timeField = $('#time');
     const timeLoader = $('#timeLoader');
 
+    // Function to convert AM/PM time to 24-hour format for comparison
+    function convertTo24Hour(timeStr) {
+        // Extract the start time from slot format "09:00 AM - 10:00 AM"
+        const startTime = timeStr.split(' - ')[0].trim();
+        const [time, period] = startTime.split(' ');
+        let [hours, minutes] = time.split(':').map(Number);
+        
+        if (period === 'PM' && hours !== 12) {
+            hours += 12;
+        } else if (period === 'AM' && hours === 12) {
+            hours = 0;
+        }
+        
+        return hours * 60 + minutes; // Return time in minutes
+    }
+
     $('#date').on('change', function() {
         const selectedDate = $(this).val();
+        const today = new Date().toISOString().split('T')[0];
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes(); // Convert current time to minutes
+        
         timeField.prop('disabled', true).html('<option value="">Loading time slots...</option>');
         timeLoader.removeClass('d-none');
 
@@ -182,8 +194,27 @@ $(document).ready(function() {
                 
                 if (response.length > 0) {
                     response.forEach(slot => {
-                        options += `<option value="${slot}">${slot}</option>`;
+                        // Check if selected date is today
+                        let showSlot = true;
+                        if (selectedDate === today) {
+                            // Convert the time slot to minutes for comparison
+                            const slotTimeInMinutes = convertTo24Hour(slot);
+                            
+                            // Only show time slots that are after current time
+                            if (slotTimeInMinutes <= currentTime) {
+                                showSlot = false;
+                            }
+                        }
+                        
+                        if (showSlot) {
+                            options += `<option value="${slot}">${slot}</option>`;
+                        }
                     });
+                    
+                    // Check if no slots are available after filtering
+                    if (options === '<option value="">Select time slot</option>') {
+                        options = '<option value="" disabled>No available slots for selected date</option>';
+                    }
                 } else {
                     options = '<option value="" disabled>No available slots</option>';
                 }

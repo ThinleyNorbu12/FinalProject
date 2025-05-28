@@ -21,292 +21,201 @@
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body>
-    <!-- Enhanced Admin Header -->
-    <header class="admin-header" id="adminHeader">
-        <div class="header-left">
-            <button class="mobile-menu-toggle d-md-none" id="mobileMenuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="header-brand d-none d-md-flex">
-                <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
-                <span>Car Rental System</span>
-            </a>
+<header class="admin-header" id="adminHeader">
+    <div class="header-left">
+        <button class="mobile-menu-toggle d-md-none" id="mobileMenuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="header-brand d-none d-md-flex">
+            <img src="<?php echo e(asset('assets/images/logo.png')); ?>" alt="Logo">
+            <span>Car Rental System</span>
+        </a>
+    </div>
 
-            <div class="header-search d-none d-lg-block">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search anything...">
-            </div>
-        </div>
+    <div class="header-actions">
 
-        <div class="header-actions">
-            <div class="header-action-item" title="Notifications">
-                <i class="fas fa-bell"></i>
-                <span class="badge">3</span>
-            </div>
-            
-            <div class="header-action-item" title="Messages">
-                <i class="fas fa-envelope"></i>
-                <span class="badge">5</span>
-            </div>
-
-            <?php if(Auth::guard('admin')->check()): ?>
-                <div class="header-profile dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar"
-                             class="rounded-circle me-2" width="32" height="32">
-                        <div class="header-profile-info d-none d-sm-block">
-                            <h4 class="mb-0"><?php echo e(Auth::guard('carowner')->user()->name); ?>!</h4>
-                            <span>Car Owner</span>
-                        </div>
-                    </a>
-                    
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li>
-                            <a class="dropdown-item" href="<?php echo e(route('admin.profile')); ?>">
-                                <i class="fas fa-user me-2"></i> Profile
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="#"
-                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="fas fa-sign-out-alt me-2"></i> Logout
-                            </a>
-                            <form id="logout-form" action="<?php echo e(route('carowner.logout')); ?>" method="POST" class="d-none">
-                                <?php echo csrf_field(); ?>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            <?php else: ?>
-                <a href="<?php echo e(route('carowner.login')); ?>" class="btn btn-primary">Login</a>
-            <?php endif; ?>
-        </div>
-    </header>
-
-    <div class="admin-dashboard" id="adminDashboard">
-        <!-- Sidebar Overlay -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-        <!-- Dashboard Sidebar -->
-        <div class="dashboard-sidebar" id="dashboardSidebar">
-            <!-- Enhanced Arrow Toggle Button -->
-            <div class="sidebar-header">
-                
-            </div>
-
-            <div class="admin-profile">
-                <?php if(Auth::guard('carowner')->check()): ?>
-                    <div class="profile-avatar">
-                        <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Admin Avatar">
-                    </div>
-                    <div class="profile-info">
-                        <h3><?php echo e(Auth::guard('carowner')->user()->name); ?></h3>
+        <?php if(Auth::guard('carowner')->check()): ?>
+            <div class="header-profile dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Avatar"
+                         class="rounded-circle me-2" width="32" height="32">
+                    <div class="header-profile-info d-none d-sm-block">
+                        <h4 class="mb-0"><?php echo e(Auth::guard('carowner')->user()->name); ?>!</h4>
                         <span>Car Owner</span>
                     </div>
-                <?php endif; ?>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li>
+                        <a class="dropdown-item" href="<?php echo e(route('admin.profile')); ?>">
+                            <i class="fas fa-user me-2"></i> Profile
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </a>
+                        <form id="logout-form" action="<?php echo e(route('carowner.logout')); ?>" method="POST" class="d-none"><?php echo csrf_field(); ?></form>
+                    </li>
+                </ul>
             </div>
+        <?php else: ?>
+            <a href="<?php echo e(route('carowner.login')); ?>" class="btn btn-primary">Login</a>
+        <?php endif; ?>
+    </div>
+</header>
 
-            <div class="sidebar-menu">
-                <a href="<?php echo e(route('carowner.dashboard')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                
-                <div class="sidebar-divider"></div>
-                <div class="sidebar-heading">Manage Service</div>
-                
-                <!-- Updated Cars link with better condition -->
-                <a href="<?php echo e(route('admin.cars.index')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.cars.index') || request()->routeIs('admin.cars.create') || request()->routeIs('admin.cars.edit') || request()->routeIs('admin.cars.show') ? 'active' : ''); ?>">
-                    <i class="fas fa-car"></i>
-                    <span>Cars</span>
-                    <div class="tooltip">Cars</div>
-                </a>
+<div class="admin-dashboard" id="adminDashboard">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-                <div class="sidebar-divider"></div>
-                <div class="sidebar-heading">Car Owner</div>
+    <div class="dashboard-sidebar" id="dashboardSidebar">
+        <div class="sidebar-header"></div>
 
-                <a href="<?php echo e(route('car-admin.new-registration-cars')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.new-registration-cars') ? 'active' : ''); ?>">
-                    <i class="fas fa-car"></i>
-                    <span>Car Registration</span>
-                    <div class="tooltip">Car Registration</div>
-                </a>
-
-                <a href="<?php echo e(route('car-admin.inspection-requests')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.inspection-requests') ? 'active' : ''); ?>">
-                    <i class="fas fa-clipboard-check"></i>
-                    <span>Inspection Requests</span>
-                    <div class="tooltip">Inspection Requests</div>
-                </a>
-
-                <a href="<?php echo e(route('car-admin.approve-inspected-cars')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.approve-inspected-cars') ? 'active' : ''); ?>">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Approve Inspections</span>
-                    <div class="tooltip">Approve Inspections</div>
-                </a>
-
-                <div class="sidebar-divider"></div>
-                <div class="sidebar-heading">Customer</div>
-
-                <a href="<?php echo e(route('admin.verify-users')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.verify-users') ? 'active' : ''); ?>">
-                    <i class="fas fa-id-card"></i>
-                    <span>Verify Users</span>
-                    <div class="tooltip">Verify Users</div>
-                </a>
-
-                <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.payments.index') ? 'active' : ''); ?>">
-                    <i class="fas fa-credit-card"></i>
-                    <span>Payments</span>
-                    <div class="tooltip">Payments</div>
-                </a>
-
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-edit"></i>
-                    <span>Update Registration</span>
-                    <div class="tooltip">Update Registration</div>
-                </a>
-
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Car Information</span>
-                    <div class="tooltip">Car Information</div>
-                </a>
-
-                <a href="<?php echo e(route('admin.booked-car')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.booked-car') ? 'active' : ''); ?>">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Booked Cars</span>
-                    <div class="tooltip">Booked Cars</div>
-                </a>
-
-                <!-- Dark Mode Toggle -->
-                <button class="dark-mode-toggle" id="darkModeToggle">
-                    <div class="toggle-text">
-                        <i class="fas fa-moon"></i>
-                        <span>Dark Mode</span>
-                    </div>
-                    <div class="toggle-switch" id="toggleSwitch">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </button>
-
-                <a href="#" class="sidebar-menu-item" onclick="document.getElementById('sidebar-logout-form').submit();">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                    <div class="tooltip">Logout</div>
-                </a>
-
-                <form method="POST" action="<?php echo e(route('admin.logout')); ?>" id="sidebar-logout-form" style="display: none;">
-                    <?php echo csrf_field(); ?>
-                </form>
-            </div>
+        <div class="admin-profile">
+            <?php if(Auth::guard('carowner')->check()): ?>
+                <div class="profile-avatar">
+                    <img src="<?php echo e(asset('assets/images/thinley.jpg')); ?>" alt="Avatar">
+                </div>
+                <div class="profile-info">
+                    <h3><?php echo e(Auth::guard('carowner')->user()->name); ?></h3>
+                    <span>Car Owner</span>
+                </div>
+            <?php endif; ?>
         </div>
 
-        <div class="dashboard-content" id="dashboardContent">
-            <!-- Breadcrumb Navigation -->
-            <?php if(!empty($breadcrumbs) || View::hasSection('breadcrumbs')): ?>
-                <nav class="page-breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <i class="fas fa-home"></i>
-                            <a href="<?php echo e(route('admin.dashboard')); ?>">Home</a>
-                        </li>
-                        <?php if(View::hasSection('breadcrumbs')): ?>
-                            <?php echo $__env->yieldContent('breadcrumbs'); ?>
-                        <?php else: ?>
-                            <?php if(isset($breadcrumbs)): ?>
-                                <?php $__currentLoopData = $breadcrumbs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $breadcrumb): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <?php if($loop->last): ?>
-                                        <li class="breadcrumb-item active"><?php echo e($breadcrumb['title']); ?></li>
-                                    <?php else: ?>
-                                        <li class="breadcrumb-item">
-                                            <a href="<?php echo e($breadcrumb['url']); ?>"><?php echo e($breadcrumb['title']); ?></a>
-                                        </li>
-                                    <?php endif; ?>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    </ol>
-                </nav>
-            <?php endif; ?>
+        <div class="sidebar-menu">
+            <a href="<?php echo e(route('carowner.dashboard')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
 
-            <!-- Page Header -->
-            <?php if(View::hasSection('page-header')): ?>
-                <div class="page-header">
-                    <?php echo $__env->yieldContent('page-header'); ?>
+            <!-- <div class="sidebar-divider"></div>
+            <div class="sidebar-heading">Manage Service</div> -->
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-heading">Car Owner</div>
+
+            <a href="<?php echo e(route('carowner.rentCar')); ?>">
+                <i class="fas fa-car"></i>
+                <span>Rent a Car</span>
+                <div class="tooltip">Rent a Car</div>
+            </a>
+
+            
+            <a href="<?php echo e(route('carowner.car-inspection')); ?>">
+                <i class="fas fa-search"></i>
+                <span>Inspection Requests</span>
+            </a>
+            <a href="<?php echo e(route('carowner.approved')); ?>">
+                <i class="fas fa-check-circle"></i>
+                <span>Approved Cars</span>
+            </a>
+            <a href="<?php echo e(route('carowner.rejected')); ?>">
+                <i class="fas fa-times-circle"></i>
+                <span>Rejected Cars</span>
+            </a>
+
+            <!-- <a href="<?php echo e(route('admin.payments.index')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('admin.payments.index') ? 'active' : ''); ?>">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a> -->
+
+            <!-- <button class="dark-mode-toggle" id="darkModeToggle">
+                <div class="toggle-text">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
                 </div>
-            <?php endif; ?>
-
-            <!-- Flash Messages -->
-            <?php if(session('success')): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <?php echo e(session('success')); ?>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="toggle-switch" id="toggleSwitch">
+                    <div class="toggle-slider"></div>
                 </div>
-            <?php endif; ?>
+            </button> -->
 
-            <?php if(session('error')): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <?php echo e(session('error')); ?>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
-
-            <?php if(session('warning')): ?>
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <?php echo e(session('warning')); ?>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
-
-            <?php if(session('info')): ?>
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <?php echo e(session('info')); ?>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
-
-            <!-- Main Content Area -->
-            <div class="main-content">
-                <?php echo $__env->yieldContent('content'); ?>
-            </div>
+            <a href="#" class="sidebar-menu-item" onclick="document.getElementById('sidebar-logout-form').submit();">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+            <form method="POST" action="<?php echo e(route('carowner.logout')); ?>" id="sidebar-logout-form" class="d-none"><?php echo csrf_field(); ?></form>
         </div>
     </div>
 
-    <!-- JavaScript Dependencies -->
-    <!-- ADD: Consistent Bootstrap version -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- ADD: jQuery (if needed for AJAX) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <!-- ADD: AJAX setup for CSRF token -->
-    <script>
-        // Only setup AJAX if jQuery is available
-        if (typeof $ !== 'undefined') {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+    <div class="dashboard-content" id="dashboardContent">
+        <?php if(!empty($breadcrumbs) || View::hasSection('breadcrumbs')): ?>
+            <nav class="page-breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <i class="fas fa-home"></i>
+                        <a href="<?php echo e(route('carowner.dashboard')); ?>">Home</a>
+                    </li>
+                    <?php if(View::hasSection('breadcrumbs')): ?>
+                        <?php echo $__env->yieldContent('breadcrumbs'); ?>
+                    <?php elseif(isset($breadcrumbs)): ?>
+                        <?php $__currentLoopData = $breadcrumbs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $breadcrumb): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li class="breadcrumb-item<?php echo e($loop->last ? ' active' : ''); ?>">
+                                <?php if(!$loop->last): ?>
+                                    <a href="<?php echo e($breadcrumb['url']); ?>"><?php echo e($breadcrumb['title']); ?></a>
+                                <?php else: ?>
+                                    <?php echo e($breadcrumb['title']); ?>
+
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php endif; ?>
+                </ol>
+            </nav>
+        <?php endif; ?>
+
+        <?php if(View::hasSection('page-header')): ?>
+            <div class="page-header"><?php echo $__env->yieldContent('page-header'); ?></div>
+        <?php endif; ?>
+
+        <?php $__currentLoopData = ['success', 'error', 'warning', 'info']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $msg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php if(session($msg)): ?>
+                <div class="alert alert-<?php echo e($msg); ?> alert-dismissible fade show" role="alert">
+                    <i class="fas fa-<?php echo e($msg == 'success' ? 'check-circle' : ($msg == 'error' ? 'exclamation-circle' : ($msg == 'warning' ? 'exclamation-triangle' : 'info-circle'))); ?> me-2"></i>
+                    <?php echo e(session($msg)); ?>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+        <div class="main-content">
+            <?php echo $__env->yieldContent('content'); ?>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // CSRF Token setup for AJAX
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-    </script>
-    
-    <script src="<?php echo e(asset('assets/js/admin-dashboard.js')); ?>"></script>
-    
-    <!-- ADD: Page Specific Scripts section -->
-    <?php echo $__env->yieldContent('scripts'); ?>
-    
-    <!-- Additional JavaScript -->
-    <?php echo $__env->yieldPushContent('scripts'); ?>
+    });
+
+    // Sidebar toggle for mobile
+    $('#mobileMenuToggle').on('click', function () {
+        $('#dashboardSidebar').toggleClass('open');
+        $('#sidebarOverlay').toggleClass('active');
+    });
+
+    $('#sidebarOverlay').on('click', function () {
+        $('#dashboardSidebar').removeClass('open');
+        $(this).removeClass('active');
+    });
+
+    // Dark mode toggle (basic version)
+    $('#darkModeToggle').on('click', function () {
+        $('body').toggleClass('dark-mode');
+    });
+</script>
+
+<?php echo $__env->yieldContent('scripts'); ?>
+<?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
 <?php /**PATH C:\Users\Thinley Norbu\Documents\GitHub\FinalProject\resources\views/layouts/carowner.blade.php ENDPATH**/ ?>

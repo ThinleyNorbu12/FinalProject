@@ -5,7 +5,6 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\InspectionRequest;
 
 class InspectionDecisionMail extends Mailable
 {
@@ -13,16 +12,23 @@ class InspectionDecisionMail extends Mailable
 
     public $inspectionRequest;
     public $decision;
+    public $rejectionReason;
 
-    public function __construct(InspectionRequest $inspectionRequest, $decision)
+    public function __construct($inspectionRequest, $decision, $rejectionReason = null)
     {
         $this->inspectionRequest = $inspectionRequest;
         $this->decision = $decision;
+        $this->rejectionReason = $rejectionReason;
     }
 
     public function build()
     {
-        return $this->subject('Car Inspection Decision')
-                    ->view('emails.inspection-decision');
+        return $this->subject('Car Inspection Decision - ' . ucfirst($this->decision))
+                    ->view('emails.inspection-decision')
+                    ->with([
+                        'inspectionRequest' => $this->inspectionRequest,
+                        'decision' => $this->decision,
+                        'rejectionReason' => $this->rejectionReason
+                    ]);
     }
 }

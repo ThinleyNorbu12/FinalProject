@@ -137,7 +137,7 @@
                 <div class="car-info-row">
                     <div><strong>Registration:</strong> <?php echo e($car->registration_no); ?></div>
                     <div><strong>Mileage:</strong> <?php echo e(number_format($car->mileage)); ?> km</div>
-                    <div><strong>Price:</strong> Nu <?php echo e(number_format($car->price)); ?>/day</div>
+                    <div><strong>Price:</strong> BTN <?php echo e(number_format($car->price)); ?>/day</div>
                 </div>
                 <div class="mt-3">
                     <div class="car-spec"><i class="fas fa-door-open me-2"></i><span><?php echo e($car->number_of_doors); ?> Doors</span></div>

@@ -30,21 +30,9 @@
             <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
             <span>Car Rental System</span>
         </a>
-        <div class="header-search d-none d-lg-block">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search anything...">
-        </div>
     </div>
 
     <div class="header-actions">
-        <div class="header-action-item" title="Notifications">
-            <i class="fas fa-bell"></i>
-            <span class="badge">3</span>
-        </div>
-        <div class="header-action-item" title="Messages">
-            <i class="fas fa-envelope"></i>
-            <span class="badge">5</span>
-        </div>
 
         @if(Auth::guard('carowner')->check())
             <div class="header-profile dropdown">

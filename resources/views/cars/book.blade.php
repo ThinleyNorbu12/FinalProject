@@ -148,7 +148,7 @@
                 <div class="car-info-row">
                     <div><strong>Registration:</strong> {{ $car->registration_no }}</div>
                     <div><strong>Mileage:</strong> {{ number_format($car->mileage) }} km</div>
-                    <div><strong>Price:</strong> Nu {{ number_format($car->price) }}/day</div>
+                    <div><strong>Price:</strong> BTN {{ number_format($car->price) }}/day</div>
                 </div>
                 <div class="mt-3">
                     <div class="car-spec"><i class="fas fa-door-open me-2"></i><span>{{ $car->number_of_doors }} Doors</span></div>

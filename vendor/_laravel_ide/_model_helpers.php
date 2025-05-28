@@ -347,6 +347,8 @@ namespace App\Models {
      * @property-read int|null $carImages_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarAdditionalImage> $additionalImages
      * @property-read int|null $additionalImages_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarBooking> $bookings
+     * @property-read int|null $bookings_count
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereMaker($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereModel($value)
@@ -1653,6 +1655,8 @@ namespace App\Models {
      * @property-read int|null $images_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarImage> $additionalImages
      * @property-read int|null $additionalImages_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarBooking> $bookings
+     * @property-read int|null $bookings_count
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereMaker($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarDetail>|CarDetail whereModel($value)
@@ -2938,6 +2942,7 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
+     * @property string|null $remarks
      * @property mixed $admin_id
      * @property mixed $decision
      * @property mixed $inspection_request_id
@@ -2948,6 +2953,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionDecision>|InspectionDecision whereInspectionRequestId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionDecision>|InspectionDecision whereDecision($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionDecision>|InspectionDecision whereAdminId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InspectionDecision>|InspectionDecision whereRemarks($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionDecision>|InspectionDecision whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionDecision>|InspectionDecision whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InspectionDecision>|InspectionDecision newModelQuery()

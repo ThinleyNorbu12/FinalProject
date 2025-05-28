@@ -738,34 +738,73 @@ public function bookCar($id)
 
 
 //  when i click on retal history in customer dashboard
+// public function rentalHistory() {
+//     $customer = Auth::guard('customer')->user();
+    
+//     // Get all bookings for this customer with car information joined
+//     $bookings = DB::table('car_bookings')
+//         ->leftJoin('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
+//         ->where('car_bookings.customer_id', $customer->id)
+//         ->select(
+//             'car_bookings.*',
+//             DB::raw("CONCAT(car_details_tbl.maker, ' ', car_details_tbl.model) as car_name"),
+//             'car_details_tbl.car_image' // Add this line to fetch the car image
+//         )
+//         ->orderBy('car_bookings.created_at', 'desc')
+//         ->get();
+    
+//     // Rest of your code remains the same...
+//     $bookingIds = $bookings->pluck('id')->toArray();
+    
+//     $payments = DB::table('payments')
+//         ->whereIn('booking_id', $bookingIds)
+//         ->get()
+//         ->keyBy('booking_id');
+    
+//     $payLaterPayments = DB::table('pay_later_payments')
+//         ->whereIn('booking_id', $bookingIds)
+//         ->get()
+//         ->groupBy('booking_id');
+    
+//     return view('customer.rental-history', compact('bookings', 'payments', 'payLaterPayments'));
+// }
 public function rentalHistory() {
     $customer = Auth::guard('customer')->user();
     
-    // Get all bookings for this customer with car information joined
+    // Check if user is authenticated
+    if (!$customer) {
+        return redirect()->route('customer.login')->with('error', 'Please login to view your rental history');
+    }
+
     $bookings = DB::table('car_bookings')
         ->leftJoin('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
         ->where('car_bookings.customer_id', $customer->id)
         ->select(
             'car_bookings.*',
             DB::raw("CONCAT(car_details_tbl.maker, ' ', car_details_tbl.model) as car_name"),
-            'car_details_tbl.car_image' // Add this line to fetch the car image
+            'car_details_tbl.car_image'
         )
         ->orderBy('car_bookings.created_at', 'desc')
         ->get();
-    
-    // Rest of your code remains the same...
+
     $bookingIds = $bookings->pluck('id')->toArray();
+
+    // Only run these queries if we have bookings
+    $payments = collect();
+    $payLaterPayments = collect();
     
-    $payments = DB::table('payments')
-        ->whereIn('booking_id', $bookingIds)
-        ->get()
-        ->keyBy('booking_id');
-    
-    $payLaterPayments = DB::table('pay_later_payments')
-        ->whereIn('booking_id', $bookingIds)
-        ->get()
-        ->groupBy('booking_id');
-    
+    if (!empty($bookingIds)) {
+        $payments = DB::table('payments')
+            ->whereIn('booking_id', $bookingIds)
+            ->get()
+            ->keyBy('booking_id');
+        
+        $payLaterPayments = DB::table('pay_later_payments')
+            ->whereIn('booking_id', $bookingIds)
+            ->get()
+            ->groupBy('booking_id');
+    }
+
     return view('customer.rental-history', compact('bookings', 'payments', 'payLaterPayments'));
 }
     

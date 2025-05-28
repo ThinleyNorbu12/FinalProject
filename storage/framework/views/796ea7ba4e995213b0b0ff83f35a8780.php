@@ -144,7 +144,7 @@
                                         
                                         <div class="mt-3 pt-3 border-top">
                                             <h6>Daily Rate:</h6>
-                                            <h4>Nu. <?php echo e(number_format($booking->car->price, 2)); ?>/day</h4>
+                                            <h4>BTN. <?php echo e(number_format($booking->car->price, 2)); ?>/day</h4>
                                         </div>
                                     </div>
                                 <?php else: ?>
@@ -173,14 +173,14 @@
                                         <h5>Price Summary</h5>
                                         <div class="row">
                                             <div class="col-md-8">
-                                                <p><?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?> x Nu. <?php echo e(number_format($dailyRate, 2)); ?></p>
+                                                <p><?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?> x BTN. <?php echo e(number_format($dailyRate, 2)); ?></p>
                                                 <p>Insurance</p>
                                                 <p>Service Fee</p>
                                             </div>
                                             <div class="col-md-4 text-end">
-                                                <p>Nu. <?php echo e(number_format($dailyRate * $days, 2)); ?></p>
-                                                <p>Nu. <?php echo e(number_format($insuranceFee, 2)); ?></p>
-                                                <p>Nu. <?php echo e(number_format($serviceFee, 2)); ?></p>
+                                                <p>BTN. <?php echo e(number_format($dailyRate * $days, 2)); ?></p>
+                                                <p>BTN. <?php echo e(number_format($insuranceFee, 2)); ?></p>
+                                                <p>BTN. <?php echo e(number_format($serviceFee, 2)); ?></p>
                                             </div>
                                         </div>
                                         <hr>
@@ -189,7 +189,7 @@
                                                 <h5>Total</h5>
                                             </div>
                                             <div class="col-md-4 text-end">
-                                                <h5>Nu. <?php echo e(number_format($totalPrice, 2)); ?></h5>
+                                                <h5>BTN. <?php echo e(number_format($totalPrice, 2)); ?></h5>
                                             </div>
                                         </div>
                                     </div>
@@ -237,6 +237,7 @@
                                     <a href="#" class="btn btn-primary" onclick="window.print()">
                                         <i class="fas fa-print me-2"></i>Print Booking
                                     </a>
+                                    <a href="<?php echo e(route('home')); ?>" class="btn btn-primary mt-3">Browse Cars</a>
                                 </div>
                             </div>
                         </div>

@@ -8,6 +8,8 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
+
+use App\Http\Controllers\ReportController;
 // homecontroller
 // home.blade.php
 Route::get('/', function () {
@@ -28,7 +30,11 @@ Route::post('/set-dates', [HomeController::class, 'setDates'])->name('set.dates'
 Route::get('/available-cars', [HomeController::class, 'showAvailableCars'])->name('available.cars');
 
 // Route for booking form display
-Route::get('/cars/{id}/book', [HomeController::class, 'book'])->name('book.car');
+// Route::get('/cars/{id}/book', [HomeController::class, 'book'])->name('book.car');
+
+Route::get('/book-car/{id}', [HomeController::class, 'book'])->name('book.car');
+Route::get('/book-admin-car/{id}', [HomeController::class, 'bookAdminCar'])->name('book.admin.car');
+
 
 // Route to handle the booking form submission (for both logged-in and non-logged-in users)
 Route::post('/car/{id}/book', [BookingController::class, 'submit'])
@@ -197,7 +203,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Newly Registered Cars Route
     Route::prefix('car-admin')->name('car-admin.')->middleware('auth:admin')->group(function () {
     Route::get('new-registration-cars', [CarAdminController::class, 'showRegisteredCars'])->name('new-registration-cars');
-
+         Route::get('live-search', [CarAdminController::class, 'liveSearch'])->name('live-search');
     // Route for viewing a specific car's details (if needed)
     Route::get('view-car/{id}', [CarAdminController::class, 'viewCar'])->name('view-car');
 
@@ -205,7 +211,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
      Route::get('request-inspection/{car}', [CarAdminController::class, 'requestInspection'])->name('admin.requestInspection');
      // Optional: form submit handler
-     Route::post('submit-inspection-request/{car}', [CarAdminController::class, 'submitInspectionRequest'])->name('admin.submitInspectionRequest');
+    //  Route::post('submit-inspection-request/{car}', [CarAdminController::class, 'submit-inspection-request'])->name('admin.submitInspectionRequest');
+    Route::post('submit-inspection-request/{car}', [CarAdminController::class, 'submitInspectionRequest'])->name('admin.submitInspectionRequest');
+
 
      // Route for rejecting cars
      Route::get('reject-car/{car}', [CarAdminController::class, 'showRejectForm'])->name('showRejectForm');
@@ -231,6 +239,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Handle the approval or rejection form (POST)
     Route::post('/approve-inspected-cars', [CarAdminController::class, 'processInspectionApproval'])->name('inspection-approval');
 
+     Route::get('/car-management-reports', [ReportController::class, 'carManagementReports'])->name('car-management-reports');
 
 });
 
@@ -325,7 +334,7 @@ Route::middleware(['auth:admin'])->group(function () {
    Route::post('/admin/cars/delete-image', [CarController::class, 'deleteImage'])->name('cars.delete-image');
 });
 
-use App\Http\Controllers\ReportController;
+
 // profile
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
     
@@ -340,6 +349,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     
     Route::get('/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/export', [App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');
+
+    
 
 });
 

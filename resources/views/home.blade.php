@@ -26,6 +26,7 @@
         z-index: 999;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         padding: 0 20px;
         transition: all 0.3s ease;
     }
@@ -33,6 +34,12 @@
     #header.sidebar-open {
         left: 250px;
         width: calc(100% - 250px);
+    }
+
+    /* Header Left Section */
+    .header-left {
+        display: flex;
+        align-items: center;
     }
 
     #toggle-btn {
@@ -47,6 +54,72 @@
 
     #toggle-btn:hover {
         color: #007bff;
+    }
+
+    /* Header Right Section */
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-auth-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .header-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .header-btn-login {
+        background-color: transparent;
+        color: #007bff;
+        border: 1px solid #007bff;
+    }
+
+    .header-btn-login:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .header-btn-signup {
+        background-color: #007bff;
+        color: white;
+        border: 1px solid #007bff;
+    }
+
+    .header-btn-signup:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .header-btn-logout {
+        background-color: #dc3545;
+        color: white;
+        border: 1px solid #dc3545;
+    }
+
+    .header-btn-logout:hover {
+        background-color: #c82333;
+        border-color: #c82333;
+    }
+
+    .user-welcome {
+        color: #333;
+        font-weight: 500;
+        margin-right: 10px;
     }
 
     /* Modern Sidebar Styles */
@@ -184,18 +257,282 @@
         #footer.shifted {
             margin-left: 0;
         }
+
+        .header-auth-buttons {
+            gap: 5px;
+        }
+
+        .header-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .user-welcome {
+            font-size: 14px;
+            margin-right: 5px;
+        }
     }
+
+    @media (max-width: 480px) {
+        .header-right {
+            gap: 8px;
+        }
+
+        .header-btn {
+            padding: 5px 10px;
+            font-size: 11px;
+        }
+
+        .user-welcome {
+            display: none;
+        }
+    }
+
+    /* Footer Styles */
+.footer {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 2rem 0 1rem;
+    border-top: 3px solid #3498db;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+    margin-top: auto;
+    transition: margin-left 0.3s ease;
+}
+
+/* Footer when sidebar is open */
+.footer.shifted {
+    margin-left: 250px;
+}
+
+.footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Footer content layout */
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-section h4 {
+    color: #3498db;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section ul li a {
+    color: #bdc3c7;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-section ul li a:hover {
+    color: #3498db;
+}
+
+.footer-section ul li a i {
+    font-size: 14px;
+    width: 16px;
+}
+
+/* Footer bottom section */
+.footer-bottom {
+    border-top: 1px solid #34495e;
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-bottom p {
+    margin: 0;
+    color: #95a5a6;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social a {
+    color: #bdc3c7;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.footer-social a:hover {
+    color: #3498db;
+}
+
+/* Contact info styling */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #bdc3c7;
+}
+
+.contact-item i {
+    color: #3498db;
+    width: 16px;
+    font-size: 14px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .footer {
+        padding: 1.5rem 0 1rem;
+    }
+    
+    .footer.shifted {
+        margin-left: 0;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .footer-social {
+        justify-content: center;
+    }
+    
+    .footer .container {
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        font-size: 13px;
+    }
+    
+    .footer-section h4 {
+        font-size: 1rem;
+    }
+    
+    .footer-content {
+        gap: 1rem;
+    }
+}
+
+/* Alternative simple footer (if you prefer minimal design) */
+.simple-footer {
+    background-color: #f8f9fa;
+    padding: 1.5rem 0;
+    border-top: 1px solid #dee2e6;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+    transition: margin-left 0.3s ease;
+}
+
+.simple-footer.shifted {
+    margin-left: 250px;
+}
+
+.simple-footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.simple-footer p {
+    margin: 0;
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .simple-footer.shifted {
+        margin-left: 0;
+    }
+    
+    .simple-footer .container {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
 </style>
 @endsection
 
 @section('content')
 <!-- Header -->
 <header id="header">
-    <button id="toggle-btn" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-    <div class="logo">
-        <h3>Car Rental System</h3>
+    <div class="header-left">
+        <button id="toggle-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo">
+            <h3>Car Rental System</h3>
+        </div>
+    </div>
+    
+    <div class="header-right">
+        @auth('customer')
+            <span class="user-welcome">
+                <i class="fas fa-user"></i> Welcome, {{ Auth::guard('customer')->user()->name }}
+            </span>
+            <div class="header-auth-buttons">
+                <a href="{{ route('customer.dashboard') }}" class="header-btn header-btn-login">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <form action="{{ route('customer.logout') }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="header-btn header-btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
+        @else
+            <div class="header-auth-buttons">
+                <a href="{{ route('customer.login') }}" class="header-btn header-btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="{{ route('customer.register') }}" class="header-btn header-btn-signup">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a>
+            </div>
+        @endauth
     </div>
 </header>
 
@@ -359,41 +696,60 @@
             dropoffDateInput.min = pickupDate.toISOString().split('T')[0];
         });
     </script>
-
-    <!-- Display Cars -->
-    <!-- <section class="cars">
-        <h2>Available Cars</h2>
-        <div class="car-container">
-            @if($cars->count())
-                @foreach($cars as $car)
-                    <div class="car">
-                        <img src="{{ asset($car->car_image) }}" alt="{{ $car->model }}" style="width: 200px; height: auto;">
-                        <h3>{{ $car->maker }} {{ $car->model }}</h3>
-                        <p>{{ $car->price }}/day</p>
-                        <div class="car-buttons">
-                            <a href="#" class="btn-details" data-car-id="{{ $car->id }}">DETAILS</a>
-                            <a href="{{ route('book.car', $car->id) }}" class="btn-contact">BOOK NOW</a>
-                        </div>
-                    </div>
-                @endforeach
-            @else
-                <p>No cars available at the moment.</p>
-            @endif
-        </div>
-    </section> -->
     <section class="cars">
         <h2>Available Cars</h2>
         <div class="car-container">
-            @if($cars->count())
-                @foreach($cars as $car)
+            @php
+                // Combine cars from both tables
+                $allCars = collect();
+                
+                // Add regular cars
+                if($cars->count()) {
+                    foreach($cars as $car) {
+                        // Check if car has confirmed booking
+                        $hasConfirmedBooking = $car->bookings()
+                            ->where('status', 'confirmed')
+                            ->exists();
+                            
+                        if(!$hasConfirmedBooking) {
+                            $car->source = 'regular'; // Mark source for image path logic
+                            $allCars->push($car);
+                        }
+                    }
+                }
+                
+                // Add admin cars (assuming you have $adminCars variable passed from controller)
+                if(isset($adminCars) && $adminCars->count()) {
+                    foreach($adminCars as $adminCar) {
+                        // Check if admin car has confirmed booking (if booking system applies to admin cars)
+                        // Adjust this logic based on your admin car booking system
+                        $hasConfirmedBooking = false; // You may need to implement this check for admin cars
+                        
+                        if(!$hasConfirmedBooking) {
+                            $adminCar->source = 'admin'; // Mark source for image path logic
+                            $allCars->push($adminCar);
+                        }
+                    }
+                }
+            @endphp
+            
+            @if($allCars->count())
+                @foreach($allCars as $car)
                     <div class="car">
                         @php
-                            $imagePathUploads = 'uploads/cars/' . $car->car_image;
-                            $imagePathAdmin = 'admincar_images/' . $car->car_image;
+                            // Handle image paths based on car source
+                            if($car->source === 'admin') {
+                                $imagePathUploads = 'uploads/admin_cars/' . $car->car_image;
+                                $imagePathAdmin = 'admincar_images/' . $car->car_image;
+                            } else {
+                                $imagePathUploads = 'uploads/cars/' . $car->car_image;
+                                $imagePathAdmin = 'admincar_images/' . $car->car_image;
+                            }
+                            
                             $imageExistsInUploads = $car->car_image && file_exists(public_path($imagePathUploads));
                             $imageExistsInAdmin = $car->car_image && file_exists(public_path($imagePathAdmin));
                         @endphp
-
+                        
                         @if($imageExistsInUploads)
                             <img src="{{ asset($imagePathUploads) }}" alt="{{ $car->maker }} {{ $car->model }}" style="width: 200px; height: auto;">
                         @elseif($imageExistsInAdmin)
@@ -410,12 +766,21 @@
                                 <i class="fas fa-car"></i>
                             </div>
                         @endif
-
+                        
                         <h3>{{ $car->maker }} {{ $car->model }}</h3>
-                        <p>${{ number_format($car->price, 2) }}/day</p>
+                        <p>BTN {{ number_format($car->price, 2) }}/day</p>
+                        
+                        @if($car->source === 'admin')
+                            <span class="admin-badge" style="background: #3498db; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Admin Car</span>
+                        @endif
+                        
                         <div class="car-buttons">
-                            <a href="#" class="btn-details" data-car-id="{{ $car->id }}">DETAILS</a>
-                            <a href="{{ route('book.car', $car->id) }}" class="btn-contact">BOOK NOW</a>
+                            <a href="#" class="btn-details" data-car-id="{{ $car->id }}" data-car-source="{{ $car->source }}">DETAILS</a>
+                            @if($car->source === 'admin')
+                                <a href="{{ route('book.admin.car', $car->id) }}" class="btn-contact">BOOK NOW</a>
+                            @else
+                                <a href="{{ route('book.car', $car->id) }}" class="btn-contact">BOOK NOW</a>
+                            @endif
                         </div>
                     </div>
                 @endforeach
@@ -435,58 +800,69 @@
         <div class="car-specs-container">
             <div class="car-specs-row">
                 <div class="car-spec">
-                    <i class="spec-icon">🚘</i>
+                    <i class="fas fa-door-open spec-icon"></i>
                     <span id="doors">4 Doors</span>
                 </div>
                 <div class="car-spec">
-                    <i class="spec-icon">👤</i>
+                    <i class="fas fa-users spec-icon"></i>
                     <span id="seats">7 Seats</span>
                 </div>
             </div>
             <div class="car-specs-row">
                 <div class="car-spec">
-                    <i class="spec-icon">❄️</i>
+                    <i class="fas fa-snowflake spec-icon"></i>
                     <span id="ac">Air Conditioning</span>
                 </div>
                 <div class="car-spec">
-                    <i class="spec-icon">🔄</i>
+                    <i class="fas fa-cogs spec-icon"></i>
                     <span id="transmission">Automatic</span>
                 </div>
             </div>
             <div class="car-specs-row">
                 <div class="car-spec">
-                    <i class="spec-icon">🧳</i>
+                    <i class="fas fa-suitcase spec-icon"></i>
                     <span id="largeBags">2 Large Bags</span>
                 </div>
                 <div class="car-spec">
-                    <i class="spec-icon">💼</i>
+                    <i class="fas fa-briefcase spec-icon"></i>
                     <span id="smallBags">2 Small Bags</span>
                 </div>
             </div>
             <div class="car-specs-row">
                 <div class="car-spec">
-                    <i class="spec-icon">⛽</i>
+                    <i class="fas fa-tachometer-alt spec-icon"></i>
                     <span id="mpg">16-21 mpg</span>
                 </div>
                 <div class="car-spec">
-                    <i class="spec-icon">🔵</i>
+                    <i class="fab fa-bluetooth spec-icon"></i>
                     <span id="bluetooth">Bluetooth</span>
                 </div>
             </div>
             <div class="car-specs-row">
                 <div class="car-spec">
-                    <i class="spec-icon">📹</i>
+                    <i class="fas fa-video spec-icon"></i>
                     <span id="camera">Backup Camera</span>
                 </div>
                 <div class="car-spec">
-                    <i class="spec-icon">⛽</i>
+                    <i class="fas fa-gas-pump spec-icon"></i>
                     <span id="fuelType">Gasoline</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="text-muted mb-0">&copy; {{ date('Y') }} Car Rental System. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="text-muted mb-0">Version 1.0.0</p>
+            </div>
+        </div>
+    </div>
+</footer>
 <script>
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');

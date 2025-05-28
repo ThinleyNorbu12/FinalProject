@@ -16,13 +16,7 @@
                     </h4>
                 </div>
                 <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    @endif
+        
 
                     <form action="{{ route('carowner.storeRentCar') }}" method="POST" enctype="multipart/form-data" id="carForm">
                         @csrf
@@ -229,7 +223,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <label class="form-check-label fw-bold">Backup Camera:</label>
+                                    <label class="form-check-label fw-bold">Rear-View Camera:</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="backup_camera" 

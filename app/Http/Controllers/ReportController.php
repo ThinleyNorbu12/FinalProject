@@ -128,4 +128,120 @@ class ReportController extends Controller
         // Implementation depends on your preferred export library
         return response()->json(['message' => 'Export functionality to be implemented']);
     }
+
+
+
+
+    public function carManagementReports()
+{
+    // Get total registered cars
+    $totalRegisteredCars = DB::table('car_details_tbl')->count();
+    
+    // Get cars by status
+    $carsByStatus = DB::table('car_details_tbl')
+        ->select('status', DB::raw('count(*) as count'))
+        ->groupBy('status')
+        ->get();
+    
+    // Get cars by vehicle type
+    $carsByType = DB::table('car_details_tbl')
+        ->select('vehicle_type', DB::raw('count(*) as count'))
+        ->groupBy('vehicle_type')
+        ->get();
+    
+    // Get cars by maker
+    $carsByMaker = DB::table('car_details_tbl')
+        ->select('maker', DB::raw('count(*) as count'))
+        ->groupBy('maker')
+        ->orderBy('count', 'desc')
+        ->get();
+    
+    // Get total inspection requests
+    $totalInspectionRequests = DB::table('inspection_requests')->count();
+    
+    // Get inspection requests by status
+    $inspectionsByStatus = DB::table('inspection_requests')
+        ->select('status', DB::raw('count(*) as count'))
+        ->groupBy('status')
+        ->get();
+    
+    // Get inspection decisions (approved/rejected)
+    $inspectionDecisions = DB::table('inspection_decisions')
+        ->select('decision', DB::raw('count(*) as count'))
+        ->groupBy('decision')
+        ->get();
+    
+    // Get detailed inspection data with car details
+    $detailedInspections = DB::table('inspection_requests as ir')
+        ->leftJoin('car_details_tbl as cd', 'ir.car_id', '=', 'cd.id')
+        ->leftJoin('inspection_decisions as id', 'ir.id', '=', 'id.inspection_request_id')
+        ->select(
+            'ir.id as request_id',
+            'cd.maker',
+            'cd.model',
+            'cd.registration_no',
+            'ir.inspection_date',
+            'ir.status as request_status',
+            'id.decision',
+            'id.remarks',
+            'ir.created_at'
+        )
+        ->orderBy('ir.created_at', 'desc')
+        ->get();
+    
+    // Monthly registration trends (last 12 months)
+    $monthlyRegistrations = DB::table('car_details_tbl')
+        ->select(
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as count')
+        )
+        ->where('created_at', '>=', now()->subMonths(12))
+        ->groupBy('year', 'month')
+        ->orderBy('year', 'desc')
+        ->orderBy('month', 'desc')
+        ->get();
+    
+    // Monthly inspection trends (last 12 months)
+    $monthlyInspections = DB::table('inspection_requests')
+        ->select(
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as count')
+        )
+        ->where('created_at', '>=', now()->subMonths(12))
+        ->groupBy('year', 'month')
+        ->orderBy('year', 'desc')
+        ->orderBy('month', 'desc')
+        ->get();
+    
+    // Get pending approvals count
+    $pendingApprovals = DB::table('inspection_requests')
+        ->where('status', 'completed')
+        ->where('is_confirmed_by_admin', 0)
+        ->count();
+    
+    // Calculate approval rate
+    $totalDecisions = DB::table('inspection_decisions')->count();
+    $approvedDecisions = DB::table('inspection_decisions')
+        ->where('decision', 'approved')
+        ->count();
+    
+    $approvalRate = $totalDecisions > 0 ? round(($approvedDecisions / $totalDecisions) * 100, 2) : 0;
+    
+    return view('admin.car-management-reports', compact(
+        'totalRegisteredCars',
+        'carsByStatus',
+        'carsByType',
+        'carsByMaker',
+        'totalInspectionRequests',
+        'inspectionsByStatus',
+        'inspectionDecisions',
+        'detailedInspections',
+        'monthlyRegistrations',
+        'monthlyInspections',
+        'pendingApprovals',
+        'approvalRate'
+    ));
+}
 }

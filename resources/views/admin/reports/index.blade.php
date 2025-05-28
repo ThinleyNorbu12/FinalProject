@@ -75,7 +75,7 @@
                 <div class="revenue-stats">
                     <div class="stat-item">
                         <span class="label">Total Revenue:</span>
-                        <span class="value">${{ number_format($revenueData->total_revenue ?? 0, 2) }}</span>
+                        <span class="value">BTN {{ number_format($revenueData->total_revenue ?? 0, 2) }}</span>
                     </div>
                     <div class="stat-item">
                         <span class="label">Completed Bookings:</span>
@@ -83,7 +83,7 @@
                     </div>
                     <div class="stat-item">
                         <span class="label">Average Booking Value:</span>
-                        <span class="value">${{ number_format($revenueData->average_booking_value ?? 0, 2) }}</span>
+                        <span class="value">BTN {{ number_format($revenueData->average_booking_value ?? 0, 2) }}</span>
                     </div>
                 </div>
             </div>
@@ -198,7 +198,7 @@
                             <tr>
                                 <td>{{ ucfirst($type->vehicle_type) }}</td>
                                 <td>{{ $type->count }}</td>
-                                <td>${{ number_format($type->avg_price, 2) }}</td>
+                                <td>BTN  {{ number_format($type->avg_price, 2) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
