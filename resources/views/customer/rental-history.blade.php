@@ -812,10 +812,17 @@
                                         <button class="btn-primary">Extend Rental</button>
                                         <button class="btn-secondary">Return Car</button>
                                     @elseif($booking->status == 'completed')
-                                        <button class="btn-primary">Book Again</button>
-                                        <button class="btn-secondary">View Invoice</button>
+                                        {{-- Link to book page with car ID from booking --}}
+                                        @if(isset($booking->car_id))
+                                            <a href="{{ route('customer.book-car', $booking->car_id) }}" class="btn-book-now" style="background-color: #3b82f6; color: white; border: 1px solid #3b82f6; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 500;">Book Again</a>
+                                        @else
+                                            {{-- Fallback: Link to browse cars if car_id is not available --}}
+                                            <a href="{{ route('customer.browse-cars') }}" class="btn-book-now" style="background-color: #3b82f6; color: white; border: 1px solid #3b82f6; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 500;">Book Again</a>
+                                        @endif
+                                        {{-- <button class="btn-secondary">View Invoice</button> --}}
                                     @endif
                                 </div>
+
                             </div>
                         </div>
                     @endforeach

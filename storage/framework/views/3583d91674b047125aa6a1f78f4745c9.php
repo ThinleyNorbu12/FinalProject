@@ -346,13 +346,10 @@
         
         <div class="header-logo">
             <i class="fas fa-car"></i>
-            <span>CarRental</span>
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
         </div>
         
-        <div class="header-search">
-            <input type="text" placeholder="Search for cars...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
+
         
         <div class="header-user">
             <?php if(Auth::guard('customer')->check()): ?>
@@ -435,24 +432,6 @@
                     <span>Fuel Policy</span>
                 </a>
                 
-                <div class="sidebar-divider"></div>
-                
-                <div class="sidebar-heading">Help</div>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-headset"></i>
-                    <span>Support</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span>FAQ</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>Report Issue</span>
-                </a>
             </div>
         </div>
 
@@ -466,54 +445,47 @@
                         <h1 class="car-title"><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h1>
                         <p class="car-subtitle"><?php echo e($car->vehicle_type); ?> • <?php echo e($car->car_condition); ?></p>
                         <div class="price-badge">
-                            $<?php echo e(number_format($car->price, 2)); ?>/day
+                            BTN <?php echo e(number_format($car->price, 2)); ?>/day
                         </div>
                     </div>
 
                     <div class="car-content">
-                        <div class="car-image-section">
-                            <?php
-                                // Extract just the filename from the stored path
-                                $filename = basename($car->car_image);
-                                
-                                // Build proper paths
-                                $imagePathUploads = 'uploads/cars/' . $filename;
-                                $imagePathAdmin = 'admincar_images/' . $filename;
-                                
-                                // Check if files exist
-                                $imageExistsInUploads = $car->car_image && file_exists(public_path($imagePathUploads));
-                                $imageExistsInAdmin = $car->car_image && file_exists(public_path($imagePathAdmin));
-                                
-                                // Debug information (remove in production)
-                                if(config('app.debug')) {
-                                    echo "<!-- Debug: Original: {$car->car_image}, Filename: {$filename}, Uploads Path: " . public_path($imagePathUploads) . ", Exists: " . ($imageExistsInUploads ? 'Yes' : 'No') . " -->";
-                                }
-                            ?>
-                            
-                            <?php if($imageExistsInUploads): ?>
-                                <img src="<?php echo e(asset($imagePathUploads)); ?>" 
-                                    alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>" 
-                                    class="car-image"
-                                    onerror="console.log('Failed to load: <?php echo e(asset($imagePathUploads)); ?>');">
-                            <?php elseif($imageExistsInAdmin): ?>
-                                <img src="<?php echo e(asset($imagePathAdmin)); ?>" 
-                                    alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>" 
-                                    class="car-image"
-                                    onerror="console.log('Failed to load: <?php echo e(asset($imagePathAdmin)); ?>');">
-                            <?php else: ?>
-                                <div class="car-image" style="background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
-                                    <i class="fas fa-car"></i>
-                                </div>
-                            <?php endif; ?>
-                            
-                            <div class="status-badge
-                                <?php if($car->status == 'available'): ?> status-available
-                                <?php elseif($car->status == 'rented'): ?> status-rented
-                                <?php else: ?> status-maintenance <?php endif; ?>">
-                                <?php echo e(ucfirst($car->status)); ?>
-
+                        <div class="car-image-section" style="text-align: center; padding: 20px;">
+                        <?php
+                            $filename = basename($car->car_image);
+                            $imagePathUploads = 'uploads/cars/' . $filename;
+                            $imagePathAdmin = 'admincar_images/' . $filename;
+                            $imageExistsInUploads = $car->car_image && file_exists(public_path($imagePathUploads));
+                            $imageExistsInAdmin = $car->car_image && file_exists(public_path($imagePathAdmin));
+                        ?>
+                        
+                        <?php if($imageExistsInUploads): ?>
+                            <img src="<?php echo e(asset($imagePathUploads)); ?>"
+                                alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>"
+                                class="car-image"
+                                style="width: 450px; height: 280px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
+                                onerror="console.log('Failed to load: <?php echo e(asset($imagePathUploads)); ?>');">
+                        <?php elseif($imageExistsInAdmin): ?>
+                            <img src="<?php echo e(asset($imagePathAdmin)); ?>"
+                                alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>"
+                                class="car-image"
+                                style="width: 450px; height: 280px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
+                                onerror="console.log('Failed to load: <?php echo e(asset($imagePathAdmin)); ?>');">
+                        <?php else: ?>
+                            <div class="car-image" style="background: linear-gradient(135deg, #bdc3c7 0%, #bdc3c7 100%); display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; width: 450px; height: 280px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                                <i class="fas fa-car"></i>
                             </div>
+                        <?php endif; ?>
+                        
+                        <div class="status-badge
+                            <?php if($car->status == 'available'): ?> status-available
+                            <?php elseif($car->status == 'rented'): ?> status-rented
+                            <?php else: ?> status-maintenance <?php endif; ?>"
+                            style="margin-top: 15px;">
+                            <?php echo e(ucfirst($car->status)); ?>
+
                         </div>
+                    </div>
 
 
                         <div class="car-info-section">

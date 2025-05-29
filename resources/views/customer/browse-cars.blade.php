@@ -409,50 +409,93 @@
             </div>
             
             <!-- Cars Grid -->
+            {{-- Add this at the top of your blade file for debugging --}}
+            {{-- Updated Blade template section for image display --}}
             @if(count($cars) > 0)
                 <div class="cars-grid">
                     @foreach($cars as $car)
                     <div class="car-card-container">
                         <div class="car-status">Available</div>
                         <div class="car-card">
+                            {{-- Fixed image display logic --}}
                             @if($car->car_image)
-                                    <img src="{{ asset($car->car_image) }}" alt="Car Image" style="width: 100px; height: auto;">
+                                @php
+                                    // Handle different image path formats based on who uploaded
+                                    $imagePath = $car->car_image;
+                                    
+                                    // Check if it's an admin uploaded car or car owner uploaded car
+                                    if (isset($car->admin_id) && $car->admin_id) {
+                                        // Admin uploaded cars - stored in admincar_images directory
+                                        if (!str_starts_with($imagePath, 'admincar_images/')) {
+                                            $imagePath = 'admincar_images/' . $imagePath;
+                                        }
+                                    } elseif (isset($car->car_owner_id) && $car->car_owner_id) {
+                                        // Car owner uploaded cars - stored in uploads/cars directory
+                                        if (!str_starts_with($imagePath, 'uploads/')) {
+                                            $imagePath = 'uploads/cars/' . $imagePath;
+                                        }
+                                    }
+                                    
+                                    // Full path to check if file exists
+                                    $fullPath = public_path($imagePath);
+                                @endphp
+                                
+                                {{-- Check if file exists before displaying --}}
+                                @if(file_exists($fullPath))
+                                    <img src="{{ asset($imagePath) }}" alt="{{ $car->maker }} {{ $car->model }}" 
+                                        style="width: 100px; height: auto; object-fit: cover;">
                                 @else
-                                    <p>No image</p>
+                                    {{-- Fallback: try original path in case it's stored differently --}}
+                                    <img src="{{ asset($car->car_image) }}" alt="{{ $car->maker }} {{ $car->model }}" 
+                                        style="width: 100px; height: auto; object-fit: cover;"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div class="no-image-placeholder" style="display: none; width: 100px; height: 75px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                        <i class="fas fa-car" style="color: #999; font-size: 24px;"></i>
+                                    </div>
                                 @endif
-                            
+                            @else
+                                {{-- No image available --}}
+                                <div class="no-image-placeholder" style="width: 100px; height: 75px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                    <i class="fas fa-car" style="color: #999; font-size: 24px;"></i>
+                                </div>
+                            @endif
+                                            
                             <div class="car-details">
                                 <h4 class="car-title">{{ $car->maker }} {{ $car->model }} ({{ $car->vehicle_type }})</h4>
-                                
+                                                
                                 <div class="car-specs">
                                     <i class="fas fa-user"></i> {{ $car->number_of_seats ?? 'N/A' }} &nbsp;
                                     <i class="fas fa-door-open"></i> {{ $car->number_of_doors ?? 'N/A' }} &nbsp;
                                     <i class="fas fa-gas-pump"></i> {{ ucfirst($car->fuel_type ?? 'N/A') }} &nbsp;
                                     <i class="fas fa-cog"></i> {{ ucfirst($car->transmission_type ?? 'Auto') }}
                                 </div>
-                                
+                                                
                                 <div class="car-description">
                                     {{ \Illuminate\Support\Str::limit($car->description, 100) ?? 'No description available.' }}
                                 </div>
-                                
+                                                
                                 <div class="car-features">
-                                    @if($car->air_conditioning)
+                                    @if($car->air_conditioning === 'Yes' || $car->air_conditioning === true)
                                         <span class="car-feature"><i class="fas fa-snowflake"></i> A/C</span>
                                     @endif
-                                    
-                                    @if($car->backup_camera)
+                                                    
+                                    @if($car->backup_camera === 'Yes' || $car->backup_camera === true)
                                         <span class="car-feature"><i class="fas fa-camera"></i> Backup Camera</span>
                                     @endif
-                                    
-                                    @if($car->bluetooth)
+                                                    
+                                    @if($car->bluetooth === 'Yes' || $car->bluetooth === true)
                                         <span class="car-feature"><i class="fab fa-bluetooth-b"></i> Bluetooth</span>
                                     @endif
-                                    
-                                    <span class="car-feature"><i class="fas fa-suitcase"></i> {{ $car->large_bags_capacity ?? '0' }} Large / {{ $car->small_bags_capacity ?? '0' }} Small</span>
+                                                    
+                                    <span class="car-feature">
+                                        <i class="fas fa-suitcase"></i> 
+                                        {{ $car->large_bags_capacity ?? '0' }} Large / 
+                                        {{ $car->small_bags_capacity ?? '0' }} Small
+                                    </span>
                                 </div>
-                                
+                                                
                                 <div class="car-price">BTN {{ number_format($car->price, 2) }}/day</div>
-                                
+                                                
                                 <div class="car-actions">
                                     <a href="{{ route('customer.car-details', $car->id) }}" class="btn-view-details">View Details</a>
                                     <a href="{{ route('customer.book-car', $car->id) }}" class="btn-book-now">Book Now</a>

@@ -560,14 +560,10 @@
         
         <div class="header-logo">
             <i class="fas fa-car"></i>
-            <span>CarRental</span>
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
         </div>
         
-        <div class="header-search">
-            <input type="text" placeholder="Search for cars...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
-        
+      
         <div class="header-user">
             <?php if(Auth::guard('customer')->check()): ?>
                 <span class="header-user-name"><?php echo e(Auth::guard('customer')->user()->name); ?></span>
@@ -650,24 +646,7 @@
                     <span>Fuel Policy</span>
                 </a>
                 
-                <div class="sidebar-divider"></div>
                 
-                <div class="sidebar-heading">Help</div>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-headset"></i>
-                    <span>Support</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span>FAQ</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>Report Issue</span>
-                </a>
             </div>
         </div>
         
@@ -786,7 +765,7 @@
                 <?php endif; ?>
             </div>
             
-            <!-- Stats -->
+            <!-- Stats
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number">1</div>
@@ -802,7 +781,7 @@
                     <div class="stat-number">8</div>
                     <div class="stat-label">Completed Rentals</div>
                 </div>
-            </div>
+            </div> -->
             
             <!-- Rental History -->
             <div class="history-card">
@@ -866,24 +845,24 @@
                                                 // Calculate the total cost (days * daily price)
                                                 $totalCost = $days * $rental->price;
                                                 // Format as currency
-                                                echo '$' . number_format($totalCost, 2);
+                                                echo 'BTN ' . number_format($totalCost, 2);
                                             ?>
                                         </td>
                                         <td>
                                             <?php if($rental->status == 'confirmed' && \Carbon\Carbon::parse($rental->dropoff_datetime) >= now()): ?>
-                                                <span class="badge badge-active">Active</span>
+                                                <span class="badge" style="background-color: #10b981; color: white; padding: 5px 10px; border-radius: 12px;">Active</span>
                                             <?php elseif($rental->status == 'confirmed' && \Carbon\Carbon::parse($rental->dropoff_datetime) < now()): ?>
-                                                <span class="badge badge-completed">Completed</span>
+                                                <span class="badge" style="background-color: #3b82f6; color: white; padding: 5px 10px; border-radius: 12px;">Completed</span>
                                             <?php elseif($rental->status == 'completed'): ?>
-                                                <span class="badge badge-completed">Completed</span>
+                                                <span class="badge" style="background-color: #3b82f6; color: white; padding: 5px 10px; border-radius: 12px;">Completed</span>
                                             <?php elseif($rental->status == 'cancelled'): ?>
-                                                <span class="badge badge-cancelled">Cancelled</span>
+                                                <span class="badge" style="background-color: #ef4444; color: white; padding: 5px 10px; border-radius: 12px;">Cancelled</span>
                                             <?php elseif($rental->status == 'pending'): ?>
-                                                <span class="badge badge-pending">Pending</span>
+                                                <span class="badge" style="background-color: #f59e0b; color: white; padding: 5px 10px; border-radius: 12px;">Pending</span>
                                             <?php elseif($rental->status == 'pending_verification'): ?>
-                                                <span class="badge badge-pending">Pending Verification</span>
+                                                <span class="badge" style="background-color: #f97316; color: white; padding: 5px 10px; border-radius: 12px;">Pending Verification</span>
                                             <?php else: ?>
-                                                <span class="badge badge-<?php echo e($rental->status); ?>"><?php echo e(ucfirst($rental->status)); ?></span>
+                                                <span class="badge" style="background-color: #6b7280; color: white; padding: 5px 10px; border-radius: 12px;"><?php echo e(ucfirst($rental->status)); ?></span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -928,7 +907,7 @@
                                     <span><i class="fas fa-cog"></i> <?php echo e($car->transmission_type); ?></span>
                                     <span><i class="fas fa-users"></i> <?php echo e($car->number_of_seats); ?> seats</span>
                                 </div>
-                                <div class="car-price">$<?php echo e(number_format($car->price, 2)); ?>/day</div>
+                                <div class="car-price">BTN <?php echo e(number_format($car->price, 2)); ?>/day</div>
                                 <a href="<?php echo e(route('customer.car-details', $car->id)); ?>" class="btn btn-primary">View Details</a>
 
                                 <a href="<?php echo e(route('customer.book-car', $car->id)); ?>" class="btn-book-now">Book Now</a>

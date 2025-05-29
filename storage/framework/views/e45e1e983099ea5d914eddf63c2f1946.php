@@ -588,13 +588,10 @@
         
         <div class="header-logo">
             <i class="fas fa-car"></i>
-            <span>CarRental</span>
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
         </div>
         
-        <div class="header-search">
-            <input type="text" placeholder="Search for cars...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
+      
         
         <div class="header-user">
             <?php if(Auth::guard('customer')->check()): ?>
@@ -679,22 +676,7 @@
                 
                 <div class="sidebar-divider"></div>
                 
-                <div class="sidebar-heading">Help</div>
                 
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-headset"></i>
-                    <span>Support</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span>FAQ</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>Report Issue</span>
-                </a>
             </div>
         </div>
         
@@ -838,10 +820,17 @@
                                         <button class="btn-primary">Extend Rental</button>
                                         <button class="btn-secondary">Return Car</button>
                                     <?php elseif($booking->status == 'completed'): ?>
-                                        <button class="btn-primary">Book Again</button>
-                                        <button class="btn-secondary">View Invoice</button>
+                                        
+                                        <?php if(isset($booking->car_id)): ?>
+                                            <a href="<?php echo e(route('customer.book-car', $booking->car_id)); ?>" class="btn-book-now" style="background-color: #3b82f6; color: white; border: 1px solid #3b82f6; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 500;">Book Again</a>
+                                        <?php else: ?>
+                                            
+                                            <a href="<?php echo e(route('customer.browse-cars')); ?>" class="btn-book-now" style="background-color: #3b82f6; color: white; border: 1px solid #3b82f6; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 500;">Book Again</a>
+                                        <?php endif; ?>
+                                        
                                     <?php endif; ?>
                                 </div>
+
                             </div>
                         </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

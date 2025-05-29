@@ -154,7 +154,7 @@
                     <td><?php echo e($car->maker); ?></td>
                     <td><?php echo e($car->model); ?></td>
                     <td><?php echo e($car->registration_no); ?></td>
-                    <td>$<?php echo e($car->price); ?>/day</td>
+                    <td>BTN <?php echo e($car->price); ?>/day</td>
                     <td><span class="status-badge <?php echo e($statusClass); ?>"><?php echo e($car->status); ?></span></td>
                     <td class="actions">
                         <a href="<?php echo e(route('cars.show', $car->id)); ?>" class="action-btn view" title="View Details">

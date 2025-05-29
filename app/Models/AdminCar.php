@@ -107,4 +107,67 @@ class AdminCar extends Model
     {
         return $this->hasMany(CarBooking::class, 'car_id');
     }
+
+     // Custom accessor for image path
+    public function getImageUrlAttribute()
+    {
+        if (empty($this->car_image)) {
+            return null;
+        }
+
+        $imagePath = $this->car_image;
+        
+        // Determine the correct path based on who uploaded the car
+        if ($this->admin_id) {
+            // Admin uploaded cars - stored in admincar_images directory
+            if (!str_starts_with($imagePath, 'admincar_images/')) {
+                $imagePath = 'admincar_images/' . $imagePath;
+            }
+        } elseif ($this->car_owner_id) {
+            // Car owner uploaded cars - stored in uploads/cars directory
+            if (!str_starts_with($imagePath, 'uploads/')) {
+                $imagePath = 'uploads/cars/' . $imagePath;
+            }
+        }
+        
+        // Check if file exists
+        if (file_exists(public_path($imagePath))) {
+            return asset($imagePath);
+        }
+        
+        // Fallback: try the original path
+        if (file_exists(public_path($this->car_image))) {
+            return asset($this->car_image);
+        }
+        
+        return null;
+    }
+
+    // Check if image exists
+    public function hasImageAttribute()
+    {
+        return !empty($this->image_url);
+    }
+
+    // Custom accessor to handle string boolean values
+    public function getAirConditioningAttribute($value)
+    {
+        return $value === 'Yes' || $value === true || $value === 1;
+    }
+
+    public function getBackupCameraAttribute($value)
+    {
+        return $value === 'Yes' || $value === true || $value === 1;
+    }
+
+    public function getBluetoothAttribute($value)
+    {
+        return $value === 'Yes' || $value === true || $value === 1;
+    }
+
+    // Scope to get only available cars
+    public function scopeAvailable($query)
+    {
+        return $query->where('status', 'available');
+    }
 }

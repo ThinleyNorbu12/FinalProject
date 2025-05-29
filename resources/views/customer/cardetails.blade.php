@@ -445,53 +445,46 @@
                         <h1 class="car-title">{{ $car->maker }} {{ $car->model }}</h1>
                         <p class="car-subtitle">{{ $car->vehicle_type }} • {{ $car->car_condition }}</p>
                         <div class="price-badge">
-                            ${{ number_format($car->price, 2) }}/day
+                            BTN {{ number_format($car->price, 2) }}/day
                         </div>
                     </div>
 
                     <div class="car-content">
-                        <div class="car-image-section">
-                            @php
-                                // Extract just the filename from the stored path
-                                $filename = basename($car->car_image);
-                                
-                                // Build proper paths
-                                $imagePathUploads = 'uploads/cars/' . $filename;
-                                $imagePathAdmin = 'admincar_images/' . $filename;
-                                
-                                // Check if files exist
-                                $imageExistsInUploads = $car->car_image && file_exists(public_path($imagePathUploads));
-                                $imageExistsInAdmin = $car->car_image && file_exists(public_path($imagePathAdmin));
-                                
-                                // Debug information (remove in production)
-                                if(config('app.debug')) {
-                                    echo "<!-- Debug: Original: {$car->car_image}, Filename: {$filename}, Uploads Path: " . public_path($imagePathUploads) . ", Exists: " . ($imageExistsInUploads ? 'Yes' : 'No') . " -->";
-                                }
-                            @endphp
-                            
-                            @if($imageExistsInUploads)
-                                <img src="{{ asset($imagePathUploads) }}" 
-                                    alt="{{ $car->maker }} {{ $car->model }}" 
-                                    class="car-image"
-                                    onerror="console.log('Failed to load: {{ asset($imagePathUploads) }}');">
-                            @elseif($imageExistsInAdmin)
-                                <img src="{{ asset($imagePathAdmin) }}" 
-                                    alt="{{ $car->maker }} {{ $car->model }}" 
-                                    class="car-image"
-                                    onerror="console.log('Failed to load: {{ asset($imagePathAdmin) }}');">
-                            @else
-                                <div class="car-image" style="background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
-                                    <i class="fas fa-car"></i>
-                                </div>
-                            @endif
-                            
-                            <div class="status-badge
-                                @if($car->status == 'available') status-available
-                                @elseif($car->status == 'rented') status-rented
-                                @else status-maintenance @endif">
-                                {{ ucfirst($car->status) }}
+                        <div class="car-image-section" style="text-align: center; padding: 20px;">
+                        @php
+                            $filename = basename($car->car_image);
+                            $imagePathUploads = 'uploads/cars/' . $filename;
+                            $imagePathAdmin = 'admincar_images/' . $filename;
+                            $imageExistsInUploads = $car->car_image && file_exists(public_path($imagePathUploads));
+                            $imageExistsInAdmin = $car->car_image && file_exists(public_path($imagePathAdmin));
+                        @endphp
+                        
+                        @if($imageExistsInUploads)
+                            <img src="{{ asset($imagePathUploads) }}"
+                                alt="{{ $car->maker }} {{ $car->model }}"
+                                class="car-image"
+                                style="width: 450px; height: 280px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
+                                onerror="console.log('Failed to load: {{ asset($imagePathUploads) }}');">
+                        @elseif($imageExistsInAdmin)
+                            <img src="{{ asset($imagePathAdmin) }}"
+                                alt="{{ $car->maker }} {{ $car->model }}"
+                                class="car-image"
+                                style="width: 450px; height: 280px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
+                                onerror="console.log('Failed to load: {{ asset($imagePathAdmin) }}');">
+                        @else
+                            <div class="car-image" style="background: linear-gradient(135deg, #bdc3c7 0%, #bdc3c7 100%); display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; width: 450px; height: 280px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                                <i class="fas fa-car"></i>
                             </div>
+                        @endif
+                        
+                        <div class="status-badge
+                            @if($car->status == 'available') status-available
+                            @elseif($car->status == 'rented') status-rented
+                            @else status-maintenance @endif"
+                            style="margin-top: 15px;">
+                            {{ ucfirst($car->status) }}
                         </div>
+                    </div>
 
 
                         <div class="car-info-section">

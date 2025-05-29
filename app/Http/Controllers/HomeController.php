@@ -280,13 +280,81 @@ public function indexAlternative()
     //     return view('search_results', compact('availableCars'));
     // }
     
-    public function searchCar(Request $request)
+//     public function searchCar(Request $request)
+// {
+//     $pickupDate = $request->pickup_date;
+//     $dropoffDate = $request->dropoff_date;
+
+//     // Build the query for available cars
+//     $availableCarsQuery = DB::table('car_details_tbl')
+//         ->whereExists(function ($query) {
+//             $query->select(DB::raw(1))
+//                   ->from('inspection_decisions')
+//                   ->join('inspection_requests', 'inspection_decisions.inspection_request_id', '=', 'inspection_requests.id')
+//                   ->whereColumn('inspection_requests.car_id', 'car_details_tbl.id')
+//                   ->where('inspection_decisions.decision', 'approved');
+//         });
+
+//     if ($pickupDate && $dropoffDate) {
+//         // Exclude cars that have overlapping bookings that are confirmed OR completed
+//         $availableCarsQuery->whereNotIn('id', function($query) use ($pickupDate, $dropoffDate) {
+//             $query->select('car_id')
+//                 ->from('car_bookings')
+//                 ->where(function ($q) use ($pickupDate, $dropoffDate) {
+//                     // If using datetime fields, convert dates to datetime for comparison
+//                     $q->where('pickup_datetime', '<=', $dropoffDate . ' 23:59:59')
+//                       ->where('dropoff_datetime', '>=', $pickupDate . ' 00:00:00');
+//                 })
+//                 ->whereIn('status', ['confirmed', 'completed']); // Exclude both confirmed and completed bookings
+//         });
+//     } else {
+//         // If no dates provided, exclude cars with confirmed or completed bookings
+//         $availableCarsQuery->whereNotExists(function($query) {
+//             $query->select(DB::raw(1))
+//                 ->from('car_bookings')
+//                 ->whereColumn('car_bookings.car_id', 'car_details_tbl.id')
+//                 ->whereIn('car_bookings.status', ['confirmed', 'completed']);
+//         });
+//     }
+
+//     $availableCars = $availableCarsQuery->get();
+
+//     return view('search_results', compact('availableCars'));
+// }
+
+public function searchCar(Request $request)
 {
     $pickupDate = $request->pickup_date;
     $dropoffDate = $request->dropoff_date;
 
-    // Build the query for available cars
-    $availableCarsQuery = DB::table('car_details_tbl')
+    // Query for approved cars from car_details_tbl
+    $approvedCarsQuery = DB::table('car_details_tbl')
+        ->select([
+            'id',
+            'maker',
+            'model',
+            'vehicle_type',
+            'car_condition',
+            'mileage',
+            'price',
+            'registration_no',
+            'status',
+            'description',
+            'car_image',
+            'car_owner_id',
+            'number_of_doors',
+            'number_of_seats',
+            'transmission_type',
+            'large_bags_capacity',
+            'small_bags_capacity',
+            'fuel_type',
+            'air_conditioning',
+            'backup_camera',
+            'bluetooth',
+            'created_at',
+            'updated_at',
+            DB::raw("'regular' as car_source") // Add source identifier
+        ])
         ->whereExists(function ($query) {
             $query->select(DB::raw(1))
                   ->from('inspection_decisions')
@@ -295,29 +363,102 @@ public function indexAlternative()
                   ->where('inspection_decisions.decision', 'approved');
         });
 
+    // Query for all cars from admin_cars_tbl
+    $adminCarsQuery = DB::table('admin_cars_tbl')
+        ->select([
+            'id',
+            'maker',
+            'model',
+            'vehicle_type',
+            'car_condition',
+            'mileage',
+            'price',
+            'registration_no',
+            'status',
+            'description',
+            'car_image',
+            'admin_id as car_owner_id', // Map admin_id to car_owner_id for consistency
+            'number_of_doors',
+            'number_of_seats',
+            'transmission_type',
+            'large_bags_capacity',
+            'small_bags_capacity',
+            'fuel_type',
+            'air_conditioning',
+            'backup_camera',
+            'bluetooth',
+            'created_at',
+            'updated_at',
+            DB::raw("'admin' as car_source") // Add source identifier
+        ])
+        ->where('status', 'active'); // Only include active admin cars
+
+    // Apply date filtering if provided
     if ($pickupDate && $dropoffDate) {
-        // Exclude cars that have overlapping bookings that are confirmed OR completed
-        $availableCarsQuery->whereNotIn('id', function($query) use ($pickupDate, $dropoffDate) {
+        // Filter approved cars
+        $approvedCarsQuery->whereNotIn('id', function($query) use ($pickupDate, $dropoffDate) {
             $query->select('car_id')
                 ->from('car_bookings')
                 ->where(function ($q) use ($pickupDate, $dropoffDate) {
-                    // If using datetime fields, convert dates to datetime for comparison
                     $q->where('pickup_datetime', '<=', $dropoffDate . ' 23:59:59')
                       ->where('dropoff_datetime', '>=', $pickupDate . ' 00:00:00');
                 })
-                ->whereIn('status', ['confirmed', 'completed']); // Exclude both confirmed and completed bookings
+                ->whereIn('status', ['confirmed', 'completed']);
+        });
+
+        // For admin cars, we'll assume they use a separate booking system or identifier
+        // You might need to adjust this based on your actual booking table structure
+        $adminCarsQuery->whereNotIn('id', function($query) use ($pickupDate, $dropoffDate) {
+            $query->select('car_id')
+                ->from('car_bookings')
+                ->where(function ($q) use ($pickupDate, $dropoffDate) {
+                    $q->where('pickup_datetime', '<=', $dropoffDate . ' 23:59:59')
+                      ->where('dropoff_datetime', '>=', $pickupDate . ' 00:00:00');
+                })
+                ->whereIn('status', ['confirmed', 'completed']);
         });
     } else {
-        // If no dates provided, exclude cars with confirmed or completed bookings
-        $availableCarsQuery->whereNotExists(function($query) {
+        // Filter approved cars without dates
+        $approvedCarsQuery->whereNotExists(function($query) {
             $query->select(DB::raw(1))
                 ->from('car_bookings')
                 ->whereColumn('car_bookings.car_id', 'car_details_tbl.id')
                 ->whereIn('car_bookings.status', ['confirmed', 'completed']);
         });
+
+        // Filter admin cars without dates
+        $adminCarsQuery->whereNotExists(function($query) {
+            $query->select(DB::raw(1))
+                ->from('car_bookings')
+                ->whereColumn('car_bookings.car_id', 'admin_cars_tbl.id')
+                ->whereIn('car_bookings.status', ['confirmed', 'completed']);
+        });
     }
 
-    $availableCars = $availableCarsQuery->get();
+    // Get the results
+    $approvedCars = $approvedCarsQuery->get();
+    $adminCars = $adminCarsQuery->get();
+
+    // Combine both collections
+    $availableCars = $approvedCars->concat($adminCars);
+
+    // Add additional properties for display
+    $availableCars = $availableCars->map(function($car) {
+        // Determine display type based on source and booking history
+        if ($car->car_source === 'admin') {
+            $car->display_type = 'admin';
+        } else {
+            // Check if car has completed bookings
+            $hasCompletedBooking = DB::table('car_bookings')
+                ->where('car_id', $car->id)
+                ->where('status', 'completed')
+                ->exists();
+            
+            $car->display_type = $hasCompletedBooking ? 'completed' : 'approved';
+        }
+        
+        return $car;
+    });
 
     return view('search_results', compact('availableCars'));
 }

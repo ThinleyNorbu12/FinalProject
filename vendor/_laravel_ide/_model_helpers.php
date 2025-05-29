@@ -321,9 +321,6 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string $bluetooth
-     * @property string $backup_camera
-     * @property string $air_conditioning
      * @property string $fuel_type
      * @property mixed $small_bags_capacity
      * @property mixed $large_bags_capacity
@@ -342,6 +339,10 @@ namespace App\Models {
      * @property string $model
      * @property string $maker
      * @property int $id
+     * @property-read mixed $air_conditioning
+     * @property-read mixed $backup_camera
+     * @property-read mixed $bluetooth
+     * @property-read mixed $image_url
      * @property-read \App\Models\Admin $admin
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AdminCarImage> $carImages
      * @property-read int|null $carImages_count
@@ -367,11 +368,9 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereLargeBagsCapacity($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereSmallBagsCapacity($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereFuelType($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereAirConditioning($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereBackupCamera($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereBluetooth($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar available()
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<AdminCar>|AdminCar query()

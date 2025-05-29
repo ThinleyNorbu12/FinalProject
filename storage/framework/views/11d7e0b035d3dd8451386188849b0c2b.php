@@ -343,31 +343,19 @@
     </div>
 
     <?php
-        // Separate cars by type
+    // Separate cars by type
         $approvedCars = collect();
         $completedBookingCars = collect();
         $adminCars = collect();
 
         if(isset($availableCars) && $availableCars->count()) {
             foreach($availableCars as $car) {
-                // Check if it's an admin car (you might need to adjust this logic)
-                if(isset($car->car_type) && $car->car_type === 'admin') {
-                    $car->display_type = 'admin';
+                if($car->display_type === 'admin') {
                     $adminCars->push($car);
+                } elseif($car->display_type === 'completed') {
+                    $completedBookingCars->push($car);
                 } else {
-                    // Check if car has completed bookings
-                    $hasCompletedBooking = DB::table('car_bookings')
-                        ->where('car_id', $car->id)
-                        ->where('status', 'completed')
-                        ->exists();
-                    
-                    if($hasCompletedBooking) {
-                        $car->display_type = 'completed';
-                        $completedBookingCars->push($car);
-                    } else {
-                        $car->display_type = 'approved';
-                        $approvedCars->push($car);
-                    }
+                    $approvedCars->push($car);
                 }
             }
         }

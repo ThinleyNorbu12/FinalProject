@@ -234,13 +234,10 @@
         
         <div class="header-logo">
             <i class="fas fa-car"></i>
-            <span>CarRental</span>
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
         </div>
         
-        <div class="header-search">
-            <input type="text" placeholder="Search for cars...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
+   
         
         <div class="header-user">
             <?php if(Auth::guard('customer')->check()): ?>
@@ -325,22 +322,6 @@
                 
                 <div class="sidebar-divider"></div>
                 
-                <div class="sidebar-heading">Help</div>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-headset"></i>
-                    <span>Support</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span>FAQ</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>Report Issue</span>
-                </a>
             </div>
         </div>
         
@@ -596,9 +577,10 @@
                                         Total: $<?php echo e(number_format($totalAmount, 2)); ?>
 
                                     </div>
-                                    <div class="action-buttons">
+                                    
+                                    <div class="action-buttons d-flex gap-3">
                                         <a href="<?php echo e(route('customer.reservation-details', $booking->id)); ?>" class="btn btn-view-details">View Details</a>
-                                        <button class="btn btn-primary">Book Again</button>
+                                        <a href="<?php echo e(route('customer.book-car', $booking->car_id)); ?>" class="btn btn-book-now" style="background-color: #3b82f6; color: white; border-color: #3b82f6;">Book Again</a>
                                     </div>
                                 </div>
                             </div>

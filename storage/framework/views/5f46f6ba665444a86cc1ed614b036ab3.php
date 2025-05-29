@@ -231,13 +231,10 @@
         
         <div class="header-logo">
             <i class="fas fa-car"></i>
-            <span>CarRental</span>
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
         </div>
         
-        <div class="header-search">
-            <input type="text" placeholder="Search for cars...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
+
         
         <div class="header-user">
             <?php if(Auth::guard('customer')->check()): ?>
@@ -320,24 +317,7 @@
                     <span>Fuel Policy</span>
                 </a>
                 
-                <div class="sidebar-divider"></div>
                 
-                <div class="sidebar-heading">Help</div>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-headset"></i>
-                    <span>Support</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span>FAQ</span>
-                </a>
-                
-                <a href="#" class="sidebar-menu-item">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>Report Issue</span>
-                </a>
             </div>
         </div>
         
@@ -429,21 +409,60 @@
             </div>
             
             <!-- Cars Grid -->
+            
+            
             <?php if(count($cars) > 0): ?>
                 <div class="cars-grid">
                     <?php $__currentLoopData = $cars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $car): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="car-card-container">
                         <div class="car-status">Available</div>
                         <div class="car-card">
-                            <?php if($car->car_image): ?>
-                                    <img src="<?php echo e(asset($car->car_image)); ?>" alt="Car Image" style="width: 100px; height: auto;">
-                                <?php else: ?>
-                                    <p>No image</p>
-                                <?php endif; ?>
                             
+                            <?php if($car->car_image): ?>
+                                <?php
+                                    // Handle different image path formats based on who uploaded
+                                    $imagePath = $car->car_image;
+                                    
+                                    // Check if it's an admin uploaded car or car owner uploaded car
+                                    if (isset($car->admin_id) && $car->admin_id) {
+                                        // Admin uploaded cars - stored in admincar_images directory
+                                        if (!str_starts_with($imagePath, 'admincar_images/')) {
+                                            $imagePath = 'admincar_images/' . $imagePath;
+                                        }
+                                    } elseif (isset($car->car_owner_id) && $car->car_owner_id) {
+                                        // Car owner uploaded cars - stored in uploads/cars directory
+                                        if (!str_starts_with($imagePath, 'uploads/')) {
+                                            $imagePath = 'uploads/cars/' . $imagePath;
+                                        }
+                                    }
+                                    
+                                    // Full path to check if file exists
+                                    $fullPath = public_path($imagePath);
+                                ?>
+                                
+                                
+                                <?php if(file_exists($fullPath)): ?>
+                                    <img src="<?php echo e(asset($imagePath)); ?>" alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>" 
+                                        style="width: 100px; height: auto; object-fit: cover;">
+                                <?php else: ?>
+                                    
+                                    <img src="<?php echo e(asset($car->car_image)); ?>" alt="<?php echo e($car->maker); ?> <?php echo e($car->model); ?>" 
+                                        style="width: 100px; height: auto; object-fit: cover;"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div class="no-image-placeholder" style="display: none; width: 100px; height: 75px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                        <i class="fas fa-car" style="color: #999; font-size: 24px;"></i>
+                                    </div>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                
+                                <div class="no-image-placeholder" style="width: 100px; height: 75px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                    <i class="fas fa-car" style="color: #999; font-size: 24px;"></i>
+                                </div>
+                            <?php endif; ?>
+                                            
                             <div class="car-details">
                                 <h4 class="car-title"><?php echo e($car->maker); ?> <?php echo e($car->model); ?> (<?php echo e($car->vehicle_type); ?>)</h4>
-                                
+                                                
                                 <div class="car-specs">
                                     <i class="fas fa-user"></i> <?php echo e($car->number_of_seats ?? 'N/A'); ?> &nbsp;
                                     <i class="fas fa-door-open"></i> <?php echo e($car->number_of_doors ?? 'N/A'); ?> &nbsp;
@@ -451,30 +470,34 @@
                                     <i class="fas fa-cog"></i> <?php echo e(ucfirst($car->transmission_type ?? 'Auto')); ?>
 
                                 </div>
-                                
+                                                
                                 <div class="car-description">
                                     <?php echo e(\Illuminate\Support\Str::limit($car->description, 100) ?? 'No description available.'); ?>
 
                                 </div>
-                                
+                                                
                                 <div class="car-features">
-                                    <?php if($car->air_conditioning): ?>
+                                    <?php if($car->air_conditioning === 'Yes' || $car->air_conditioning === true): ?>
                                         <span class="car-feature"><i class="fas fa-snowflake"></i> A/C</span>
                                     <?php endif; ?>
-                                    
-                                    <?php if($car->backup_camera): ?>
+                                                    
+                                    <?php if($car->backup_camera === 'Yes' || $car->backup_camera === true): ?>
                                         <span class="car-feature"><i class="fas fa-camera"></i> Backup Camera</span>
                                     <?php endif; ?>
-                                    
-                                    <?php if($car->bluetooth): ?>
+                                                    
+                                    <?php if($car->bluetooth === 'Yes' || $car->bluetooth === true): ?>
                                         <span class="car-feature"><i class="fab fa-bluetooth-b"></i> Bluetooth</span>
                                     <?php endif; ?>
-                                    
-                                    <span class="car-feature"><i class="fas fa-suitcase"></i> <?php echo e($car->large_bags_capacity ?? '0'); ?> Large / <?php echo e($car->small_bags_capacity ?? '0'); ?> Small</span>
+                                                    
+                                    <span class="car-feature">
+                                        <i class="fas fa-suitcase"></i> 
+                                        <?php echo e($car->large_bags_capacity ?? '0'); ?> Large / 
+                                        <?php echo e($car->small_bags_capacity ?? '0'); ?> Small
+                                    </span>
                                 </div>
-                                
-                                <div class="car-price">$<?php echo e(number_format($car->price, 2)); ?>/day</div>
-                                
+                                                
+                                <div class="car-price">BTN <?php echo e(number_format($car->price, 2)); ?>/day</div>
+                                                
                                 <div class="car-actions">
                                     <a href="<?php echo e(route('customer.car-details', $car->id)); ?>" class="btn-view-details">View Details</a>
                                     <a href="<?php echo e(route('customer.book-car', $car->id)); ?>" class="btn-book-now">Book Now</a>

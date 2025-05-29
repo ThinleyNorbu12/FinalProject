@@ -234,10 +234,10 @@
                                         <?php endif; ?>
                                     <?php endif; ?>
                                     
-                                    <a href="#" class="btn btn-primary" onclick="window.print()">
+                                    <a href="#" class="btn btn-primary me-3" onclick="window.print()">
                                         <i class="fas fa-print me-2"></i>Print Booking
                                     </a>
-                                    <a href="<?php echo e(route('home')); ?>" class="btn btn-primary mt-3">Browse Cars</a>
+                                    <a href="<?php echo e(route('home')); ?>" class="btn btn-primary">Browse Cars</a>
                                 </div>
                             </div>
                         </div>

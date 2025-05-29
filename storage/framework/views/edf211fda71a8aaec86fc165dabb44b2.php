@@ -37,7 +37,7 @@
             
             <a href="<?php echo e(route('admin.dashboard')); ?>" class="header-brand d-none d-md-flex">
                 <img src="<?php echo e(asset('assets/images/logo1.png')); ?>" alt="Logo" style="height: 80px !important;">
-                <span style="font-size: 1.5rem !important; font-weight: 400 !important;">CAR  RENTAL SYSTEM</span>
+                <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
             </a>
         </div>
 
@@ -87,9 +87,11 @@
         <!-- Dashboard Sidebar -->
         <div class="dashboard-sidebar" id="dashboardSidebar">
             <!-- Enhanced Arrow Toggle Button -->
-            <div class="sidebar-header">
-                
-            </div>
+            <!-- <div class="sidebar-header">
+               <button id="sidebar-toggle" class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button> 
+            </div> -->
 
             <div class="admin-profile">
                 <?php if(Auth::guard('admin')->check()): ?>
@@ -140,11 +142,7 @@
                     <div class="tooltip">Approve Inspections</div>
                 </a>
 
-                <a href="<?php echo e(route('car-admin.car-management-reports')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.car-management-reports') ? 'active' : ''); ?>">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Car Management Reports</span>
-                    <div class="tooltip">Complete Car Management Reports</div>
-                </a>
+                
 
                 
 

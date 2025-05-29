@@ -572,9 +572,13 @@
                                         @endphp
                                         Total: ${{ number_format($totalAmount, 2) }}
                                     </div>
-                                    <div class="action-buttons">
+                                    {{-- <div class="action-buttons">
                                         <a href="{{ route('customer.reservation-details', $booking->id) }}" class="btn btn-view-details">View Details</a>
-                                        <button class="btn btn-primary">Book Again</button>
+                                         <a href="{{ route('customer.book-car', $booking->car_id) }}" class="btn-book-now">Book Again</a>
+                                    </div> --}}
+                                    <div class="action-buttons d-flex gap-3">
+                                        <a href="{{ route('customer.reservation-details', $booking->id) }}" class="btn btn-view-details">View Details</a>
+                                        <a href="{{ route('customer.book-car', $booking->car_id) }}" class="btn btn-book-now" style="background-color: #3b82f6; color: white; border-color: #3b82f6;">Book Again</a>
                                     </div>
                                 </div>
                             </div>

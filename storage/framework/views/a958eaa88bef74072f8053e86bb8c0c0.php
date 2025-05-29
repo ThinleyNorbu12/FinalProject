@@ -240,13 +240,10 @@
         </button>
     <div class="header-logo">
         <i class="fas fa-car"></i>
-        <span>CarRental</span>
+        <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
     </div>
     
-    <div class="header-search">
-        <input type="text" placeholder="Search for cars...">
-        <button><i class="fas fa-search"></i></button>
-    </div>
+
     
     <div class="header-user">
         <?php if(Auth::guard('customer')->check()): ?>
@@ -329,24 +326,7 @@
                 <span>Fuel Policy</span>
             </a>
             
-            <div class="sidebar-divider"></div>
             
-            <div class="sidebar-heading">Help</div>
-            
-            <a href="#" class="sidebar-menu-item">
-                <i class="fas fa-headset"></i>
-                <span>Support</span>
-            </a>
-            
-            <a href="#" class="sidebar-menu-item">
-                <i class="fas fa-question-circle"></i>
-                <span>FAQ</span>
-            </a>
-            
-            <a href="#" class="sidebar-menu-item">
-                <i class="fas fa-exclamation-circle"></i>
-                <span>Report Issue</span>
-            </a>
         </div>
     </div>
     

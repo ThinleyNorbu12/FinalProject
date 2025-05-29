@@ -142,11 +142,11 @@
                     <div class="tooltip">Approve Inspections</div>
                 </a>
 
-                <a href="{{route('car-admin.car-management-reports') }}" class="sidebar-menu-item {{ request()->routeIs('car-admin.car-management-reports') ? 'active' : '' }}">
+                {{-- <a href="{{route('car-admin.car-management-reports') }}" class="sidebar-menu-item {{ request()->routeIs('car-admin.car-management-reports') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Car Management Reports</span>
                     <div class="tooltip">Complete Car Management Reports</div>
-                </a>
+                </a> --}}
 
                 
 
