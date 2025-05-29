@@ -820,10 +820,17 @@
                                         <button class="btn-primary">Extend Rental</button>
                                         <button class="btn-secondary">Return Car</button>
                                     <?php elseif($booking->status == 'completed'): ?>
-                                        <button class="btn-primary">Book Again</button>
-                                        <button class="btn-secondary">View Invoice</button>
+                                        
+                                        <?php if(isset($booking->car_id)): ?>
+                                            <a href="<?php echo e(route('customer.book-car', $booking->car_id)); ?>" class="btn-book-now" style="background-color: #3b82f6; color: white; border: 1px solid #3b82f6; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 500;">Book Again</a>
+                                        <?php else: ?>
+                                            
+                                            <a href="<?php echo e(route('customer.browse-cars')); ?>" class="btn-book-now" style="background-color: #3b82f6; color: white; border: 1px solid #3b82f6; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 500;">Book Again</a>
+                                        <?php endif; ?>
+                                        
                                     <?php endif; ?>
                                 </div>
+
                             </div>
                         </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

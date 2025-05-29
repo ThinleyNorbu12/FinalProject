@@ -759,7 +759,7 @@ class CarOwnerController extends Controller
             Mail::to($admin->email)->send(new InspectionAcceptedNotification($request, $admin->name));
         }
 
-        return redirect()->back()->with('success', 'You have accepted the inspection date and time. All admins have been notified.');
+        return redirect()->back()->with('success', 'You have accepted the inspection date and time. Admins have been notified.');
     }
 
     // for approved car 

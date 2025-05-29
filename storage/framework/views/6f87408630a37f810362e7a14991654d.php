@@ -1175,7 +1175,7 @@
 
                                 </td>
                                 <td><?php echo e($paymentDueDate->format('M d, Y')); ?></td>
-                                <td><?php echo e($payment->currency ?? '$'); ?> <?php echo e(number_format($payment->amount, 2)); ?></td>
+                                <td><?php echo e($payment->currency ?? 'BTN'); ?> <?php echo e(number_format($payment->amount, 2)); ?></td>
                                 <td>
                                     <?php if($displayStatus == 'overdue'): ?>
                                         <span class="badge badge-overdue">Overdue</span>
@@ -1189,7 +1189,7 @@
                                         <span class="badge badge-paid">Paid</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <?php if($displayStatus != 'paid' && $displayStatus != 'cancelled'): ?>
                                         <button class="btn-pay" onclick="openPaymentModal('<?php echo e($car->maker ?? 'Unknown'); ?> <?php echo e($car->model ?? 'Car'); ?>', '<?php echo e($booking->id); ?>', '<?php echo e($payment->amount); ?>', '<?php echo e($payment->id); ?>')">Pay Now</button>
                                         <form action="<?php echo e(route('customer.cancel-payment', $payment->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to cancel this payment?');">
@@ -1200,6 +1200,20 @@
                                         <button class="btn-pay disabled" disabled>Cancelled</button>
                                     <?php else: ?>
                                         <button class="btn-pay disabled" disabled>Completed</button>
+                                    <?php endif; ?>
+                                </td> -->
+                                <td>
+                                    <?php if($displayStatus != 'paid' && $displayStatus != 'cancelled'): ?>
+                                        <button class="btn-pay btn-fixed" onclick="openPaymentModal('<?php echo e($car->maker ?? 'Unknown'); ?> <?php echo e($car->model ?? 'Car'); ?>', '<?php echo e($booking->id); ?>', '<?php echo e($payment->amount); ?>', '<?php echo e($payment->id); ?>')">Pay Now</button>
+
+                                        <form action="<?php echo e(route('customer.cancel-payment', $payment->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to cancel this payment?');" style="display: inline;">
+                                            <?php echo csrf_field(); ?>
+                                            <button type="submit" class="btn btn-danger btn-fixed">Cancel Payment</button>
+                                        </form>
+                                    <?php elseif($displayStatus == 'cancelled'): ?>
+                                        <button class="btn-pay btn-fixed disabled" disabled>Cancelled</button>
+                                    <?php else: ?>
+                                        <button class="btn-pay btn-fixed disabled" disabled>Completed</button>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -1212,11 +1226,11 @@
                     <h4>Payment Summary</h4>
                     <div class="summary-item">
                         <div>Pending Payments:</div>
-                        <div><?php echo e($pendingPayments->first()->currency ?? '$'); ?> <?php echo e(number_format($totalPending, 2)); ?></div>
+                        <div><?php echo e($pendingPayments->first()->currency ?? 'BTN'); ?> <?php echo e(number_format($totalPending, 2)); ?></div>
                     </div>
                     <div class="summary-total">
                         <div>Total Amount:</div>
-                        <div><?php echo e($pendingPayments->first()->currency ?? '$'); ?> <?php echo e(number_format($totalPending, 2)); ?></div>
+                        <div><?php echo e($pendingPayments->first()->currency ?? 'BTN'); ?> <?php echo e(number_format($totalPending, 2)); ?></div>
                     </div>
                 </div>
                 <?php else: ?>

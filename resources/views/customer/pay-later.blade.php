@@ -1174,7 +1174,7 @@
                                     {{ \Carbon\Carbon::parse($booking->dropoff_datetime)->format('M d, Y') }}
                                 </td>
                                 <td>{{ $paymentDueDate->format('M d, Y') }}</td>
-                                <td>{{ $payment->currency ?? '$' }} {{ number_format($payment->amount, 2) }}</td>
+                                <td>{{ $payment->currency ?? 'BTN' }} {{ number_format($payment->amount, 2) }}</td>
                                 <td>
                                     @if($displayStatus == 'overdue')
                                         <span class="badge badge-overdue">Overdue</span>
@@ -1188,7 +1188,7 @@
                                         <span class="badge badge-paid">Paid</span>
                                     @endif
                                 </td>
-                                <td>
+                                <!-- <td>
                                     @if($displayStatus != 'paid' && $displayStatus != 'cancelled')
                                         <button class="btn-pay" onclick="openPaymentModal('{{ $car->maker ?? 'Unknown' }} {{ $car->model ?? 'Car' }}', '{{ $booking->id }}', '{{ $payment->amount }}', '{{ $payment->id }}')">Pay Now</button>
                                         <form action="{{ route('customer.cancel-payment', $payment->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this payment?');">
@@ -1199,6 +1199,20 @@
                                         <button class="btn-pay disabled" disabled>Cancelled</button>
                                     @else
                                         <button class="btn-pay disabled" disabled>Completed</button>
+                                    @endif
+                                </td> -->
+                                <td>
+                                    @if($displayStatus != 'paid' && $displayStatus != 'cancelled')
+                                        <button class="btn-pay btn-fixed" onclick="openPaymentModal('{{ $car->maker ?? 'Unknown' }} {{ $car->model ?? 'Car' }}', '{{ $booking->id }}', '{{ $payment->amount }}', '{{ $payment->id }}')">Pay Now</button>
+
+                                        <form action="{{ route('customer.cancel-payment', $payment->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this payment?');" style="display: inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-danger btn-fixed">Cancel Payment</button>
+                                        </form>
+                                    @elseif($displayStatus == 'cancelled')
+                                        <button class="btn-pay btn-fixed disabled" disabled>Cancelled</button>
+                                    @else
+                                        <button class="btn-pay btn-fixed disabled" disabled>Completed</button>
                                     @endif
                                 </td>
                             </tr>
@@ -1211,11 +1225,11 @@
                     <h4>Payment Summary</h4>
                     <div class="summary-item">
                         <div>Pending Payments:</div>
-                        <div>{{ $pendingPayments->first()->currency ?? '$' }} {{ number_format($totalPending, 2) }}</div>
+                        <div>{{ $pendingPayments->first()->currency ?? 'BTN' }} {{ number_format($totalPending, 2) }}</div>
                     </div>
                     <div class="summary-total">
                         <div>Total Amount:</div>
-                        <div>{{ $pendingPayments->first()->currency ?? '$' }} {{ number_format($totalPending, 2) }}</div>
+                        <div>{{ $pendingPayments->first()->currency ?? 'BTN' }} {{ number_format($totalPending, 2) }}</div>
                     </div>
                 </div>
                 @else

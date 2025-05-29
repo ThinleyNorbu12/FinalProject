@@ -492,6 +492,80 @@
         gap: 0.5rem;
     }
 }
+
+ /* Car Details Modal Styles */
+    .car-details-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .car-details-modal .modal-content {
+        background-color: #f8f8f8;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .close-modal {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close-modal:hover,
+    .close-modal:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .car-specs-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+        background-color: #f0f0f0;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .car-specs-row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .car-spec {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 48%;
+        background-color: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .spec-icon {
+        font-style: normal;
+        font-size: 18px;
+    }
+
+    #modalCarTitle {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 </style>
 <?php $__env->stopSection(); ?>
 
@@ -502,8 +576,13 @@
         <button id="toggle-btn" onclick="toggleSidebar()">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="logo">
-            <h3>Car Rental System</h3>
+        <!-- <a href="<?php echo e(route('home')); ?>" class="header-brand d-none d-md-flex">
+            <img src="<?php echo e(asset('assets/images/logo1.png')); ?>" alt="Logo" style="height: 70px !important;">
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
+        </a> -->
+        <div href="<?php echo e(route('home')); ?>" class="logo">
+            <img src="<?php echo e(asset('assets/images/logo1.png')); ?>" alt="Logo" style="height: 60px !important;">
+            <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
         </div>
     </div>
     
@@ -1077,80 +1156,5 @@
     });
 </script>
 
-<style>
-    /* Car Details Modal Styles */
-    .car-details-modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.5);
-    }
-
-    .car-details-modal .modal-content {
-        background-color: #f8f8f8;
-        margin: 10% auto;
-        padding: 20px;
-        border-radius: 8px;
-        width: 80%;
-        max-width: 600px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-
-    .close-modal {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .close-modal:hover,
-    .close-modal:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .car-specs-container {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-top: 20px;
-        background-color: #f0f0f0;
-        padding: 15px;
-        border-radius: 5px;
-    }
-
-    .car-specs-row {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .car-spec {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        width: 48%;
-        background-color: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .spec-icon {
-        font-style: normal;
-        font-size: 18px;
-    }
-
-    #modalCarTitle {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-</style>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Sangay Ngedup\Documents\GitHub\FinalProject\resources\views/home.blade.php ENDPATH**/ ?>

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\DrivingLicense;
 use Illuminate\Support\Facades\DB;
+use App\Models\AdminNotification;
 
 class UserVerificationController extends Controller
 {

@@ -272,8 +272,8 @@ Route::middleware(['auth:customer'])->group(function () {
     Route::put('/profile/update', [CustomerProfileController::class, 'update'])
         ->name('customer.profile.update');
     
-    Route::post('/profile/save-license', [CustomerProfileController::class, 'saveLicense'])
-        ->name('customer.profile.save-license');
+     Route::post('/profile/save-license', [CustomerProfileController::class, 'saveLicense'])->name('profile.save-license');
+    Route::post('/profile/save-license', [CustomerProfileController::class, 'saveLicense'])->name('customer.profile.save-license');
 });
 
 // Admin verification routes

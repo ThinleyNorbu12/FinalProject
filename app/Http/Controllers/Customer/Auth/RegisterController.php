@@ -23,8 +23,8 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:customers',
-            'phone' => 'required|string|max:20|unique:customers',
-            'cid_no' => 'required|string|max:20|unique:customers',
+            'phone' => 'required|string|max:8|unique:customers',
+            'cid_no' => 'required|string|max:11|unique:customers',
             'date_of_birth' => 'nullable|date',
             'address' => 'nullable|string|max:500',
         ]);

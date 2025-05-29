@@ -218,7 +218,7 @@
         </div>
     </div>
 </div>
-
+@endsection
 <!-- Verification Modals -->
 @foreach($payments as $payment)
     @if($payment->payment_method == 'qr_code' && $payment->status == 'pending_verification')
@@ -315,7 +315,7 @@
     </div>
     @endif
 @endforeach
-@endsection
+
 
 @push('styles')
 <style>
