@@ -220,7 +220,7 @@
         </div>
     </div>
 </div>
-
+<?php $__env->stopSection(); ?>
 <!-- Verification Modals -->
 <?php $__currentLoopData = $payments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <?php if($payment->payment_method == 'qr_code' && $payment->status == 'pending_verification'): ?>
@@ -317,7 +317,7 @@
     </div>
     <?php endif; ?>
 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-<?php $__env->stopSection(); ?>
+
 
 <?php $__env->startPush('styles'); ?>
 <style>

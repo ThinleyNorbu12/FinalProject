@@ -922,11 +922,11 @@
                                     alt="Back License" class="license-image">
                             <?php endif; ?>
 
-                            <div class="license-details mt-3">
+                            <!-- <div class="license-details mt-3">
                                 <p><strong>Verification Status:</strong> <span class="license-status">Verified</span></p>
                                 <p><strong>Last Verified:</strong> April 15, 2025</p>
                                 <p><small>Your license has been verified for vehicle services in Bhutan.</small></p>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

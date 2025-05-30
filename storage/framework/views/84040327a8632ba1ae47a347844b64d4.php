@@ -656,7 +656,7 @@
 
                     <div class="footer-actions mt-4 d-flex justify-content-between">
                         <a href="<?php echo e(route('booking.summary', ['bookingId' => $booking->id])); ?>" class="btn btn-secondary cancel-btn">Cancel</a>
-                        <button class="btn btn-primary payment-btn" id="nextBtn" disabled>Next</button>
+                        <!-- <button class="btn btn-primary payment-btn" id="nextBtn" disabled>Next</button> -->
                     </div>
                 </div>
             </div>

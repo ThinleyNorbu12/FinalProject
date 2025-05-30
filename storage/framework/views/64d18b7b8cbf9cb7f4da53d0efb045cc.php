@@ -67,9 +67,11 @@
 
     <!-- Revenue Summary -->
     <div class="report-row">
+        
+        
         <div class="report-card">
             <div class="card-header">
-                <h3><i class="fas fa-dollar-sign"></i> Revenue Summary</h3>
+                <h3><i class="fas fa-money-bill-wave"></i> Revenue Summary</h3>
             </div>
             <div class="card-body">
                 <div class="revenue-stats">
@@ -78,13 +80,142 @@
                         <span class="value">BTN <?php echo e(number_format($revenueData->total_revenue ?? 0, 2)); ?></span>
                     </div>
                     <div class="stat-item">
-                        <span class="label">Completed Bookings:</span>
+                        <span class="label">Completed Payments:</span>
                         <span class="value"><?php echo e($revenueData->total_bookings ?? 0); ?></span>
                     </div>
                     <div class="stat-item">
-                        <span class="label">Average Booking Value:</span>
+                        <span class="label">Average Transaction Value:</span>
                         <span class="value">BTN <?php echo e(number_format($revenueData->average_booking_value ?? 0, 2)); ?></span>
                     </div>
+                    <div class="stat-item">
+                        <span class="label">Payment Methods Used:</span>
+                        <span class="value"><?php echo e($revenueData->payment_methods_used ?? 0); ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="report-card">
+            <div class="card-header">
+                <h3><i class="fas fa-credit-card"></i> Payment Methods Analysis</h3>
+            </div>
+            <div class="card-body">
+                <div class="payment-methods">
+                    <?php $__currentLoopData = $paymentMethodAnalysis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $method): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="method-item">
+                        <div class="method-info">
+                            <span class="method-name"><?php echo e(ucfirst($method->payment_method)); ?></span>
+                            <span class="method-count"><?php echo e($method->count); ?> transactions</span>
+                        </div>
+                        <div class="method-amount">
+                            BTN <?php echo e(number_format($method->total_amount, 2)); ?>
+
+                        </div>
+                    </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="report-card">
+            <div class="card-header">
+                <h3><i class="fas fa-chart-pie"></i> Payment Status Distribution</h3>
+            </div>
+            <div class="card-body">
+                <div class="status-distribution">
+                    <?php $__currentLoopData = $paymentStatus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="status-item">
+                        <div class="status-info">
+                            <span class="status-name badge 
+                                <?php if($status->status === 'completed'): ?> badge-success
+                                <?php elseif($status->status === 'failed'): ?> badge-danger
+                                <?php elseif($status->status === 'pending'): ?> badge-warning
+                                <?php else: ?> badge-secondary
+                                <?php endif; ?>">
+                                <?php echo e(ucfirst($status->status)); ?>
+
+                            </span>
+                            <span class="status-count"><?php echo e($status->count); ?> payments</span>
+                        </div>
+                        <div class="status-amount">
+                            BTN <?php echo e(number_format($status->amount, 2)); ?>
+
+                        </div>
+                    </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            </div>
+        </div>
+
+        
+        <?php if($failedPayments && $failedPayments->failed_count > 0): ?>
+        <div class="report-card alert-card">
+            <div class="card-header">
+                <h3><i class="fas fa-exclamation-triangle text-warning"></i> Failed Payments Alert</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <p><strong><?php echo e($failedPayments->failed_count); ?></strong> failed payments resulted in potential lost revenue of <strong>BTN <?php echo e(number_format($failedPayments->lost_revenue, 2)); ?></strong></p>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        
+        <div class="report-card">
+            <div class="card-header">
+                <h3><i class="fas fa-list"></i> Recent Payments</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Reference No.</th>
+                                <th>Vehicle</th>
+                                <th>Amount</th>
+                                <th>Payment Method</th>
+                                <th>Pickup Date</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Payment Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__currentLoopData = $recentPayments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <tr>
+                                <td><?php echo e($payment->reference_number); ?></td>
+                                <td><?php echo e($payment->maker); ?> <?php echo e($payment->model); ?> <br><small class="text-muted">(<?php echo e($payment->registration_no); ?>)</small></td>
+                                <td><?php echo e($payment->currency); ?> <?php echo e(number_format($payment->amount, 2)); ?></td>
+                                <td><?php echo e(ucfirst($payment->payment_method)); ?></td>
+                                <td><?php echo e(\Carbon\Carbon::parse($payment->pickup_datetime)->format('M d, Y H:i')); ?></td>
+                                <td>
+                                    <small>
+                                        <strong>From:</strong> <?php echo e($payment->pickup_location); ?><br>
+                                        <strong>To:</strong> <?php echo e($payment->dropoff_location); ?>
+
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        <?php if($payment->status === 'completed'): ?> badge-success
+                                        <?php elseif($payment->status === 'failed'): ?> badge-danger
+                                        <?php elseif($payment->status === 'pending'): ?> badge-warning
+                                        <?php else: ?> badge-secondary
+                                        <?php endif; ?>">
+                                        <?php echo e(ucfirst($payment->status)); ?>
+
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">Booking: <?php echo e(ucfirst($payment->booking_status)); ?></small>
+                                </td>
+                                <td><?php echo e(\Carbon\Carbon::parse($payment->payment_date)->format('M d, Y H:i')); ?></td>
+                            </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -287,30 +418,62 @@
 </div>
 
 <style>
+/* Main Content Container - Added to fix positioning */
+.main-content {
+    margin-left: 0;
+    padding: 1rem 2rem;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Dashboard Header */
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    padding: 0;
+    width: 100%;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    color: #333;
+}
+
+/* Date Filter Form */
+.date-filter-form {
+    margin-left: auto;
 }
 
 .date-filter-form .date-inputs {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .date-inputs input {
     padding: 0.5rem;
     border: 1px solid #ddd;
     border-radius: 4px;
+    min-width: 120px;
 }
 
+.date-inputs span {
+    color: #666;
+    font-weight: 500;
+}
+
+/* Summary Cards */
 .report-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
+    width: 100%;
 }
 
 .summary-card {
@@ -320,6 +483,8 @@
     display: flex;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+    width: 100%;
 }
 
 .card-icon {
@@ -332,6 +497,7 @@
     margin-right: 1rem;
     color: white;
     font-size: 1.5rem;
+    flex-shrink: 0;
 }
 
 .bg-primary { background-color: #007bff; }
@@ -343,29 +509,39 @@
     margin: 0;
     font-size: 2rem;
     font-weight: bold;
+    color: #333;
 }
 
 .card-content p {
     margin: 0;
     color: #666;
+    font-size: 0.9rem;
 }
 
+/* Report Cards Grid */
 .report-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
+    width: 100%;
 }
 
 .report-card {
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
     overflow: hidden;
+    width: 100%;
 }
 
 .report-card.full-width {
     grid-column: 1 / -1;
+}
+
+.report-card.alert-card {
+    border-left: 4px solid #ffc107;
 }
 
 .card-header {
@@ -378,12 +554,14 @@
     margin: 0;
     font-size: 1.25rem;
     color: #495057;
+    font-weight: 600;
 }
 
 .card-body {
     padding: 1.5rem;
 }
 
+/* Revenue Stats */
 .revenue-stats {
     display: flex;
     flex-direction: column;
@@ -394,7 +572,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
     border-bottom: 1px solid #eee;
 }
 
@@ -402,38 +580,108 @@
     border-bottom: none;
 }
 
-.value {
-    font-weight: bold;
-    color: #28a745;
+.stat-item .label {
+    color: #666;
+    font-weight: 500;
 }
 
+.stat-item .value {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 1.1rem;
+}
+
+/* Payment Methods & Status */
+.payment-methods,
+.status-distribution {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.method-item,
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.method-info,
+.status-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.method-name,
+.status-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.method-count,
+.status-count {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.method-amount,
+.status-amount {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 1.1rem;
+}
+
+/* Car Status Charts */
 .status-charts {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
 }
 
+.chart-section h4 {
+    margin: 0 0 1rem 0;
+    color: #495057;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+}
+
 .status-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
 }
 
-.status-item {
+.status-list .status-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
     position: relative;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #eee;
 }
 
-.status-count {
+.status-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.status-list .status-count {
     font-weight: bold;
-    background: #e9ecef;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    min-width: 30px;
+    background: #007bff;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    min-width: 40px;
     text-align: center;
+    font-size: 0.9rem;
 }
 
 .status-bar {
@@ -453,54 +701,234 @@
     transition: width 0.3s ease;
 }
 
-.report-table {
+/* Container and Layout Fixes */
+.container,
+.container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+}
+
+/* Tables */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.report-table,
+.table {
     width: 100%;
     border-collapse: collapse;
+    margin: 0;
 }
 
 .report-table th,
-.report-table td {
+.report-table td,
+.table th,
+.table td {
     padding: 0.75rem;
     text-align: left;
     border-bottom: 1px solid #dee2e6;
+    vertical-align: top;
 }
 
-.report-table th {
+.report-table th,
+.table th {
     background: #f8f9fa;
     font-weight: 600;
     color: #495057;
+    font-size: 0.9rem;
 }
 
-.status-badge {
-    padding: 0.25rem 0.5rem;
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+}
+
+/* Status Badges */
+.status-badge,
+.badge {
+    padding: 0.35rem 0.65rem;
     border-radius: 4px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
 }
 
-.status-pending { background: #fff3cd; color: #856404; }
-.status-confirmed { background: #d4edda; color: #155724; }
-.status-completed { background: #d1ecf1; color: #0c5460; }
-.status-cancelled { background: #f8d7da; color: #721c24; }
+.status-pending,
+.badge-warning { 
+    background: #fff3cd; 
+    color: #856404; 
+}
 
+.status-confirmed,
+.badge-success { 
+    background: #d4edda; 
+    color: #155724; 
+}
+
+.status-completed,
+.badge-info { 
+    background: #d1ecf1; 
+    color: #0c5460; 
+}
+
+.status-cancelled,
+.badge-danger { 
+    background: #f8d7da; 
+    color: #721c24; 
+}
+
+.badge-secondary {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+/* Alert Styling */
+.alert {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+}
+
+/* Text Utilities */
 .text-center {
-    text-align: center;
+    text-align: center !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .report-row {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .report-summary {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    
+    .main-content {
+        padding: 1rem 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .status-charts {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .report-row {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    
+    .main-content {
+        padding: 1rem;
+    }
 }
 
 @media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .date-filter-form .date-inputs {
+        justify-content: center;
+    }
+    
     .report-row {
         grid-template-columns: 1fr;
     }
     
-    .status-charts {
+    .report-summary {
         grid-template-columns: 1fr;
-        gap: 1rem;
     }
     
     .date-inputs {
         flex-direction: column;
         align-items: stretch;
+        gap: 0.75rem;
+    }
+    
+    .date-inputs input {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .summary-card {
+        padding: 1rem;
+    }
+    
+    .card-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-item,
+    .method-item,
+    .status-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .main-content {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .card-content h3 {
+        font-size: 1.25rem;
+    }
+    
+    .report-table th,
+    .report-table td,
+    .table th,
+    .table td {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .summary-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .card-icon {
+        margin-right: 0;
+    }
+    
+    .main-content {
+        padding: 0.5rem;
     }
 }
 </style>

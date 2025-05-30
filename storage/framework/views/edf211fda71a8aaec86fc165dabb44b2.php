@@ -36,7 +36,7 @@
             </button>
             
             <a href="<?php echo e(route('admin.dashboard')); ?>" class="header-brand d-none d-md-flex">
-                <img src="<?php echo e(asset('assets/images/logo1.png')); ?>" alt="Logo" style="height: 80px !important;">
+                <img src="<?php echo e(asset('assets/images/logo1.png')); ?>" alt="Logo" style="height: 70px !important;">
                 <span style="font-size: 1.5rem !important; font-weight: 700 !important;">CAR RENTAL SYSTEM</span>
             </a>
         </div>
