@@ -298,15 +298,14 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     // ... other admin routes ...
     
     // User verification routes
-    Route::get('/verify-users', [App\Http\Controllers\UserVerificationController::class, 'index'])
-        ->name('verify-users');
+    Route::get('/verify-users', [App\Http\Controllers\UserVerificationController::class, 'index'])->name('verify-users');
     
     // User verification detail routes
-    Route::get('/user-verification/{id}', [App\Http\Controllers\UserVerificationController::class, 'show'])
-        ->name('user-verification.show');
-    
-    Route::put('/user-verification/{id}', [App\Http\Controllers\UserVerificationController::class, 'updateStatus'])
-        ->name('user-verification.update');
+    Route::get('/user-verification/{id}', [App\Http\Controllers\UserVerificationController::class, 'show'])->name('user-verification.show');
+
+    Route::put('/user-verification/{id}', [App\Http\Controllers\UserVerificationController::class, 'updateStatus'])->name('user-verification.update');
+
+    Route::put('/admin/user-verification/{id}/alternative', [UserVerificationController::class, 'alternativeVerification'])->name('user-verification.alternative');
 });
 
 // Admin Routes
