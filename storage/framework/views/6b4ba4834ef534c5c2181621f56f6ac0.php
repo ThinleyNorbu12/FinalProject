@@ -470,7 +470,7 @@
                                         <?php
                                             $totalAmount = $booking->payments->sum('amount');
                                         ?>
-                                        Total: <?php echo e($totalAmount > 0 ? '$'.number_format($totalAmount, 2) : 'Pending Payment'); ?>
+                                        Total: <?php echo e($totalAmount > 0 ? 'BTN '.number_format($totalAmount, 2) : 'Pending Payment'); ?>
 
                                     </div>
                                     <div class="action-buttons">
@@ -574,7 +574,7 @@
                                         <?php
                                             $totalAmount = $booking->payments->sum('amount');
                                         ?>
-                                        Total: $<?php echo e(number_format($totalAmount, 2)); ?>
+                                        Total: BTN <?php echo e(number_format($totalAmount, 2)); ?>
 
                                     </div>
                                     

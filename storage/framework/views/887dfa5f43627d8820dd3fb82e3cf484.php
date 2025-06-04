@@ -82,7 +82,8 @@
                             <option value="pending" <?php echo e(request('status') == 'pending' ? 'selected' : ''); ?>>Pending</option>
                             <option value="pending_verification" <?php echo e(request('status') == 'pending_verification' ? 'selected' : ''); ?>>Pending Verification</option>
                             <option value="processing" <?php echo e(request('status') == 'processing' ? 'selected' : ''); ?>>Processing</option>
-                            <option value="completed" <?php echo e(request('status') == 'completed' ? 'selected' : ''); ?>>Completed</option>
+                            
+                            <option value="completed" <?php echo e(request('status') == 'completed' ? 'selected' : ''); ?>>Paid</option>
                             <option value="failed" <?php echo e(request('status') == 'failed' ? 'selected' : ''); ?>>Failed</option>
                             <option value="refunded" <?php echo e(request('status') == 'refunded' ? 'selected' : ''); ?>>Refunded</option>
                             <option value="cancelled" <?php echo e(request('status') == 'cancelled' ? 'selected' : ''); ?>>Cancelled</option>
@@ -169,8 +170,9 @@
                                 <?php case ('processing'): ?>
                                     <span class="badge bg-primary">Processing</span>
                                     <?php break; ?>
+                                
                                 <?php case ('completed'): ?>
-                                    <span class="badge bg-success">Completed</span>
+                                    <span class="badge bg-success">Paid</span>
                                     <?php break; ?>
                                 <?php case ('failed'): ?>
                                     <span class="badge bg-danger">Failed</span>

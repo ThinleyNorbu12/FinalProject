@@ -983,8 +983,8 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property bool $read
-     * @property string $type
+     * @property string|null $type
+     * @property boolean $is_read
      * @property string $message
      * @property string $title
      * @property mixed $customer_id
@@ -994,8 +994,8 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<AdminNotification>|AdminNotification whereCustomerId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminNotification>|AdminNotification whereTitle($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminNotification>|AdminNotification whereMessage($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<AdminNotification>|AdminNotification whereIsRead($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminNotification>|AdminNotification whereType($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminNotification>|AdminNotification whereRead($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminNotification>|AdminNotification whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminNotification>|AdminNotification whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminNotification>|AdminNotification newModelQuery()
@@ -1605,6 +1605,10 @@ namespace App\Models {
     /**
      * App\Models\CarBooking
      *
+     * @property mixed $current_mileage
+     * @property mixed $mileage_limit
+     * @property float|null $price_per_km
+     * @property float $rate_per_day
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property string|null $transaction_id
@@ -1639,6 +1643,10 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereTransactionId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereRatePerDay($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking wherePricePerKm($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereMileageLimit($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking whereCurrentMileage($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<CarBooking>|CarBooking query()
@@ -2931,6 +2939,7 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
+     * @property string|null $rejection_reason
      * @property mixed $status
      * @property mixed $license_back_image
      * @property mixed $license_front_image
@@ -2954,6 +2963,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereLicenseFrontImage($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereLicenseBackImage($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereRejectionReason($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DrivingLicense>|DrivingLicense newModelQuery()

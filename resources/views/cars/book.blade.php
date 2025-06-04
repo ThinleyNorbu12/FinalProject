@@ -158,7 +158,7 @@
                     <div class="car-spec"><i class="fas fa-suitcase me-2"></i><span>{{ $car->small_bags_capacity }} Small Bags</span></div>
                     <div class="car-spec"><i class="fas fa-gas-pump me-2"></i><span>{{ $car->fuel_type }}</span></div>
                     <div class="car-spec"><i class="fas fa-snowflake me-2"></i><span>{{ $car->air_conditioning ? 'Air Conditioning' : 'No AC' }}</span></div>
-                    <div class="car-spec"><i class="fas fa-video me-2"></i><span>{{ $car->backup_camera ? 'Backup Camera' : 'No Backup Camera' }}</span></div>
+                    <div class="car-spec"><i class="fas fa-video me-2"></i><span>{{ $car->backup_camera ? 'Rear-View Camera' : 'No Rear-View Camera' }}</span></div>
                     <div class="car-spec"><i class="fas fa-music me-2"></i><span>{{ $car->bluetooth ? 'Bluetooth Enabled' : 'No Bluetooth' }}</span></div>
                 </div>
                 @if($car->description)

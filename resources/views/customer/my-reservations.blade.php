@@ -467,7 +467,7 @@
                                         @php
                                             $totalAmount = $booking->payments->sum('amount');
                                         @endphp
-                                        Total: {{ $totalAmount > 0 ? '$'.number_format($totalAmount, 2) : 'Pending Payment' }}
+                                        Total: {{ $totalAmount > 0 ? 'BTN '.number_format($totalAmount, 2) : 'Pending Payment' }}
                                     </div>
                                     <div class="action-buttons">
                                         @if($booking->status === 'pending')
@@ -570,7 +570,7 @@
                                         @php
                                             $totalAmount = $booking->payments->sum('amount');
                                         @endphp
-                                        Total: ${{ number_format($totalAmount, 2) }}
+                                        Total: BTN {{ number_format($totalAmount, 2) }}
                                     </div>
                                     {{-- <div class="action-buttons">
                                         <a href="{{ route('customer.reservation-details', $booking->id) }}" class="btn btn-view-details">View Details</a>

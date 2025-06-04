@@ -265,6 +265,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
      Route::get('/car-management-reports', [ReportController::class, 'carManagementReports'])->name('car-management-reports');
 
+      // Add Price routes
+    Route::get('/add-price', [App\Http\Controllers\CarAdminController::class, 'showAddPriceForm'])->name('add-price');
+    Route::post('/add-price', [App\Http\Controllers\CarAdminController::class, 'storeCarPricing'])->name('add-price.store');
+    
+
 });
 
 // Customer profile routes
@@ -378,6 +383,38 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 });
 
 
+use App\Http\Controllers\RecordMileageController;
+Route::prefix('car-admin')->name('car-admin.')->group(function () {
+    // Record Mileage Routes
+    Route::get('/record-mileage', [App\Http\Controllers\RecordMileageController::class, 'index'])
+         ->name('record-mileage');
+    
+    Route::get('/record-mileage/create', [App\Http\Controllers\RecordMileageController::class, 'create'])
+         ->name('record-mileage.create');
+    
+    Route::post('/record-mileage', [App\Http\Controllers\RecordMileageController::class, 'store'])
+         ->name('record-mileage.store');
+    
+    Route::get('/record-mileage/{id}/edit', [App\Http\Controllers\RecordMileageController::class, 'edit'])
+         ->name('record-mileage.edit');
+    
+    Route::put('/record-mileage/{id}', [App\Http\Controllers\RecordMileageController::class, 'update'])
+         ->name('record-mileage.update');
+    
+    Route::get('/record-mileage/search', [App\Http\Controllers\RecordMileageController::class, 'search'])
+         ->name('record-mileage.search');
+         
+    // Additional routes you might want to add later:
+    
+    // Route::delete('/record-mileage/{id}', [App\Http\Controllers\Admin\RecordMileageController::class, 'destroy'])
+    //      ->name('record-mileage.destroy');
+    
+    // Route::get('/record-mileage/export', [App\Http\Controllers\Admin\RecordMileageController::class, 'export'])
+    //      ->name('record-mileage.export');
+    
+    // Route::get('/record-mileage/{id}/history', [App\Http\Controllers\Admin\RecordMileageController::class, 'history'])
+    //      ->name('record-mileage.history');
+});
     
 
 

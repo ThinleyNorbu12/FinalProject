@@ -780,7 +780,7 @@
                                         </div>
                                     @endif
                                     
-                                    @if($payLaterInfo && count($payLaterInfo) > 0)
+                                    {{-- @if($payLaterInfo && count($payLaterInfo) > 0)
                                         <div class="pay-later-section">
                                             <div class="payment-info-title">Pay Later Information</div>
                                             @foreach($payLaterInfo as $payLater)
@@ -795,7 +795,7 @@
                                                 </div>
                                             @endforeach
                                         </div>
-                                    @endif
+                                    @endif --}}
                                 </div>
                             </div>
                             

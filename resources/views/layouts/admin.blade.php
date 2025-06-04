@@ -142,6 +142,18 @@
                     <div class="tooltip">Approve Inspections</div>
                 </a>
 
+                <a href="{{ route('car-admin.add-price') }}" class="sidebar-menu-item {{ request()->routeIs('car-admin.add-price') ? 'active' : '' }}">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Add Price</span>
+                    <div class="tooltip">Add Price</div>
+                </a>
+                <a href="{{ route('car-admin.record-mileage') }}" class="sidebar-menu-item {{ request()->routeIs('car-admin.record-mileage') ? 'active' : '' }}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Record Mileage</span>
+                    <div class="tooltip">Record Mileage</div>
+                </a>
+
+
                 {{-- <a href="{{route('car-admin.car-management-reports') }}" class="sidebar-menu-item {{ request()->routeIs('car-admin.car-management-reports') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Car Management Reports</span>

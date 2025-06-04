@@ -82,7 +82,8 @@
                             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="pending_verification" {{ request('status') == 'pending_verification' ? 'selected' : '' }}>Pending Verification</option>
                             <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
-                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                            {{-- <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option> --}}
+                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Paid</option>
                             <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
                             <option value="refunded" {{ request('status') == 'refunded' ? 'selected' : '' }}>Refunded</option>
                             <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
@@ -168,8 +169,11 @@
                                 @case('processing')
                                     <span class="badge bg-primary">Processing</span>
                                     @break
-                                @case('completed')
+                                {{-- @case('completed')
                                     <span class="badge bg-success">Completed</span>
+                                    @break --}}
+                                @case('completed')
+                                    <span class="badge bg-success">Paid</span>
                                     @break
                                 @case('failed')
                                     <span class="badge bg-danger">Failed</span>

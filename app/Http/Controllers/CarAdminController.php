@@ -14,6 +14,7 @@ use App\Mail\InspectionDecisionMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use App\Models\CarBooking;
 
 
 
@@ -547,13 +548,59 @@ public function getProfileData()
         'updated_at' => $admin->updated_at->format('M d, Y'),
     ]);
 }
+
+
+
+
+
+public function showAddPriceForm()
+{
+    // Get all cars to select from
+    $cars = CarDetail::all();
     
+    return view('admin.add-price', compact('cars'));
+}
 
- 
+/**
+ * Store car pricing information
+ */
+public function storeCarPricing(Request $request)
+{
+    $request->validate([
+        'car_id' => 'required|exists:car_details_tbl,id',
+        'rate_per_day' => 'required|numeric|min:0',
+        'mileage_limit' => 'required|numeric|min:0',
+        'price_per_km' => 'required|numeric|min:0',
+        'current_mileage' => 'required|numeric|min:0',
+    ]);
 
+    try {
+        // Create a new car booking record with pricing information
+        CarBooking::create([
+            'car_id' => $request->car_id,
+            'customer_id' => null, // No customer for pricing setup
+            'pickup_location' => null,
+            'dropoff_location' => null,
+            'pickup_datetime' => null,
+            'dropoff_datetime' => null,
+            'status' => 'pricing_setup', // Custom status for pricing records
+            'payment_method' => null,
+            'transaction_id' => null,
+            'rate_per_day' => $request->rate_per_day,
+            'price_per_km' => $request->price_per_km,
+            'mileage_limit' => $request->mileage_limit,
+            'current_mileage' => $request->current_mileage,
+        ]);
 
-
-    
+        return redirect()->route('car-admin.add-price')
+            ->with('success', 'Car pricing information added successfully!');
+            
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->with('error', 'Failed to add pricing information. Please try again.')
+            ->withInput();
+    }
+}
 
 
 }

@@ -147,7 +147,7 @@
                     <div class="car-spec"><i class="fas fa-suitcase me-2"></i><span><?php echo e($car->small_bags_capacity); ?> Small Bags</span></div>
                     <div class="car-spec"><i class="fas fa-gas-pump me-2"></i><span><?php echo e($car->fuel_type); ?></span></div>
                     <div class="car-spec"><i class="fas fa-snowflake me-2"></i><span><?php echo e($car->air_conditioning ? 'Air Conditioning' : 'No AC'); ?></span></div>
-                    <div class="car-spec"><i class="fas fa-video me-2"></i><span><?php echo e($car->backup_camera ? 'Backup Camera' : 'No Backup Camera'); ?></span></div>
+                    <div class="car-spec"><i class="fas fa-video me-2"></i><span><?php echo e($car->backup_camera ? 'Rear-View Camera' : 'No Rear-View Camera'); ?></span></div>
                     <div class="car-spec"><i class="fas fa-music me-2"></i><span><?php echo e($car->bluetooth ? 'Bluetooth Enabled' : 'No Bluetooth'); ?></span></div>
                 </div>
                 <?php if($car->description): ?>
