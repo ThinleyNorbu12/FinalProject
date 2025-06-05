@@ -132,51 +132,7 @@ endif;
 unset($__errorArgs, $__bag); ?>
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="mileage" class="form-label">Mileage (km)</label>
-                                <input type="number" class="form-control <?php $__errorArgs = ['mileage'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" 
-                                       name="mileage" id="mileage" value="<?php echo e(old('mileage')); ?>" placeholder="0">
-                                <?php $__errorArgs = ['mileage'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
-                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="price" class="form-label">Price per Day (BTN) <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control <?php $__errorArgs = ['price'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" 
-                                       name="price" id="price" value="<?php echo e(old('price')); ?>" placeholder="0.00" step="0.01">
-                                <?php $__errorArgs = ['price'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
-                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                            </div>
+                            
 
                             <div class="col-md-6">
                                 <label for="registration_no" class="form-label">Registration Number <span class="text-danger">*</span></label>

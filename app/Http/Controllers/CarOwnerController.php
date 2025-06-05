@@ -433,8 +433,8 @@ class CarOwnerController extends Controller
             'model' => 'required|string|max:255',
             'vehicle_type' => 'required|string',
             'car_condition' => 'required|string',
-            'mileage' => 'required|numeric',
-            'price' => 'required|numeric',
+            // 'mileage' => 'required|numeric',
+            // 'price' => 'required|numeric',
             'registration_no' => 'required|string|unique:car_details_tbl,registration_no',
             'status' => 'required|string',
             'description' => 'nullable|string',
@@ -465,8 +465,8 @@ class CarOwnerController extends Controller
         $car->model = $request->model;
         $car->vehicle_type = $request->vehicle_type;
         $car->car_condition = $request->car_condition;
-        $car->mileage = $request->mileage;
-        $car->price = $request->price;
+        // $car->mileage = $request->mileage;
+        // $car->price = $request->price;
         $car->registration_no = $request->registration_no;
         $car->status = $request->status;
         $car->description = $request->description;

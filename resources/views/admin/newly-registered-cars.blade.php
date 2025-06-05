@@ -87,7 +87,7 @@
                         type="text" 
                         id="live-search" 
                         class="form-control search-input" 
-                        placeholder="Search by Maker, Model, Vehicle Type, Price, Registration Number, or Status..." 
+                        placeholder="Search by Maker, Model, Vehicle Type, Registration Number, or Status..." 
                         value="{{ request('search') }}"
                         autocomplete="off"
                     >
@@ -155,7 +155,7 @@
                                 <th>Maker</th>
                                 <th>Model</th>
                                 <th>Vehicle Type</th>
-                                <th>Price per Day</th>
+                                {{-- <th>Price per Day</th> --}}
                                 <th>Registration Number</th>
                                 <th>Status</th>
                                 <th>Car Image</th>
@@ -178,9 +178,9 @@
                                     <td>
                                         <span class="badge bg-secondary">{{ $car->vehicle_type }}</span>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         <span class="fw-medium text-success">BTN {{ number_format($car->price, 2) }}</span>
-                                    </td>
+                                    </td> --}}
                                     <td>
                                         <code>{{ $car->registration_no }}</code>
                                     </td>

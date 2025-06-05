@@ -43,9 +43,9 @@
                                         <th scope="col">
                                             <i class="fas fa-tools me-1"></i>Condition
                                         </th>
-                                        <th scope="col">
+                                        {{-- <th scope="col">
                                             <i class="fas fa-dollar-sign me-1"></i>Price
-                                        </th>
+                                        </th> --}}
                                         <th scope="col">
                                             <i class="fas fa-id-card me-1"></i>Registration No
                                         </th>
@@ -71,9 +71,9 @@
                                             <td>
                                                 <span class="badge bg-warning text-dark">{{ $car->car_condition }}</span>
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                 <strong class="text-success">${{ number_format($car->price, 2) }}</strong>
-                                            </td>
+                                            </td> --}}
                                             <td>
                                                 <code>{{ $car->registration_no }}</code>
                                             </td>
@@ -130,7 +130,7 @@
                                                             <div class="col-md-6">
                                                                 <h6><i class="fas fa-dollar-sign text-success me-2"></i>Pricing & Registration</h6>
                                                                 <table class="table table-sm">
-                                                                    <tr><td><strong>Price:</strong></td><td>${{ number_format($car->price, 2) }}</td></tr>
+                                                                    {{-- <tr><td><strong>Price:</strong></td><td>${{ number_format($car->price, 2) }}</td></tr> --}}
                                                                     <tr><td><strong>Registration:</strong></td><td>{{ $car->registration_no }}</td></tr>
                                                                     <tr><td><strong>Status:</strong></td><td><span class="badge bg-danger">Rejected</span></td></tr>
                                                                 </table>

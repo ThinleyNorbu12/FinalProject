@@ -70,4 +70,9 @@ class InspectionRequest extends Model
     {
         return $this->hasOne(InspectionDecision::class, 'inspection_request_id');
     }
+
+    public function inspectionDecision()
+    {
+        return $this->hasOne(InspectionDecision::class);
+    }
 }

@@ -319,22 +319,31 @@
 <body>
     <div class="container">
         <div class="payment-container">
-              
+            
             <?php if(session('error')): ?>
                 <div class="alert alert-danger">
                     <?php echo e(session('error')); ?>
 
                 </div>
             <?php endif; ?>
+            
+            <?php if(session('success')): ?>
+                <div class="alert alert-success">
+                    <?php echo e(session('success')); ?>
+
+                </div>
+            <?php endif; ?>
+            
             <div class="payment-header">
                 <h2>SELECT PAYMENT METHOD</h2>
             </div>
+            
             <div class="payment-body">
                 <a href="<?php echo e(route('booking.summary', ['bookingId' => $booking->id])); ?>" class="back-link mb-4">
                     <i class="fas fa-arrow-left me-2"></i> Back to booking
                 </a>
                 
-                <!-- Payment summary section remains the same -->
+                <!-- Payment summary section -->
                 <div class="payment-summary">
                     <h4 class="mb-4">Booking Summary</h4>
                     
@@ -355,6 +364,20 @@
                                 <span><i class="fas fa-cog"></i> <?php echo e($booking->car->transmission_type); ?></span>
                                 <span><i class="fas fa-gas-pump"></i> <?php echo e($booking->car->fuel_type); ?></span>
                                 <span><i class="fas fa-users"></i> <?php echo e($booking->car->number_of_seats); ?> seats</span>
+                                <span><i class="fas fa-door-open"></i> <?php echo e($booking->car->number_of_doors); ?> doors</span>
+                            </div>
+                            
+                            <!-- Vehicle Features -->
+                            <div class="vehicle-features mt-2">
+                                <?php if($booking->car->air_conditioning === 'Yes'): ?>
+                                    <span class="badge bg-success"><i class="fas fa-snowflake me-1"></i>AC</span>
+                                <?php endif; ?>
+                                <?php if($booking->car->backup_camera === 'Yes'): ?>
+                                    <span class="badge bg-success"><i class="fas fa-video me-1"></i>Backup Camera</span>
+                                <?php endif; ?>
+                                <?php if($booking->car->bluetooth === 'Yes'): ?>
+                                    <span class="badge bg-success"><i class="fas fa-bluetooth me-1"></i>Bluetooth</span>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <span class="badge <?php echo e($booking->status === 'confirmed' ? 'badge-success' : 'badge-warning'); ?>">
@@ -380,283 +403,327 @@
                         </div>
                     </div>
                     
-                   <?php
-                    $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
-                    $days = ceil($hours / 24); // Round up to full days for pricing
-                    $dailyRate = $booking->car->price;
-                    $insuranceFee = 200;
-                    $serviceFee = 100;
-                    // Removed: $securityDeposit
-                    $totalPrice = ($dailyRate * $days) + $insuranceFee + $serviceFee;
-                ?>
+                    <?php
+                        $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
+                        $days = ceil($hours / 24); // Round up to full days for pricing
+                        $dailyRate = $booking->car->rate_per_day ?? $booking->car->price ?? 0;
+                        $insuranceFee = 200;
+                        $serviceFee = 100;
+                        $totalPrice = ($dailyRate * $days) + $insuranceFee + $serviceFee;
+                    ?>
 
-                <div class="summary-item">
-                    <span>Booking ID</span>
-                    <span id="bookingId">#<?php echo e($booking->id); ?></span>
-                </div>
-
-                <div class="summary-item">
-                    <span>Duration</span>
-                    <span>
-                        <?php if($days > 0): ?>
-                            <?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?>
-
-                        <?php endif; ?>
-                        <?php if($hours % 24 > 0): ?>
-                            <?php echo e($hours % 24); ?> hour<?php echo e($hours % 24 > 1 ? 's' : ''); ?>
-
-                        <?php endif; ?>
-                    </span>
-                </div>
-
-                <hr>
-
-                <div class="summary-item">
-                    <span>Rental Fee (<?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?> × Nu. <?php echo e(number_format($dailyRate, 2)); ?>)</span>
-                    <span>Nu. <?php echo e(number_format($dailyRate * $days, 2)); ?></span>
-                </div>
-
-                <div class="summary-item">
-                    <span>Insurance Fee</span>
-                    <span>Nu. <?php echo e(number_format($insuranceFee, 2)); ?></span>
-                </div>
-
-                <div class="summary-item">
-                    <span>Service Fee</span>
-                    <span>Nu. <?php echo e(number_format($serviceFee, 2)); ?></span>
-                </div>
-
-                <hr>
-
-                <div class="summary-item mb-0">
-                    <span class="fw-bold">Total Amount</span>
-                    <span class="total-amount">Nu. <?php echo e(number_format($totalPrice, 2)); ?></span>
-                </div>
-                
-                <!-- PAYMENT OPTIONS -->
-                <h4 class="mb-3">Choose Payment Method</h4>
-                
-                <!-- Option 1: QR Code Payment -->
-                <div class="payment-option" id="option1">
-                    <div class="payment-option-header">
-                        <div class="payment-option-icon">
-                            <i class="fas fa-qrcode"></i>
-                        </div>
-                        <h5 class="payment-option-title">QR Code Payment</h5>
+                    <div class="summary-item">
+                        <span>Booking ID</span>
+                        <span id="bookingId">#<?php echo e($booking->id); ?></span>
                     </div>
-                    <div class="payment-option-body">
-                        <p>Choose your bank below and follow the instructions to complete your payment.</p>
-                        
-                        <!-- Hidden form for QR payment submission -->
-                        <form id="qrPaymentForm" action="<?php echo e(route('booking.payment.qr', ['bookingId' => $booking->id])); ?>" method="POST" enctype="multipart/form-data" style="display: none;">
-                            <?php echo csrf_field(); ?>
-                            <input type="hidden" name="bank_code" id="selected_bank_code">
-                            <input type="file" name="screenshot" id="screenshot_file">
-                        </form>
-                        
-                        <div class="bank-selector">
-                            <div class="bank-option" data-bank="bob">
-                                <img src="../assets/images/mbob.png" alt="Bank of Bhutan">
-                                <div>BOB</div>
-                            </div>
-                            <div class="bank-option" data-bank="bnb">
-                                <img src="../assets/images/bnb.png" alt="Bhutan National Bank">
-                                <div>BNB</div>
-                            </div>
-                            <div class="bank-option" data-bank="tbank">
-                                <img src="../assets/images/Tbank.jpg" alt="T-Bank">
-                                <div>T-Bank</div>
-                            </div>
-                            <div class="bank-option" data-bank="dpnb">
-                                <img src="../assets/images/drukpnb.png" alt="Druk PNB">
-                                <div>DPNB</div>
-                            </div>
-                            <div class="bank-option" data-bank="bdbl">
-                                <img src="../assets/images/bdbl.jpg" alt="BDBL">
-                                <div>BDBL</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Bank instructions remain the same -->
-                        <!-- BOB Instructions -->
-                        <div class="bank-instructions hidden" id="bob-instructions">
-                            <h6>Payment Instructions for Bank of Bhutan</h6>
-                            <ol>
-                                <li>Open your mBOB app</li>
-                                <li>Go to Payments > Scan QR</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Enter amount: Nu. 15,300.00</li>
-                                <li>Confirm payment using your PIN/password</li>
-                                <li>Take a screenshot of the confirmation</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                        
-                        <!-- BNB Instructions -->
-                        <div class="bank-instructions hidden" id="bnb-instructions">
-                            <h6>Payment Instructions for Bhutan National Bank</h6>
-                            <ol>
-                                <li>Open your BNB mPAY app</li>
-                                <li>Select "Scan & Pay" option</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Enter amount: Nu. 15,300.00</li>
-                                <li>Enter your mPIN to authorize payment</li>
-                                <li>Take a screenshot of the payment receipt</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                        
-                        <!-- T-Bank Instructions -->
-                        <div class="bank-instructions hidden" id="tbank-instructions">
-                            <h6>Payment Instructions for T-Bank</h6>
-                            <ol>
-                                <li>Log in to your T-Bank mobile app</li>
-                                <li>Tap on "Payments" > "QR Payments"</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Verify recipient details</li>
-                                <li>Enter amount: Nu. 15,300.00</li>
-                                <li>Confirm payment with your secure PIN</li>
-                                <li>Take a screenshot of the transaction receipt</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                        
-                        <!-- DPNB Instructions -->
-                        <div class="bank-instructions hidden" id="dpnb-instructions">
-                            <h6>Payment Instructions for Druk PNB</h6>
-                            <ol>
-                                <li>Open the Druk PNB mobile banking app</li>
-                                <li>Select "QR Payments" from the main menu</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Enter amount: Nu. 15,300.00</li>
-                                <li>Verify recipient information</li>
-                                <li>Confirm using your MPIN</li>
-                                <li>Take a screenshot of the success page</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                        
-                        <!-- BDBL Instructions -->
-                        <div class="bank-instructions hidden" id="bdbl-instructions">
-                            <h6>Payment Instructions for BDBL</h6>
-                            <ol>
-                                <li>Login to your BDBL mobile banking app</li>
-                                <li>Tap on "QR Code Payment"</li>
-                                <li>Scan the QR code shown here</li>
-                                <li>Check recipient name: "THINLEY NORBU"</li>
-                                <li>Enter amount: Nu. 15,300.00</li>
-                                <li>Enter your security PIN to complete payment</li>
-                                <li>Take a screenshot of the payment confirmation</li>
-                                <li>Upload the screenshot below</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="qr-code-container hidden" id="qrContainer">
-                            <div class="qr-wrapper">
-                                <img src="../assets/images/bobQRcode.jpg" alt="QR Code" class="qr-code-image" id="bankQrCode">
-                            </div>
-                            
-                            <div class="qr-details">
-                                <p class="name">Car Rental System</p>
-                                <p class="amount">Amount: <strong>Nu. <?php echo e(number_format($totalPrice, 2)); ?></strong></p>
-                            </div>
-                            
-                            <label class="upload-btn mt-4">
-                                <i class="fas fa-upload"></i>
-                                <span>Upload Payment Screenshot</span>
-                                <input type="file" id="payment_screenshot" style="display: none;" accept="image/*">
-                            </label>
-                        </div>
-                        
-                        <p class="text-center mt-3 text-muted" id="qrPrompt">Please select a bank to display the QR code</p>
-                        
-                        <div class="text-center mt-3">
-                            <button type="button" class="payment-btn" id="confirmQrBtn" disabled>Confirm Payment</button>
-                        </div>
+
+                    <div class="summary-item">
+                        <span>Duration</span>
+                        <span>
+                            <?php if($days > 0): ?>
+                                <?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?>
+
+                            <?php endif; ?>
+                            <?php if($hours % 24 > 0): ?>
+                                <?php echo e($hours % 24); ?> hour<?php echo e($hours % 24 > 1 ? 's' : ''); ?>
+
+                            <?php endif; ?>
+                        </span>
                     </div>
-                </div>
-                
-                <!-- Option 2 and 3 remain the same -->
-                <div class="payment-option" id="option2">
-                    <div class="payment-option-header">
-                        <div class="payment-option-icon">
-                            <i class="fas fa-university"></i>
-                        </div>
-                        <h5 class="payment-option-title">Bank Transfer with OTP Verification</h5>
+
+                    <!-- Vehicle Information -->
+                    <div class="summary-item">
+                        <span>Vehicle</span>
+                        <span><?php echo e($booking->car->maker); ?> <?php echo e($booking->car->model); ?> (<?php echo e($booking->car->registration_no); ?>)</span>
                     </div>
-                    <div class="payment-option-body">
-                        <div class="mb-3">
-                            <label class="form-label">Bank Code</label>
-                            <select class="bank-dropdown">
-                                <option value="">Select Bank</option>
-                                <option value="bob">BANK OF BHUTAN LIMITED</option>
-                                <option value="bnb">BHUTAN NATIONAL BANK LIMITED</option>
-                                <option value="tbank">T-BANK LIMITED</option>
-                                <option value="dpnb">DRUK PNB BANK LIMITED</option>
-                                <option value="bdbl">BHUTAN DEVELOPMENT BANK LIMITED</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Bank Account Number</label>
-                            <input type="text" class="account-input" placeholder="Enter Account Number">
-                        </div>
+
+                    <?php if($booking->car->mileage_limit): ?>
+                    <div class="summary-item">
+                        <span>Daily Mileage Limit</span>
+                        <span><?php echo e(number_format($booking->car->mileage_limit)); ?> km/day</span>
+                    </div>
+                    <?php endif; ?>
+
+                    <hr>
+
+                    <!-- Pricing Breakdown -->
+                    <div class="summary-item">
+                        <span>Rental Fee (<?php echo e($days); ?> day<?php echo e($days > 1 ? 's' : ''); ?> × BTN <?php echo e(number_format($dailyRate, 2)); ?>)</span>
+                        <span>BTN <?php echo e(number_format($dailyRate * $days, 2)); ?></span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span>Insurance Fee</span>
+                        <span>BTN <?php echo e(number_format($insuranceFee, 2)); ?></span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span>Service Fee</span>
+                        <span>BTN <?php echo e(number_format($serviceFee, 2)); ?></span>
+                    </div>
+
+                    <?php if($booking->car->price_per_km && $booking->car->mileage_limit): ?>
+                    <div class="summary-item text-muted">
+                        <span><small>Excess Mileage Fee</small></span>
+                        <span><small>BTN <?php echo e(number_format($booking->car->price_per_km, 2)); ?>/km</small></span>
+                    </div>
+                    <?php endif; ?>
+
+                    <hr>
+
+                    <div class="summary-item mb-0">
+                        <span class="fw-bold">Total Amount</span>
+                        <span class="total-amount">BTN <?php echo e(number_format($totalPrice, 2)); ?></span>
+                    </div>
                     
-                        
-                        <div class="text-center mt-4">
-                            <button class="otp-btn">Send OTP</button>
+                    <!-- PAYMENT OPTIONS -->
+                    <h4 class="mb-3 mt-4">Choose Payment Method</h4>
+                    
+                    <!-- Option 1: QR Code Payment -->
+                    <div class="payment-option" id="option1">
+                        <div class="payment-option-header">
+                            <div class="payment-option-icon">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <h5 class="payment-option-title">QR Code Payment</h5>
                         </div>
-                        
-                        <div class="mt-4 hidden" id="otpSection">
-                            <label class="form-label">Enter OTP</label>
-                            <div class="d-flex gap-2">
-                                <input type="text" maxlength="1" class="form-control text-center">
-                                <input type="text" maxlength="1" class="form-control text-center">
-                                <input type="text" maxlength="1" class="form-control text-center">
-                                <input type="text" maxlength="1" class="form-control text-center">
-                                <input type="text" maxlength="1" class="form-control text-center">
-                                <input type="text" maxlength="1" class="form-control text-center">
+                        <div class="payment-option-body">
+                            <p>Choose your bank below and follow the instructions to complete your payment.</p>
+                            
+                            <!-- Hidden form for QR payment submission -->
+                            <form id="qrPaymentForm" action="<?php echo e(route('booking.payment.qr', ['bookingId' => $booking->id])); ?>" method="POST" enctype="multipart/form-data" style="display: none;">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="bank_code" id="selected_bank_code">
+                                <input type="hidden" name="total_amount" value="<?php echo e($totalPrice); ?>">
+                                <input type="file" name="screenshot" id="screenshot_file">
+                            </form>
+                            
+                            <div class="bank-selector">
+                                <div class="bank-option" data-bank="bob" data-qr="../assets/images/bobQRcode.jpg">
+                                    <img src="../assets/images/mbob.png" alt="Bank of Bhutan">
+                                    <div>BOB</div>
+                                </div>
+                                <div class="bank-option" data-bank="bnb" data-qr="../assets/images/bnbQRcode.jpg">
+                                    <img src="../assets/images/bnb.png" alt="Bhutan National Bank">
+                                    <div>BNB</div>
+                                </div>
+                                <div class="bank-option" data-bank="tbank" data-qr="../assets/images/tbankQRcode.jpg">
+                                    <img src="../assets/images/Tbank.jpg" alt="T-Bank">
+                                    <div>T-Bank</div>
+                                </div>
+                                <div class="bank-option" data-bank="dpnb" data-qr="../assets/images/dpnbQRcode.jpg">
+                                    <img src="../assets/images/drukpnb.png" alt="Druk PNB">
+                                    <div>DPNB</div>
+                                </div>
+                                <div class="bank-option" data-bank="bdbl" data-qr="../assets/images/bdblQRcode.jpg">
+                                    <img src="../assets/images/bdbl.jpg" alt="BDBL">
+                                    <div>BDBL</div>
+                                </div>
                             </div>
                             
-                            <div class="text-center mt-4">
-                                <button class="payment-btn">Verify & Pay</button>
+                            <!-- Bank instructions -->
+                            <div class="bank-instructions hidden" id="bob-instructions">
+                                <h6>Payment Instructions for Bank of Bhutan</h6>
+                                <ol>
+                                    <li>Open your mBOB app</li>
+                                    <li>Go to Payments > Scan QR</li>
+                                    <li>Scan the QR code shown here</li>
+                                    <li>Enter amount: BTN <?php echo e(number_format($totalPrice, 2)); ?></li>
+                                    <li>Confirm payment using your PIN/password</li>
+                                    <li>Take a screenshot of the confirmation</li>
+                                    <li>Upload the screenshot below</li>
+                                </ol>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Option 3: Pay Later (updated) -->
-                <!-- Pay Later Option -->
-                        <div class="payment-option" id="option3">
-                            <div class="payment-option-header">
-                                <div class="payment-option-icon">
-                                    <i class="fas fa-hourglass-half"></i>
-                                </div>
-                                <h5 class="payment-option-title">Pay Later</h5>
+                            
+                            <div class="bank-instructions hidden" id="bnb-instructions">
+                                <h6>Payment Instructions for Bhutan National Bank</h6>
+                                <ol>
+                                    <li>Open your BNB mPAY app</li>
+                                    <li>Select "Scan & Pay" option</li>
+                                    <li>Scan the QR code shown here</li>
+                                    <li>Enter amount: BTN <?php echo e(number_format($totalPrice, 2)); ?></li>
+                                    <li>Enter your mPIN to authorize payment</li>
+                                    <li>Take a screenshot of the payment receipt</li>
+                                    <li>Upload the screenshot below</li>
+                                </ol>
                             </div>
-                            <div class="payment-option-body">
-                                <p>Select this option if you prefer to pay in cash at the time of pickup.</p>
-                                <div class="alert alert-warning">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    Please note that choosing "Pay Later" option means you will need to pay the full amount when you meet for the car handover.
+                            
+                            <div class="bank-instructions hidden" id="tbank-instructions">
+                                <h6>Payment Instructions for T-Bank</h6>
+                                <ol>
+                                    <li>Log in to your T-Bank mobile app</li>
+                                    <li>Tap on "Payments" > "QR Payments"</li>
+                                    <li>Scan the QR code shown here</li>
+                                    <li>Verify recipient details</li>
+                                    <li>Enter amount: BTN <?php echo e(number_format($totalPrice, 2)); ?></li>
+                                    <li>Confirm payment with your secure PIN</li>
+                                    <li>Take a screenshot of the transaction receipt</li>
+                                    <li>Upload the screenshot below</li>
+                                </ol>
+                            </div>
+                            
+                            <div class="bank-instructions hidden" id="dpnb-instructions">
+                                <h6>Payment Instructions for Druk PNB</h6>
+                                <ol>
+                                    <li>Open the Druk PNB mobile banking app</li>
+                                    <li>Select "QR Payments" from the main menu</li>
+                                    <li>Scan the QR code shown here</li>
+                                    <li>Enter amount: BTN <?php echo e(number_format($totalPrice, 2)); ?></li>
+                                    <li>Verify recipient information</li>
+                                    <li>Confirm using your MPIN</li>
+                                    <li>Take a screenshot of the success page</li>
+                                    <li>Upload the screenshot below</li>
+                                </ol>
+                            </div>
+                            
+                            <div class="bank-instructions hidden" id="bdbl-instructions">
+                                <h6>Payment Instructions for BDBL</h6>
+                                <ol>
+                                    <li>Login to your BDBL mobile banking app</li>
+                                    <li>Tap on "QR Code Payment"</li>
+                                    <li>Scan the QR code shown here</li>
+                                    <li>Check recipient name: "Car Rental System"</li>
+                                    <li>Enter amount: BTN <?php echo e(number_format($totalPrice, 2)); ?></li>
+                                    <li>Enter your security PIN to complete payment</li>
+                                    <li>Take a screenshot of the payment confirmation</li>
+                                    <li>Upload the screenshot below</li>
+                                </ol>
+                            </div>
+                            
+                            <div class="qr-code-container hidden" id="qrContainer">
+                                <div class="qr-wrapper">
+                                    <img src="../assets/images/bobQRcode.jpg" alt="QR Code" class="qr-code-image" id="bankQrCode">
                                 </div>
                                 
-                                <!-- Hidden form for Pay Later submission -->
-                                <form id="payLaterForm" method="POST" action="<?php echo e(route('booking.payment.payLater', ['bookingId' => $booking->id])); ?>" style="display: none;">
-                                    <?php echo csrf_field(); ?>
-                                    <input type="hidden" name="notes" value="Customer opted to pay at pickup.">
-                                </form>
+                                <div class="qr-details text-center">
+                                    <p class="name">Car Rental System</p>
+                                    <p class="amount">Amount: <strong>BTN <?php echo e(number_format($totalPrice, 2)); ?></strong></p>
+                                    <p class="booking-ref">Booking: <strong>#<?php echo e($booking->id); ?></strong></p>
+                                </div>
+                                
+                                <label class="upload-btn mt-4">
+                                    <i class="fas fa-upload"></i>
+                                    <span>Upload Payment Screenshot</span>
+                                    <input type="file" id="payment_screenshot" style="display: none;" accept="image/*" required>
+                                </label>
+                                
+                                <div id="screenshot-preview" class="mt-3 hidden">
+                                    <img id="preview-image" src="" alt="Screenshot Preview" style="max-width: 200px; max-height: 200px;">
+                                    <p class="text-success mt-2"><i class="fas fa-check-circle"></i> Screenshot uploaded successfully</p>
+                                </div>
+                            </div>
+                            
+                            <p class="text-center mt-3 text-muted" id="qrPrompt">Please select a bank to display the QR code</p>
+                            
+                            <div class="text-center mt-3">
+                                <button type="button" class="payment-btn" id="confirmQrBtn" disabled>Confirm Payment</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Option 2: Bank Transfer with OTP -->
+                    <div class="payment-option" id="option2">
+                        <div class="payment-option-header">
+                            <div class="payment-option-icon">
+                                <i class="fas fa-university"></i>
+                            </div>
+                            <h5 class="payment-option-title">Bank Transfer with OTP Verification</h5>
+                        </div>
+                        <div class="payment-option-body">
+                            
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="total_amount" value="<?php echo e($totalPrice); ?>">
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Bank Code</label>
+                                    <select class="bank-dropdown form-control" name="bank_code" required>
+                                        <option value="">Select Bank</option>
+                                        <option value="bob">BANK OF BHUTAN LIMITED</option>
+                                        <option value="bnb">BHUTAN NATIONAL BANK LIMITED</option>
+                                        <option value="tbank">T-BANK LIMITED</option>
+                                        <option value="dpnb">DRUK PNB BANK LIMITED</option>
+                                        <option value="bdbl">BHUTAN DEVELOPMENT BANK LIMITED</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Bank Account Number</label>
+                                    <input type="text" class="account-input form-control" name="account_number" placeholder="Enter Account Number" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Account Holder Name</label>
+                                    <input type="text" class="form-control" name="account_holder" placeholder="Enter Account Holder Name" required>
+                                </div>
                                 
                                 <div class="text-center mt-4">
-                                    <button type="button" class="btn btn-primary payment-btn">Confirm Pay Later</button>
+                                    <button type="button" class="otp-btn" id="sendOtpBtn">Send OTP</button>
                                 </div>
+                                
+                                <div class="mt-4 hidden" id="otpSection">
+                                    <label class="form-label">Enter OTP</label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <input type="text" maxlength="1" class="form-control text-center otp-input" style="width: 50px;">
+                                        <input type="text" maxlength="1" class="form-control text-center otp-input" style="width: 50px;">
+                                        <input type="text" maxlength="1" class="form-control text-center otp-input" style="width: 50px;">
+                                        <input type="text" maxlength="1" class="form-control text-center otp-input" style="width: 50px;">
+                                        <input type="text" maxlength="1" class="form-control text-center otp-input" style="width: 50px;">
+                                        <input type="text" maxlength="1" class="form-control text-center otp-input" style="width: 50px;">
+                                    </div>
+                                    <input type="hidden" name="otp_code" id="otpCode">
+                                    
+                                    <div class="text-center mt-4">
+                                        <button type="submit" class="payment-btn">Verify & Pay</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Option 3: Pay Later -->
+                    <div class="payment-option" id="option3">
+                        <div class="payment-option-header">
+                            <div class="payment-option-icon">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <h5 class="payment-option-title">Pay at Pickup</h5>
+                        </div>
+                        <div class="payment-option-body">
+                            <p>Select this option if you prefer to pay in cash at the time of pickup.</p>
+                            
+                            <div class="alert alert-warning">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Please note that choosing "Pay at Pickup" option means you will need to pay the full amount of <strong>BTN <?php echo e(number_format($totalPrice, 2)); ?></strong> when you meet for the car handover.
+                            </div>
+                            
+                            <?php if($booking->car->mileage_limit): ?>
+                            <div class="alert alert-info">
+                                <i class="fas fa-road me-2"></i>
+                                <strong>Mileage Limit:</strong> <?php echo e(number_format($booking->car->mileage_limit)); ?> km per day. 
+                                <?php if($booking->car->price_per_km): ?>
+                                    Excess mileage will be charged at BTN <?php echo e(number_format($booking->car->price_per_km, 2)); ?> per km.
+                                <?php endif; ?>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <!-- Hidden form for Pay Later submission -->
+                            <form id="payLaterForm" method="POST" action="<?php echo e(route('booking.payment.payLater', ['bookingId' => $booking->id])); ?>" style="display: none;">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="total_amount" value="<?php echo e($totalPrice); ?>">
+                                <input type="hidden" name="notes" value="Customer opted to pay at pickup - Total: BTN <?php echo e(number_format($totalPrice, 2)); ?>">
+                            </form>
+                            
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-primary payment-btn" id="confirmPayLaterBtn">Confirm Pay at Pickup</button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="footer-actions mt-4 d-flex justify-content-between">
-                        <a href="<?php echo e(route('booking.summary', ['bookingId' => $booking->id])); ?>" class="btn btn-secondary cancel-btn">Cancel</a>
-                        <!-- <button class="btn btn-primary payment-btn" id="nextBtn" disabled>Next</button> -->
+                <div class="footer-actions mt-4 d-flex justify-content-between">
+                    <a href="<?php echo e(route('booking.summary', ['bookingId' => $booking->id])); ?>" class="btn btn-secondary cancel-btn">Cancel</a>
+                    <div class="text-muted">
+                        <small>Booking ID: #<?php echo e($booking->id); ?></small>
                     </div>
                 </div>
             </div>

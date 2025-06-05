@@ -178,45 +178,90 @@ public function indexAlternative()
     //         'details' => $details
     //     ]);
     // }
-    public function getCarDetails($id)
+   public function getCarDetails($id, Request $request)
 {
-    // First check if it's from regular cars table
-    $car = DB::table('car_details_tbl')->where('id', $id)->first();
-    $isAdminCar = false;
-    
-    // If not found, check admin cars table
-    if (!$car) {
-        $car = DB::table('admin_cars_tbl')->where('id', $id)->first();
-        $isAdminCar = true;
-    }
-    
-    if (!$car) {
+    try {
+        // First check if it's from regular cars table  
+        $car = DB::table('car_details_tbl')->where('id', $id)->first();
+        $isAdminCar = false;
+        
+        // If not found, check admin cars table
+        if (!$car) {
+            $car = DB::table('admin_cars_tbl')->where('id', $id)->first();
+            $isAdminCar = true;
+        }
+        
+        if (!$car) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Car not found'
+            ], 404);
+        }
+        
+        // Handle boolean/string values properly
+        $airConditioning = $this->formatBooleanField($car->air_conditioning ?? 'No');
+        $bluetooth = $this->formatBooleanField($car->bluetooth ?? 'No');
+        $backupCamera = $this->formatBooleanField($car->backup_camera ?? 'No');
+        
+        // Format the details for the modal
+        $details = [
+            'title' => $car->maker . ' ' . $car->model,
+            'doors' => ($car->number_of_doors ?? 4) . ' Doors',
+            'seats' => ($car->number_of_seats ?? 5) . ' Seats',
+            'ac' => $airConditioning ? 'Air Conditioning' : 'No Air Conditioning',
+            'transmission' => ucfirst($car->transmission_type ?? 'manual'),
+            'largeBags' => ($car->large_bags_capacity ?? 2) . ' Large Bags',
+            'smallBags' => ($car->small_bags_capacity ?? 2) . ' Small Bags',
+            'mpg' => $this->formatMileage($car),
+            'bluetooth' => $bluetooth ? 'Bluetooth' : 'No Bluetooth',
+            'camera' => $backupCamera ? 'Backup Camera' : 'No Backup Camera',
+            'fuelType' => ucfirst($car->fuel_type ?? 'gasoline'),
+            'ratePerDay' => 'BTN ' . number_format($car->rate_per_day ?? 0, 2) . '/day',
+            'mileageLimit' => ($car->mileage_limit ?? 0) . ' km/day limit',
+            'source' => $isAdminCar ? 'admin' : 'regular'
+        ];
+        
+        return response()->json([
+            'success' => true,
+            'details' => $details
+        ]);
+        
+    } catch (\Exception $e) {
+        \Log::error('Error fetching car details: ' . $e->getMessage());
         return response()->json([
             'success' => false,
-            'message' => 'Car not found'
-        ], 404);
+            'message' => 'Server error: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+// Helper method to format boolean fields
+private function formatBooleanField($value)
+{
+    if (is_bool($value)) {
+        return $value;
     }
     
-    // Format the details for the modal
-    $details = [
-        'title' => $car->maker . ' ' . $car->model,
-        'doors' => $car->number_of_doors . ' Doors',
-        'seats' => $car->number_of_seats . ' Seats',
-        'ac' => $car->air_conditioning ? 'Air Conditioning' : 'No Air Conditioning',
-        'transmission' => ucfirst($car->transmission_type),
-        'largeBags' => $car->large_bags_capacity . ' Large Bags',
-        'smallBags' => $car->small_bags_capacity . ' Small Bags',
-        'mpg' => $car->mileage . ' mpg',
-        'bluetooth' => $car->bluetooth ? 'Bluetooth' : 'No Bluetooth',
-        'camera' => $car->backup_camera ? 'Backup Camera' : 'No Backup Camera',
-        'fuelType' => ucfirst($car->fuel_type),
-        'source' => $isAdminCar ? 'admin' : 'regular'
-    ];
+    if (is_string($value)) {
+        return strtolower($value) === 'yes' || $value === '1';
+    }
     
-    return response()->json([
-        'success' => true,
-        'details' => $details
-    ]);
+    return (bool) $value;
+}
+
+// Helper method to format mileage information
+private function formatMileage($car)
+{
+    if (isset($car->current_mileage)) {
+        return number_format($car->current_mileage) . ' km';
+    }
+    
+    // Fallback if you have any legacy mileage field
+    if (isset($car->mileage)) {
+        return $car->mileage . ' mpg';
+    }
+    
+    return 'N/A';
 }
 
     // public function searchCar(Request $request)

@@ -14,8 +14,8 @@ use App\Mail\InspectionDecisionMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use App\Models\CarBooking;
-
+// use App\Models\CarBooking;
+use App\Models\CarPricing;
 
 
 
@@ -553,18 +553,18 @@ public function getProfileData()
 
 
 
-public function showAddPriceForm()
-{
-    // Get all cars to select from
-    $cars = CarDetail::all();
-    
-    return view('admin.add-price', compact('cars'));
-}
+    public function showAddPriceForm()
+    {
+        // Get all cars to select from
+        $cars = CarDetail::all();
+        
+        return view('admin.add-price', compact('cars'));
+    }
 
-/**
- * Store car pricing information
- */
-public function storeCarPricing(Request $request)
+    /**
+     * Store car pricing information
+     */
+   public function storeCarPricing(Request $request)
 {
     $request->validate([
         'car_id' => 'required|exists:car_details_tbl,id',
@@ -575,32 +575,200 @@ public function storeCarPricing(Request $request)
     ]);
 
     try {
-        // Create a new car booking record with pricing information
-        CarBooking::create([
-            'car_id' => $request->car_id,
-            'customer_id' => null, // No customer for pricing setup
-            'pickup_location' => null,
-            'dropoff_location' => null,
-            'pickup_datetime' => null,
-            'dropoff_datetime' => null,
-            'status' => 'pricing_setup', // Custom status for pricing records
-            'payment_method' => null,
-            'transaction_id' => null,
+        // Find the car record
+        $car = CarDetail::findOrFail($request->car_id);
+        
+        // Update the car record with pricing information
+        $car->update([
             'rate_per_day' => $request->rate_per_day,
             'price_per_km' => $request->price_per_km,
             'mileage_limit' => $request->mileage_limit,
             'current_mileage' => $request->current_mileage,
+            'pricing_active' => true  // Mark pricing as active
         ]);
 
         return redirect()->route('car-admin.add-price')
-            ->with('success', 'Car pricing information added successfully!');
+            ->with('success', 'Car pricing information saved successfully!');
             
     } catch (\Exception $e) {
         return redirect()->back()
-            ->with('error', 'Failed to add pricing information. Please try again.')
+            ->with('error', 'Failed to save pricing information. Please try again.')
             ->withInput();
     }
 }
 
+/**
+ * Get pricing data for a specific car
+ */
+public function getPricingData($id)
+{
+    try {
+        $car = CarDetail::findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $car->id,
+                'car_id' => $car->id,
+                'car_name' => ($car->maker ?? 'N/A') . ' ' . ($car->model ?? 'N/A') . ' - ' . ($car->registration_no ?? 'N/A'),
+                'rate_per_day' => $car->rate_per_day,
+                'price_per_km' => $car->price_per_km,
+                'mileage_limit' => $car->mileage_limit,
+                'current_mileage' => $car->current_mileage,
+                'pricing_active' => $car->pricing_active
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Car record not found'
+        ], 404);
+    }
+}
 
+/**
+ * Update pricing data for a specific car
+ */
+public function updateCarPricing(Request $request, $id)
+{
+    $request->validate([
+        'rate_per_day' => 'required|numeric|min:0',
+        'mileage_limit' => 'required|numeric|min:0',
+        'price_per_km' => 'required|numeric|min:0',
+        'current_mileage' => 'required|numeric|min:0',
+    ]);
+
+    try {
+        $car = CarDetail::findOrFail($id);
+        
+        $car->update([
+            'rate_per_day' => $request->rate_per_day,
+            'price_per_km' => $request->price_per_km,
+            'mileage_limit' => $request->mileage_limit,
+            'current_mileage' => $request->current_mileage,
+            'pricing_active' => true  // Ensure pricing remains active after update
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pricing updated successfully!'
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to update pricing information'
+        ], 500);
+    }
+}
+
+/**
+ * Toggle pricing active status
+ */
+public function togglePricingStatus($id)
+{
+    try {
+        $car = CarDetail::findOrFail($id);
+        
+        $car->update([
+            'pricing_active' => !$car->pricing_active
+        ]);
+
+        $status = $car->pricing_active ? 'activated' : 'deactivated';
+        
+        return response()->json([
+            'success' => true,
+            'message' => "Pricing {$status} successfully!",
+            'pricing_active' => $car->pricing_active
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to update pricing status'
+        ], 500);
+    }
+}
+
+/**
+ * Get all cars with their pricing information
+ */
+public function getAllCarsWithPricing()
+{
+    try {
+        $cars = CarDetail::with('owner')
+            ->select('id', 'maker', 'model', 'registration_no', 'status', 'car_owner_id', 
+                    'rate_per_day', 'price_per_km', 'mileage_limit', 'current_mileage', 'pricing_active')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $cars
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to fetch cars data'
+        ], 500);
+    }
+}
+
+/**
+ * Get cars that need pricing setup (approved but no pricing)
+ */
+public function getCarsNeedingPricing()
+{
+    try {
+        $cars = CarDetail::where('status', 'approved')
+            ->where(function($query) {
+                $query->where('pricing_active', false)
+                      ->orWhereNull('rate_per_day')
+                      ->orWhereNull('price_per_km')
+                      ->orWhereNull('mileage_limit')
+                      ->orWhereNull('current_mileage');
+            })
+            ->with('owner')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $cars
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to fetch cars needing pricing'
+        ], 500);
+    }
+}
+
+/**
+ * Get available cars for rental (approved + pricing active)
+ */
+public function getAvailableCarsForRental()
+{
+    try {
+        $cars = CarDetail::where('status', 'approved')
+            ->where('pricing_active', true)
+            ->whereNotNull('rate_per_day')
+            ->whereNotNull('price_per_km')
+            ->whereNotNull('mileage_limit')
+            ->whereNotNull('current_mileage')
+            ->with('owner')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $cars
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to fetch available cars'
+        ], 500);
+    }
+}
 }

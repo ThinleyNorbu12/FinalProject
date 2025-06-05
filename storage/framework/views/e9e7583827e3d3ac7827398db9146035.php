@@ -67,15 +67,7 @@
                     <p class="info-value"><?php echo e($car->car_condition); ?></p>
                 </div>
 
-                <div class="info-card">
-                    <div class="info-label">Mileage</div>
-                    <p class="info-value"><?php echo e(number_format($car->mileage)); ?> km</p>
-                </div>
-
-                <div class="info-card">
-                    <div class="info-label">Price per Day</div>
-                    <p class="info-value price-highlight">BTN <?php echo e(number_format($car->price, 2)); ?></p>
-                </div>
+                
 
                 <div class="info-card">
                     <div class="info-label">Registration Number</div>

@@ -76,7 +76,7 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <label for="mileage" class="form-label">Mileage (km)</label>
                                 <input type="number" class="form-control @error('mileage') is-invalid @enderror" 
                                        name="mileage" id="mileage" value="{{ old('mileage') }}" placeholder="0">
@@ -92,7 +92,7 @@
                                 @error('price')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-6">
                                 <label for="registration_no" class="form-label">Registration Number <span class="text-danger">*</span></label>

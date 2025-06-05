@@ -55,13 +55,7 @@
                                                 <span class="d-block text-muted"><?php echo e($car->car_condition); ?></span>
                                             </div>
                                         </div>
-                                        <div class="col-6">
-                                            <div class="info-item">
-                                                <i class="fas fa-money-bill-wave text-primary me-2"></i>
-                                                <strong>Price:</strong>
-                                                <span class="d-block text-success fw-bold">Nu. <?php echo e(number_format($car->price)); ?></span>
-                                            </div>
-                                        </div>
+                                        
                                         <div class="col-6">
                                             <div class="info-item">
                                                 <i class="fas fa-hashtag text-primary me-2"></i>
@@ -137,10 +131,7 @@
                                             <i class="fas fa-cogs me-2 text-muted"></i>
                                             Condition
                                         </th>
-                                        <th class="border-0 py-3">
-                                            <i class="fas fa-money-bill-wave me-2 text-muted"></i>
-                                            Price
-                                        </th>
+                                        
                                         <th class="border-0 py-3">
                                             <i class="fas fa-id-card me-2 text-muted"></i>
                                             Registration No
@@ -175,9 +166,7 @@
 
                                                 </span>
                                             </td>
-                                            <td class="py-3">
-                                                <div class="fw-bold text-success">Nu. <?php echo e(number_format($car->price)); ?></div>
-                                            </td>
+                                            
                                             <td class="py-3">
                                                 <code class="bg-light text-dark p-1 rounded"><?php echo e($car->registration_no); ?></code>
                                             </td>

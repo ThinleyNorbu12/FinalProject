@@ -268,7 +268,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
       // Add Price routes
     Route::get('/add-price', [App\Http\Controllers\CarAdminController::class, 'showAddPriceForm'])->name('add-price');
     Route::post('/add-price', [App\Http\Controllers\CarAdminController::class, 'storeCarPricing'])->name('add-price.store');
-    
+    Route::get('/get-pricing/{id}', [App\Http\Controllers\CarAdminController::class, 'getPricingData'])->name('get-pricing');
+    Route::put('/update-pricing/{id}', [App\Http\Controllers\CarAdminController::class, 'updateCarPricing'])->name('update-pricing');
 
 });
 

@@ -147,22 +147,107 @@
                 </div>
                 <div class="car-info-row">
                     <div><strong>Registration:</strong> {{ $car->registration_no }}</div>
-                    <div><strong>Mileage:</strong> {{ number_format($car->mileage) }} km</div>
-                    <div><strong>Price:</strong> BTN {{ number_format($car->price) }}/day</div>
+                    <div><strong>Current Mileage:</strong> {{ number_format($car->current_mileage ?? 0) }} km</div>
+                    <div><strong>Rate:</strong> BTN {{ number_format($car->rate_per_day ?? 0, 2) }}/day</div>
                 </div>
+                
+                @if($car->price_per_km || $car->mileage_limit)
+                <div class="car-info-row">
+                    @if($car->mileage_limit)
+                        <div><strong>Daily Limit:</strong> {{ number_format($car->mileage_limit) }} km/day</div>
+                    @endif
+                    @if($car->price_per_km)
+                        <div><strong>Extra KM Rate:</strong> BTN {{ number_format($car->price_per_km, 2) }}/km</div>
+                    @endif
+                    @if($car->pricing_active !== null)
+                        <div><strong>Status:</strong> 
+                            <span class="badge {{ $car->pricing_active ? 'bg-success' : 'bg-warning' }}">
+                                {{ $car->pricing_active ? 'Active' : 'Inactive' }}
+                            </span>
+                        </div>
+                    @endif
+                </div>
+                @endif
+                
                 <div class="mt-3">
-                    <div class="car-spec"><i class="fas fa-door-open me-2"></i><span>{{ $car->number_of_doors }} Doors</span></div>
-                    <div class="car-spec"><i class="fas fa-users me-2"></i><span>{{ $car->number_of_seats }} Seats</span></div>
-                    <div class="car-spec"><i class="fas fa-cogs me-2"></i><span>{{ ucfirst($car->transmission_type) }}</span></div>
-                    <div class="car-spec"><i class="fas fa-suitcase-rolling me-2"></i><span>{{ $car->large_bags_capacity }} Large Bags</span></div>
-                    <div class="car-spec"><i class="fas fa-suitcase me-2"></i><span>{{ $car->small_bags_capacity }} Small Bags</span></div>
-                    <div class="car-spec"><i class="fas fa-gas-pump me-2"></i><span>{{ $car->fuel_type }}</span></div>
-                    <div class="car-spec"><i class="fas fa-snowflake me-2"></i><span>{{ $car->air_conditioning ? 'Air Conditioning' : 'No AC' }}</span></div>
-                    <div class="car-spec"><i class="fas fa-video me-2"></i><span>{{ $car->backup_camera ? 'Rear-View Camera' : 'No Rear-View Camera' }}</span></div>
-                    <div class="car-spec"><i class="fas fa-music me-2"></i><span>{{ $car->bluetooth ? 'Bluetooth Enabled' : 'No Bluetooth' }}</span></div>
+                    <div class="car-spec">
+                        <i class="fas fa-door-open me-2"></i>
+                        <span>{{ $car->number_of_doors ?? 'N/A' }} {{ ($car->number_of_doors ?? 0) == 1 ? 'Door' : 'Doors' }}</span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-users me-2"></i>
+                        <span>{{ $car->number_of_seats ?? 'N/A' }} {{ ($car->number_of_seats ?? 0) == 1 ? 'Seat' : 'Seats' }}</span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-cogs me-2"></i>
+                        <span>{{ ucfirst($car->transmission_type ?? 'Unknown') }}</span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-suitcase-rolling me-2"></i>
+                        <span>{{ $car->large_bags_capacity ?? 0 }} Large {{ ($car->large_bags_capacity ?? 0) == 1 ? 'Bag' : 'Bags' }}</span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-suitcase me-2"></i>
+                        <span>{{ $car->small_bags_capacity ?? 0 }} Small {{ ($car->small_bags_capacity ?? 0) == 1 ? 'Bag' : 'Bags' }}</span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-gas-pump me-2"></i>
+                        <span>{{ ucfirst($car->fuel_type ?? 'Unknown') }}</span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-snowflake me-2"></i>
+                        <span>
+                            @php
+                                $hasAC = false;
+                                if (is_bool($car->air_conditioning)) {
+                                    $hasAC = $car->air_conditioning;
+                                } elseif (is_string($car->air_conditioning)) {
+                                    $hasAC = strtolower($car->air_conditioning) === 'yes' || $car->air_conditioning === '1';
+                                } else {
+                                    $hasAC = (bool) $car->air_conditioning;
+                                }
+                            @endphp
+                            {{ $hasAC ? 'Air Conditioning' : 'No AC' }}
+                        </span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-video me-2"></i>
+                        <span>
+                            @php
+                                $hasCamera = false;
+                                if (is_bool($car->backup_camera)) {
+                                    $hasCamera = $car->backup_camera;
+                                } elseif (is_string($car->backup_camera)) {
+                                    $hasCamera = strtolower($car->backup_camera) === 'yes' || $car->backup_camera === '1';
+                                } else {
+                                    $hasCamera = (bool) $car->backup_camera;
+                                }
+                            @endphp
+                            {{ $hasCamera ? 'Rear-View Camera' : 'No Rear-View Camera' }}
+                        </span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-music me-2"></i>
+                        <span>
+                            @php
+                                $hasBluetooth = false;
+                                if (is_bool($car->bluetooth)) {
+                                    $hasBluetooth = $car->bluetooth;
+                                } elseif (is_string($car->bluetooth)) {
+                                    $hasBluetooth = strtolower($car->bluetooth) === 'yes' || $car->bluetooth === '1';
+                                } else {
+                                    $hasBluetooth = (bool) $car->bluetooth;
+                                }
+                            @endphp
+                            {{ $hasBluetooth ? 'Bluetooth Enabled' : 'No Bluetooth' }}
+                        </span>
+                    </div>
                 </div>
+                
                 @if($car->description)
-                    <div class="mt-3"><p><strong>Description:</strong> {{ $car->description }}</p></div>
+                    <div class="mt-3">
+                        <p><strong>Description:</strong> {{ $car->description }}</p>
+                    </div>
                 @endif
             </div>
 
