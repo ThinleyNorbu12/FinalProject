@@ -820,7 +820,7 @@
                             'car_details_tbl.maker',
                             'car_details_tbl.model',
                             'car_details_tbl.vehicle_type',
-                            'car_details_tbl.price'
+                            'car_details_tbl.rate_per_day'
                         )
                         ->where('car_bookings.customer_id', $customerId)
                         ->orderBy('car_bookings.pickup_datetime', 'desc')
@@ -858,8 +858,8 @@
                                                 $pickupDate = \Carbon\Carbon::parse($rental->pickup_datetime);
                                                 $dropoffDate = \Carbon\Carbon::parse($rental->dropoff_datetime);
                                                 $days = $pickupDate->diffInDays($dropoffDate);
-                                                // Calculate the total cost (days * daily price)
-                                                $totalCost = $days * $rental->price;
+                                                // Calculate the total cost (days * daily rate)
+                                                $totalCost = $days * $rental->rate_per_day;
                                                 // Format as currency
                                                 echo 'BTN ' . number_format($totalCost, 2);
                                             @endphp
@@ -922,8 +922,9 @@
                                     <span><i class="fas fa-gas-pump"></i> {{ $car->fuel_type }}</span>
                                     <span><i class="fas fa-cog"></i> {{ $car->transmission_type }}</span>
                                     <span><i class="fas fa-users"></i> {{ $car->number_of_seats }} seats</span>
+                                    <span><i class="fas fa-tachometer-alt"></i> {{ number_format($car->current_mileage) }} km</span>
                                 </div>
-                                <div class="car-price">BTN {{ number_format($car->price, 2) }}/day</div>
+                                <div class="car-price">BTN {{ number_format($car->rate_per_day, 2) }}/day</div>
                                 <a href="{{ route('customer.car-details', $car->id) }}" class="btn btn-primary">View Details</a>
 
                                 <a href="{{ route('customer.book-car', $car->id) }}" class="btn-book-now">Book Now</a>

@@ -494,7 +494,7 @@
                                     </span>
                                 </div>
                                                 
-                                <div class="car-price">BTN {{ number_format($car->price, 2) }}/day</div>
+                                <div class="car-price">BTN {{ number_format($car->rate_per_day, 2) }}/day</div>
                                                 
                                 <div class="car-actions">
                                     <a href="{{ route('customer.car-details', $car->id) }}" class="btn-view-details">View Details</a>

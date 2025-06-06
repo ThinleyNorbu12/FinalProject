@@ -445,7 +445,7 @@
                         <h1 class="car-title"><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h1>
                         <p class="car-subtitle"><?php echo e($car->vehicle_type); ?> • <?php echo e($car->car_condition); ?></p>
                         <div class="price-badge">
-                            BTN <?php echo e(number_format($car->price, 2)); ?>/day
+                            BTN <?php echo e(number_format($car->rate_per_day, 2)); ?>/day
                         </div>
                     </div>
 
@@ -498,8 +498,8 @@
 
                                 <div class="info-card">
                                     <i class="fas fa-tachometer-alt"></i>
-                                    <div class="info-label">Mileage</div>
-                                    <div class="info-value"><?php echo e(number_format($car->mileage)); ?> km</div>
+                                    <div class="info-label">Current Mileage</div>
+                                    <div class="info-value"><?php echo e(number_format($car->current_mileage)); ?> km</div>
                                 </div>
 
                                 <div class="info-card">

@@ -242,7 +242,8 @@
                         <p><i class="fas fa-car me-2"></i> <strong>Type:</strong> {{ $booking->car->vehicle_type ?? 'N/A' }}</p>
                         <p><i class="fas fa-tachometer-alt me-2"></i> <strong>Mileage:</strong> {{ number_format($booking->car->mileage ?? 0) }} km</p>
                         <p><i class="fas fa-gas-pump me-2"></i> <strong>Fuel Type:</strong> {{ $booking->car->fuel_type ?? 'N/A' }}</p>
-                        <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN {{ number_format($booking->car->price ?? 0, 2) }}</p>
+                        {{-- <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN {{ number_format($booking->car->price ?? 0, 2) }}</p> --}}
+                        <p><i class="fas fa-money-bill-wave me-2"></i> <strong>Daily Rate:</strong> BTN {{ number_format($booking->car->rate_per_day ?? 0, 2) }}</p>
                     </div>
                     
                     <!-- <a href="#" class="btn btn-sm btn-outline-primary mt-2">

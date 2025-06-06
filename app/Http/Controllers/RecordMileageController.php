@@ -2,135 +2,385 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\CarDetail;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class RecordMileageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cars = CarDetail::select('car_details_tbl.id', 'car_details_tbl.registration_no', 'car_details_tbl.maker', 'car_details_tbl.model', 'car_details_tbl.mileage', 'car_details_tbl.start_mileage', 'car_details_tbl.end_mileage', 'car_details_tbl.status')
-                         ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
-                         ->join('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
-                         ->where('inspection_decisions.decision', 'approved')
-                         ->orderBy('car_details_tbl.registration_no')
-                         ->paginate(15);
+        $search = $request->get('search');
         
-        return view('admin.record-mileage.index', compact('cars'));
-    }
+        // Base query for pickup bookings
+        $pickupQuery = DB::table('car_bookings')
+            ->join('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
+            ->join('customers', 'car_bookings.customer_id', '=', 'customers.id')
+            ->leftJoin('mileage_records', function($join) {
+                $join->on('car_bookings.id', '=', 'mileage_records.booking_id')
+                     ->where('mileage_records.record_type', '=', 'pickup');
+            })
+            ->where('car_bookings.status', 'confirmed')
+            ->whereNull('mileage_records.id'); // Only bookings without pickup records
 
-    public function create()
-    {
-        $cars = CarDetail::select('car_details_tbl.id', 'car_details_tbl.registration_no', 'car_details_tbl.maker', 'car_details_tbl.model', 'car_details_tbl.mileage')
-                         ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
-                         ->join('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
-                         ->where('inspection_decisions.decision', 'approved')
-                         ->orderBy('car_details_tbl.registration_no')
-                         ->get();
-        
-        return view('admin.record-mileage.create', compact('cars'));
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'car_id' => 'required|exists:car_details_tbl,id',
-            'mileage_type' => 'required|in:current,start,end',
-            'mileage_value' => 'required|numeric|min:0',
-            'recording_date' => 'required|date|before_or_equal:today',
-            'notes' => 'nullable|string|max:500'
-        ]);
-
-        $car = CarDetail::findOrFail($request->car_id);
-        
-        // Validation based on mileage type
-        if ($request->mileage_type === 'current') {
-            if ($car->start_mileage && $request->mileage_value < $car->start_mileage) {
-                return back()->withErrors(['mileage_value' => 'Current mileage cannot be less than start mileage.']);
-            }
-        } elseif ($request->mileage_type === 'end') {
-            if ($car->start_mileage && $request->mileage_value < $car->start_mileage) {
-                return back()->withErrors(['mileage_value' => 'End mileage cannot be less than start mileage.']);
-            }
-            if ($car->mileage && $request->mileage_value < $car->mileage) {
-                return back()->withErrors(['mileage_value' => 'End mileage cannot be less than current mileage.']);
-            }
-        }
-
-        // Update the appropriate mileage field
-        switch ($request->mileage_type) {
-            case 'current':
-                $car->mileage = $request->mileage_value;
-                break;
-            case 'start':
-                $car->start_mileage = $request->mileage_value;
-                break;
-            case 'end':
-                $car->end_mileage = $request->mileage_value;
-                break;
-        }
-
-        $car->save();
-
-        return redirect()->route('car-admin.record-mileage')
-                        ->with('success', 'Mileage recorded successfully for ' . $car->registration_no);
-    }
-
-    public function edit($id)
-    {
-        $car = CarDetail::findOrFail($id);
-        return view('admin.record-mileage.edit', compact('car'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'mileage' => 'nullable|numeric|min:0',
-            'start_mileage' => 'nullable|numeric|min:0',
-            'end_mileage' => 'nullable|numeric|min:0',
-        ]);
-
-        $car = CarDetail::findOrFail($id);
-        
-        // Validation logic
-        if ($request->start_mileage && $request->mileage && $request->mileage < $request->start_mileage) {
-            return back()->withErrors(['mileage' => 'Current mileage cannot be less than start mileage.']);
-        }
-        
-        if ($request->start_mileage && $request->end_mileage && $request->end_mileage < $request->start_mileage) {
-            return back()->withErrors(['end_mileage' => 'End mileage cannot be less than start mileage.']);
-        }
-
-        $car->update([
-            'mileage' => $request->mileage,
-            'start_mileage' => $request->start_mileage,
-            'end_mileage' => $request->end_mileage,
-        ]);
-
-        return redirect()->route('car-admin.record-mileage')
-                        ->with('success', 'Mileage updated successfully for ' . $car->registration_no);
-    }
-
-    public function search(Request $request)
-    {
-        $query = CarDetail::select('car_details_tbl.id', 'car_details_tbl.registration_no', 'car_details_tbl.maker', 'car_details_tbl.model', 'car_details_tbl.mileage', 'car_details_tbl.start_mileage', 'car_details_tbl.end_mileage', 'car_details_tbl.status')
-                          ->join('inspection_requests', 'car_details_tbl.id', '=', 'inspection_requests.car_id')
-                          ->join('inspection_decisions', 'inspection_requests.id', '=', 'inspection_decisions.inspection_request_id')
-                          ->where('inspection_decisions.decision', 'approved');
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('car_details_tbl.registration_no', 'LIKE', "%{$search}%")
-                  ->orWhere('car_details_tbl.maker', 'LIKE', "%{$search}%")
-                  ->orWhere('car_details_tbl.model', 'LIKE', "%{$search}%");
+        // Apply search filters for pickup bookings
+        if ($search) {
+            $pickupQuery->where(function($query) use ($search) {
+                $query->where('car_bookings.id', 'LIKE', "%{$search}%")
+                      ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                      ->orWhere('customers.email', 'LIKE', "%{$search}%")
+                      ->orWhereRaw("CONCAT(car_details_tbl.maker, ' ', car_details_tbl.model) LIKE ?", ["%{$search}%"])
+                      ->orWhere('car_details_tbl.registration_no', 'LIKE', "%{$search}%");
             });
         }
 
-        $cars = $query->orderBy('car_details_tbl.registration_no')->paginate(15);
-        
-        return view('admin.record-mileage.index', compact('cars'));
+        $pickupBookings = $pickupQuery->select(
+                'car_bookings.*',
+                'car_details_tbl.maker',
+                'car_details_tbl.model',
+                'car_details_tbl.registration_no',
+                'car_details_tbl.current_mileage',
+                'car_details_tbl.mileage_limit',
+                'customers.name as customer_name',
+                'customers.email as customer_email'
+            )
+            ->orderBy('car_bookings.pickup_datetime', 'asc')
+            ->get();
+
+        // Base query for return bookings - FIXED VERSION
+        $returnQuery = DB::table('car_bookings')
+            ->join('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
+            ->join('customers', 'car_bookings.customer_id', '=', 'customers.id')
+            ->join('mileage_records as pickup_record', function($join) {
+                $join->on('car_bookings.id', '=', 'pickup_record.booking_id')
+                     ->where('pickup_record.record_type', '=', 'pickup');
+            })
+            ->leftJoin('mileage_records as return_record', function($join) {
+                $join->on('car_bookings.id', '=', 'return_record.booking_id')
+                     ->where('return_record.record_type', '=', 'return');
+            });
+
+        // Apply search filters for return bookings
+        if ($search) {
+            $returnQuery->where(function($query) use ($search) {
+                $query->where('car_bookings.id', 'LIKE', "%{$search}%")
+                      ->orWhere('customers.name', 'LIKE', "%{$search}%")
+                      ->orWhere('customers.email', 'LIKE', "%{$search}%")
+                      ->orWhereRaw("CONCAT(car_details_tbl.maker, ' ', car_details_tbl.model) LIKE ?", ["%{$search}%"])
+                      ->orWhere('car_details_tbl.registration_no', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $returnBookings = $returnQuery->select(
+                'car_bookings.*',
+                'car_details_tbl.maker',
+                'car_details_tbl.model',
+                'car_details_tbl.registration_no',
+                'car_details_tbl.current_mileage',
+                'car_details_tbl.mileage_limit',
+                'car_details_tbl.price_per_km',
+                'customers.name as customer_name',
+                'customers.email as customer_email',
+                'pickup_record.mileage_at_pickup',
+                'pickup_record.fuel_level_pickup',
+                'pickup_record.pickup_notes',
+                // ADD THESE FIELDS FROM THE PICKUP RECORD (which contains return data)
+                'pickup_record.mileage_at_return',
+                'pickup_record.fuel_level_return',
+                'pickup_record.return_notes',
+                'pickup_record.car_condition_return',
+                'pickup_record.damage_reported',
+                'pickup_record.damage_description',
+                'pickup_record.mileage_used',
+                'pickup_record.excess_mileage',
+                'pickup_record.excess_charges',
+                'pickup_record.return_recorded_at'
+            )
+            ->orderBy('car_bookings.dropoff_datetime', 'asc')
+            ->get();
+
+        return view('admin.record-mileage.index', compact('pickupBookings', 'returnBookings', 'search'));
     }
+
+    public function recordPickup(Request $request)
+    {
+        $request->validate([
+            'booking_id' => 'required|exists:car_bookings,id',
+            'mileage_at_pickup' => 'required|integer|min:0',
+            'fuel_level_pickup' => 'required|string|in:Empty,1/4,1/2,3/4,Full',
+            'pickup_notes' => 'nullable|string|max:500',
+            'car_condition_pickup' => 'nullable|string|max:500'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Insert mileage record
+            DB::table('mileage_records')->insert([
+                'booking_id' => $request->booking_id,
+                'record_type' => 'pickup',
+                'mileage_at_pickup' => $request->mileage_at_pickup,
+                'fuel_level_pickup' => $request->fuel_level_pickup,
+                'pickup_notes' => $request->pickup_notes,
+                'car_condition_pickup' => $request->car_condition_pickup,
+                'recorded_by' => auth()->id() ?? 1, // Assuming admin user ID
+                'recorded_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            // Update car's current mileage
+            $booking = DB::table('car_bookings')->where('id', $request->booking_id)->first();
+            DB::table('car_details_tbl')
+                ->where('id', $booking->car_id)
+                ->update(['current_mileage' => $request->mileage_at_pickup]);
+
+            DB::commit();
+
+            return redirect()->route('car-admin.record-mileage')
+                           ->with('success', 'Pickup mileage recorded successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Failed to record pickup mileage: ' . $e->getMessage());
+        }
+    }
+
+    public function recordReturn(Request $request)
+    {
+        $request->validate([
+            'booking_id' => 'required|exists:car_bookings,id',
+            'mileage_at_return' => 'required|integer|min:0',
+            'fuel_level_return' => 'required|string|in:Empty,1/4,1/2,3/4,Full',
+            'return_notes' => 'nullable|string|max:500',
+            'car_condition_return' => 'nullable|string|max:500',
+            'damage_reported' => 'nullable|string|in:Yes,No',
+            'damage_description' => 'nullable|string|max:500'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Get pickup record and booking details
+            $pickupRecord = DB::table('mileage_records')
+                ->where('booking_id', $request->booking_id)
+                ->where('record_type', 'pickup')
+                ->first();
+
+            $booking = DB::table('car_bookings')
+                ->join('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
+                ->where('car_bookings.id', $request->booking_id)
+                ->select('car_bookings.*', 'car_details_tbl.mileage_limit', 'car_details_tbl.price_per_km')
+                ->first();
+
+            // Calculate mileage used and extra charges
+            $mileageUsed = $request->mileage_at_return - $pickupRecord->mileage_at_pickup;
+            $rentalDays = Carbon::parse($booking->pickup_datetime)->diffInDays(Carbon::parse($booking->dropoff_datetime)) + 1;
+            $allowedMileage = $booking->mileage_limit * $rentalDays;
+            $excessMileage = max(0, $mileageUsed - $allowedMileage);
+            $excessCharges = $excessMileage * $booking->price_per_km;
+
+            // Update mileage record with return information
+            DB::table('mileage_records')
+                ->where('booking_id', $request->booking_id)
+                ->where('record_type', 'pickup')
+                ->update([
+                    'mileage_at_return' => $request->mileage_at_return,
+                    'fuel_level_return' => $request->fuel_level_return,
+                    'return_notes' => $request->return_notes,
+                    'car_condition_return' => $request->car_condition_return,
+                    'damage_reported' => $request->damage_reported ?? 'No',
+                    'damage_description' => $request->damage_description,
+                    'mileage_used' => $mileageUsed,
+                    'excess_mileage' => $excessMileage,
+                    'excess_charges' => $excessCharges,
+                    'return_recorded_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+            // Update car's current mileage
+            DB::table('car_details_tbl')
+                ->where('id', $booking->car_id)
+                ->update(['current_mileage' => $request->mileage_at_return]);
+
+            // Update booking status to completed
+            DB::table('car_bookings')
+                ->where('id', $request->booking_id)
+                ->update(['status' => 'completed']);
+
+            DB::commit();
+
+            $message = 'Return mileage recorded successfully!';
+            if ($excessCharges > 0) {
+                $message .= " Excess mileage charges: Nu. " . number_format($excessCharges, 2);
+            }
+
+            return redirect()->route('car-admin.record-mileage')
+                           ->with('success', $message);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Failed to record return mileage: ' . $e->getMessage());
+        }
+    }
+
+    public function getMileageHistory($bookingId)
+    {
+        $record = DB::table('mileage_records')
+            ->join('car_bookings', 'mileage_records.booking_id', '=', 'car_bookings.id')
+            ->join('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
+            ->join('customers', 'car_bookings.customer_id', '=', 'customers.id')
+            ->where('mileage_records.booking_id', $bookingId)
+            ->select(
+                'mileage_records.*',
+                'car_details_tbl.maker',
+                'car_details_tbl.model',
+                'car_details_tbl.registration_no',
+                'customers.name as customer_name'
+            )
+            ->first();
+
+        return response()->json($record);
+    }
+
+
+
+
+
+    public function processExcessPayment(Request $request)
+{
+    try {
+        // Validate the request
+        $validatedData = $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'payment_method' => 'required|in:cash,qr_code,bank_transfer,card,pay_later',
+            'payment_amount' => 'required|numeric|min:0',
+            'payment_notes' => 'nullable|string|max:1000',
+            
+            // QR Code specific fields
+            'qr_screenshot' => 'nullable|image|max:5120', // 5MB max
+            'qr_bank_code' => 'nullable|string',
+            
+            // Bank Transfer specific fields
+            'bank_name' => 'nullable|string|max:255',
+            'transfer_reference' => 'nullable|string|max:255',
+            'transfer_date' => 'nullable|date',
+            'bank_receipt' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            
+            // Card Payment specific fields
+            'card_type' => 'nullable|string',
+            'card_transaction_id' => 'nullable|string|max:255',
+            'card_last_four' => 'nullable|string|max:4',
+            'card_receipt' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            
+            // Pay Later specific fields
+            'due_date' => 'nullable|date|after:today',
+            'customer_contact' => 'nullable|string|max:20',
+            'pay_later_notes' => 'nullable|string|max:1000',
+        ]);
+
+        // Find the booking
+        $booking = Booking::findOrFail($validatedData['booking_id']);
+
+        // Handle file uploads
+        $uploadedFiles = [];
+        
+        if ($request->hasFile('qr_screenshot')) {
+            $uploadedFiles['qr_screenshot'] = $this->handleFileUpload($request->file('qr_screenshot'), 'payment_screenshots');
+        }
+        
+        if ($request->hasFile('bank_receipt')) {
+            $uploadedFiles['bank_receipt'] = $this->handleFileUpload($request->file('bank_receipt'), 'payment_receipts');
+        }
+        
+        if ($request->hasFile('card_receipt')) {
+            $uploadedFiles['card_receipt'] = $this->handleFileUpload($request->file('card_receipt'), 'payment_receipts');
+        }
+
+        // Create payment record
+        $paymentData = [
+            'booking_id' => $booking->id,
+            'payment_type' => 'excess_mileage',
+            'payment_method' => $validatedData['payment_method'],
+            'amount' => $validatedData['payment_amount'],
+            'payment_status' => $validatedData['payment_method'] === 'pay_later' ? 'pending' : 'completed',
+            'payment_date' => now(),
+            'notes' => $validatedData['payment_notes'],
+            'processed_by' => auth()->id(),
+        ];
+
+        // Add method-specific data
+        switch ($validatedData['payment_method']) {
+            case 'qr_code':
+                $paymentData['qr_bank_code'] = $validatedData['qr_bank_code'] ?? null;
+                $paymentData['qr_screenshot'] = $uploadedFiles['qr_screenshot'] ?? null;
+                break;
+                
+            case 'bank_transfer':
+                $paymentData['bank_name'] = $validatedData['bank_name'];
+                $paymentData['transfer_reference'] = $validatedData['transfer_reference'];
+                $paymentData['transfer_date'] = $validatedData['transfer_date'];
+                $paymentData['bank_receipt'] = $uploadedFiles['bank_receipt'] ?? null;
+                break;
+                
+            case 'card':
+                $paymentData['card_type'] = $validatedData['card_type'] ?? null;
+                $paymentData['card_transaction_id'] = $validatedData['card_transaction_id'] ?? null;
+                $paymentData['card_last_four'] = $validatedData['card_last_four'] ?? null;
+                $paymentData['card_receipt'] = $uploadedFiles['card_receipt'] ?? null;
+                break;
+                
+            case 'pay_later':
+                $paymentData['due_date'] = $validatedData['due_date'];
+                $paymentData['customer_contact'] = $validatedData['customer_contact'] ?? null;
+                $paymentData['pay_later_notes'] = $validatedData['pay_later_notes'] ?? null;
+                break;
+        }
+
+        // Create the payment record (assuming you have a payments table)
+        Payment::create($paymentData);
+
+        // Update booking payment status
+        $booking->update([
+            'excess_payment_status' => $validatedData['payment_method'] === 'pay_later' ? 'pending' : 'paid',
+            'excess_payment_method' => $validatedData['payment_method'],
+            'excess_payment_date' => $validatedData['payment_method'] !== 'pay_later' ? now() : null,
+        ]);
+
+        // Log the activity
+        activity()
+            ->performedOn($booking)
+            ->causedBy(auth()->user())
+            ->withProperties(['payment_method' => $validatedData['payment_method'], 'amount' => $validatedData['payment_amount']])
+            ->log('Excess mileage payment processed');
+
+        return redirect()->route('car-admin.record-mileage')
+            ->with('success', 'Excess mileage payment processed successfully!');
+
+    } catch (\Exception $e) {
+        \Log::error('Error processing excess payment: ' . $e->getMessage());
+        
+        return redirect()->back()
+            ->with('error', 'Failed to process payment. Please try again.')
+            ->withInput();
+    }
+}
+
+/**
+ * Handle file upload
+ */
+private function handleFileUpload($file, $directory)
+{
+    try {
+        $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $filePath = $file->storeAs('uploads/' . $directory, $fileName, 'public');
+        
+        return $filePath;
+    } catch (\Exception $e) {
+        \Log::error('File upload error: ' . $e->getMessage());
+        throw new \Exception('File upload failed');
+    }
+}
 }

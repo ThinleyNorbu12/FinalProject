@@ -1,7 +1,9 @@
 @extends('layouts.admin')
 
 @section('title', 'Add Car Pricing')
-
+@section('breadcrumbs')
+    <li class="breadcrumb-item active">Add Price</li>
+@endsection
 @section('content')
 <div class="container-fluid">
     <div class="row">

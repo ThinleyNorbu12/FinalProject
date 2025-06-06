@@ -85,10 +85,10 @@ class PaymentController extends Controller
         // Load booking with car relationship
         $booking = CarBooking::with('car')->findOrFail($bookingId);
         
-        // Calculate total price using the same logic as the view
+        // Calculate total price using rate_per_day instead of price
         $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
         $days = ceil($hours / 24);
-        $dailyRate = $booking->car->price;
+        $dailyRate = $booking->car->rate_per_day; // Changed from price to rate_per_day
         $insuranceFee = 200;
         $serviceFee = 100;
         $totalPrice = ($dailyRate * $days) + $insuranceFee + $serviceFee;
@@ -172,10 +172,10 @@ class PaymentController extends Controller
         // Load booking with car relationship
         $booking = CarBooking::with('car')->findOrFail($bookingId);
         
-        // Calculate total price
+        // Calculate total price using rate_per_day instead of price
         $hours = $booking->pickup_datetime->diffInHours($booking->dropoff_datetime);
         $days = ceil($hours / 24);
-        $dailyRate = $booking->car->price;
+        $dailyRate = $booking->car->rate_per_day; // Changed from price to rate_per_day
         $insuranceFee = 200;
         $serviceFee = 100;
         $totalPrice = ($dailyRate * $days) + $insuranceFee + $serviceFee;

@@ -763,6 +763,7 @@
         });
     </script>
     
+    <!-- Updated section of your Blade template -->
     <section class="cars">
         <h2>Available Cars</h2>
         <div class="car-container">
@@ -773,12 +774,14 @@
                 // Add regular cars
                 if($cars->count()) {
                     foreach($cars as $car) {
-                        // Check if car has confirmed booking
+                        // Check if car has confirmed booking AND has a valid price
                         $hasConfirmedBooking = $car->bookings()
                             ->where('status', 'confirmed')
                             ->exists();
+                        
+                        $hasValidPrice = !empty($car->rate_per_day) && $car->rate_per_day > 0;
                             
-                        if(!$hasConfirmedBooking) {
+                        if(!$hasConfirmedBooking && $hasValidPrice) {
                             $car->source = 'regular'; // Mark source for image path logic
                             $allCars->push($car);
                         }
@@ -789,10 +792,12 @@
                 if(isset($adminCars) && $adminCars->count()) {
                     foreach($adminCars as $adminCar) {
                         // Check if admin car has confirmed booking (if booking system applies to admin cars)
-                        // Adjust this logic based on your admin car booking system
                         $hasConfirmedBooking = false; // You may need to implement this check for admin cars
                         
-                        if(!$hasConfirmedBooking) {
+                        // Check if admin car has a valid price
+                        $hasValidPrice = !empty($adminCar->rate_per_day) && $adminCar->rate_per_day > 0;
+                        
+                        if(!$hasConfirmedBooking && $hasValidPrice) {
                             $adminCar->source = 'admin'; // Mark source for image path logic
                             $allCars->push($adminCar);
                         }
@@ -835,7 +840,7 @@
                         <?php endif; ?>
                         
                         <h3><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
-                        <p>BTN <?php echo e(number_format($car->rate_per_day ?? $car->price ?? 0, 2)); ?>/day</p>
+                        <p>BTN <?php echo e(number_format($car->rate_per_day, 2)); ?>/day</p>
                         
                         <?php if($car->source === 'admin'): ?>
                             <span class="admin-badge" style="background: #3498db; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Admin Car</span>

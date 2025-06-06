@@ -1,7 +1,9 @@
 
 
 <?php $__env->startSection('title', 'Add Car Pricing'); ?>
-
+<?php $__env->startSection('breadcrumbs'); ?>
+    <li class="breadcrumb-item active">Add Price</li>
+<?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
 <div class="container-fluid">
     <div class="row">

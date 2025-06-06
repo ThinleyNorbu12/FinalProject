@@ -2939,25 +2939,7 @@ namespace App\Models {
     /**
      * App\Models\CarPricing
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property boolean $is_active
-     * @property mixed $current_mileage
-     * @property mixed $mileage_limit
-     * @property decimal:2 $price_per_km
-     * @property decimal:2 $rate_per_day
-     * @property mixed $car_id
-     * @property int $id
      * @property-read \App\Models\CarDetail $car
-     * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing whereCarId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing whereRatePerDay($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing wherePricePerKm($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing whereMileageLimit($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing whereCurrentMileage($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing whereIsActive($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<CarPricing>|CarPricing query()

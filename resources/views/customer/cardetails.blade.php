@@ -445,7 +445,7 @@
                         <h1 class="car-title">{{ $car->maker }} {{ $car->model }}</h1>
                         <p class="car-subtitle">{{ $car->vehicle_type }} • {{ $car->car_condition }}</p>
                         <div class="price-badge">
-                            BTN {{ number_format($car->price, 2) }}/day
+                            BTN {{ number_format($car->rate_per_day, 2) }}/day
                         </div>
                     </div>
 
@@ -497,8 +497,8 @@
 
                                 <div class="info-card">
                                     <i class="fas fa-tachometer-alt"></i>
-                                    <div class="info-label">Mileage</div>
-                                    <div class="info-value">{{ number_format($car->mileage) }} km</div>
+                                    <div class="info-label">Current Mileage</div>
+                                    <div class="info-value">{{ number_format($car->current_mileage) }} km</div>
                                 </div>
 
                                 <div class="info-card">
