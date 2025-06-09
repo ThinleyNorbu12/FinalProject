@@ -12,7 +12,7 @@ class RecordMileageController extends Controller
     {
         $search = $request->get('search');
         
-        // Base query for pickup bookings
+        // Base query for pickup bookings - exclude cancelled bookings
         $pickupQuery = DB::table('car_bookings')
             ->join('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
             ->join('customers', 'car_bookings.customer_id', '=', 'customers.id')
@@ -47,7 +47,7 @@ class RecordMileageController extends Controller
             ->orderBy('car_bookings.pickup_datetime', 'asc')
             ->get();
 
-        // Base query for return bookings - FIXED VERSION
+        // Base query for return bookings - exclude cancelled bookings
         $returnQuery = DB::table('car_bookings')
             ->join('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
             ->join('customers', 'car_bookings.customer_id', '=', 'customers.id')
@@ -58,7 +58,10 @@ class RecordMileageController extends Controller
             ->leftJoin('mileage_records as return_record', function($join) {
                 $join->on('car_bookings.id', '=', 'return_record.booking_id')
                      ->where('return_record.record_type', '=', 'return');
-            });
+            })
+            // Exclude cancelled bookings from return records
+            ->whereNotIn('car_bookings.status', ['cancelled', 'canceled'])
+            ->whereNull('return_record.id'); // Only show bookings without return records
 
         // Apply search filters for return bookings
         if ($search) {
@@ -84,7 +87,6 @@ class RecordMileageController extends Controller
                 'pickup_record.mileage_at_pickup',
                 'pickup_record.fuel_level_pickup',
                 'pickup_record.pickup_notes',
-                // ADD THESE FIELDS FROM THE PICKUP RECORD (which contains return data)
                 'pickup_record.mileage_at_return',
                 'pickup_record.fuel_level_return',
                 'pickup_record.return_notes',
@@ -99,53 +101,171 @@ class RecordMileageController extends Controller
             ->orderBy('car_bookings.dropoff_datetime', 'asc')
             ->get();
 
-        return view('admin.record-mileage.index', compact('pickupBookings', 'returnBookings', 'search'));
+        // Get cancelled bookings that had pickup records (for reference/history)
+        $cancelledBookings = DB::table('car_bookings')
+            ->join('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
+            ->join('customers', 'car_bookings.customer_id', '=', 'customers.id')
+            ->join('mileage_records as pickup_record', function($join) {
+                $join->on('car_bookings.id', '=', 'pickup_record.booking_id')
+                     ->where('pickup_record.record_type', '=', 'pickup');
+            })
+            ->whereIn('car_bookings.status', ['cancelled', 'canceled'])
+            ->select(
+                'car_bookings.*',
+                'car_details_tbl.maker',
+                'car_details_tbl.model',
+                'car_details_tbl.registration_no',
+                'customers.name as customer_name',
+                'customers.email as customer_email',
+                'pickup_record.mileage_at_pickup',
+                'pickup_record.mileage_at_return'
+            )
+            ->orderBy('car_bookings.updated_at', 'desc')
+            ->get();
+
+        return view('admin.record-mileage.index', compact('pickupBookings', 'returnBookings', 'cancelledBookings', 'search'));
     }
 
+    // public function recordPickup(Request $request)
+    // {
+    //     $request->validate([
+    //         'booking_id' => 'required|exists:car_bookings,id',
+    //         'mileage_at_pickup' => 'required|integer|min:0',
+    //         'fuel_level_pickup' => 'required|string|in:Empty,1/4,1/2,3/4,Full',
+    //         'pickup_notes' => 'nullable|string|max:500',
+    //         'car_condition_pickup' => 'nullable|string|max:500'
+    //     ]);
+
+    //     try {
+    //         DB::beginTransaction();
+
+    //         // Check if booking is still confirmed (not cancelled)
+    //         $booking = DB::table('car_bookings')->where('id', $request->booking_id)->first();
+            
+    //         if (!$booking) {
+    //             throw new \Exception('Booking not found.');
+    //         }
+
+    //         if (in_array($booking->status, ['cancelled', 'canceled'])) {
+    //             throw new \Exception('Cannot record pickup for cancelled booking.');
+    //         }
+
+    //         if ($booking->status !== 'confirmed') {
+    //             throw new \Exception('Booking must be confirmed to record pickup.');
+    //         }
+
+    //         // Insert mileage record
+    //         DB::table('mileage_records')->insert([
+    //             'booking_id' => $request->booking_id,
+    //             'record_type' => 'pickup',
+    //             'mileage_at_pickup' => $request->mileage_at_pickup,
+    //             'fuel_level_pickup' => $request->fuel_level_pickup,
+    //             'pickup_notes' => $request->pickup_notes,
+    //             'car_condition_pickup' => $request->car_condition_pickup,
+    //             'recorded_by' => auth()->id() ?? 1,
+    //             'recorded_at' => now(),
+    //             'created_at' => now(),
+    //             'updated_at' => now()
+    //         ]);
+
+    //         // Update car's current mileage
+    //         DB::table('car_details_tbl')
+    //             ->where('id', $booking->car_id)
+    //             ->update(['current_mileage' => $request->mileage_at_pickup]);
+
+    //         // Update booking status to picked_up
+    //         DB::table('car_bookings')
+    //             ->where('id', $request->booking_id)
+    //             ->update(['status' => 'picked_up']);
+
+    //         DB::commit();
+
+    //         return redirect()->route('car-admin.record-mileage')
+    //                        ->with('success', 'Pickup mileage recorded successfully!');
+
+    //     } catch (\Exception $e) {
+    //         DB::rollback();
+    //         return redirect()->back()
+    //                        ->with('error', 'Failed to record pickup mileage: ' . $e->getMessage());
+    //     }
+    // }
     public function recordPickup(Request $request)
-    {
-        $request->validate([
-            'booking_id' => 'required|exists:car_bookings,id',
-            'mileage_at_pickup' => 'required|integer|min:0',
-            'fuel_level_pickup' => 'required|string|in:Empty,1/4,1/2,3/4,Full',
-            'pickup_notes' => 'nullable|string|max:500',
-            'car_condition_pickup' => 'nullable|string|max:500'
+{
+    $request->validate([
+        'booking_id' => 'required|exists:car_bookings,id',
+        'mileage_at_pickup' => 'required|integer|min:0',
+        'fuel_level_pickup' => 'required|string|in:Empty,1/4,1/2,3/4,Full',
+        'pickup_notes' => 'nullable|string|max:500',
+        'car_condition_pickup' => 'nullable|string|max:500'
+    ]);
+
+    try {
+        DB::beginTransaction();
+
+        // Check if booking is still confirmed (not cancelled)
+        $booking = DB::table('car_bookings')->where('id', $request->booking_id)->first();
+        
+        if (!$booking) {
+            throw new \Exception('Booking not found.');
+        }
+
+        if (in_array($booking->status, ['cancelled', 'canceled'])) {
+            throw new \Exception('Cannot record pickup for cancelled booking.');
+        }
+
+        if ($booking->status !== 'confirmed') {
+            throw new \Exception('Booking must be confirmed to record pickup.');
+        }
+
+        // Insert mileage record
+        DB::table('mileage_records')->insert([
+            'booking_id' => $request->booking_id,
+            'record_type' => 'pickup',
+            'mileage_at_pickup' => $request->mileage_at_pickup,
+            'fuel_level_pickup' => $request->fuel_level_pickup,
+            'pickup_notes' => $request->pickup_notes,
+            'car_condition_pickup' => $request->car_condition_pickup,
+            'recorded_by' => auth()->id() ?? 1,
+            'recorded_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
 
-        try {
-            DB::beginTransaction();
+        // Update car's current mileage
+        DB::table('car_details_tbl')
+            ->where('id', $booking->car_id)
+            ->update(['current_mileage' => $request->mileage_at_pickup]);
 
-            // Insert mileage record
-            DB::table('mileage_records')->insert([
-                'booking_id' => $request->booking_id,
-                'record_type' => 'pickup',
-                'mileage_at_pickup' => $request->mileage_at_pickup,
-                'fuel_level_pickup' => $request->fuel_level_pickup,
-                'pickup_notes' => $request->pickup_notes,
-                'car_condition_pickup' => $request->car_condition_pickup,
-                'recorded_by' => auth()->id() ?? 1, // Assuming admin user ID
-                'recorded_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+        // Update booking status - use one of these options based on your ENUM values:
+        // Option 1: Keep as 'confirmed' (safest option)
+        // No status update needed
+        
+        // Option 2: Use 'active' if that's an allowed value
+        // DB::table('car_bookings')
+        //     ->where('id', $request->booking_id)
+        //     ->update(['status' => 'active']);
+        
+        // Option 3: Use 'ongoing' if that's an allowed value
+        // DB::table('car_bookings')
+        //     ->where('id', $request->booking_id)
+        //     ->update(['status' => 'ongoing']);
 
-            // Update car's current mileage
-            $booking = DB::table('car_bookings')->where('id', $request->booking_id)->first();
-            DB::table('car_details_tbl')
-                ->where('id', $booking->car_id)
-                ->update(['current_mileage' => $request->mileage_at_pickup]);
+        // Option 4: Use 'in_progress' if that's an allowed value
+        // DB::table('car_bookings')
+        //     ->where('id', $request->booking_id)
+        //     ->update(['status' => 'in_progress']);
 
-            DB::commit();
+        DB::commit();
 
-            return redirect()->route('car-admin.record-mileage')
-                           ->with('success', 'Pickup mileage recorded successfully!');
+        return redirect()->route('car-admin.record-mileage')
+                       ->with('success', 'Pickup mileage recorded successfully!');
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()
-                           ->with('error', 'Failed to record pickup mileage: ' . $e->getMessage());
-        }
+    } catch (\Exception $e) {
+        DB::rollback();
+        return redirect()->back()
+                       ->with('error', 'Failed to record pickup mileage: ' . $e->getMessage());
     }
+}
 
     public function recordReturn(Request $request)
     {
@@ -162,11 +282,22 @@ class RecordMileageController extends Controller
         try {
             DB::beginTransaction();
 
+            // Check if booking is not cancelled
+            $bookingCheck = DB::table('car_bookings')->where('id', $request->booking_id)->first();
+            
+            if (in_array($bookingCheck->status, ['cancelled', 'canceled'])) {
+                throw new \Exception('Cannot record return for cancelled booking.');
+            }
+
             // Get pickup record and booking details
             $pickupRecord = DB::table('mileage_records')
                 ->where('booking_id', $request->booking_id)
                 ->where('record_type', 'pickup')
                 ->first();
+
+            if (!$pickupRecord) {
+                throw new \Exception('Pickup record not found. Cannot process return without pickup record.');
+            }
 
             $booking = DB::table('car_bookings')
                 ->join('car_details_tbl', 'car_bookings.car_id', '=', 'car_details_tbl.id')
@@ -180,6 +311,11 @@ class RecordMileageController extends Controller
             $allowedMileage = $booking->mileage_limit * $rentalDays;
             $excessMileage = max(0, $mileageUsed - $allowedMileage);
             $excessCharges = $excessMileage * $booking->price_per_km;
+
+            // Validate return mileage is not less than pickup mileage
+            if ($request->mileage_at_return < $pickupRecord->mileage_at_pickup) {
+                throw new \Exception('Return mileage cannot be less than pickup mileage.');
+            }
 
             // Update mileage record with return information
             DB::table('mileage_records')
@@ -226,6 +362,62 @@ class RecordMileageController extends Controller
         }
     }
 
+    /**
+     * Handle cancelled bookings that have pickup records
+     */
+    public function handleCancelledBooking(Request $request)
+    {
+        $request->validate([
+            'booking_id' => 'required|exists:car_bookings,id',
+            'cancellation_reason' => 'required|string|max:500',
+            'refund_mileage_charges' => 'nullable|boolean'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $booking = DB::table('car_bookings')->where('id', $request->booking_id)->first();
+            
+            // Check if there's a pickup record
+            $pickupRecord = DB::table('mileage_records')
+                ->where('booking_id', $request->booking_id)
+                ->where('record_type', 'pickup')
+                ->first();
+
+            if ($pickupRecord && !$pickupRecord->mileage_at_return) {
+                // Car was picked up but not returned - handle this case
+                // You might want to force a return record or handle specially
+                throw new \Exception('Cannot cancel booking - car was picked up but not yet returned. Please process return first.');
+            }
+
+            // Update booking status
+            DB::table('car_bookings')
+                ->where('id', $request->booking_id)
+                ->update([
+                    'status' => 'cancelled',
+                    'cancellation_reason' => $request->cancellation_reason,
+                    'cancelled_at' => now(),
+                    'cancelled_by' => auth()->id()
+                ]);
+
+            // If there are excess charges and refund is requested
+            if ($pickupRecord && $pickupRecord->excess_charges > 0 && $request->refund_mileage_charges) {
+                // Handle refund logic here
+                // You might want to create a refund record or update payment status
+            }
+
+            DB::commit();
+
+            return redirect()->route('car-admin.record-mileage')
+                           ->with('success', 'Booking cancelled successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                           ->with('error', 'Failed to cancel booking: ' . $e->getMessage());
+        }
+    }
+
     public function getMileageHistory($bookingId)
     {
         $record = DB::table('mileage_records')
@@ -238,7 +430,8 @@ class RecordMileageController extends Controller
                 'car_details_tbl.maker',
                 'car_details_tbl.model',
                 'car_details_tbl.registration_no',
-                'customers.name as customer_name'
+                'customers.name as customer_name',
+                'car_bookings.status as booking_status'
             )
             ->first();
 

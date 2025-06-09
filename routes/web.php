@@ -10,13 +10,14 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserGuideController;
 // homecontroller
 // home.blade.php
 Route::get('/', function () {
     return view('home');
 
 });
-
+ Route::get('/user-guide', [UserGuideController::class, 'index'])->name('user.guide');
 // Route for displaying car details page
 Route::get('/cars/{id}/details', [HomeController::class, 'getCarDetails'])->name('car.details');
 

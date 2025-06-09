@@ -66,8 +66,8 @@
                     <i class="fas fa-info-circle me-2"></i>
                     Showing results for: <strong>"<?php echo e(request('search')); ?>"</strong>
                     <span class="ms-3">
-                        Found <?php echo e(count($pickupBookings) + count($returnBookings)); ?> total records
-                        (<?php echo e(count($pickupBookings)); ?> pickup, <?php echo e(count($returnBookings)); ?> return)
+                        Found <?php echo e(count($pickupBookings) + count($returnBookings) + (isset($cancelledBookings) ? count($cancelledBookings) : 0)); ?> total records
+                        (<?php echo e(count($pickupBookings)); ?> pickup, <?php echo e(count($returnBookings)); ?> return<?php echo e(isset($cancelledBookings) ? ', ' . count($cancelledBookings) . ' cancelled' : ''); ?>)
                     </span>
                 </div>
             </div>
@@ -153,7 +153,7 @@
     </div>
 
     <!-- Return Records Section -->
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -236,6 +236,85 @@
             </div>
         </div>
     </div>
+
+    <!-- Cancelled Bookings Section -->
+    <?php if(isset($cancelledBookings) && count($cancelledBookings) > 0): ?>
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-times-circle me-2"></i>
+                        Cancelled Bookings (Previously Picked Up)
+                        <span class="badge bg-light text-danger ms-2"><?php echo e(count($cancelledBookings)); ?></span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Note:</strong> These bookings were cancelled after pickup. Please ensure proper return procedures are followed.
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Customer</th>
+                                    <th>Car Details</th>
+                                    <th>Pickup Date</th>
+                                    <th>Pickup Mileage</th>
+                                    <th>Return Mileage</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $__currentLoopData = $cancelledBookings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $booking): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <tr class="table-danger">
+                                    <td><strong>#<?php echo e($booking->id); ?></strong></td>
+                                    <td>
+                                        <div class="fw-bold"><?php echo e($booking->customer_name); ?></div>
+                                        <small class="text-muted"><?php echo e($booking->customer_email ?? 'N/A'); ?></small>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold"><?php echo e($booking->maker); ?> <?php echo e($booking->model); ?></div>
+                                        <small class="text-muted"><?php echo e($booking->registration_no); ?></small>
+                                    </td>
+                                    <td><?php echo e(\Carbon\Carbon::parse($booking->pickup_datetime)->format('M d, Y H:i')); ?></td>
+                                    <td>
+                                        <span class="badge bg-info"><?php echo e(number_format($booking->mileage_at_pickup)); ?> km</span>
+                                    </td>
+                                    <td>
+                                        <?php if($booking->mileage_at_return): ?>
+                                            <span class="badge bg-success"><?php echo e(number_format($booking->mileage_at_return)); ?> km</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-warning">Not Returned</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-danger"><?php echo e(ucfirst(str_replace('_', ' ', $booking->status))); ?></span>
+                                    </td>
+                                    <td>
+                                        <?php if(!$booking->mileage_at_return): ?>
+                                            <button class="btn btn-warning btn-sm" onclick="openReturnModal(<?php echo e(json_encode($booking)); ?>)" title="Record return for cancelled booking">
+                                                <i class="fas fa-clipboard-check me-1"></i>Record Return
+                                            </button>
+                                        <?php else: ?>
+                                            <button class="btn btn-secondary btn-sm" disabled title="Already returned">
+                                                <i class="fas fa-check me-1"></i>Completed
+                                            </button>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 <?php $__env->stopSection(); ?>
 

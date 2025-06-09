@@ -315,12 +315,7 @@ unset($__errorArgs, $__bag); ?>
                                                 <button class="btn btn-sm btn-warning" onclick="editPricing(<?php echo e($car->id); ?>)">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </button>
-                                                <button class="btn btn-sm <?php echo e($car->pricing_active ? 'btn-secondary' : 'btn-success'); ?>" 
-                                                        onclick="togglePricingStatus(<?php echo e($car->id); ?>)">
-                                                    <i class="fas fa-<?php echo e($car->pricing_active ? 'pause' : 'play'); ?>"></i> 
-                                                    <?php echo e($car->pricing_active ? 'Deactivate' : 'Activate'); ?>
-
-                                                </button>
+                                                
                                             </td>
                                         </tr>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

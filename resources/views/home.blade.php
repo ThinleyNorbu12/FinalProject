@@ -592,6 +592,10 @@
                 <i class="fas fa-user"></i> Welcome, {{ Auth::guard('customer')->user()->name }}
             </span>
             <div class="header-auth-buttons">
+                <a href="{{ route('user.guide') }}" class="header-btn header-btn-guide" title="User Guide">
+                    <i class="fas fa-question-circle"></i> Help
+                </a>
+
                 <a href="{{ route('customer.dashboard') }}" class="header-btn header-btn-login">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
@@ -604,6 +608,9 @@
             </div>
         @else
             <div class="header-auth-buttons">
+                <a href="{{ route('user.guide') }}" class="header-btn header-btn-guide" title="User Guide">
+                    <i class="fas fa-question-circle"></i> Help
+                </a>
                 <a href="{{ route('customer.login') }}" class="header-btn header-btn-login">
                     <i class="fas fa-sign-in-alt"></i> Login
                 </a>
@@ -632,6 +639,12 @@
                 <a href="{{ url('/') }}">
                     <i class="fas fa-home"></i>
                     <span style="text-transform: uppercase;">Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('user.guide') }}">
+                    <i class="fas fa-question-circle"></i>
+                    <span style="text-transform: uppercase;">User Guide</span>
                 </a>
             </li>
             <li>

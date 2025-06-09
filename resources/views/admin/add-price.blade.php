@@ -242,11 +242,11 @@
                                                 <button class="btn btn-sm btn-warning" onclick="editPricing({{ $car->id }})">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </button>
-                                                <button class="btn btn-sm {{ $car->pricing_active ? 'btn-secondary' : 'btn-success' }}" 
+                                                {{-- <button class="btn btn-sm {{ $car->pricing_active ? 'btn-secondary' : 'btn-success' }}" 
                                                         onclick="togglePricingStatus({{ $car->id }})">
                                                     <i class="fas fa-{{ $car->pricing_active ? 'pause' : 'play' }}"></i> 
                                                     {{ $car->pricing_active ? 'Deactivate' : 'Activate' }}
-                                                </button>
+                                                </button> --}}
                                             </td>
                                         </tr>
                                     @endforeach

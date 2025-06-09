@@ -1,6 +1,52 @@
 body {
     background-color: #f7f9fc;
 }
+/* Disable previous dates styling for Pikaday */
+.pika-button.is-disabled {
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    opacity: 0.3 !important;
+    background-color: #f5f5f5 !important;
+    color: #ccc !important;
+    border-color: #e0e0e0 !important;
+    position: relative;
+}
+
+.pika-button.is-disabled:hover {
+    background-color: #f5f5f5 !important;
+    color: #ccc !important;
+    cursor: not-allowed !important;
+}
+
+.pika-button.is-disabled:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Add a strike-through effect to make it more obvious */
+.pika-button.is-disabled::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background-color: #ccc;
+    transform: translateY(-50%);
+}
+
+/* Ensure the disabled state is clear */
+.pika-table .is-disabled {
+    background: #f8f9fa !important;
+    color: #6c757d !important;
+    cursor: default !important;
+}
+
+/* Remove any hover effects on disabled dates */
+.pika-table .is-disabled:hover {
+    background: #f8f9fa !important;
+    color: #6c757d !important;
+}
 .carousel-container {
     background-color: white;
     padding: 15px;
