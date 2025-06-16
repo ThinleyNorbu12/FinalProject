@@ -784,25 +784,7 @@
                                         </div>
                                     <?php endif; ?>
                                     
-                                    <?php if($payLaterInfo && count($payLaterInfo) > 0): ?>
-                                        <div class="pay-later-section">
-                                            <div class="payment-info-title">Pay Later Information</div>
-                                            <?php $__currentLoopData = $payLaterInfo; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payLater): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <div>
-                                                    <strong>Collection Date:</strong> <?php echo e(date('M d, Y', strtotime($payLater->collection_date))); ?>
-
-                                                    <br>
-                                                    <strong>Status:</strong> <?php echo e(ucfirst($payLater->status)); ?>
-
-                                                    <?php if($payLater->status == 'collected'): ?>
-                                                        <br>
-                                                        <strong>Collection Method:</strong> <?php echo e($payLater->collection_method); ?>
-
-                                                    <?php endif; ?>
-                                                </div>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </div>
-                                    <?php endif; ?>
+                                    
                                 </div>
                             </div>
                             

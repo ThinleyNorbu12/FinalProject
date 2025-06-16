@@ -593,6 +593,10 @@
 
             </span>
             <div class="header-auth-buttons">
+                <a href="<?php echo e(route('user.guide')); ?>" class="header-btn header-btn-guide" title="User Guide">
+                    <i class="fas fa-question-circle"></i> Help
+                </a>
+
                 <a href="<?php echo e(route('customer.dashboard')); ?>" class="header-btn header-btn-login">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
@@ -605,6 +609,9 @@
             </div>
         <?php else: ?>
             <div class="header-auth-buttons">
+                <a href="<?php echo e(route('user.guide')); ?>" class="header-btn header-btn-guide" title="User Guide">
+                    <i class="fas fa-question-circle"></i> Help
+                </a>
                 <a href="<?php echo e(route('customer.login')); ?>" class="header-btn header-btn-login">
                     <i class="fas fa-sign-in-alt"></i> Login
                 </a>
@@ -633,6 +640,12 @@
                 <a href="<?php echo e(url('/')); ?>">
                     <i class="fas fa-home"></i>
                     <span style="text-transform: uppercase;">Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo e(route('user.guide')); ?>">
+                    <i class="fas fa-question-circle"></i>
+                    <span style="text-transform: uppercase;">User Guide</span>
                 </a>
             </li>
             <li>
@@ -762,6 +775,8 @@
             dropoffDateInput.min = pickupDate.toISOString().split('T')[0];
         });
     </script>
+    
+    <!-- Updated section of your Blade template -->
     <section class="cars">
         <h2>Available Cars</h2>
         <div class="car-container">
@@ -772,12 +787,14 @@
                 // Add regular cars
                 if($cars->count()) {
                     foreach($cars as $car) {
-                        // Check if car has confirmed booking
+                        // Check if car has confirmed booking AND has a valid price
                         $hasConfirmedBooking = $car->bookings()
                             ->where('status', 'confirmed')
                             ->exists();
+                        
+                        $hasValidPrice = !empty($car->rate_per_day) && $car->rate_per_day > 0;
                             
-                        if(!$hasConfirmedBooking) {
+                        if(!$hasConfirmedBooking && $hasValidPrice) {
                             $car->source = 'regular'; // Mark source for image path logic
                             $allCars->push($car);
                         }
@@ -788,10 +805,12 @@
                 if(isset($adminCars) && $adminCars->count()) {
                     foreach($adminCars as $adminCar) {
                         // Check if admin car has confirmed booking (if booking system applies to admin cars)
-                        // Adjust this logic based on your admin car booking system
                         $hasConfirmedBooking = false; // You may need to implement this check for admin cars
                         
-                        if(!$hasConfirmedBooking) {
+                        // Check if admin car has a valid price
+                        $hasValidPrice = !empty($adminCar->rate_per_day) && $adminCar->rate_per_day > 0;
+                        
+                        if(!$hasConfirmedBooking && $hasValidPrice) {
                             $adminCar->source = 'admin'; // Mark source for image path logic
                             $allCars->push($adminCar);
                         }
@@ -834,7 +853,7 @@
                         <?php endif; ?>
                         
                         <h3><?php echo e($car->maker); ?> <?php echo e($car->model); ?></h3>
-                        <p>BTN <?php echo e(number_format($car->price, 2)); ?>/day</p>
+                        <p>BTN <?php echo e(number_format($car->rate_per_day, 2)); ?>/day</p>
                         
                         <?php if($car->source === 'admin'): ?>
                             <span class="admin-badge" style="background: #3498db; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Admin Car</span>
@@ -867,56 +886,67 @@
             <div class="car-specs-row">
                 <div class="car-spec">
                     <i class="fas fa-door-open spec-icon"></i>
-                    <span id="doors">4 Doors</span>
+                    <span id="doors">Loading...</span>
                 </div>
                 <div class="car-spec">
                     <i class="fas fa-users spec-icon"></i>
-                    <span id="seats">7 Seats</span>
+                    <span id="seats">Loading...</span>
                 </div>
             </div>
             <div class="car-specs-row">
                 <div class="car-spec">
                     <i class="fas fa-snowflake spec-icon"></i>
-                    <span id="ac">Air Conditioning</span>
+                    <span id="ac">Loading...</span>
                 </div>
                 <div class="car-spec">
                     <i class="fas fa-cogs spec-icon"></i>
-                    <span id="transmission">Automatic</span>
+                    <span id="transmission">Loading...</span>
                 </div>
             </div>
             <div class="car-specs-row">
                 <div class="car-spec">
                     <i class="fas fa-suitcase spec-icon"></i>
-                    <span id="largeBags">2 Large Bags</span>
+                    <span id="largeBags">Loading...</span>
                 </div>
                 <div class="car-spec">
                     <i class="fas fa-briefcase spec-icon"></i>
-                    <span id="smallBags">2 Small Bags</span>
+                    <span id="smallBags">Loading...</span>
                 </div>
             </div>
             <div class="car-specs-row">
                 <div class="car-spec">
                     <i class="fas fa-tachometer-alt spec-icon"></i>
-                    <span id="mpg">16-21 mpg</span>
+                    <span id="mpg">Loading...</span>
                 </div>
                 <div class="car-spec">
                     <i class="fab fa-bluetooth spec-icon"></i>
-                    <span id="bluetooth">Bluetooth</span>
+                    <span id="bluetooth">Loading...</span>
                 </div>
             </div>
             <div class="car-specs-row">
                 <div class="car-spec">
                     <i class="fas fa-video spec-icon"></i>
-                    <span id="camera">Backup Camera</span>
+                    <span id="camera">Loading...</span>
                 </div>
                 <div class="car-spec">
                     <i class="fas fa-gas-pump spec-icon"></i>
-                    <span id="fuelType">Gasoline</span>
+                    <span id="fuelType">Loading...</span>
+                </div>
+            </div>
+            <div class="car-specs-row">
+                <div class="car-spec">
+                    <i class="fas fa-dollar-sign spec-icon"></i>
+                    <span id="ratePerDay">Loading...</span>
+                </div>
+                <div class="car-spec">
+                    <i class="fas fa-road spec-icon"></i>
+                    <span id="mileageLimit">Loading...</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <footer class="footer mt-auto py-3 bg-light">
     <div class="container">
         <div class="row">
@@ -929,6 +959,7 @@
         </div>
     </div>
 </footer>
+
 <script>
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
@@ -997,13 +1028,15 @@
             button.addEventListener('click', function(e) {
                 e.preventDefault();
                 const carId = this.getAttribute('data-car-id');
+                const carSource = this.getAttribute('data-car-source');
                 
                 // Show loading state
                 document.getElementById('modalCarTitle').textContent = "Loading...";
+                setLoadingState(true);
                 carDetailsModal.style.display = 'block';
                 
                 // Fetch car details from the server
-                fetchCarDetails(carId);
+                fetchCarDetails(carId, carSource);
             });
         });
 
@@ -1020,43 +1053,86 @@
             }
         });
 
-        function fetchCarDetails(carId) {
-            console.log('Fetching details for car ID:', carId);
-            fetch(`/cars/${carId}/details`)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
+        function setLoadingState(isLoading) {
+            const loadingText = isLoading ? "Loading..." : "";
+            const elements = ['doors', 'seats', 'ac', 'transmission', 'largeBags', 'smallBags', 'mpg', 'bluetooth', 'camera', 'fuelType', 'ratePerDay', 'mileageLimit'];
+            
+            elements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element && isLoading) {
+                    element.textContent = loadingText;
+                }
+            });
+        }
+
+        function fetchCarDetails(carId, carSource) {
+            console.log('Fetching details for car ID:', carId, 'Source:', carSource);
+            
+            // Use the correct route format
+            const url = `<?php echo e(url('/cars')); ?>/${carId}/details`;
+            
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        console.error('Response text:', text);
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Received data:', data);
+                if (data.success) {
+                    showCarDetails(data.details);
+                } else {
+                    throw new Error(data.message || 'Error fetching car details');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('modalCarTitle').textContent = "Error loading details";
+                setLoadingState(false);
+                
+                // Show error message in modal
+                const errorElements = ['doors', 'seats', 'ac', 'transmission', 'largeBags', 'smallBags', 'mpg', 'bluetooth', 'camera', 'fuelType', 'ratePerDay', 'mileageLimit'];
+                errorElements.forEach(elementId => {
+                    const element = document.getElementById(elementId);
+                    if (element) {
+                        element.textContent = "Error";
                     }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Received data:', data);
-                    if (data.success) {
-                        showCarDetails(data.details);
-                    } else {
-                        throw new Error(data.message || 'Error fetching car details');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('modalCarTitle').textContent = "Error loading details";
                 });
+            });
         }
 
         function showCarDetails(carData) {
+            console.log('Showing car details:', carData);
+            
             // Update the modal with car details from the database
-            document.getElementById('modalCarTitle').textContent = carData.title;
-            document.getElementById('doors').textContent = carData.doors;
-            document.getElementById('seats').textContent = carData.seats;
-            document.getElementById('ac').textContent = carData.ac;
-            document.getElementById('transmission').textContent = carData.transmission;
-            document.getElementById('largeBags').textContent = carData.largeBags;
-            document.getElementById('smallBags').textContent = carData.smallBags;
-            document.getElementById('mpg').textContent = carData.mpg;
-            document.getElementById('bluetooth').textContent = carData.bluetooth;
-            document.getElementById('camera').textContent = carData.camera;
-            document.getElementById('fuelType').textContent = carData.fuelType;
+            document.getElementById('modalCarTitle').textContent = carData.title || 'Car Details';
+            document.getElementById('doors').textContent = carData.doors || 'N/A';
+            document.getElementById('seats').textContent = carData.seats || 'N/A';
+            document.getElementById('ac').textContent = carData.ac || 'N/A';
+            document.getElementById('transmission').textContent = carData.transmission || 'N/A';
+            document.getElementById('largeBags').textContent = carData.largeBags || 'N/A';
+            document.getElementById('smallBags').textContent = carData.smallBags || 'N/A';
+            document.getElementById('mpg').textContent = carData.mpg || carData.mileage || 'N/A';
+            document.getElementById('bluetooth').textContent = carData.bluetooth || 'N/A';
+            document.getElementById('camera').textContent = carData.camera || 'N/A';
+            document.getElementById('fuelType').textContent = carData.fuelType || 'N/A';
+            document.getElementById('ratePerDay').textContent = carData.ratePerDay || 'N/A';
+            document.getElementById('mileageLimit').textContent = carData.mileageLimit || 'N/A';
         }
 
         function showModal(title, message, registerUrl, loginUrl) {
@@ -1152,7 +1228,6 @@
                 document.head.appendChild(style);
             }
         }
-
     });
 </script>
 

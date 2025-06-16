@@ -142,6 +142,18 @@
                     <div class="tooltip">Approve Inspections</div>
                 </a>
 
+                <a href="<?php echo e(route('car-admin.add-price')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.add-price') ? 'active' : ''); ?>">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Add Price</span>
+                    <div class="tooltip">Add Price</div>
+                </a>
+                <a href="<?php echo e(route('car-admin.record-mileage')); ?>" class="sidebar-menu-item <?php echo e(request()->routeIs('car-admin.record-mileage') ? 'active' : ''); ?>">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Record Mileage</span>
+                    <div class="tooltip">Record Mileage</div>
+                </a>
+
+
                 
 
                 

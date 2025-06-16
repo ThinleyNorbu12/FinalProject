@@ -136,22 +136,111 @@
                 </div>
                 <div class="car-info-row">
                     <div><strong>Registration:</strong> <?php echo e($car->registration_no); ?></div>
-                    <div><strong>Mileage:</strong> <?php echo e(number_format($car->mileage)); ?> km</div>
-                    <div><strong>Price:</strong> BTN <?php echo e(number_format($car->price)); ?>/day</div>
+                    <div><strong>Current Mileage:</strong> <?php echo e(number_format($car->current_mileage ?? 0)); ?> km</div>
+                    <div><strong>Rate:</strong> BTN <?php echo e(number_format($car->rate_per_day ?? 0, 2)); ?>/day</div>
                 </div>
+                
+                <?php if($car->price_per_km || $car->mileage_limit): ?>
+                <div class="car-info-row">
+                    <?php if($car->mileage_limit): ?>
+                        <div><strong>Daily Limit:</strong> <?php echo e(number_format($car->mileage_limit)); ?> km/day</div>
+                    <?php endif; ?>
+                    <?php if($car->price_per_km): ?>
+                        <div><strong>Extra KM Rate:</strong> BTN <?php echo e(number_format($car->price_per_km, 2)); ?>/km</div>
+                    <?php endif; ?>
+                    <?php if($car->pricing_active !== null): ?>
+                        <div><strong>Status:</strong> 
+                            <span class="badge <?php echo e($car->pricing_active ? 'bg-success' : 'bg-warning'); ?>">
+                                <?php echo e($car->pricing_active ? 'Active' : 'Inactive'); ?>
+
+                            </span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+                
                 <div class="mt-3">
-                    <div class="car-spec"><i class="fas fa-door-open me-2"></i><span><?php echo e($car->number_of_doors); ?> Doors</span></div>
-                    <div class="car-spec"><i class="fas fa-users me-2"></i><span><?php echo e($car->number_of_seats); ?> Seats</span></div>
-                    <div class="car-spec"><i class="fas fa-cogs me-2"></i><span><?php echo e(ucfirst($car->transmission_type)); ?></span></div>
-                    <div class="car-spec"><i class="fas fa-suitcase-rolling me-2"></i><span><?php echo e($car->large_bags_capacity); ?> Large Bags</span></div>
-                    <div class="car-spec"><i class="fas fa-suitcase me-2"></i><span><?php echo e($car->small_bags_capacity); ?> Small Bags</span></div>
-                    <div class="car-spec"><i class="fas fa-gas-pump me-2"></i><span><?php echo e($car->fuel_type); ?></span></div>
-                    <div class="car-spec"><i class="fas fa-snowflake me-2"></i><span><?php echo e($car->air_conditioning ? 'Air Conditioning' : 'No AC'); ?></span></div>
-                    <div class="car-spec"><i class="fas fa-video me-2"></i><span><?php echo e($car->backup_camera ? 'Backup Camera' : 'No Backup Camera'); ?></span></div>
-                    <div class="car-spec"><i class="fas fa-music me-2"></i><span><?php echo e($car->bluetooth ? 'Bluetooth Enabled' : 'No Bluetooth'); ?></span></div>
+                    <div class="car-spec">
+                        <i class="fas fa-door-open me-2"></i>
+                        <span><?php echo e($car->number_of_doors ?? 'N/A'); ?> <?php echo e(($car->number_of_doors ?? 0) == 1 ? 'Door' : 'Doors'); ?></span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-users me-2"></i>
+                        <span><?php echo e($car->number_of_seats ?? 'N/A'); ?> <?php echo e(($car->number_of_seats ?? 0) == 1 ? 'Seat' : 'Seats'); ?></span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-cogs me-2"></i>
+                        <span><?php echo e(ucfirst($car->transmission_type ?? 'Unknown')); ?></span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-suitcase-rolling me-2"></i>
+                        <span><?php echo e($car->large_bags_capacity ?? 0); ?> Large <?php echo e(($car->large_bags_capacity ?? 0) == 1 ? 'Bag' : 'Bags'); ?></span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-suitcase me-2"></i>
+                        <span><?php echo e($car->small_bags_capacity ?? 0); ?> Small <?php echo e(($car->small_bags_capacity ?? 0) == 1 ? 'Bag' : 'Bags'); ?></span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-gas-pump me-2"></i>
+                        <span><?php echo e(ucfirst($car->fuel_type ?? 'Unknown')); ?></span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-snowflake me-2"></i>
+                        <span>
+                            <?php
+                                $hasAC = false;
+                                if (is_bool($car->air_conditioning)) {
+                                    $hasAC = $car->air_conditioning;
+                                } elseif (is_string($car->air_conditioning)) {
+                                    $hasAC = strtolower($car->air_conditioning) === 'yes' || $car->air_conditioning === '1';
+                                } else {
+                                    $hasAC = (bool) $car->air_conditioning;
+                                }
+                            ?>
+                            <?php echo e($hasAC ? 'Air Conditioning' : 'No AC'); ?>
+
+                        </span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-video me-2"></i>
+                        <span>
+                            <?php
+                                $hasCamera = false;
+                                if (is_bool($car->backup_camera)) {
+                                    $hasCamera = $car->backup_camera;
+                                } elseif (is_string($car->backup_camera)) {
+                                    $hasCamera = strtolower($car->backup_camera) === 'yes' || $car->backup_camera === '1';
+                                } else {
+                                    $hasCamera = (bool) $car->backup_camera;
+                                }
+                            ?>
+                            <?php echo e($hasCamera ? 'Rear-View Camera' : 'No Rear-View Camera'); ?>
+
+                        </span>
+                    </div>
+                    <div class="car-spec">
+                        <i class="fas fa-music me-2"></i>
+                        <span>
+                            <?php
+                                $hasBluetooth = false;
+                                if (is_bool($car->bluetooth)) {
+                                    $hasBluetooth = $car->bluetooth;
+                                } elseif (is_string($car->bluetooth)) {
+                                    $hasBluetooth = strtolower($car->bluetooth) === 'yes' || $car->bluetooth === '1';
+                                } else {
+                                    $hasBluetooth = (bool) $car->bluetooth;
+                                }
+                            ?>
+                            <?php echo e($hasBluetooth ? 'Bluetooth Enabled' : 'No Bluetooth'); ?>
+
+                        </span>
+                    </div>
                 </div>
+                
                 <?php if($car->description): ?>
-                    <div class="mt-3"><p><strong>Description:</strong> <?php echo e($car->description); ?></p></div>
+                    <div class="mt-3">
+                        <p><strong>Description:</strong> <?php echo e($car->description); ?></p>
+                    </div>
                 <?php endif; ?>
             </div>
 
