@@ -253,7 +253,7 @@
                         </div>
                         <div class="stat-info">
                             <span class="stat-label">Monthly Rate</span>
-                            <span class="stat-value">$<?php echo e(number_format($car->price * 30, 2)); ?></span>
+                            <span class="stat-value">BTN <?php echo e(number_format($car->price * 30, 2)); ?></span>
                         </div>
                     </div>
                     <div class="stat-card">
