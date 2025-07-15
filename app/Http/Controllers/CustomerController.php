@@ -572,6 +572,176 @@ public function cancelPayment($paymentId)
     
 //     return view('customer.browse-cars', compact('cars', 'vehicleTypes', 'transmissionTypes'));
 // }
+// public function browseCars(Request $request) 
+// {
+//     // Filters
+//     $vehicleType = $request->vehicle_type;
+//     $transmissionType = $request->transmission_type;
+//     $minPrice = $request->min_price;
+//     $maxPrice = $request->max_price;
+//     $airConditioning = $request->air_conditioning;
+//     $backupCamera = $request->backup_camera;
+//     $bluetooth = $request->bluetooth;
+//     $sortBy = $request->sort_by ?? 'price_asc';
+
+//     // Base query for admin cars table
+//     $adminCarsQuery = DB::table('admin_cars_tbl')
+//         ->select(
+//             'id',
+//             'maker',
+//             'model',
+//             'vehicle_type',
+//             'car_condition',
+//             'registration_no',
+//             'status',
+//             'description',
+//             'car_image',
+//             'number_of_doors',
+//             'number_of_seats',
+//             'transmission_type',
+//             'large_bags_capacity',
+//             'small_bags_capacity',
+//             'fuel_type',
+//             'air_conditioning',
+//             'backup_camera',
+//             'bluetooth',
+//             'price as rate_per_day', // Map price to rate_per_day for consistency
+//             'created_at',
+//             'updated_at',
+//             DB::raw("'admin' as car_source"), // Add source identifier
+//             DB::raw("null as car_owner_id"), // Add missing columns
+//             DB::raw("null as price_per_km"),
+//             DB::raw("null as mileage_limit"),
+//             DB::raw("null as current_mileage"),
+//             DB::raw("null as pricing_active")
+//         )
+//         ->where('status', 'available');
+
+//     // Base query for car details table
+//     $carDetailsQuery = DB::table('car_details_tbl')
+//         ->select(
+//             'id',
+//             'maker',
+//             'model',
+//             'vehicle_type',
+//             'car_condition',
+//             'registration_no',
+//             'status',
+//             'description',
+//             'car_image',
+//             'car_owner_id',
+//             'number_of_doors',
+//             'number_of_seats',
+//             'transmission_type',
+//             'large_bags_capacity',
+//             'small_bags_capacity',
+//             'fuel_type',
+//             'air_conditioning',
+//             'backup_camera',
+//             'bluetooth',
+//             'rate_per_day',
+//             'price_per_km',
+//             'mileage_limit',
+//             'current_mileage',
+//             'pricing_active',
+//             'created_at',
+//             'updated_at',
+//             DB::raw("'owner' as car_source") // Add source identifier
+//         )
+//         ->where('status', 'available');
+
+//     // Apply filters to admin cars query
+//     if (!empty($vehicleType)) {
+//         $adminCarsQuery->where('vehicle_type', $vehicleType);
+//     }
+//     if (!empty($transmissionType)) {
+//         $adminCarsQuery->where('transmission_type', $transmissionType);
+//     }
+//     if (!empty($minPrice)) {
+//         $adminCarsQuery->where('price', '>=', $minPrice);
+//     }
+//     if (!empty($maxPrice)) {
+//         $adminCarsQuery->where('price', '<=', $maxPrice);
+//     }
+//     if ($airConditioning) {
+//         $adminCarsQuery->where('air_conditioning', 'Yes');
+//     }
+//     if ($backupCamera) {
+//         $adminCarsQuery->where('backup_camera', 'Yes');
+//     }
+//     if ($bluetooth) {
+//         $adminCarsQuery->where('bluetooth', 'Yes');
+//     }
+
+//     // Apply filters to car details query
+//     if (!empty($vehicleType)) {
+//         $carDetailsQuery->where('vehicle_type', $vehicleType);
+//     }
+//     if (!empty($transmissionType)) {
+//         $carDetailsQuery->where('transmission_type', $transmissionType);
+//     }
+//     if (!empty($minPrice)) {
+//         $carDetailsQuery->where('rate_per_day', '>=', $minPrice);
+//     }
+//     if (!empty($maxPrice)) {
+//         $carDetailsQuery->where('rate_per_day', '<=', $maxPrice);
+//     }
+//     if ($airConditioning) {
+//         $carDetailsQuery->where('air_conditioning', 'Yes');
+//     }
+//     if ($backupCamera) {
+//         $carDetailsQuery->where('backup_camera', 'Yes');
+//     }
+//     if ($bluetooth) {
+//         $carDetailsQuery->where('bluetooth', 'Yes');
+//     }
+
+//     // Execute both queries
+//     $adminCars = $adminCarsQuery->get();
+//     $carDetails = $carDetailsQuery->get();
+
+//     // Merge both results
+//     $cars = $adminCars->merge($carDetails);
+
+//     // Sort the merged collection
+//     switch ($sortBy) {
+//         case 'price_desc':
+//             $cars = $cars->sortByDesc('rate_per_day');
+//             break;
+//         case 'newest':
+//             $cars = $cars->sortByDesc('created_at');
+//             break;
+//         case 'price_asc':
+//         default:
+//             $cars = $cars->sortBy('rate_per_day');
+//             break;
+//     }
+
+//     // Get distinct vehicle types and transmission types from both tables
+//     $vehicleTypes = DB::table('admin_cars_tbl')
+//         ->select('vehicle_type')
+//         ->distinct()
+//         ->union(
+//             DB::table('car_details_tbl')->select('vehicle_type')->distinct()
+//         )
+//         ->pluck('vehicle_type')
+//         ->unique()
+//         ->sort()
+//         ->values();
+
+//     $transmissionTypes = DB::table('admin_cars_tbl')
+//         ->select('transmission_type')
+//         ->distinct()
+//         ->union(
+//             DB::table('car_details_tbl')->select('transmission_type')->distinct()
+//         )
+//         ->pluck('transmission_type')
+//         ->unique()
+//         ->sort()
+//         ->values();
+
+//     return view('customer.browse-cars', compact('cars', 'vehicleTypes', 'transmissionTypes'));
+// }
 
 public function browseCars(Request $request)
 {
