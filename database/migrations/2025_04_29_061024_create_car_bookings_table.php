@@ -46,7 +46,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateCarBookingsTable extends Migration
 {
-    /**
+    /** 
      * Run the migrations.
      */
     public function up(): void
@@ -76,14 +76,15 @@ class CreateCarBookingsTable extends Migration
             // Payment information
             $table->string('payment_method', 20)->nullable();
             $table->string('transaction_id', 100)->nullable();
-            
+             
             // Timestamps
             $table->timestamps();
             
             // Foreign keys
             $table->foreign('car_id')
                   ->references('id')
-                  ->on('cars')
+                //   ->on('cars')
+                 ->on('car_details_tbl')
                   ->onDelete('cascade');
                   
             $table->foreign('customer_id')
